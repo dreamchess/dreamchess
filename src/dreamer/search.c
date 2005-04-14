@@ -1,0 +1,375 @@
+/*  DreamChess
+**  Copyright (C) 2003-2004  The DreamChess project
+**
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation; either version 2 of the License, or
+**  (at your option) any later version.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "board.h"
+#include "move.h"
+#include "search.h"
+#include "eval.h"
+#include "history.h"
+#include "repetition.h"
+#include "transposition.h"
+#include "hashing.h"
+
+extern int moves_made;
+int abort_search;
+int node_trigger;
+move_t *prev_best_move;
+int prev_best_score;
+
+int
+alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta);
+
+int
+is_check(board_t *board);
+
+void poll_abort()
+{
+    if (!prev_best_move)
+        return;
+
+    if (check_abort())
+        abort_search = 1;
+}
+
+int
+quiescence(board_t *board, int ply, int check, int alpha, int beta)
+{
+    move_t moves[28*16];
+    int total_moves;
+    int move_nr;
+    int best_move_score;
+    bitboard_t en_passent;
+    int castle_flags;
+    int fifty_moves;
+
+    if (!node_trigger--)
+    {
+        poll_abort();
+        node_trigger = 10000;
+    }
+
+    if (abort_search)
+        return 0;
+
+    if (is_repetition(board, ply))
+        return 0;
+
+    if ((check & (board->current_player? 2 : 1)) && is_check(board))
+        return alpha_beta(board, 1, ply, board->current_player? 2 : 1, alpha, beta);
+
+    /* Is this needed? */
+    if ((total_moves = compute_legal_moves(board, moves)) < 0)
+        return ALPHABETA_ILLEGAL;
+
+    sort_moves(moves, total_moves, board->current_player);
+
+    best_move_score = board_eval_complete(board);
+
+    if (best_move_score >= beta)
+        return best_move_score;
+
+    if (best_move_score > alpha)
+        alpha = best_move_score;
+
+    en_passent = board->en_passent;
+    castle_flags = board->castle_flags;
+    fifty_moves = board->fifty_moves;
+
+    for (move_nr = 0; move_nr < total_moves; move_nr++)
+    {
+        int score;
+        if ((moves[move_nr].type == CAPTURE_MOVE) ||
+                (moves[move_nr].type == CAPTURE_MOVE_EN_PASSENT) ||
+                (moves[move_nr].type & MOVE_PROMOTION_MASK))
+        {
+
+            execute_move(board, &moves[move_nr]);
+            score = -quiescence(board, ply + 1, check & (board->current_player? 1 : 2), -beta, -alpha);
+            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            if (abort_search)
+                return 0;
+            if (score == -ALPHABETA_ILLEGAL)
+                continue;
+            if (score > alpha)
+                alpha = score;
+            if (score > best_move_score)
+            {
+                best_move_score = score;
+                if (best_move_score >= beta)
+                {
+                    add_count(&moves[move_nr], board->current_player);
+                    return best_move_score;
+                }
+            }
+        }
+    }
+    if (best_move_score <= ALPHABETA_MIN)
+    {
+        /* There are no legal moves. We're either checkmated or
+        ** stalemated.
+        */
+
+        /* If the opponent can capture the king that means we're
+        ** checkmated.
+        */
+        board->current_player = OPPONENT(board->current_player);
+        if (compute_legal_moves(board, moves) < 0)
+        {
+            /* depth is added to make checkmates that are
+            ** further away more preferable over the ones
+            ** that are closer.
+            */
+            board->current_player = OPPONENT(board->current_player);
+            return best_move_score;
+        }
+        else
+        {
+            /* We're stalemated. */
+            board->current_player = OPPONENT(board->current_player);
+            return 0;
+        }
+    }
+
+    return best_move_score;
+}
+
+int
+alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
+{
+    move_t moves[28*16];
+    int total_moves;
+    int move_nr;
+    int best_move_score;
+    entry_t *entry;
+    int hard_alpha = ALPHABETA_MIN;
+    int hard_beta = ALPHABETA_MAX;
+    int current_alpha = alpha;
+    long long en_passent;
+    int castle_flags;
+    int fifty_moves;
+
+    if (!node_trigger--)
+    {
+        poll_abort();
+        node_trigger = 10000;
+    }
+
+    if (abort_search)
+        return 0;
+
+    if ((entry = lookup_board(board)) && (entry->depth >= depth))
+    {
+        switch (entry->eval_type)
+        {
+        case EVAL_ACCURATE:
+            return entry->eval;
+        case EVAL_LOWERBOUND:
+            if (entry->eval >= beta)
+                return entry->eval;
+            else
+            {
+                hard_alpha = entry->eval;
+                break;
+            }
+        case EVAL_UPPERBOUND:
+            if (entry->eval <= alpha)
+                return entry->eval;
+            else
+                hard_beta = entry->eval;
+        }
+    }
+
+    if (depth == 0)
+        return quiescence(board, ply, check, alpha, beta);
+    if (is_repetition(board, ply))
+        return 0;
+
+    if ((total_moves = compute_legal_moves(board, moves)) < 0)
+        return ALPHABETA_ILLEGAL;
+
+    sort_moves(moves, total_moves, board->current_player);
+
+    best_move_score = ALPHABETA_MIN;
+
+    en_passent = board->en_passent;
+    castle_flags = board->castle_flags;
+    fifty_moves = board->fifty_moves;
+
+    for (move_nr = 0; move_nr < total_moves; move_nr++)
+    {
+        int score;
+        execute_move(board, &moves[move_nr]);
+        score = -alpha_beta(board, depth - 1, ply + 1, check, -beta, -current_alpha);
+        unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+        if (abort_search)
+            return 0;
+        if (score == -ALPHABETA_ILLEGAL)
+            continue;
+        if (score > current_alpha)
+            current_alpha = score;
+        if (score > best_move_score)
+        {
+            best_move_score = score;
+            if (best_move_score >= beta)
+            {
+                store_board(board, best_move_score, EVAL_LOWERBOUND, depth,
+                            moves_made);
+                add_count(&moves[move_nr], board->current_player);
+                break;
+            }
+        }
+    }
+
+    if (current_alpha == alpha)
+    {
+        /* Fail low. */
+        store_board(board, best_move_score, EVAL_UPPERBOUND, depth,
+                    moves_made);
+    }
+    else if (best_move_score < beta)
+    {
+        store_board(board, best_move_score, EVAL_ACCURATE, depth, moves_made);
+    }
+
+    if (best_move_score <= ALPHABETA_MIN)
+    {
+        /* There are no legal moves. We're either checkmated or
+        ** stalemated.
+        */
+
+        /* If the opponent can capture the king that means we're
+        ** checkmated.
+        */
+        board->current_player = OPPONENT(board->current_player);
+        if (compute_legal_moves(board, moves) < 0)
+        {
+            /* depth is added to make checkmates that are
+            ** further away more preferable over the ones
+            ** that are closer.
+            */
+            board->current_player = OPPONENT(board->current_player);
+            return ALPHABETA_MIN + ply;
+        }
+        else
+        {
+            /* We're stalemated. */
+            board->current_player = OPPONENT(board->current_player);
+            return 0;
+        }
+    }
+
+    if (best_move_score < hard_alpha)
+        best_move_score = hard_alpha;
+    if (best_move_score > hard_beta)
+        best_move_score = hard_beta;
+
+    if (board->fifty_moves == 100)
+        return 0;
+    else
+        return best_move_score;
+}
+
+move_t
+find_best_move(board_t *board, int depth)
+{
+    /* depth = 4; */
+    move_t moves[28*16];
+    move_t *best_move;
+    int total_moves;
+    int move_nr;
+    int cur_depth;
+    int best_score;
+    long long en_passent = board->en_passent;
+    int castle_flags = board->castle_flags;
+    int fifty_moves = board->fifty_moves;
+    node_trigger = 10000;
+    prev_best_move = NULL;
+    prev_best_score = ALPHABETA_MIN;
+    abort_search = 0;
+    for (cur_depth = 0; cur_depth < depth; cur_depth++)
+    {
+        int alpha = ALPHABETA_MIN;
+        best_score = ALPHABETA_MIN;
+        total_moves = compute_legal_moves(board, moves);
+        sort_moves(moves, total_moves, board->current_player);
+        for (move_nr = 0; move_nr < total_moves; move_nr++)
+        {
+            int score;
+            execute_move(board, &moves[move_nr]);
+            /*e_comm_send("Examining move %i-%i.. ", moves[move_nr].source,
+                        moves[move_nr].destination);*/
+            score = -alpha_beta(board, cur_depth, 0, 3, ALPHABETA_MIN, -alpha);
+            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            /*e_comm_send("Move scored %i\n", score);*/
+            if (abort_search)
+                break;
+            if (score == -ALPHABETA_ILLEGAL)
+                continue;
+            if (score > alpha)
+                alpha = score;
+            if (score > best_score)
+            {
+                best_move = &moves[move_nr];
+                best_score = score;
+            }
+        }
+        if (abort_search)
+        {
+            best_move = prev_best_move;
+            best_score = prev_best_score;
+            break;
+        }
+        prev_best_move = best_move;
+        prev_best_score = best_score;
+        /*e_comm_send("Best move at depth %i: %i-%i..\n", cur_depth, prev_best_move->source,
+                    prev_best_move->destination);*/
+    }
+    if (best_score <= ALPHABETA_MIN)
+    {
+        /* There are no legal moves. We're either checkmated or
+        ** stalemated.
+        */
+        move_t move;
+
+        /* If the opponent can capture the king that means we're
+        ** checkmated.
+        */
+        board->current_player = OPPONENT(board->current_player);
+        if (compute_legal_moves(board, moves) < 0)
+        {
+            /* We're checkmated. */
+            move.type = RESIGN_MOVE;
+            board->current_player = OPPONENT(board->current_player);
+            return move;
+        }
+        else
+        {
+            /* We're stalemated. */
+            move.type = STALEMATE_MOVE;
+            board->current_player = OPPONENT(board->current_player);
+            return move;
+        }
+    }
+    if (best_score > 29000)
+    {}
+    /*printf("MATE IN %i!\n", ((ALPHABETA_MAX - best_score) / 2) + 1);*/
+    return *best_move;
+}

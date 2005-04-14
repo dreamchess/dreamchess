@@ -1,0 +1,267 @@
+DreamChess README
+Version 0.1.0-SVN
+-----------------
+
+For the latest information, please check out our project website at:
+http://developer.berlios.de/projects/dreamchess/
+
+Index
+-----
+
+1 - About
+2 - System Requirements
+2.1 - User Interface Drivers
+2.1.1 - sdlgl
+2.1.2 - sdl
+3 - Building
+3.1 - Microsoft Windows
+3.2 - Sega Dreamcast
+3.3 - Installing
+3.3.1 - Microsoft Windows
+3.3.2 - Sega Dreamcast
+4 - Subversion Repository
+5 - Running DreamChess
+5.1 - Running Dreamer
+6 - Acknowledgments
+
+
+1 - About
+---------
+
+DreamChess is a user interface for playing chess. It comes with its own
+engine called Dreamer. Both DreamChess and Dreamer are compatible with the
+xboard/Winboard chess engine communication protocol. This means that
+DreamChess can be used with other xboard-compatible chess engines such as
+crafty (ftp://ftp.cis.uab.edu/pub/hyatt/) and GNU Chess
+(http://www.gnu.org/software/chess/). Similarly, the Dreamer chess engine can
+be used with other xboard-compatible user interfaces such as xboard and
+Winboard (http://www.tim-mann.org/xboard.html) and recent editions of the
+commercial chess program Chessmaster (http://www.chessmaster.com/).
+
+
+2 - System Requirements
+-----------------------
+
+The following platforms are currently officially supported:
+
+ * UNIX (Linux, Sun Solaris etc)
+ * Microsoft Windows (95 and above)
+ * Sega Dreamcast
+
+2.1 - User Interface Drivers
+----------------------------
+
+DreamChess supports several user interface drivers which can be selected at
+runtime. Requirements for these drivers vary and will be described per driver
+below.
+
+2.1.1 - sdlgl
+-------------
+
+This driver uses SDL as well as OpenGL. To avoid performance issues it is
+recommended that you use a hardware-accelerated OpenGL library, if available.
+
+The following libraries are required for this driver:
+
+ * SDL (http://www.libsdl.org/)
+ * OpenGL
+ * SDL_image (http://www.libsdl.org/projects/SDL_image/)
+
+2.1.2 - sdl
+-----------
+
+This driver uses SDL and should work well on most systems.
+
+The following libraries are required for this driver:
+
+ * SDL (http://www.libsdl.org/)
+ * SDL_image (http://www.libsdl.org/projects/SDL_image/)
+
+NOTE: This driver is currently disabled as it's not ready for use yet.
+
+
+3 - Building DreamChess
+-----------------------
+
+This chapter describes how to build and install DreamChess from source.
+Building essentially consists of two steps:
+
+   ./configure
+   make
+
+For more detailed information about this process, please read the INSTALL
+file.
+
+3.1 - Microsoft Windows
+-----------------------
+
+In order to build DreamChess in Windows you'll need to install the following:
+
+ * MinGW (http://www.mingw.org/)
+ * MSYS (http://www.mingw.org/msys.shtml)
+
+This provides the environment necessary to run the configure script and
+compile DreamChess.
+
+3.2 - Sega Dreamcast
+--------------------
+
+Building the Dreamcast version can only be done by cross-compiling it on
+another system. You'll need the following:
+
+ * KallistiOS (http://gamedev.allusion.net/softprj/kos/)
+
+Follow the setup guide at http://gamedev.allusion.net/softprj/kos/setup.php
+closely. We recommend that you use GCC 3.4.1, binutils 2.15 and newlib
+1.12.0 for SH. For ARM we recommend GCC 3.0.4 and binutils 2.15.
+
+In order to meet the requirements of the sdlgl driver you'll need to build
+the zlib and libpng libraries that can be found in the kos-ports directory
+of KallistiOS. You'll also need the following software package from our
+website:
+
+ * dreamcast-ports (http://developer.berlios.de/projects/dreamchess/)
+
+Follow the instructions in the enclosed README file to set it up.
+
+To configure and compile DreamChess you need to first run the KallistiOS
+environ script which you created during the setup process. After that use
+the following commands to configure and compile DreamChess:
+
+   ./configure --host=sh-elf CC=kos-cc CC_FOR_BUILD=gcc CFLAGS= \
+   SDL_CONFIG=$DREAMCAST_PORTS_BASE/SDL/sdl-config --datadir=/cd \
+   --enable-linked-engine
+   make
+
+NOTE: The Dreamcast port is configured with the --enable-linked-engine option
+which creates a single executable that includes the Dreamer engine. It is
+therefor not possible to choose another engine at runtime.
+
+3.3 - Installing DreamChess
+---------------------------
+
+You can use the following command to install DreamChess:
+
+   make install
+
+For more detailed information please read the INSTALL file. Note that this
+will install DreamChess in your build environment, which is probably not what
+you want if you're building for Windows or Dreamcast. Read the following two
+sections for additional information concerning those platforms.
+
+3.3.1 - Microsoft Windows
+-------------------------
+
+Create a new directory (e.g. C:\DreamChess) and copy src/dreamchess.exe and
+src/dreamer/dreamer.exe into it. Next, copy the entire data directory as a
+whole into the new directory. You'll also need the following dll's:
+
+ * SDL.dll
+ * SDL_image.dll
+ * jpeg.dll
+ * libpng1.dll
+ * zlib.dll
+
+You can find them on http://www.libsdl.org/, contained in the Windows
+runtime library packages for SDL and SDL_image.
+
+3.3.2 - Sega Dreamcast
+----------------------
+
+On Dreamcast you'll most likely want to make a bootable CD (there are other
+ways of running DreamChess, but they won't be discussed here).
+
+First you need to create a raw binary from the elf file that was built.
+Change to the src directory and run:
+
+   sh-elf-objcopy -R .stack -O binary dreamchess dreamchess.bin
+
+In order for this binary to work on a bootable CD, it needs to be scrambled.
+Download the 1ST_READ.BIN scrambler from http://mc.pp.se/dc/sw.html and
+install it. Then run:
+
+   scramble dreamchess.bin 1ST_READ.BIN
+
+Now follow the tutorial at http://mc.pp.se/dc/cdr.html to create a bootable
+CD. The iso image should contain the 1ST_READ.BIN file in the root directory.
+It must also contain the complete data directory, renamed to dreamchess.
+
+NOTE: In recent versions of cdrecord the -xa1 option was renamed to -xa.
+
+
+4 - Subversion Repository
+-------------------------
+
+The DreamChess project uses a Subversion repository. This is where the
+source code is kept as it gets updated between releases. If you want
+to try out recent improvements and can't wait for the next release, you can
+check out a copy of the source code and compile it. Note that the source code
+you obtain in this way has not gone through the regular testing phase that
+happens before each release. It is therefor not unlikely that it contains
+serious bugs.
+
+In order to check out source code from the Subversion repository and build
+it you need the following additional tools:
+
+ * GNU automake (http://www.gnu.org/software/automake/)
+ * GNU autoconf (http://www.gnu.org/software/autoconf/)
+ * Subversion (http://subversion.tigris.org/)
+ * GNU bison (http://www.gnu.org/software/bison/)
+
+Change to a suitable directory and run the following command:
+
+   svn checkout svn://svn.berlios.de/dreamchess/trunk dreamchess
+
+This will check out the source code and place it in a dreamchess
+subdirectory. Now change to that directory and run:
+
+   ./autogen.sh
+
+This should generate a configure script. You can now follow the regular build
+instructions in chapter 3.
+
+NOTE: Should you ever want to update this checkout you can do this:
+
+   svn up
+   ./autogen.sh
+
+
+5 - Running DreamChess
+----------------------
+
+You can start the game by running the dreamchess executable. Here's an
+overview of the command-line options:
+
+Usage: dreamchess [options]
+
+An xboard-compatible chess interface.
+
+Options:
+  --help                -h              Show help.
+  --list-drivers        -l              List all available drivers.
+  --ui <drv>            -u<drv>         Use user interface driver <drv>.
+  --first-engine <eng>  -f<eng>         Use <eng> as first chess engine.
+                                          Defaults to `dreamer'.
+
+NOTE: It's not possible to specify command-line arguments when running the
+Dreamcast version of DreamChess.
+
+5.1 - Running Dreamer
+---------------------
+
+You generally don't want to run Dreamer directly. If you want to use Dreamer
+with another user interface, please consult that program's documentation on
+how to specify that the dreamer engine should be used.
+
+
+6 - Acknowledgments
+--------------------
+
+Special thanks go out to the following people:
+
+ * Francois Dominic Laramee - for his excellent article on chess engines.
+     (http://www.gamedev.net/reference/programming/features/chess1/)
+
+ * Bob Hyatt - for his many useful Usenet posts over the years.
+
+ * Dan Potter - for making KallistiOS.

@@ -1,0 +1,10 @@
+SUBDIRS = libs dreamer include
+noinst_HEADERS = board.h comm.h datadir.h dreamchess.h history.h ui.h \
+	credits.h ui_sdlgl_3d.h
+bin_PROGRAMS = dreamchess
+INCLUDES = -I$(top_srcdir)/src/include
+AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
+dreamchess_SOURCES = ui_sdlgl.c ui_sdl.c board.c history.c ui.c \
+	comm_unix.c comm_sdlthd.c dreamchess.c main.c main_sdlthd.c \
+	datadir.c comm.c comm_win32.c credits.c ui_sdlgl_3d.c
+dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ libs/libsan.a
