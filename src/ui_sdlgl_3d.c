@@ -24,7 +24,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef _arch_dreamcast
+#include <dc/fmath.h>
+#define sin fsin
+#define cos fcos
+#define sqrt fsqrt
+#define magnitude(X, Y, Z) fipr_magnitude_sqr(X, Y, Z, 1)
+#else
 #include <math.h>
+#define magnitude in_product_self
+#endif
+
 #include <SDL_opengl.h>
 
 #include "board.h"
@@ -339,6 +350,13 @@ coord3_t light = {0.0f, 0.0f, -1.0f};
 
 #define DC_PI 3.14159265358979323846
 
+inline float arccos(float f)
+{
+    return (2.193376378 + (-2.987042783 + (.5314426631 + .2990387380 * f)
+        * f) * f) / (1.396346817 + (-1.012703522 + (-.3056194995
+        + .1383216735 * f) * f) * f);
+}
+
 void model_render(model_t *model, float alpha, coord3_t *light)
 {
     mesh_t *mesh = model->mesh;
@@ -367,11 +385,11 @@ void model_render(model_t *model, float alpha, coord3_t *light)
 
             if (light)
             {
-                angle = acos(mesh->normal[data[i] * 3] * light->x
+                angle = arccos(mesh->normal[data[i] * 3] * light->x
                              + mesh->normal[data[i] * 3 + 1] * light->y
                              + mesh->normal[data[i] * 3 + 2] * light->z);
 
-                angle /= DC_PI;
+                angle /= 2.8;
 
                 if (angle < 0.5f)
                     angle = 0.25f;
@@ -531,6 +549,11 @@ void render_scene_3d(board_t *board)
     glDisable(GL_CULL_FACE);
 }
 
+static inline float in_product_self(float x, float y, float z)
+{
+    return sqrt(x * x + y * y + z * z);
+}
+
 static void update_light()
 {
     float len;
@@ -539,7 +562,7 @@ static void update_light()
     light.y = -sin(x_rotation * DC_PI / 180.0f) * cos(z_rotation * DC_PI / 180.0f);
     light.z = -cos(x_rotation * DC_PI / 180.0f);
 
-    len = sqrt(light.x * light.x + light.y * light.y + light.z * light.z);
+    len = magnitude(light.x, light.y, light.z);
 
     light.x /= len;
     light.y /= len;

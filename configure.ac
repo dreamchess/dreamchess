@@ -43,8 +43,8 @@ AC_DEFUN([AC_NEEDS],
 	LIBS="${LIBS} -l$1 $6"
 	[AC_CACHE_CHECK([whether lib$1 needs -l$2], ac_$1_needs_$2,
 		AC_TRY_LINK_FUNC($3,
-			[ac_$1_needs_$2="no" $5],
-			[ac_$1_needs_$2="yes" $4]
+			[ac_$1_needs_$2="no" ; $5],
+			[ac_$1_needs_$2="yes" ; $4]
 			)
 		)]
 	LIBS="${OLD_LIBS}"
