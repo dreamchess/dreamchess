@@ -220,7 +220,6 @@ AC_C_VOLATILE
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-		data/Makefile
 		man/Makefile
 		m4/Makefile
 		src/Makefile

@@ -221,9 +221,14 @@ static Uint32 fps_time = 0;
 static float fps;
 
 static char* themelist[25];
-static int themelistindex;
 static int num_theme;
 static int cur_theme;
+static char** pieces_list;
+static int pieces_list_total;
+static int pieces_list_cur;
+static char** board_list;
+static int board_list_total;
+static int board_list_cur;
 static int flip_board;
 static int dialog_promote_piece;
 
@@ -1516,14 +1521,24 @@ void dialog_title_players(widget_t *widget, void *data)
     }
 }
 
-void dialog_title_level(widget_t *widget, void *data)
+static void dialog_title_level(widget_t *widget, void *data)
 {
     config->cpu_level = w_option_get_selected(widget) + 1;
 }
 
-void dialog_title_theme(widget_t *widget, void *data)
+static void dialog_title_theme(widget_t *widget, void *data)
 {
     cur_theme = w_option_get_selected(widget);
+}
+
+static void dialog_title_pieces(widget_t *widget, void *data)
+{
+    pieces_list_cur = w_option_get_selected(widget);
+}
+
+static void dialog_title_board(widget_t *widget, void *data)
+{
+    board_list_cur = w_option_get_selected(widget);
 }
 
 static dialog_t *dialog_title_create()
@@ -1560,6 +1575,11 @@ static dialog_t *dialog_title_create()
     label = w_text_create("Theme:");
     w_text_set_alignment(label, 0.0f, 0.0f);
     w_vbox_append(vbox2, label);
+
+    label = w_text_create("Chess Set:");
+    w_text_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
+
     hbox = w_hbox_create(20);
     w_hbox_append(hbox, vbox2);
 
@@ -1583,6 +1603,18 @@ static dialog_t *dialog_title_create()
     for (i = 0; i < num_theme; i++)
         w_option_append_label(widget, themelist[i], 0.5f, 0.0f);
     w_option_set_callback(widget, dialog_title_theme, NULL);
+    w_vbox_append(vbox2, widget);
+
+    widget = w_option_create();
+    for (i = 0; i < pieces_list_total; i++)
+        w_option_append_label(widget, pieces_list[i], 0.5f, 0.0f);
+    w_option_set_callback(widget, dialog_title_pieces, NULL);
+    w_vbox_append(vbox2, widget);
+
+    widget = w_option_create();
+    for (i = 0; i < board_list_total; i++)
+        w_option_append_label(widget, board_list[i], 0.5f, 0.0f);
+    w_option_set_callback(widget, dialog_title_board, NULL);
     w_vbox_append(vbox2, widget);
 
     w_hbox_append(hbox, vbox2);
@@ -1714,7 +1746,7 @@ static void draw_backdrop();
 
 static void init_gl();
 static void resize_window( int width, int height );
-static void load_theme( char* name );
+static void load_theme(char* name, char *pieces, char *board);
 static int GetMove();
 void load_texture_png( texture_t *texture, char *filename, int alpha );
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
@@ -2081,7 +2113,6 @@ static config_t *do_menu()
     SDL_Event event;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
-    themelistindex=0;
     title_process_retval=2;
 
     board_xpos=128;
@@ -2133,7 +2164,8 @@ static config_t *do_menu()
 
         if ( can_load == TRUE )
         {
-            load_theme( themelist[cur_theme] );
+            load_theme(themelist[cur_theme], pieces_list[pieces_list_cur],
+                board_list[board_list_cur]);
             reset_3d();
             return config;
         }
@@ -2258,6 +2290,41 @@ static void init_gui()
         }
     }
 
+    /* Fill pieces list. */
+    ch_datadir();
+
+    if ((themedir=opendir("pieces")) != NULL )
+    {
+        pieces_list_total = 0;
+        while ((themedir_entry = readdir(themedir)) != NULL)
+        {
+            if (themedir_entry->d_name[0] != '.')
+            {
+                pieces_list = realloc(pieces_list, pieces_list_total + 1 *
+                                      sizeof(char *));
+                pieces_list[pieces_list_total++] =
+                    strdup(themedir_entry->d_name);
+            }
+        }
+    }
+
+    /* Fill board list. */
+    ch_datadir();
+
+    if ((themedir=opendir("boards")) != NULL )
+    {
+        pieces_list_total = 0;
+        while ((themedir_entry = readdir(themedir)) != NULL)
+        {
+            if (themedir_entry->d_name[0] != '.')
+            {
+                board_list = realloc(board_list, board_list_total + 1 *
+                                      sizeof(char *));
+                board_list[board_list_total++] =
+                    strdup(themedir_entry->d_name);
+            }
+        }
+    }
     fps_time = SDL_GetTicks();
 }
 
@@ -2328,7 +2395,7 @@ void load_pieces()
  *
  *  @param name The name of the subdirectory of the theme to load.
  */
-static void load_theme( char* name )
+static void load_theme(char* name, char* pieces, char *board)
 {
     printf( "Loading theme.\n" );
     ch_datadir();
@@ -2339,7 +2406,16 @@ static void load_theme( char* name )
     load_texture_png( &backdrop, "backdrop.png", 0 );
     load_texture_png( &boardimg, "board.png", 0 );
     load_pieces();
+
+    ch_datadir();
+    chdir("pieces");
+    chdir(pieces);
     loadmodels("set.cfg");
+
+    ch_datadir();
+    chdir("boards");
+    chdir(board);
+    load_board("board.dcm", "board.png");
 
     ch_datadir();
     printf( "Loaded theme.\n" );
@@ -2851,7 +2927,8 @@ static int GetMove()
         if (keystate[SDLK_UP])
             move_camera(0.6f * MOVE_SPEED, 0.0f);
 
-        while (SDL_PollEvent( &event ));
+        while (SDL_PollEvent( &event ))
+            ;
     }
 
     while ( SDL_PollEvent( &event ) )

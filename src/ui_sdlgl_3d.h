@@ -27,3 +27,5 @@ void move_selector(int direction);
 int get_selector();
 void select_piece(int square);
 void reset_3d();
+void loadmodels(char *filename);
+void load_board(char *dcm_name, char *texture_name);

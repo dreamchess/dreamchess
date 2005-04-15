@@ -1,9 +1,11 @@
-SUBDIRS = src man data m4
+SUBDIRS = src man m4
 ACLOCAL_AMFLAGS = -I m4
 
+INSTALL_DIRS = / /themes/default /pieces/classiclow/ /boards/classic/
+
 install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/themes/default
-	@for dir in / /themes/default/; do \
+	@for dir in $(INSTALL_DIRS); do \
+	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/$$dir; \
 	  for file in $(srcdir)/data$$dir*; do \
 	    if test -f $$file; then \
 	      echo " $(INSTALL_DATA) $$file $(DESTDIR)$(pkgdatadir)$$dir`basename $$file`"; \
@@ -13,7 +15,7 @@ install-data-local:
 	done
 
 uninstall-local:
-	@for dir in / /themes/default/; do \
+	@for dir in $(INSTALL_DIRS); do \
 	  for file in $(srcdir)/data$$dir*; do \
 	    if test -f $$file; then \
 	      echo " rm -f $(DESTDIR)$(pkgdatadir)$$dir`basename $$file`"; \

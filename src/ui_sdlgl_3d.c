@@ -41,13 +41,6 @@
 #include "board.h"
 #include "ui_sdlgl_3d.h"
 
-typedef struct coord2
-{
-    float x;
-    float y;
-}
-coord2_t;
-
 typedef struct coord3
 {
     float x;
@@ -55,20 +48,6 @@ typedef struct coord3
     float z;
 }
 coord3_t;
-
-typedef struct vertex
-{
-    coord3_t co;
-    coord3_t no;
-}
-vertex_t;
-
-typedef struct face
-{
-    int v[3];
-    coord2_t tco[3];
-}
-face_t;
 
 typedef struct texture
 {
@@ -184,7 +163,8 @@ static data_col_t meshes;
 #define BUF_SIZE 256
 #define FN_LEN 256
 
-static model_t model[13];
+static model_t model[12];
+static model_t board;
 
 static int selector, selected;
 
@@ -436,7 +416,7 @@ void loadmodels(char *filename)
         exit(-1);
     }
 
-    for (i = 0; i < 13; i++)
+    for (i = 0; i < 12; i++)
     {
         if (!fgets(mesh, 256, f) || (mesh[strlen(mesh) - 1] != '\n')
                 || !fgets(texture, 256, f)
@@ -452,6 +432,12 @@ void loadmodels(char *filename)
         model[i].mesh = load_mesh(mesh);
         model[i].texture = load_piece_texture(texture);
     }
+}
+
+void load_board(char *dcm_name, char *texture_name)
+{
+    board.mesh = dcm_load(dcm_name);
+    load_texture_png(&board.texture, texture_name, 0);
 }
 
 void free_mesh(void *data)
@@ -520,7 +506,7 @@ static void draw_board(float rot_x, float rot_z)
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
-    model_render(&model[12], 1.0f, &fixed);
+    model_render(&board, 1.0f, &fixed);
 }
 
 void draw_selector()
