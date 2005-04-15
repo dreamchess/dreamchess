@@ -1580,6 +1580,10 @@ static dialog_t *dialog_title_create()
     w_text_set_alignment(label, 0.0f, 0.0f);
     w_vbox_append(vbox2, label);
 
+    label = w_text_create("Board:");
+    w_text_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
+
     hbox = w_hbox_create(20);
     w_hbox_append(hbox, vbox2);
 
@@ -2313,7 +2317,7 @@ static void init_gui()
 
     if ((themedir=opendir("boards")) != NULL )
     {
-        pieces_list_total = 0;
+        board_list_total = 0;
         while ((themedir_entry = readdir(themedir)) != NULL)
         {
             if (themedir_entry->d_name[0] != '.')
