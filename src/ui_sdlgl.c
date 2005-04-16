@@ -146,6 +146,55 @@ texture_t;
 /* Menu stuff */
 static texture_t menu_title_tex;
 
+static ui_event_t convert_event(SDL_Event *event)
+{
+    switch (event->type)
+    {
+    case SDL_KEYDOWN:
+        switch (event->key.keysym.sym)
+        {
+        case SDLK_RIGHT:
+            return UI_EVENT_RIGHT;
+        case SDLK_LEFT:
+            return UI_EVENT_LEFT;
+        case SDLK_UP:
+            return UI_EVENT_UP;
+        case SDLK_DOWN:
+            return UI_EVENT_DOWN;
+        case SDLK_ESCAPE:
+            return UI_EVENT_ESCAPE;
+        case SDLK_RETURN:
+            return UI_EVENT_ACTION;
+        }
+        break;
+
+    case SDL_JOYHATMOTION:
+        switch (event->jhat.value)
+        {
+        case SDL_HAT_RIGHT:
+            return UI_EVENT_RIGHT;
+        case SDL_HAT_LEFT:
+            return UI_EVENT_LEFT;
+        case SDL_HAT_UP:
+            return UI_EVENT_UP;
+        case SDL_HAT_DOWN:
+            return UI_EVENT_DOWN;
+        }
+        break;
+
+    case SDL_JOYBUTTONDOWN:
+        switch (event->jbutton.button)
+        {
+        case 0:
+            return UI_EVENT_ACTION;
+        case 1:
+            return UI_EVENT_ESCAPE;
+        }
+    }
+
+    return UI_EVENT_NONE;
+}
+
 #define DC_PI 3.14159265358979323846
 
 void set_perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
@@ -273,7 +322,7 @@ typedef struct widget
      *  @param event The event to handle.
      *  @return 0 = Event not supported in this state, 1 = event processed.
      */
-    int (* input) (struct widget *widget, SDL_Event *event);
+    int (* input) (struct widget *widget, ui_event_t event);
 
     void (* destroy) (struct widget *widget);
 
@@ -740,12 +789,11 @@ static void w_action_render(widget_t *widget, int x, int y, int width, int heigh
 }
 
 /** Implements widget::input for action widgets. */
-static int w_action_input(widget_t *widget, SDL_Event *event)
+static int w_action_input(widget_t *widget, ui_event_t event)
 {
     w_action_data_t *action_data = widget->data;
 
-    if (((event->type == SDL_JOYBUTTONDOWN) && (event->jbutton.button == 0))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_RETURN)))
+    if (event == UI_EVENT_ACTION)
     {
         if (action_data->func)
             action_data->func(widget, action_data->func_data);
@@ -881,7 +929,7 @@ static void w_option_render(widget_t *widget, int x, int y, int width, int heigh
 }
 
 /** Implements widget::input for option widgets. */
-static int w_option_input(widget_t *widget, SDL_Event *event)
+static int w_option_input(widget_t *widget, ui_event_t event)
 {
     w_option_data_t *multi_data = widget->data;
     widget_list_t *list = &multi_data->list;
@@ -889,8 +937,7 @@ static int w_option_input(widget_t *widget, SDL_Event *event)
     if (list->sel == -1)
         return 0;
 
-    if (((event->type == SDL_JOYBUTTONDOWN) && (event->jbutton.button == SDL_HAT_RIGHT))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_RIGHT)))
+    if (event == UI_EVENT_RIGHT)
     {
         if (widget_list_select_next(list, 0, 0))
         {
@@ -900,8 +947,7 @@ static int w_option_input(widget_t *widget, SDL_Event *event)
 
         return 1;
     }
-    if (((event->type == SDL_JOYBUTTONDOWN) && (event->jbutton.button == SDL_HAT_LEFT))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_LEFT)))
+    if (event == UI_EVENT_LEFT)
     {
         if (widget_list_select_prev(list, 0, 0))
         {
@@ -1060,7 +1106,7 @@ void w_vbox_render(widget_t *widget, int x, int y, int width, int height, int fo
     }
 }
 
-static int w_vbox_input(widget_t *widget, SDL_Event *event)
+static int w_vbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
@@ -1071,12 +1117,10 @@ static int w_vbox_input(widget_t *widget, SDL_Event *event)
     if (list->item[list->sel]->input(list->item[list->sel], event))
         return 1;
 
-    if (((event->type == SDL_JOYHATMOTION) && (event->jhat.value == SDL_HAT_UP))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_UP)))
+    if (event == UI_EVENT_UP)
         return widget_list_select_prev(list, 1, 1);
 
-    if (((event->type == SDL_JOYHATMOTION) && (event->jhat.value == SDL_HAT_DOWN))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_DOWN)))
+    if (event == UI_EVENT_DOWN)
         return widget_list_select_next(list, 1, 1);
 
     return 0;
@@ -1175,7 +1219,7 @@ void w_hbox_render(widget_t *widget, int x, int y, int width, int height, int fo
     }
 }
 
-static int w_hbox_input(widget_t *widget, SDL_Event *event)
+static int w_hbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
@@ -1186,12 +1230,10 @@ static int w_hbox_input(widget_t *widget, SDL_Event *event)
     if (list->item[list->sel]->input(list->item[list->sel], event))
         return 1;
 
-    if (((event->type == SDL_JOYHATMOTION) && (event->jhat.value == SDL_HAT_LEFT))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_LEFT)))
+    if (event == UI_EVENT_LEFT)
         return widget_list_select_prev(list, 1, 1);
 
-    if (((event->type == SDL_JOYHATMOTION) && (event->jhat.value == SDL_HAT_RIGHT))
-            || ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_RIGHT)))
+    if (event == UI_EVENT_RIGHT)
         return widget_list_select_next(list, 1, 1);
 
     return 0;
@@ -1724,18 +1766,17 @@ static void dialog_render(style_t *style, position_t *pos)
  *
  *  @param event The event to process.
  */
-static void dialog_input(SDL_Event event)
+static void dialog_input(ui_event_t event)
 {
     dialog_t *dialog = dialog_current();
 
     if (!dialog)
         return;
 
-    if (!dialog->modal && (((event.type == SDL_JOYBUTTONDOWN) && (event.jbutton.button == 1))
-                           || ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_ESCAPE))))
+    if (!dialog->modal && (event == UI_EVENT_ESCAPE))
         dialog_close();
 
-    dialog->widget->input(dialog->widget, &event);
+    dialog->widget->input(dialog->widget, event);
 }
 
 #define SCREEN_WIDTH  640
@@ -2153,7 +2194,7 @@ static config_t *do_menu()
 
             }
             else
-                dialog_input(event);
+                dialog_input(convert_event(&event));
 
             if (title_process_retval == 1)
             {
@@ -2169,7 +2210,7 @@ static config_t *do_menu()
         if ( can_load == TRUE )
         {
             load_theme(themelist[cur_theme], pieces_list[pieces_list_cur],
-                board_list[board_list_cur]);
+                       board_list[board_list_cur]);
             reset_3d();
             return config;
         }
@@ -2323,7 +2364,7 @@ static void init_gui()
             if (themedir_entry->d_name[0] != '.')
             {
                 board_list = realloc(board_list, board_list_total + 1 *
-                                      sizeof(char *));
+                                     sizeof(char *));
                 board_list[board_list_total++] =
                     strdup(themedir_entry->d_name);
             }
@@ -2941,7 +2982,7 @@ static int GetMove()
             fps_enabled = 1 - fps_enabled;
         /* in the quit dialog */
         else if (dialog_current())
-            dialog_input(event);
+            dialog_input(convert_event(&event));
         /* In the promote dialog */
         else
             switch ( event.type )

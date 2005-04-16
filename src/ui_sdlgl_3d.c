@@ -514,14 +514,11 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
 static void draw_board(float rot_x, float rot_z)
 {
     coord3_t fixed = {0, 0, -1};
-
-glLoadIdentity()
-    ;
+    glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
-    model_render(&board, 1.0f, &fixed)
-    ;
+    model_render(&board, 1.0f, &fixed);
 }
 
 void draw_selector()

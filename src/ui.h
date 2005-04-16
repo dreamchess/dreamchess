@@ -52,4 +52,16 @@ extern ui_driver_t *ui_driver[];
 ui_driver_t *ui_find_driver(char *name);
 void ui_list_drivers();
 
+typedef enum ui_event
+{
+    UI_EVENT_NONE,
+    UI_EVENT_ACTION,
+    UI_EVENT_ESCAPE,
+    UI_EVENT_UP,
+    UI_EVENT_RIGHT,
+    UI_EVENT_DOWN,
+    UI_EVENT_LEFT
+}
+ui_event_t;
+
 #endif /* _UI_H */
