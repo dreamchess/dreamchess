@@ -189,7 +189,26 @@ static ui_event_t convert_event(SDL_Event *event)
             return UI_EVENT_ACTION;
         case 1:
             return UI_EVENT_ESCAPE;
+        case 2:
+            return UI_EVENT_EXTRA1;
+        case 3:
+            return UI_EVENT_EXTRA2;
+        case 4:
+            return UI_EVENT_EXTRA3;
         }
+    }
+
+    if (event->type == SDL_KEYDOWN)
+    {
+        ui_event_t retval;
+        if ((event->key.keysym.sym >= SDLK_a)
+                && (event->key.keysym.sym <= SDLK_z))
+
+            retval = event->key.keysym.sym - SDLK_a + UI_EVENT_CHAR_a;
+        if (event->key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
+            retval += UI_EVENT_CHAR_A - UI_EVENT_CHAR_a;
+
+        return retval;
     }
 
     return UI_EVENT_NONE;
@@ -2978,106 +2997,65 @@ static int GetMove()
 
     while ( SDL_PollEvent( &event ) )
     {
-        if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_f))
+        ui_event_t ui_event = convert_event(&event);
+
+        if (ui_event == UI_EVENT_CHAR_f)
             fps_enabled = 1 - fps_enabled;
-        /* in the quit dialog */
         else if (dialog_current())
-            dialog_input(convert_event(&event));
+            dialog_input(ui_event);
         /* In the promote dialog */
         else
-            switch ( event.type )
+            switch (ui_event)
             {
-            case SDL_JOYHATMOTION:
-                switch (event.jhat.value)
-                {
-                case SDL_HAT_LEFT:
-                    move_selector(SELECTOR_LEFT);
-                    break;
-                case SDL_HAT_RIGHT:
-                    move_selector(SELECTOR_RIGHT);
-                    break;
-                case SDL_HAT_UP:
-                    move_selector(SELECTOR_UP);
-                    break;
-                case SDL_HAT_DOWN:
-                    move_selector(SELECTOR_DOWN);
-                    break;
-                }
+            case UI_EVENT_LEFT:
+                move_selector(SELECTOR_LEFT);
                 break;
-            case SDL_JOYBUTTONDOWN:
-                switch(event.jbutton.button)
-                {
-                case 0:
-                    retval = get_selector();
-                    select_piece(retval);
-                    break;
-                case 4:
-                    dialog_open(dialog_system_create());
-                    break;
-                }
+            case UI_EVENT_RIGHT:
+                move_selector(SELECTOR_RIGHT);
                 break;
-            case SDL_MOUSEMOTION:
-                mouse_x_pos=((event.motion.x-10))/(460/8);
-                mouse_y_pos=(470-(event.motion.y))/(460/8);
+            case UI_EVENT_UP:
+                move_selector(SELECTOR_UP);
                 break;
-            case SDL_MOUSEBUTTONDOWN:
-                if ( event.button.button == SDL_BUTTON_LEFT )
-                {
-                    retval = (mouse_y_pos*8)+mouse_x_pos;
-                    select_piece(retval);
-                }
+            case UI_EVENT_DOWN:
+                move_selector(SELECTOR_DOWN);
                 break;
-            case SDL_KEYDOWN:
-                switch( event.key.keysym.sym )
-                {
-                case SDLK_ESCAPE:
-                    dialog_open(dialog_system_create());
-                    break;
-                case SDLK_g:
-                    dialog_open(dialog_ingame_create());
-                    break;
-                case SDLK_d:
-                    board_xpos+=5;
-                    break;
-                case SDLK_a:
-                    board_xpos-=5;
-                    break;
-                case SDLK_w:
-                    board_ypos+=5;
-                    break;
-                case SDLK_s:
-                    board_ypos-=5;
-                    break;
-                case SDLK_p:
-                    game_view_prev();
-                    break;
-                case SDLK_n:
-                    game_view_next();
-                    break;
-                case SDLK_u:
-                    game_undo();
-                    break;
-                case SDLK_LEFT:
-                    move_selector(SELECTOR_LEFT);
-                    break;
-                case SDLK_RIGHT:
-                    move_selector(SELECTOR_RIGHT);
-                    break;
-                case SDLK_UP:
-                    move_selector(SELECTOR_UP);
-                    break;
-                case SDLK_DOWN:
-                    move_selector(SELECTOR_DOWN);
-                    break;
-                case SDLK_RETURN:
-                    retval = get_selector();
-                    select_piece(retval);
-                    break;
-                default:
-                    break;
-                }
+            case UI_EVENT_ACTION:
+                retval = get_selector();
+                select_piece(retval);
+                break;
+            case UI_EVENT_ESCAPE:
+                dialog_open(dialog_system_create());
+                break;
+            case UI_EVENT_CHAR_g:
+            case UI_EVENT_EXTRA3:
+                dialog_open(dialog_ingame_create());
+                break;
+            case UI_EVENT_CHAR_p:
+                game_view_prev();
+                break;
+            case UI_EVENT_CHAR_n:
+                game_view_next();
+                break;
+            case UI_EVENT_CHAR_u:
+                game_undo();
                 break;
             }
+        break;
+#if 0
+
+    case SDL_MOUSEMOTION:
+        mouse_x_pos=((event.motion.x-10))/(460/8);
+        mouse_y_pos=(470-(event.motion.y))/(460/8);
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        if ( event.button.button == SDL_BUTTON_LEFT )
+        {
+            retval = (mouse_y_pos*8)+mouse_x_pos;
+            select_piece(retval);
+        }
+        break;
+#endif
+
     }
     return retval;
 }

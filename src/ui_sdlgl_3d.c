@@ -30,10 +30,12 @@
 #define sin fsin
 #define cos fcos
 #define sqrt fsqrt
-#define magnitude(X, Y, Z) fipr_magnitude_sqr(X, Y, Z, 1)
+#define magnitude_sqr(X, Y, Z) fipr_magnitude_sqr(X, Y, Z, 0)
+#define dot_product(X, Y, Z, XX, YY, ZZ) fipr(X, Y, Z, 0, XX, YY, ZZ, 0)
 #else
 #include <math.h>
-#define magnitude in_product_self
+#define magnitude_sqr in_product_self
+#define dot_product in_product
 #endif
 
 #include <SDL_opengl.h>
@@ -162,6 +164,17 @@ static data_col_t meshes;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
+
+static inline float in_product_self(float x, float y, float z)
+{
+    return x * x + y * y + z * z;
+}
+
+static inline float in_product(float x, float y, float z, float xx, float yy,
+                               float zz)
+{
+    return x * xx + y * yy + z * zz;
+}
 
 static model_t model[12];
 static model_t board;
@@ -367,9 +380,10 @@ void model_render(model_t *model, float alpha, coord3_t *light)
 
             if (light)
             {
-                angle = arccos(mesh->normal[data[i] * 3] * light->x
-                               + mesh->normal[data[i] * 3 + 1] * light->y
-                               + mesh->normal[data[i] * 3 + 2] * light->z);
+                angle = arccos(dot_product(mesh->normal[data[i] * 3],
+                               mesh->normal[data[i] * 3 + 1],
+                               mesh->normal[data[i] * 3 + 2],
+                               light->x, light->y, light->z));
 
                 angle /= 2.8;
 
@@ -514,7 +528,8 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
 static void draw_board(float rot_x, float rot_z)
 {
     coord3_t fixed = {0, 0, -1};
-    glLoadIdentity();
+glLoadIdentity()
+    ;
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
@@ -547,11 +562,6 @@ void render_scene_3d(board_t *board)
     glDisable(GL_CULL_FACE);
 }
 
-static inline float in_product_self(float x, float y, float z)
-{
-    return sqrt(x * x + y * y + z * z);
-}
-
 static void update_light()
 {
     float len;
@@ -560,7 +570,7 @@ static void update_light()
     light.y = -sin(x_rotation * DC_PI / 180.0f) * cos(z_rotation * DC_PI / 180.0f);
     light.z = -cos(x_rotation * DC_PI / 180.0f);
 
-    len = magnitude(light.x, light.y, light.z);
+    len = sqrt(magnitude_sqr(light.x, light.y, light.z));
 
     light.x /= len;
     light.y /= len;
