@@ -166,6 +166,8 @@ static data_col_t meshes;
 static model_t model[12];
 static model_t board;
 
+static int is_2d;
+
 static int selector, selected;
 
 static float x_rotation, z_rotation;
@@ -183,7 +185,7 @@ static texture_t load_piece_texture(char *filename)
     tex = malloc(sizeof(texture_t));
 
     printf("Loading %s\n", filename);
-    load_texture_png(tex, filename, 0);
+    load_texture_png(tex, filename, 1);
     data_col_add(&textures, filename, tex);
     return *tex;
 }
@@ -333,8 +335,8 @@ coord3_t light = {0.0f, 0.0f, -1.0f};
 inline float arccos(float f)
 {
     return (2.193376378 + (-2.987042783 + (.5314426631 + .2990387380 * f)
-        * f) * f) / (1.396346817 + (-1.012703522 + (-.3056194995
-        + .1383216735 * f) * f) * f);
+                           * f) * f) / (1.396346817 + (-1.012703522 + (-.3056194995
+                                                       + .1383216735 * f) * f) * f);
 }
 
 void model_render(model_t *model, float alpha, coord3_t *light)
@@ -366,8 +368,8 @@ void model_render(model_t *model, float alpha, coord3_t *light)
             if (light)
             {
                 angle = arccos(mesh->normal[data[i] * 3] * light->x
-                             + mesh->normal[data[i] * 3 + 1] * light->y
-                             + mesh->normal[data[i] * 3 + 2] * light->z);
+                               + mesh->normal[data[i] * 3 + 1] * light->y
+                               + mesh->normal[data[i] * 3 + 2] * light->z);
 
                 angle /= 2.8;
 
@@ -432,6 +434,11 @@ void loadmodels(char *filename)
         model[i].mesh = load_mesh(mesh);
         model[i].texture = load_piece_texture(texture);
     }
+
+    if ((model[0].mesh->groups) == 1 && (model[0].mesh->group[0].len == 4))
+        is_2d = 1;
+    else
+        is_2d = 0;
 }
 
 void load_board(char *dcm_name, char *texture_name)
@@ -487,8 +494,14 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                 glTranslatef(0, -0.5f, -12.0f );
                 glRotatef(rot_x, 1, 0, 0);
                 glRotatef(rot_z, 0, 0, 1);
-                glTranslatef(-3.5f + j, -3.5f + i, 0);
-                if (k < 12 && IS_BLACK(k))
+                glTranslatef(-3.5f + j, -3.5f + i, 0.02);
+                if (is_2d)
+                {
+                    int steps = (z_rotation + 45.0f) / 90.0f;
+
+                    glRotatef(-steps * 90.0f, 0, 0, 1);
+                }
+                else if (k < 12 && IS_BLACK(k))
                 {
                     glRotatef(180, 0, 0, 1);
                     l = &light_inv;
@@ -502,11 +515,13 @@ static void draw_board(float rot_x, float rot_z)
 {
     coord3_t fixed = {0, 0, -1};
 
-    glLoadIdentity();
+glLoadIdentity()
+    ;
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
-    model_render(&board, 1.0f, &fixed);
+    model_render(&board, 1.0f, &fixed)
+    ;
 }
 
 void draw_selector()
@@ -630,8 +645,16 @@ void reset_3d()
 {
     selected = -1;
     selector = 0;
-    x_rotation = -45.0f;
-    z_rotation = 0.0f;
+    if (is_2d)
+    {
+        x_rotation = 0.0f;
+        z_rotation = 0.0f;
+    }
+    else
+    {
+        x_rotation = -45.0f;
+        z_rotation = 0.0f;
+    }
     update_light();
 }
 

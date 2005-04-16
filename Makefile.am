@@ -1,7 +1,12 @@
 SUBDIRS = src man m4
 ACLOCAL_AMFLAGS = -I m4
 
-INSTALL_DIRS = / /themes/default /pieces/classiclow/ /boards/classic/
+INSTALL_DIRS = \
+	/ \
+	/themes/default \
+	/pieces/classiclow/ \
+	/pieces/figurine/ \
+	/boards/classic/
 
 install-data-local:
 	@for dir in $(INSTALL_DIRS); do \
