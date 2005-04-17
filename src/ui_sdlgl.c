@@ -207,12 +207,13 @@ static ui_event_t convert_event(SDL_Event *event)
         ui_event_t retval;
         if ((event->key.keysym.sym >= SDLK_a)
                 && (event->key.keysym.sym <= SDLK_z))
-
+        {
             retval = event->key.keysym.sym - SDLK_a + UI_EVENT_CHAR_a;
-        if (event->key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
-            retval += UI_EVENT_CHAR_A - UI_EVENT_CHAR_a;
+            if (event->key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
+                retval += UI_EVENT_CHAR_A - UI_EVENT_CHAR_a;
 
-        return retval;
+            return retval;
+        }
     }
 
     return UI_EVENT_NONE;
@@ -639,6 +640,9 @@ typedef struct w_text_data
 
     /** Vertical alignment. Ranges from 0.0f (top) to 1.0f (bottom). */
     float yalign;
+
+    /** Bounce on focus. 0 = no, 1 = yes. */
+    int bouncy;
 }
 w_text_data_t;
 
@@ -651,7 +655,12 @@ static void w_text_render(widget_t *widget, int x, int y, int width, int height,
     y += (1.0f - text_data->yalign) * (height - widget->height);
 
     if (focus != FOCUS_NONE)
-        text_draw_string_bouncy(x, y, text_data->label, 1, &col_dark_red);
+    {
+        if (text_data->bouncy)
+            text_draw_string_bouncy(x, y, text_data->label, 1, &col_dark_red);
+        else
+            text_draw_string(x, y, text_data->label, 1, &col_dark_red);
+    }
     else
         text_draw_string(x, y, text_data->label, 1, &col_black);
 }
@@ -662,6 +671,13 @@ static void w_text_set_alignment(widget_t *widget, float xalign, float yalign)
 
     data->xalign = xalign;
     data->yalign = yalign;
+}
+
+static void w_text_set_bouncy(widget_t *widget, int bouncy)
+{
+    w_text_data_t *data = widget->data;
+
+    data->bouncy = bouncy;
 }
 
 /** @brief Destroys a text widget.
@@ -697,6 +713,7 @@ widget_t *w_text_create(char *string)
     data->label = strdup(string);
     data->xalign = 0.5f;
     data->yalign = 0.5f;
+    data->bouncy = 0;
     item->label = NULL;
     item->data = data;
     item->enabled = 1;
@@ -873,6 +890,7 @@ widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
     widget_t *label = w_text_create(text);
     widget_t *action;
 
+    w_text_set_bouncy(label, 1);
     w_text_set_alignment(label, xalign, yalign);
     action = w_action_create(label);
     return action;
@@ -1359,8 +1377,9 @@ void w_entry_render(widget_t *widget, int x, int y, int width, int height, int f
 
     if (focus != FOCUS_NONE)
     {
-        text_draw_string_bouncy(x, y, data->text, 1, &col_dark_red);
-        text_draw_string_bouncy(x + len - 2, y, ENTRY_CURSOR, 1, &col_dark_red);
+        text_draw_string(x, y, data->text, 1, &col_dark_red);
+if (SDL_GetTicks() % 400 < 200)
+        text_draw_string(x + len - 2, y, ENTRY_CURSOR, 1, &col_dark_red);
     }
     else
         text_draw_string(x, y, data->text, 1, &col_black);
