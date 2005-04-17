@@ -64,6 +64,8 @@ typedef enum ui_event
     UI_EVENT_RIGHT,
     UI_EVENT_DOWN,
     UI_EVENT_LEFT,
+    UI_EVENT_BACKSPACE,
+    UI_EVENT_SPACE,
     UI_EVENT_CHAR_a,
     UI_EVENT_CHAR_b,
     UI_EVENT_CHAR_c,

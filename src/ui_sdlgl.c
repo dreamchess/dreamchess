@@ -165,6 +165,10 @@ static ui_event_t convert_event(SDL_Event *event)
             return UI_EVENT_ESCAPE;
         case SDLK_RETURN:
             return UI_EVENT_ACTION;
+        case SDLK_BACKSPACE:
+            return UI_EVENT_BACKSPACE;
+        case SDLK_SPACE:
+            return UI_EVENT_SPACE;
         }
         break;
 
@@ -1325,6 +1329,140 @@ void w_hbox_append(widget_t *hbox, widget_t *widget)
     }
 }
 
+/* Text entry widget. */
+
+#define ENTRY_MAX_LEN 255
+#define ENTRY_CURSOR "|"
+
+/** Text entry widget state. */
+typedef struct w_entry_data
+{
+    char text[ENTRY_MAX_LEN + 1];
+
+    int max_len;
+
+    int cursor_pos;
+}
+w_entry_data_t;
+
+/** Implements widget::render for text entry widgets. */
+void w_entry_render(widget_t *widget, int x, int y, int width, int height, int focus)
+{
+    w_entry_data_t *data = widget->data;
+    char c;
+    int len;
+
+    c = data->text[data->cursor_pos];
+    data->text[data->cursor_pos] = '\0';
+    len = text_width(data->text);
+    if (focus != FOCUS_NONE)
+        text_draw_string_bouncy(x, y, data->text, 1, &col_dark_red);
+    else
+        text_draw_string(x, y, data->text, 1, &col_black);
+
+    data->text[data->cursor_pos] = c;
+
+    if (focus != FOCUS_NONE)
+    {
+        text_draw_string_bouncy(x + len - 2, y, ENTRY_CURSOR, 1, &col_dark_red);
+        text_draw_string_bouncy(x + len, y, data->text +
+            data->cursor_pos, 1, &col_dark_red);
+    }
+    else
+        text_draw_string(x + len, y, data->text + data->cursor_pos, 1, &col_black);
+}
+
+/** Implements widget::input for text entry widgets. */
+static int w_entry_input(widget_t *widget, ui_event_t event)
+{
+    w_entry_data_t *data = widget->data;
+    int c = -1;
+    int len = strlen(data->text);
+
+    if (event == UI_EVENT_LEFT)
+    {
+        if (data->cursor_pos > 0)
+            data->cursor_pos--;
+        return 1;
+    }
+
+    if (event == UI_EVENT_RIGHT)
+    {
+        if (data->cursor_pos < len)
+            data->cursor_pos++;
+        return 1;
+    }
+
+    if (event == UI_EVENT_BACKSPACE)
+    {
+        if (data->cursor_pos > 0)
+        {
+            int i;
+            for (i = data->cursor_pos; i <= len; i++)
+                data->text[i - 1] = data->text[i];
+            data->cursor_pos--;
+        }
+
+        return 1;
+    }
+
+    if ((event >= UI_EVENT_CHAR_a) && (event <= UI_EVENT_CHAR_z))
+        c = event - UI_EVENT_CHAR_a + 'a';
+    else if ((event >= UI_EVENT_CHAR_A) && (event <= UI_EVENT_CHAR_Z))
+        c = event - UI_EVENT_CHAR_A + 'A';
+    else if (event == UI_EVENT_SPACE)
+        c = ' ';
+    else
+        return 0;
+
+    if (len < data->max_len)
+    {
+        int i;
+        for (i = len; i >= data->cursor_pos; i--)
+            data->text[i + 1] = data->text[i];
+        data->text[data->cursor_pos++] = c;
+    }
+
+    return 1;
+}
+
+/** @brief Destroys a text entry widget.
+ *
+ *  @param widget The widget to destroy.
+ */
+void w_entry_destroy(widget_t *widget)
+{
+    w_entry_data_t *data = widget->data;
+
+    free(data);
+    free(widget);
+}
+
+/** @brief Creates a text entry widget.
+ *
+ *  A text entry widget for a single line of text.
+ *
+ *  @return The created widget.
+ */
+widget_t *w_entry_create()
+{
+    widget_t *item = malloc(sizeof(widget_t));
+    w_entry_data_t *data = malloc(sizeof(w_entry_data_t));
+
+    item->render = w_entry_render;
+    item->input = w_entry_input;
+    item->destroy = w_entry_destroy;
+    data->max_len = ENTRY_MAX_LEN;
+    data->cursor_pos = 0;
+    data->text[0] = '\0';
+    item->data = data;
+    item->enabled = 1;
+    item->width = text_width("Visible text");
+    item->height = text_height();
+
+    return item;
+}
+
 void dialog_set_modal(dialog_t *dialog, int modal)
 {
     dialog->modal = modal;
@@ -1645,6 +1783,10 @@ static dialog_t *dialog_title_create()
     w_text_set_alignment(label, 0.0f, 0.0f);
     w_vbox_append(vbox2, label);
 
+    label = w_text_create("Name:");
+    w_text_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
+
     hbox = w_hbox_create(20);
     w_hbox_append(hbox, vbox2);
 
@@ -1680,6 +1822,9 @@ static dialog_t *dialog_title_create()
     for (i = 0; i < board_list_total; i++)
         w_option_append_label(widget, board_list[i], 0.5f, 0.0f);
     w_option_set_callback(widget, dialog_title_board, NULL);
+    w_vbox_append(vbox2, widget);
+
+    widget = w_entry_create();
     w_vbox_append(vbox2, widget);
 
     w_hbox_append(hbox, vbox2);
@@ -2201,11 +2346,6 @@ static config_t *do_menu()
         /* Precess input */
         while ( SDL_PollEvent( &event ) )
         {
-            if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_f))
-            {
-                fps_enabled = 1 - fps_enabled;
-                continue;
-            }
             if (wait_menu)
             {
                 if (event.type == SDL_KEYDOWN || event.type == SDL_JOYBUTTONDOWN )
@@ -2214,6 +2354,12 @@ static config_t *do_menu()
             }
             else
                 dialog_input(convert_event(&event));
+
+            if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_f))
+            {
+                fps_enabled = 1 - fps_enabled;
+                continue;
+            }
 
             if (title_process_retval == 1)
             {
@@ -2999,9 +3145,7 @@ static int GetMove()
     {
         ui_event_t ui_event = convert_event(&event);
 
-        if (ui_event == UI_EVENT_CHAR_f)
-            fps_enabled = 1 - fps_enabled;
-        else if (dialog_current())
+        if (dialog_current())
             dialog_input(ui_event);
         /* In the promote dialog */
         else
@@ -3039,6 +3183,8 @@ static int GetMove()
             case UI_EVENT_CHAR_u:
                 game_undo();
                 break;
+            case UI_EVENT_CHAR_f:
+                fps_enabled = 1 - fps_enabled;
             }
         break;
 #if 0
