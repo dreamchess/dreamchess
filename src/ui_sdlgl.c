@@ -1355,21 +1355,15 @@ void w_entry_render(widget_t *widget, int x, int y, int width, int height, int f
     c = data->text[data->cursor_pos];
     data->text[data->cursor_pos] = '\0';
     len = text_width(data->text);
-    if (focus != FOCUS_NONE)
-        text_draw_string_bouncy(x, y, data->text, 1, &col_dark_red);
-    else
-        text_draw_string(x, y, data->text, 1, &col_black);
-
     data->text[data->cursor_pos] = c;
 
     if (focus != FOCUS_NONE)
     {
+        text_draw_string_bouncy(x, y, data->text, 1, &col_dark_red);
         text_draw_string_bouncy(x + len - 2, y, ENTRY_CURSOR, 1, &col_dark_red);
-        text_draw_string_bouncy(x + len, y, data->text +
-            data->cursor_pos, 1, &col_dark_red);
     }
     else
-        text_draw_string(x + len, y, data->text + data->cursor_pos, 1, &col_black);
+        text_draw_string(x, y, data->text, 1, &col_black);
 }
 
 /** Implements widget::input for text entry widgets. */
