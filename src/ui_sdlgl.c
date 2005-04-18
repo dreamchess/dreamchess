@@ -115,6 +115,17 @@ static colour_t col_yellow =
         1.0f, 1.0f, 0.0f, 1.0f
     };
 
+void draw_rect(int x, int y, int w, int h, colour_t *col)
+{
+    glColor4f(col->r, col->g, col->b, col->a);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(x + 0.5f, y + 0.5f, 1.0f);
+    glVertex3f(x + w + 0.5f, y + 0.5f, 1.0f);
+    glVertex3f(x + w + 0.5f, y + h + 0.5f, 1.0f);
+    glVertex3f(x + 0.5f, y + h + 0.5f, 1.0f);
+    glEnd();
+}
+
 /** Describes a texture. The OpenGL texture ID is paired with texture
  *  coordinates to allow for only a small portion of the image to be used.
  */
@@ -348,6 +359,8 @@ typedef struct widget
      */
     int (* input) (struct widget *widget, ui_event_t event);
 
+    void (* set_size) (struct widget *widget, int width, int height);
+
     void (* destroy) (struct widget *widget);
 
     /** Label to be rendered left of widget. Can be NULL. */
@@ -361,11 +374,17 @@ typedef struct widget
      */
     int enabled;
 
-    /** Maximum widget width in pixels. */
+    /** Minimum widget width in pixels. */
     int width;
 
-    /** Maximum widget height in pixels. */
+    /** Minimum widget height in pixels. */
     int height;
+
+    /** Allocated widget width in pixels. */
+    int width_a;
+
+    /** Allocated widget height in pixels. */
+    int height_a;
 }
 widget_t;
 
@@ -441,6 +460,14 @@ static void widget_list_destroy(widget_list_t *list)
 
     if (list->item)
         free(list->item);
+}
+
+static void widget_list_set_size(widget_list_t *list, int width, int height)
+{
+    int i;
+
+    for (i = 0; i < list->nr; i++)
+        list->item[i]->set_size(list->item[i], width, height);
 }
 
 /** Dialog box. */
@@ -627,6 +654,12 @@ static position_t pos_title =
         ALIGN_CENTER, ALIGN_CENTER
     };
 
+static void w_set_size(widget_t *widget, int width, int height)
+{
+    widget->width_a = width;
+    widget->height_a = height;
+}
+
 /* Text widget. */
 
 /** Text widget state. */
@@ -651,8 +684,8 @@ static void w_text_render(widget_t *widget, int x, int y, int width, int height,
 {
     w_text_data_t *text_data = widget->data;
 
-    x += text_data->xalign * (width - widget->width);
-    y += (1.0f - text_data->yalign) * (height - widget->height);
+    x += text_data->xalign * (widget->width_a - widget->width);
+    y += (1.0f - text_data->yalign) * (widget->height_a - widget->height);
 
     if (focus != FOCUS_NONE)
     {
@@ -710,6 +743,7 @@ widget_t *w_text_create(char *string)
     item->render = w_text_render;
     item->input = NULL;
     item->destroy = w_text_destroy;
+    item->set_size = w_set_size;
     data->label = strdup(string);
     data->xalign = 0.5f;
     data->yalign = 0.5f;
@@ -786,6 +820,7 @@ widget_t *w_image_create(texture_t *image)
     item->render = w_image_render;
     item->input = NULL;
     item->destroy = w_image_destroy;
+    item->set_size = w_set_size;
     data->xalign = 0.5f;
     data->yalign = 0.5f;
     data->image = image;
@@ -843,6 +878,16 @@ static int w_action_input(widget_t *widget, ui_event_t event)
     return 0;
 }
 
+void w_action_set_size(widget_t *widget, int width, int height)
+{
+    w_action_data_t *data = widget->data;
+
+    if (data->child)
+        data->child->set_size(data->child, width, height);
+
+    w_set_size(widget, width, height);
+}
+
 /** @brief Destroys an action widget.
  *
  *  @param widget The action widget.
@@ -873,6 +918,7 @@ widget_t *w_action_create(widget_t *widget)
     item->render = w_action_render;
     item->input = w_action_input;
     item->destroy = w_action_destroy;
+    item->set_size = w_action_set_size;
     data->child = widget;
     data->func = NULL;
     data->func_data = NULL;
@@ -1002,6 +1048,21 @@ static int w_option_input(widget_t *widget, ui_event_t event)
     return 0;
 }
 
+void w_option_set_size(widget_t *widget, int width, int height)
+{
+    w_option_data_t *multi_data = widget->data;
+    widget_list_t *list = &multi_data->list;
+    int border_l = text_width(OPTION_ARROW_LEFT);
+    int border_r = text_width(OPTION_ARROW_RIGHT);
+    int i;
+
+    for (i = 0; i < list->nr; i++)
+        list->item[i]->set_size(list->item[i], width - border_l - border_r,
+                                list->item[i]->height);
+
+    w_set_size(widget, width, height);
+}
+
 /** @brief Destroys an option widget.
  *
  *  @param widget The option widget.
@@ -1031,6 +1092,7 @@ widget_t *w_option_create()
     item->render = w_option_render;
     item->input = w_option_input;
     item->destroy = w_option_destroy;
+    item->set_size = w_option_set_size;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1167,6 +1229,18 @@ static int w_vbox_input(widget_t *widget, ui_event_t event)
     return 0;
 }
 
+static void w_vbox_set_size(widget_t *widget, int width, int height)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int i;
+
+    for (i = 0; i < list->nr; i++)
+        list->item[i]->set_size(list->item[i], width, list->item[i]->height);
+
+    w_set_size(widget, width, height);
+}
+
 /** @brief Destroys a vertical box widget.
  *
  *  @param widget The option widget.
@@ -1194,6 +1268,7 @@ widget_t *w_vbox_create(int spacing)
     item->render = w_vbox_render;
     item->input = w_vbox_input;
     item->destroy = w_vbox_destroy;
+    item->set_size = w_vbox_set_size;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1280,6 +1355,18 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
     return 0;
 }
 
+static void w_hbox_set_size(widget_t *widget, int width, int height)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int i;
+
+    for (i = 0; i < list->nr; i++)
+        list->item[i]->set_size(list->item[i], list->item[i]->width, height);
+
+    w_set_size(widget, width, height);
+}
+
 /** @brief Destroys a horizontal box widget.
  *
  *  @param widget The widget to destroy.
@@ -1307,6 +1394,7 @@ widget_t *w_hbox_create(int spacing)
     item->render = w_hbox_render;
     item->input = w_hbox_input;
     item->destroy = w_hbox_destroy;
+    item->set_size = w_hbox_set_size;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1349,6 +1437,7 @@ void w_hbox_append(widget_t *hbox, widget_t *widget)
 
 /* Text entry widget. */
 
+#define ENTRY_SPACING 2
 #define ENTRY_MAX_LEN 255
 #define ENTRY_CURSOR "|"
 
@@ -1360,6 +1449,10 @@ typedef struct w_entry_data
     int max_len;
 
     int cursor_pos;
+
+    int display_pos;
+
+    int display_len;
 }
 w_entry_data_t;
 
@@ -1367,19 +1460,25 @@ w_entry_data_t;
 void w_entry_render(widget_t *widget, int x, int y, int width, int height, int focus)
 {
     w_entry_data_t *data = widget->data;
-    char c;
     int len;
 
-    c = data->text[data->cursor_pos];
-    data->text[data->cursor_pos] = '\0';
-    len = text_width(data->text);
-    data->text[data->cursor_pos] = c;
+    len = text_width_n(data->text, data->cursor_pos);
+
+    if (focus != FOCUS_NONE)
+        draw_rect(x, y, width, height, &col_dark_red);
+    else
+        draw_rect(x, y, width, height, &col_black);
+
+    x += ENTRY_SPACING;
+    y += ENTRY_SPACING;
 
     if (focus != FOCUS_NONE)
     {
+        int cursor_width = text_width(ENTRY_CURSOR);
         text_draw_string(x, y, data->text, 1, &col_dark_red);
-if (SDL_GetTicks() % 400 < 200)
-        text_draw_string(x + len - 2, y, ENTRY_CURSOR, 1, &col_dark_red);
+        if (SDL_GetTicks() % 400 < 200)
+            text_draw_string(x + len - cursor_width / 2, y, ENTRY_CURSOR,1,
+                             &col_dark_red);
     }
     else
         text_draw_string(x, y, data->text, 1, &col_black);
@@ -1465,13 +1564,14 @@ widget_t *w_entry_create()
     item->render = w_entry_render;
     item->input = w_entry_input;
     item->destroy = w_entry_destroy;
+    item->set_size = w_set_size;
     data->max_len = ENTRY_MAX_LEN;
     data->cursor_pos = 0;
     data->text[0] = '\0';
     item->data = data;
     item->enabled = 1;
-    item->width = text_width("Visible text");
-    item->height = text_height();
+    item->width = text_width("Visible text") + ENTRY_SPACING * 2;
+    item->height = text_height() + ENTRY_SPACING * 2;
 
     return item;
 }
@@ -1494,6 +1594,8 @@ dialog_t *dialog_create(widget_t *widget)
     dialog->width = widget->width;
     dialog->height = widget->height;
     dialog->modal = 0;
+
+    widget->set_size(widget, dialog->width, dialog->height);
 
     return dialog;
 }
@@ -2904,6 +3006,16 @@ void text_draw_string( float xpos, float ypos, unsigned char *text, float scale,
     }
 }
 
+static int text_width_n(unsigned char *text, int n)
+{
+    int retval, i;
+
+    retval = 0;
+    for (i = 0; i < n; i++)
+        retval += text_characters[(int) text[i]].width;
+    return retval;
+}
+
 /** @brief Returns the width of a string.
  *
  *  @param text String to compute width of.
@@ -2911,12 +3023,7 @@ void text_draw_string( float xpos, float ypos, unsigned char *text, float scale,
  */
 static int text_width(unsigned char *text)
 {
-    int retval, i;
-
-    retval = 0;
-    for (i = 0; i < strlen(text); i++)
-        retval += text_characters[(int) text[i]].width;
-    return retval;
+    return text_width_n(text, strlen(text));
 }
 
 /** @brief Returns the font height.
@@ -2926,6 +3033,24 @@ static int text_width(unsigned char *text)
 static int text_height()
 {
     return text_characters['a'].height;
+}
+
+static int text_max_width()
+{
+    static width = -1;
+    int i;
+
+    if (width >= 0)
+        return width;
+
+    for (i = 0; i < 256; i++)
+    {
+        int cur_width = text_characters[i].width;
+        if (cur_width > width)
+            width = cur_width;
+    }
+
+    return width;
 }
 
 /** @brief Renders a latin1 string with right-alignment.
