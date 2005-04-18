@@ -344,12 +344,10 @@ typedef struct widget
      *  @param data Widget state.
      *  @param x Leftmost x-coordinate where widget should be rendered.
      *  @param y Lowermost y-coordinate where widget should be rendered.
-     *  @param width Allocated width in pixels.
-     *  @param height Allocated height in pixels..
      *  @param focus Indicates whether the widget has focus. 1 = focus,
      *               0 = no focus.
      */
-    void (* render) (struct widget *widget, int x, int y, int width, int height, int focus);
+    void (* render) (struct widget *widget, int x, int y, int focus);
 
     /** @brief Handles a widget input event.
      *
@@ -379,6 +377,12 @@ typedef struct widget
 
     /** Minimum widget height in pixels. */
     int height;
+
+    /** Minimum widget width override. */
+    int width_f;
+
+    /** Minimum widget width override. */
+    int height_f;
 
     /** Allocated widget width in pixels. */
     int width_a;
@@ -660,6 +664,31 @@ static void w_set_size(widget_t *widget, int width, int height)
     widget->height_a = height;
 }
 
+static void w_get_requested_size(widget_t *widget, int *width, int *height)
+{
+    if (width)
+    {
+        if (widget->width_f > widget->width)
+            *width = widget->width_f;
+        else
+            *width = widget->width;
+    }
+
+    if (height)
+    {
+        if (widget->height_f > widget->height)
+            *height = widget->height_f;
+        else
+            *height = widget->height;
+    }
+}
+
+static void w_set_requested_size(widget_t *widget, int width, int height)
+{
+    widget->width_f = width;
+    widget->height_f = height;
+}
+
 /* Text widget. */
 
 /** Text widget state. */
@@ -680,7 +709,7 @@ typedef struct w_text_data
 w_text_data_t;
 
 /** Implements widget::render for text widgets. */
-static void w_text_render(widget_t *widget, int x, int y, int width, int height, int focus)
+static void w_text_render(widget_t *widget, int x, int y, int focus)
 {
     w_text_data_t *text_data = widget->data;
 
@@ -753,6 +782,8 @@ widget_t *w_text_create(char *string)
     item->enabled = 1;
     item->width = text_width(string);
     item->height = text_height() + BOUNCE_AMP;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -770,7 +801,7 @@ typedef struct w_image_data
 w_image_data_t;
 
 /** Implements widget::render for image widgets. */
-static void w_image_render(widget_t *widget, int x, int y, int width, int height, int focus)
+static void w_image_render(widget_t *widget, int x, int y, int focus)
 {
     w_image_data_t *image_data = widget->data;
     int w = widget->width;
@@ -784,8 +815,8 @@ static void w_image_render(widget_t *widget, int x, int y, int width, int height
     else
         factor = 1.0f + IMAGE_SCALE * ((1.0f - phase) * 2);
 
-    x += image_data->xalign * (width - widget->width);
-    y += (1.0f - image_data->yalign) * (height - widget->height);
+    x += image_data->xalign * (widget->width_a - widget->width);
+    y += (1.0f - image_data->yalign) * (widget->height_a - widget->height);
 
 
     if (focus != FOCUS_NONE)
@@ -829,6 +860,8 @@ widget_t *w_image_create(texture_t *image)
     item->enabled = 1;
     item->width = image->width;
     item->height = image->height;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -853,14 +886,14 @@ typedef struct w_action_data
 w_action_data_t;
 
 /** Implements widget::render for action widgets. */
-static void w_action_render(widget_t *widget, int x, int y, int width, int height, int focus)
+static void w_action_render(widget_t *widget, int x, int y, int focus)
 {
     w_action_data_t *action_data = widget->data;
 
     if (focus != FOCUS_NONE)
         focus = FOCUS_ALL;
 
-    action_data->child->render(action_data->child, x, y, width, height, focus);
+    action_data->child->render(action_data->child, x, y, focus);
 }
 
 /** Implements widget::input for action widgets. */
@@ -927,6 +960,8 @@ widget_t *w_action_create(widget_t *widget)
     item->enabled = 1; /*widget->enabled;*/
     item->width = widget->width;
     item->height = widget->height;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -977,7 +1012,7 @@ w_option_data_t;
 #define OPTION_ARROW_RIGHT " \273"
 
 /** Implements widget::render for option widgets. */
-static void w_option_render(widget_t *widget, int x, int y, int width, int height, int focus)
+static void w_option_render(widget_t *widget, int x, int y, int focus)
 {
     w_option_data_t *multi_data = widget->data;
     widget_list_t *list = &multi_data->list;
@@ -985,8 +1020,7 @@ static void w_option_render(widget_t *widget, int x, int y, int width, int heigh
     int xx, yy;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
-
-    yy = y + height / 2 - text_height() / 2;
+    yy = y + widget->height_a / 2 - text_height() / 2;
 
     if (list->sel == -1)
         return;
@@ -1002,8 +1036,8 @@ static void w_option_render(widget_t *widget, int x, int y, int width, int heigh
     xx = x + border_l;
 
     child = list->item[list->sel];
-    child->render(child, xx, y, width - border_l - border_r, height, focus);
-    xx = x + width - border_r;
+    child->render(child, xx, y, focus);
+    xx = x + widget->width_a - border_r;
     if (list->sel < list->nr - 1)
     {
         if (focus != FOCUS_NONE)
@@ -1058,7 +1092,7 @@ void w_option_set_size(widget_t *widget, int width, int height)
 
     for (i = 0; i < list->nr; i++)
         list->item[i]->set_size(list->item[i], width - border_l - border_r,
-                                list->item[i]->height);
+                                height);
 
     w_set_size(widget, width, height);
 }
@@ -1101,6 +1135,8 @@ widget_t *w_option_create()
     item->enabled = 0;
     item->width = 0;
     item->height = 0;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -1114,11 +1150,15 @@ void w_option_append(widget_t *widget, widget_t *child)
 {
     w_option_data_t *data = widget->data;
     widget_list_t *list = &data->list;
-    int width = child->width;
+    int width, child_height;
     int height = text_height();
+
+    w_get_requested_size(child, &width, &child_height);
+
     width += text_width(OPTION_ARROW_LEFT) + text_width(OPTION_ARROW_RIGHT);
-    if (child->height > height)
-        height = child->height;
+
+    if (child_height > height)
+        height = child_height;
 
     widget_list_append(list, child);
 
@@ -1184,13 +1224,13 @@ w_box_data_t;
 
 /* Vertical box widget. */
 
-void w_vbox_render(widget_t *widget, int x, int y, int width, int height, int focus)
+void w_vbox_render(widget_t *widget, int x, int y, int focus)
 {
     w_box_data_t *data = widget->data;
     widget_list_t *list = &data->list;
     int nr = data->list.nr;
 
-    y += height - widget->height;
+    y += widget->height_a - widget->height;
 
     while (--nr >= 0)
     {
@@ -1203,7 +1243,7 @@ void w_vbox_render(widget_t *widget, int x, int y, int width, int height, int fo
         else
             focus_child = 0;
 
-        list->item[nr]->render(list->item[nr], x, y, width, list->item[nr]->height, focus_child);
+        list->item[nr]->render(list->item[nr], x, y, focus_child);
         y += list->item[nr]->height;
         y += data->spacing;
     }
@@ -1236,7 +1276,12 @@ static void w_vbox_set_size(widget_t *widget, int width, int height)
     int i;
 
     for (i = 0; i < list->nr; i++)
-        list->item[i]->set_size(list->item[i], width, list->item[i]->height);
+    {
+        int item_height;
+
+        w_get_requested_size(list->item[i], NULL, &item_height);
+        list->item[i]->set_size(list->item[i], width, item_height);
+    }
 
     w_set_size(widget, width, height);
 }
@@ -1278,6 +1323,8 @@ widget_t *w_vbox_create(int spacing)
     item->enabled = 0;
     item->width = 0;
     item->height = 0;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -1291,13 +1338,15 @@ void w_vbox_append(widget_t *vbox, widget_t *widget)
 {
     w_box_data_t *data = vbox->data;
     widget_list_t *list = &data->list;
+    int widget_width, widget_height;
 
     widget_list_append(list, widget);
+    w_get_requested_size(widget, &widget_width, &widget_height);
 
-    if (widget->width > vbox->width)
-        vbox->width = widget->width;
+    if (widget_width > vbox->width)
+        vbox->width = widget_width;
 
-    vbox->height += widget->height;
+    vbox->height += widget_height;
     if (list->nr != 1)
         vbox->height += data->spacing;
 
@@ -1311,7 +1360,7 @@ void w_vbox_append(widget_t *vbox, widget_t *widget)
 
 /* Horizontal box widget. */
 
-void w_hbox_render(widget_t *widget, int x, int y, int width, int height, int focus)
+void w_hbox_render(widget_t *widget, int x, int y, int focus)
 {
     w_box_data_t *data = widget->data;
     widget_list_t *list = &data->list;
@@ -1328,7 +1377,7 @@ void w_hbox_render(widget_t *widget, int x, int y, int width, int height, int fo
         else
             focus_child = 0;
 
-        list->item[nr]->render(list->item[nr], x, y, list->item[nr]->width, height, focus_child);
+        list->item[nr]->render(list->item[nr], x, y, focus_child);
         x += list->item[nr]->width;
         x += data->spacing;
         nr++;
@@ -1362,7 +1411,12 @@ static void w_hbox_set_size(widget_t *widget, int width, int height)
     int i;
 
     for (i = 0; i < list->nr; i++)
-        list->item[i]->set_size(list->item[i], list->item[i]->width, height);
+    {
+        int item_width;
+
+        w_get_requested_size(list->item[i], &item_width, NULL);
+        list->item[i]->set_size(list->item[i], item_width, height);
+    }
 
     w_set_size(widget, width, height);
 }
@@ -1404,6 +1458,8 @@ widget_t *w_hbox_create(int spacing)
     item->enabled = 0;
     item->width = 0;
     item->height = 0;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -1417,13 +1473,15 @@ void w_hbox_append(widget_t *hbox, widget_t *widget)
 {
     w_box_data_t *data = hbox->data;
     widget_list_t *list = &data->list;
+    int widget_width, widget_height;
 
     widget_list_append(list, widget);
+    w_get_requested_size(widget, &widget_width, &widget_height);
 
-    if (widget->height > hbox->height)
-        hbox->height = widget->height;
+    if (widget_height > hbox->height)
+        hbox->height = widget_height;
 
-    hbox->width += widget->width;
+    hbox->width += widget_width;
     if (list->nr != 1)
         hbox->width += data->spacing;
 
@@ -1457,7 +1515,7 @@ typedef struct w_entry_data
 w_entry_data_t;
 
 /** Implements widget::render for text entry widgets. */
-void w_entry_render(widget_t *widget, int x, int y, int width, int height, int focus)
+void w_entry_render(widget_t *widget, int x, int y, int focus)
 {
     w_entry_data_t *data = widget->data;
     int len;
@@ -1465,9 +1523,9 @@ void w_entry_render(widget_t *widget, int x, int y, int width, int height, int f
     len = text_width_n(data->text, data->cursor_pos);
 
     if (focus != FOCUS_NONE)
-        draw_rect(x, y, width, height, &col_dark_red);
+        draw_rect(x, y, widget->width_a, widget->height_a, &col_dark_red);
     else
-        draw_rect(x, y, width, height, &col_black);
+        draw_rect(x, y, widget->width_a, widget->height_a, &col_black);
 
     x += ENTRY_SPACING;
     y += ENTRY_SPACING;
@@ -1572,6 +1630,8 @@ widget_t *w_entry_create()
     item->enabled = 1;
     item->width = text_width("Visible text") + ENTRY_SPACING * 2;
     item->height = text_height() + ENTRY_SPACING * 2;
+    item->width_f = -1;
+    item->height_f = -1;
 
     return item;
 }
@@ -1591,9 +1651,8 @@ dialog_t *dialog_create(widget_t *widget)
     dialog_t *dialog = malloc(sizeof(dialog_t));
 
     dialog->widget = widget;
-    dialog->width = widget->width;
-    dialog->height = widget->height;
     dialog->modal = 0;
+    w_get_requested_size(widget, &dialog->width, &dialog->height);
 
     widget->set_size(widget, dialog->width, dialog->height);
 
@@ -2038,7 +2097,7 @@ static void dialog_render(style_t *style, position_t *pos)
     ymin += style->vert_pad;
     ymax -= style->vert_pad;
 
-    menu->widget->render(menu->widget, xmin, ymin, width, height, 1);
+    menu->widget->render(menu->widget, xmin, ymin, 1);
 }
 
 /** @brief Processes an input event for a specific dialog.
