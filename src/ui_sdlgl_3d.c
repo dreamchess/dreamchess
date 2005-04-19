@@ -274,6 +274,10 @@ mesh_t *dcm_load(char *filename)
         }
     }
 
+    /* As we don't flip our images we flip our u coordinates instead. */
+    for (i = 1; i < vertices * 2; i += 2)
+        mesh->tex_coord[i] = 1.0f - mesh->tex_coord[i];
+
     if (fscanf(f, "%d\n", &mesh->groups) != 1)
     {
         fprintf(stderr, "Error reading DCM file\n");
