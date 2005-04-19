@@ -172,14 +172,8 @@ static ui_event_t convert_event(SDL_Event *event)
             return UI_EVENT_UP;
         case SDLK_DOWN:
             return UI_EVENT_DOWN;
-        case SDLK_ESCAPE:
-            return UI_EVENT_ESCAPE;
         case SDLK_RETURN:
             return UI_EVENT_ACTION;
-        case SDLK_BACKSPACE:
-            return UI_EVENT_BACKSPACE;
-        case SDLK_SPACE:
-            return UI_EVENT_SPACE;
         }
         break;
 
@@ -216,15 +210,9 @@ static ui_event_t convert_event(SDL_Event *event)
     if (event->type == SDL_KEYDOWN)
     {
         ui_event_t retval;
-        if ((event->key.keysym.sym >= SDLK_a)
-                && (event->key.keysym.sym <= SDLK_z))
-        {
-            retval = event->key.keysym.sym - SDLK_a + UI_EVENT_CHAR_a;
-            if (event->key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
-                retval += UI_EVENT_CHAR_A - UI_EVENT_CHAR_a;
 
-            return retval;
-        }
+        if (event->key.keysym.unicode <= 0xff)
+            return event->key.keysym.unicode & 0xff;
     }
 
     return UI_EVENT_NONE;
@@ -1576,12 +1564,8 @@ static int w_entry_input(widget_t *widget, ui_event_t event)
         return 1;
     }
 
-    if ((event >= UI_EVENT_CHAR_a) && (event <= UI_EVENT_CHAR_z))
-        c = event - UI_EVENT_CHAR_a + 'a';
-    else if ((event >= UI_EVENT_CHAR_A) && (event <= UI_EVENT_CHAR_Z))
-        c = event - UI_EVENT_CHAR_A + 'A';
-    else if (event == UI_EVENT_SPACE)
-        c = ' ';
+    if ((event > 0) && (event <= 255))
+       c = event;
     else
         return 0;
 
@@ -2615,6 +2599,8 @@ static void init_gui()
         exit(1);
     }
 
+    SDL_EnableUNICODE(1);
+
     video_info = SDL_GetVideoInfo( );
 
     if ( !video_info )
@@ -3367,20 +3353,20 @@ static int GetMove()
             case UI_EVENT_ESCAPE:
                 dialog_open(dialog_system_create());
                 break;
-            case UI_EVENT_CHAR_g:
+            case 'g':
             case UI_EVENT_EXTRA3:
                 dialog_open(dialog_ingame_create());
                 break;
-            case UI_EVENT_CHAR_p:
+            case 'p':
                 game_view_prev();
                 break;
-            case UI_EVENT_CHAR_n:
+            case 'n':
                 game_view_next();
                 break;
-            case UI_EVENT_CHAR_u:
+            case 'u':
                 game_undo();
                 break;
-            case UI_EVENT_CHAR_f:
+            case 'f':
                 fps_enabled = 1 - fps_enabled;
             }
         break;
