@@ -288,6 +288,7 @@ static int title_process_retval;
 static int set_loading=FALSE;
 
 static int fps_enabled = 0;
+static int vkeyboard_enabled = 0;
 static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
@@ -628,6 +629,13 @@ static position_t pos_ingame =
     {
         320, 240,
         ALIGN_CENTER, ALIGN_CENTER
+    };
+
+/** Position used for the virtual keyboard. */
+static position_t pos_vkeyboard =
+    {
+        320, 460,
+        ALIGN_CENTER, ALIGN_TOP
     };
 
 /** Style used for the title menu. */
@@ -1565,7 +1573,7 @@ static int w_entry_input(widget_t *widget, ui_event_t event)
     }
 
     if ((event > 0) && (event <= 255))
-       c = event;
+        c = event;
     else
         return 0;
 
@@ -1647,6 +1655,106 @@ void dialog_destroy(dialog_t *dialog)
 {
     dialog->widget->destroy(dialog->widget);
     free(dialog);
+}
+
+/** @brief Renders a dialog.
+ *
+ *  Renders a dialog in a specific style and at a specific position.
+ *
+ *  @param menu The dialog to render.
+ *  @param style The style to render in.
+ *  @param pos The position to render at.
+ */
+static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
+{
+    int height, width;
+    int total_height, total_width;
+    int xmin, xmax, ymin, ymax;
+    colour_t col;
+
+    height = menu->height;
+    width = menu->width;
+    total_height = height + 2 * style->vert_pad + 2 * style->border;
+    total_width = width + 2 * style->hor_pad + 2 * style->border;
+
+    if (pos->x_align == ALIGN_LEFT)
+        xmin = pos->x;
+    else if (pos->x_align == ALIGN_RIGHT)
+        xmin = pos->x - total_width;
+    else
+        xmin = pos->x - total_width / 2;
+
+    if (pos->y_align == ALIGN_TOP)
+        ymin = pos->y - total_height;
+    else if (pos->y_align == ALIGN_BOTTOM)
+        ymin = pos->y;
+    else
+        ymin = pos->y - total_height / 2;
+
+    xmax = xmin + total_width;
+    ymax = ymin + total_height;
+
+    /* Draw the 'fade' */
+    col = style->fade_col;
+    glColor4f(col.r, col.b, col.g, col.a); /* 0.0f 0.0f 0.0f 0.5f */
+
+    glBegin( GL_QUADS );
+    glVertex3f( 640, 0, 0.9f );
+    glVertex3f( 640, 480, 0.9f );
+    glVertex3f( 0, 480, 0.9f );
+    glVertex3f( 0, 0, 0.9f );
+    glEnd( );
+
+    /* Draw the border. */
+    col = style->border_col;
+    glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
+
+    glBegin( GL_QUADS );
+    glVertex3f(xmax, ymin, 0.9f);
+    glVertex3f(xmax, ymax, 0.9f);
+    glVertex3f(xmin, ymax, 0.9f);
+    glVertex3f(xmin, ymin, 0.9f);
+    glEnd();
+
+    xmin += style->border;
+    xmax -= style->border;
+    ymin += style->border;
+    ymax -= style->border;
+
+    /* Draw the backdrop. */
+    col = style->bg_col;
+    glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
+
+    glBegin( GL_QUADS );
+    glVertex3f(xmax, ymin, 0.95f);
+    glVertex3f(xmax, ymax, 0.95f);
+    glVertex3f(xmin, ymax, 0.95f);
+    glVertex3f(xmin, ymin, 0.95f);
+    glEnd();
+
+    xmin += style->hor_pad;
+    xmax -= style->hor_pad;
+    ymin += style->vert_pad;
+    ymax -= style->vert_pad;
+
+    menu->widget->render(menu->widget, xmin, ymin, 1);
+}
+
+/** @brief Processes an input event for a specific dialog.
+ *
+ *  @param event The event to process.
+ */
+static void dialog_input(ui_event_t event)
+{
+    dialog_t *dialog = dialog_current();
+
+    if (!dialog)
+        return;
+
+    if (!dialog->modal && (event == UI_EVENT_ESCAPE))
+        dialog_close();
+
+    dialog->widget->input(dialog->widget, event);
 }
 
 /* In-game dialog. */
@@ -1898,50 +2006,6 @@ static void dialog_title_board(widget_t *widget, void *data)
     board_list_cur = w_option_get_selected(widget);
 }
 
-static void dialog_vkeyboard_key(widget_t *widget, void *data)
-{
-   printf( "Pressed a keyyy... it was uh.. '%s' .. right?\n\r", data );
-}
-
-static dialog_t *dialog_vkeyboard_create()
-{
-   dialog_t *dialog;
-   widget_t *label;
-   widget_t *action;
-   widget_t *vbox;
-   widget_t *hbox;
-   widget_t *vbox2;
-   char *key;
-   int i,j;
-
-   hbox=w_hbox_create(10);
-   label=w_text_create("Type stuff, k?" );
-   w_hbox_append(hbox, label);
-   vbox2=w_vbox_create(10);
-   w_vbox_append(vbox2, hbox );
-
-   /* This should be interestingly.. messy... ;D ;D */
-   /* add ... 16 A's! */
-
-   for ( j=0; j<3; j++ )
-   {
-      hbox = w_hbox_create(10);
-      for ( i=0; i<16; i++ )
-      {
-         key="A";
-         action = w_action_create_with_label(key, 0.5f, 0.0f);
-         w_action_set_callback(action, dialog_vkeyboard_key, key);
-
-         vbox = w_vbox_create(0);
-         w_vbox_append(vbox, action);
-         w_hbox_append(hbox, vbox);
-      }
-      w_vbox_append(vbox2, hbox);
-   }
-   
-   dialog = dialog_create(vbox2);
-}
-
 static dialog_t *dialog_title_create()
 {
     dialog_t *dialog;
@@ -2041,111 +2105,52 @@ static dialog_t *dialog_title_create()
     return dialog;
 }
 
-/** @brief Renders a dialog.
- *
- *  Renders a dialog in a specific style and at a specific position.
- *
- *  @param menu The dialog to render.
- *  @param style The style to render in.
- *  @param pos The position to render at.
- */
-static void dialog_render(style_t *style, position_t *pos)
+static void dialog_vkeyboard_key(widget_t *widget, void *data)
 {
-    dialog_t *menu = dialog_current();
-    int height, width;
-    int total_height, total_width;
-    int xmin, xmax, ymin, ymax;
-    colour_t col;
-
-    if (!menu)
-        return;
-
-    height = menu->height;
-    width = menu->width;
-    total_height = height + 2 * style->vert_pad + 2 * style->border;
-    total_width = width + 2 * style->hor_pad + 2 * style->border;
-
-    if (pos->x_align == ALIGN_LEFT)
-        xmin = pos->x;
-    else if (pos->x_align == ALIGN_RIGHT)
-        xmin = pos->x - total_width;
-    else
-        xmin = pos->x - total_width / 2;
-
-    if (pos->y_align == ALIGN_TOP)
-        ymin = pos->y - total_height;
-    else if (pos->y_align == ALIGN_BOTTOM)
-        ymin = pos->y;
-    else
-        ymin = pos->y - total_height / 2;
-
-    xmax = xmin + total_width;
-    ymax = ymin + total_height;
-
-    /* Draw the 'fade' */
-    col = style->fade_col;
-    glColor4f(col.r, col.b, col.g, col.a); /* 0.0f 0.0f 0.0f 0.5f */
-
-    glBegin( GL_QUADS );
-    glVertex3f( 640, 0, 0.9f );
-    glVertex3f( 640, 480, 0.9f );
-    glVertex3f( 0, 480, 0.9f );
-    glVertex3f( 0, 0, 0.9f );
-    glEnd( );
-
-    /* Draw the border. */
-    col = style->border_col;
-    glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
-
-    glBegin( GL_QUADS );
-    glVertex3f(xmax, ymin, 0.9f);
-    glVertex3f(xmax, ymax, 0.9f);
-    glVertex3f(xmin, ymax, 0.9f);
-    glVertex3f(xmin, ymin, 0.9f);
-    glEnd();
-
-    xmin += style->border;
-    xmax -= style->border;
-    ymin += style->border;
-    ymax -= style->border;
-
-    /* Draw the backdrop. */
-    col = style->bg_col;
-    glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
-
-    glBegin( GL_QUADS );
-    glVertex3f(xmax, ymin, 0.95f);
-    glVertex3f(xmax, ymax, 0.95f);
-    glVertex3f(xmin, ymax, 0.95f);
-    glVertex3f(xmin, ymin, 0.95f);
-    glEnd();
-
-    xmin += style->hor_pad;
-    xmax -= style->hor_pad;
-    ymin += style->vert_pad;
-    ymax -= style->vert_pad;
-
-    menu->widget->render(menu->widget, xmin, ymin, 1);
+    if (dialog_current())
+        dialog_input(*(ui_event_t *) data);
+    printf( "Pressed a keyyy... it was uh.. '%s' .. right?\n\r", data );
 }
 
-/** @brief Processes an input event for a specific dialog.
- *
- *  @param event The event to process.
- */
-static void dialog_input(ui_event_t event)
+static dialog_t *dialog_vkeyboard_create()
 {
-    dialog_t *dialog = dialog_current();
+    dialog_t *dialog;
+    widget_t *label;
+    widget_t *action;
+    widget_t *vbox;
+    widget_t *hbox;
+    widget_t *vbox2;
+    static ui_event_t key;
+    int i,j;
 
-    if (!dialog)
-        return;
+    hbox=w_hbox_create(10);
+    label=w_text_create("Type stuff, k?" );
+    w_hbox_append(hbox, label);
+    vbox2=w_vbox_create(10);
+    w_vbox_append(vbox2, hbox );
 
-    if (!dialog->modal && (event == UI_EVENT_ESCAPE))
-        dialog_close();
+    /* This should be interestingly.. messy... ;D ;D */
+    /* add ... 16 A's! */
 
-    if ( event == 'l' )
-        dialog_open(dialog_vkeyboard_create());
+    for ( j=0; j<3; j++ )
+    {
+        hbox = w_hbox_create(10);
+        for ( i=0; i<16; i++ )
+        {
+            char key_str[2];
+            key='A';
+            key_str[0] = key;
+            key_str[1] = '\0';
+            action = w_action_create_with_label(key_str, 0.5f, 0.0f);
+            w_action_set_callback(action, dialog_vkeyboard_key, &key);
 
-    dialog->widget->input(dialog->widget, event);
+            w_hbox_append(hbox, action);
+        }
+        w_vbox_append(vbox2, hbox);
+    }
+
+    dialog = dialog_create(vbox2);
+    return dialog;
 }
 
 #define SCREEN_WIDTH  640
@@ -2524,6 +2529,7 @@ static void gl_swap()
 /** Implements ui_driver::menu */
 static config_t *do_menu()
 {
+    dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
@@ -2551,20 +2557,32 @@ static config_t *do_menu()
         /* Precess input */
         while ( SDL_PollEvent( &event ) )
         {
+            ui_event_t ui_event = convert_event(&event);
+
             if (wait_menu)
             {
-                if (event.type == SDL_KEYDOWN || event.type == SDL_JOYBUTTONDOWN )
+                if (ui_event != UI_EVENT_NONE)
                     wait_menu = 0;
 
+                continue;
             }
-            else
-                dialog_input(convert_event(&event));
 
-            if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_f))
+            if (ui_event == 0x06)
             {
                 fps_enabled = 1 - fps_enabled;
                 continue;
             }
+
+            if (ui_event == 0x0b)
+            {
+                vkeyboard_enabled = 1 - vkeyboard_enabled;
+                continue;
+            }
+
+            if (vkeyboard_enabled)
+                keyboard->widget->input(keyboard->widget, ui_event);
+            else
+                dialog_input(ui_event);
 
             if (title_process_retval == 1)
             {
@@ -2587,11 +2605,15 @@ static config_t *do_menu()
 
         if ( set_loading == FALSE )
         {
-            draw_credits(0);
             if (wait_menu)
                 text_draw_string_bouncy( 140, 30, "Press any key or button to start", 1.5, &col_white );
             else
-                dialog_render(&style_title, &pos_title);
+                dialog_render(dialog_current(), &style_title, &pos_title);
+
+            if (vkeyboard_enabled)
+                dialog_render(keyboard, &style_title, &pos_vkeyboard);
+
+            draw_credits(0);
         }
         else
         {
@@ -3029,7 +3051,8 @@ static void draw_scene( board_t *b )
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    dialog_render(&style_ingame, &pos_ingame);
+    if (dialog_current())
+        dialog_render(dialog_current(), &style_ingame, &pos_ingame);
 
     /* Draw it to the screen */
     gl_swap();
@@ -3413,7 +3436,7 @@ static int GetMove()
             case 'u':
                 game_undo();
                 break;
-            case 'f':
+            case 0x06:
                 fps_enabled = 1 - fps_enabled;
             }
         break;
