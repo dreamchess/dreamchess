@@ -1898,6 +1898,50 @@ static void dialog_title_board(widget_t *widget, void *data)
     board_list_cur = w_option_get_selected(widget);
 }
 
+static void dialog_vkeyboard_key(widget_t *widget, void *data)
+{
+   printf( "Pressed a keyyy... it was uh.. '%s' .. right?\n\r", data );
+}
+
+static dialog_t *dialog_vkeyboard_create()
+{
+   dialog_t *dialog;
+   widget_t *label;
+   widget_t *action;
+   widget_t *vbox;
+   widget_t *hbox;
+   widget_t *vbox2;
+   char *key;
+   int i,j;
+
+   hbox=w_hbox_create(10);
+   label=w_text_create("Type stuff, k?" );
+   w_hbox_append(hbox, label);
+   vbox2=w_vbox_create(10);
+   w_vbox_append(vbox2, hbox );
+
+   /* This should be interestingly.. messy... ;D ;D */
+   /* add ... 16 A's! */
+
+   for ( j=0; j<3; j++ )
+   {
+      hbox = w_hbox_create(10);
+      for ( i=0; i<16; i++ )
+      {
+         key="A";
+         action = w_action_create_with_label(key, 0.5f, 0.0f);
+         w_action_set_callback(action, dialog_vkeyboard_key, key);
+
+         vbox = w_vbox_create(0);
+         w_vbox_append(vbox, action);
+         w_hbox_append(hbox, vbox);
+      }
+      w_vbox_append(vbox2, hbox);
+   }
+   
+   dialog = dialog_create(vbox2);
+}
+
 static dialog_t *dialog_title_create()
 {
     dialog_t *dialog;
@@ -2097,6 +2141,9 @@ static void dialog_input(ui_event_t event)
 
     if (!dialog->modal && (event == UI_EVENT_ESCAPE))
         dialog_close();
+
+    if ( event == 'l' )
+        dialog_open(dialog_vkeyboard_create());
 
     dialog->widget->input(dialog->widget, event);
 }
