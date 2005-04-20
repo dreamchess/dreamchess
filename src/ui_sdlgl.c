@@ -1324,19 +1324,19 @@ static void w_vbox_get_focus_pos(widget_t *widget, int *x , int *y)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
-    int nr = 0;
+    int nr = list->nr - 1;
 
     assert(list->sel != -1);
 
     list->item[list->sel]->get_focus_pos(list->item[list->sel], x, y);
 
-    while (nr < list->sel)
+    while (nr > list->sel)
     {
         *y += list->item[nr]->height_a;
-        nr++;
+        nr--;
     }
 
-    *y += list->sel * box->spacing;
+    *y += (list->nr - list->sel - 1)  * box->spacing;
 }
 
 static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
@@ -1349,7 +1349,7 @@ static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
 
     while (widget_list_select_prev(list, 1, 1))
     {
-        cur_y += list->item[list->sel]->width_a;
+        cur_y += list->item[list->sel]->height_a;
         if (cur_y >= y)
             break;
         cur_y += box->spacing;
