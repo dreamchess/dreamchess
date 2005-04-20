@@ -33,6 +33,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
+#include <assert.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -348,6 +349,10 @@ typedef struct widget
 
     void (* set_size) (struct widget *widget, int width, int height);
 
+    void (* get_focus_pos) (struct widget *widget, int *x, int *y);
+
+    void (* set_focus_pos) (struct widget *widget, int x, int y);
+
     void (* destroy) (struct widget *widget);
 
     /** Label to be rendered left of widget. Can be NULL. */
@@ -660,6 +665,16 @@ static void w_set_size(widget_t *widget, int width, int height)
     widget->height_a = height;
 }
 
+static void w_get_focus_pos(widget_t *widget, int *x, int *y)
+{
+    *x = widget->width_a / 2;
+    *y = widget->height_a / 2;
+}
+
+static void w_set_focus_pos(widget_t *widget, int x, int y)
+{
+}
+
 static void w_get_requested_size(widget_t *widget, int *width, int *height)
 {
     if (width)
@@ -769,6 +784,8 @@ widget_t *w_text_create(char *string)
     item->input = NULL;
     item->destroy = w_text_destroy;
     item->set_size = w_set_size;
+    item->get_focus_pos = w_get_focus_pos;
+    item->set_focus_pos = w_set_focus_pos;
     data->label = strdup(string);
     data->xalign = 0.5f;
     data->yalign = 0.5f;
@@ -848,6 +865,8 @@ widget_t *w_image_create(texture_t *image)
     item->input = NULL;
     item->destroy = w_image_destroy;
     item->set_size = w_set_size;
+    item->get_focus_pos = w_get_focus_pos;
+    item->set_focus_pos = w_set_focus_pos;
     data->xalign = 0.5f;
     data->yalign = 0.5f;
     data->image = image;
@@ -948,6 +967,8 @@ widget_t *w_action_create(widget_t *widget)
     item->input = w_action_input;
     item->destroy = w_action_destroy;
     item->set_size = w_action_set_size;
+    item->get_focus_pos = w_get_focus_pos;
+    item->set_focus_pos = w_set_focus_pos;
     data->child = widget;
     data->func = NULL;
     data->func_data = NULL;
@@ -1123,6 +1144,8 @@ widget_t *w_option_create()
     item->input = w_option_input;
     item->destroy = w_option_destroy;
     item->set_size = w_option_set_size;
+    item->get_focus_pos = w_get_focus_pos;
+    item->set_focus_pos = w_set_focus_pos;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1249,6 +1272,7 @@ static int w_vbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
+    int retval, x, y;
 
     if (list->sel == -1)
         return 0;
@@ -1256,11 +1280,25 @@ static int w_vbox_input(widget_t *widget, ui_event_t event)
     if (list->item[list->sel]->input(list->item[list->sel], event))
         return 1;
 
+    list->item[list->sel]->get_focus_pos(list->item[list->sel], &x, &y);
+
     if (event == UI_EVENT_UP)
-        return widget_list_select_prev(list, 1, 1);
+    {
+        retval = widget_list_select_prev(list, 1, 1);
+        y = 0;
+    }
 
     if (event == UI_EVENT_DOWN)
-        return widget_list_select_next(list, 1, 1);
+    {
+        retval = widget_list_select_next(list, 1, 1);
+        y = list->item[list->sel]->height_a - 1;
+    }
+
+    if (retval)
+    {
+        list->item[list->sel]->set_focus_pos(list->item[list->sel], x, y);
+        return retval;
+    }
 
     return 0;
 }
@@ -1280,6 +1318,44 @@ static void w_vbox_set_size(widget_t *widget, int width, int height)
     }
 
     w_set_size(widget, width, height);
+}
+
+static void w_vbox_get_focus_pos(widget_t *widget, int *x , int *y)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int nr = 0;
+
+    assert(list->sel != -1);
+
+    list->item[list->sel]->get_focus_pos(list->item[list->sel], x, y);
+
+    while (nr < list->sel)
+    {
+        *y += list->item[nr]->height_a;
+        nr++;
+    }
+
+    *y += list->sel * box->spacing;
+}
+
+static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int cur_y = widget->height_a - widget->height;
+
+    list->sel = list->nr;
+
+    while (widget_list_select_prev(list, 1, 1))
+    {
+        cur_y += list->item[list->sel]->width_a;
+        if (cur_y >= y)
+            break;
+        cur_y += box->spacing;
+    }
+
+    assert (list->sel != list->nr);
 }
 
 /** @brief Destroys a vertical box widget.
@@ -1310,6 +1386,8 @@ widget_t *w_vbox_create(int spacing)
     item->input = w_vbox_input;
     item->destroy = w_vbox_destroy;
     item->set_size = w_vbox_set_size;
+    item->get_focus_pos = w_vbox_get_focus_pos;
+    item->set_focus_pos = w_vbox_set_focus_pos;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1384,6 +1462,7 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
+    int retval, x, y;
 
     if (list->sel == -1)
         return 0;
@@ -1391,11 +1470,25 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
     if (list->item[list->sel]->input(list->item[list->sel], event))
         return 1;
 
+    list->item[list->sel]->get_focus_pos(list->item[list->sel], &x, &y);
+
     if (event == UI_EVENT_LEFT)
-        return widget_list_select_prev(list, 1, 1);
+    {
+        retval = widget_list_select_prev(list, 1, 1);
+        x = list->item[list->sel]->width_a - 1;
+    }
 
     if (event == UI_EVENT_RIGHT)
-        return widget_list_select_next(list, 1, 1);
+    {
+        retval = widget_list_select_next(list, 1, 1);
+        x = 0;
+    }
+
+    if (retval)
+    {
+        list->item[list->sel]->set_focus_pos(list->item[list->sel], x, y);
+        return retval;
+    }
 
     return 0;
 }
@@ -1415,6 +1508,44 @@ static void w_hbox_set_size(widget_t *widget, int width, int height)
     }
 
     w_set_size(widget, width, height);
+}
+
+static void w_hbox_get_focus_pos(widget_t *widget, int *x , int *y)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int nr = 0;
+
+    assert(list->sel != -1);
+
+    list->item[list->sel]->get_focus_pos(list->item[list->sel], x, y);
+
+    while (nr < list->sel)
+    {
+        *x += list->item[nr]->width_a;
+        nr++;
+    }
+
+    *x += list->sel * box->spacing;
+}
+
+static void w_hbox_set_focus_pos(widget_t *widget, int x , int y)
+{
+    w_box_data_t *box = widget->data;
+    widget_list_t *list = &box->list;
+    int cur_x = 0;
+
+    list->sel = -1;
+
+    while (widget_list_select_next(list, 1, 1))
+    {
+        cur_x += list->item[list->sel]->width_a;
+        if (cur_x >= x)
+            break;
+        cur_x += box->spacing;
+    }
+
+    assert (list->sel != -1);
 }
 
 /** @brief Destroys a horizontal box widget.
@@ -1445,6 +1576,8 @@ widget_t *w_hbox_create(int spacing)
     item->input = w_hbox_input;
     item->destroy = w_hbox_destroy;
     item->set_size = w_hbox_set_size;
+    item->get_focus_pos = w_hbox_get_focus_pos;
+    item->set_focus_pos = w_hbox_set_focus_pos;
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
@@ -1615,6 +1748,8 @@ widget_t *w_entry_create()
     item->input = w_entry_input;
     item->destroy = w_entry_destroy;
     item->set_size = w_set_size;
+    item->get_focus_pos = w_get_focus_pos;
+    item->set_focus_pos = w_set_focus_pos;
     data->max_len = ENTRY_MAX_LEN;
     data->cursor_pos = 0;
     data->text[0] = '\0';
@@ -2109,7 +2244,7 @@ static void dialog_vkeyboard_key(widget_t *widget, void *data)
 {
     if (dialog_current())
         dialog_input(*(ui_event_t *) data);
-    printf( "Pressed a keyyy... it was uh.. '%s' .. right?\n\r", data );
+    printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
 
 static dialog_t *dialog_vkeyboard_create()
