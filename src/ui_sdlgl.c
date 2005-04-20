@@ -208,13 +208,8 @@ static ui_event_t convert_event(SDL_Event *event)
         }
     }
 
-    if (event->type == SDL_KEYDOWN)
-    {
-        ui_event_t retval;
-
-        if (event->key.keysym.unicode <= 0xff)
-            return event->key.keysym.unicode & 0xff;
-    }
+    if ((event->type == SDL_KEYDOWN) && (event->key.keysym.unicode <= 0xff))
+        return event->key.keysym.unicode;
 
     return UI_EVENT_NONE;
 }
@@ -1272,7 +1267,7 @@ static int w_vbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
-    int retval, x, y;
+    int retval = 0, x, y;
 
     if (list->sel == -1)
         return 0;
@@ -1462,7 +1457,7 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
 {
     w_box_data_t *box = widget->data;
     widget_list_t *list = &box->list;
-    int retval, x, y;
+    int retval = 0, x, y;
 
     if (list->sel == -1)
         return 0;
@@ -1527,7 +1522,6 @@ static void w_hbox_get_focus_pos(widget_t *widget, int *x , int *y)
     }
 
     *x += list->sel * box->spacing;
-printf("Get focus: %d,%d\n", *x, *y);
 }
 
 static void w_hbox_set_focus_pos(widget_t *widget, int x , int y)
