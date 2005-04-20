@@ -1527,6 +1527,7 @@ static void w_hbox_get_focus_pos(widget_t *widget, int *x , int *y)
     }
 
     *x += list->sel * box->spacing;
+printf("Get focus: %d,%d\n", *x, *y);
 }
 
 static void w_hbox_set_focus_pos(widget_t *widget, int x , int y)
@@ -2874,7 +2875,7 @@ static void init_gui()
         {
             if (themedir_entry->d_name[0] != '.')
             {
-                pieces_list = realloc(pieces_list, pieces_list_total + 1 *
+                pieces_list = realloc(pieces_list, (pieces_list_total + 1) *
                                       sizeof(char *));
                 pieces_list[pieces_list_total++] =
                     strdup(themedir_entry->d_name);
@@ -2892,7 +2893,7 @@ static void init_gui()
         {
             if (themedir_entry->d_name[0] != '.')
             {
-                board_list = realloc(board_list, board_list_total + 1 *
+                board_list = realloc(board_list, (board_list_total + 1) *
                                      sizeof(char *));
                 board_list[board_list_total++] =
                     strdup(themedir_entry->d_name);
