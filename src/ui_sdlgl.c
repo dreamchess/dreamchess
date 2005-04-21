@@ -127,6 +127,22 @@ void draw_rect(int x, int y, int w, int h, colour_t *col)
     glEnd();
 }
 
+/*
+   Key table?
+*/
+ui_event_t keys[94];
+
+
+void PopulateKeyTable()
+{
+   int i;
+
+   for ( i=0; i<94; i++ )
+   {
+      keys[i]=i+33;
+   }
+}
+
 /** Describes a texture. The OpenGL texture ID is paired with texture
  *  coordinates to allow for only a small portion of the image to be used.
  */
@@ -2239,6 +2255,7 @@ static void dialog_vkeyboard_key(widget_t *widget, void *data)
 {
     if (dialog_current())
         dialog_input(*(ui_event_t *) data);
+
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
 
@@ -2251,30 +2268,32 @@ static dialog_t *dialog_vkeyboard_create()
     widget_t *hbox;
     widget_t *vbox2;
     static ui_event_t key;
-    int i,j;
+    int i,j,k;
 
-    hbox=w_hbox_create(10);
+    hbox=w_hbox_create(2);
     label=w_text_create("Type stuff, k?" );
     w_hbox_append(hbox, label);
-    vbox2=w_vbox_create(10);
+    vbox2=w_vbox_create(2);
     w_vbox_append(vbox2, hbox );
 
-    /* This should be interestingly.. messy... ;D ;D */
-    /* add ... 16 A's! */
-
-    for ( j=0; j<3; j++ )
+    k=0;
+    for ( j=0; j<6; j++ )
     {
-        hbox = w_hbox_create(10);
+        hbox = w_hbox_create(2);
         for ( i=0; i<16; i++ )
         {
-            char key_str[2];
-            key='A';
-            key_str[0] = key;
-            key_str[1] = '\0';
-            action = w_action_create_with_label(key_str, 0.5f, 0.0f);
-            w_action_set_callback(action, dialog_vkeyboard_key, &key);
+            if ( k < 127-33 )
+            {
+               char key_str[2];
+               key=k+33;
+               key_str[0] = key;
+               key_str[1] = '\0';
+               action = w_action_create_with_label(key_str, 0.5f, 0.0f);
+               w_action_set_callback(action, dialog_vkeyboard_key, &keys[k]);
 
-            w_hbox_append(hbox, action);
+               w_hbox_append(hbox, action);
+               k++;
+            }
         }
         w_vbox_append(vbox2, hbox);
     }
@@ -2879,6 +2898,9 @@ static void init_gui()
 
     /* Fill board list. */
     ch_datadir();
+
+   /* Make key table? */
+   PopulateKeyTable();
 
     if ((themedir=opendir("boards")) != NULL )
     {
