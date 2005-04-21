@@ -1274,7 +1274,7 @@ void w_vbox_render(widget_t *widget, int x, int y, int focus)
             focus_child = 0;
 
         list->item[nr]->render(list->item[nr], x, y, focus_child);
-        y += list->item[nr]->height;
+        y += list->item[nr]->height_a;
         y += data->spacing;
     }
 }
@@ -1463,7 +1463,7 @@ void w_hbox_render(widget_t *widget, int x, int y, int focus)
             focus_child = 0;
 
         list->item[nr]->render(list->item[nr], x, y, focus_child);
-        x += list->item[nr]->width;
+        x += list->item[nr]->width_a;
         x += data->spacing;
         nr++;
     }
@@ -2269,12 +2269,20 @@ static dialog_t *dialog_vkeyboard_create()
     widget_t *vbox2;
     static ui_event_t key;
     int i,j,k;
+    int max_width = 0;
 
-    hbox=w_hbox_create(2);
+    hbox=w_hbox_create(0);
     label=w_text_create("Type stuff, k?" );
     w_hbox_append(hbox, label);
-    vbox2=w_vbox_create(2);
+    vbox2=w_vbox_create(0);
     w_vbox_append(vbox2, hbox );
+
+    for (i = 0; i < 256; i++)
+    {
+        int cur_width = text_characters[i].width;
+        if (cur_width > max_width)
+            max_width = cur_width;
+    }
 
     k=0;
     for ( j=0; j<6; j++ )
@@ -2288,7 +2296,8 @@ static dialog_t *dialog_vkeyboard_create()
                key=k+33;
                key_str[0] = key;
                key_str[1] = '\0';
-               action = w_action_create_with_label(key_str, 0.5f, 0.0f);
+               action = w_action_create_with_label(key_str, 0.5f, 0.5f);
+               w_set_requested_size(action, max_width, 0);
                w_action_set_callback(action, dialog_vkeyboard_key, &keys[k]);
 
                w_hbox_append(hbox, action);
