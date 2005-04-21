@@ -127,6 +127,17 @@ void draw_rect(int x, int y, int w, int h, colour_t *col)
     glEnd();
 }
 
+void draw_rect_fill(int x, int y, int w, int h, colour_t *col)
+{
+    glColor4f(col->r, col->g, col->b, col->a);
+    glBegin(GL_QUADS);
+    glVertex3f(x + 0.5f, y + 0.5f, 1.0f);
+    glVertex3f(x + w + 0.5f, y + 0.5f, 1.0f);
+    glVertex3f(x + w + 0.5f, y + h + 0.5f, 1.0f);
+    glVertex3f(x + 0.5f, y + h + 0.5f, 1.0f);
+    glEnd();
+}
+
 /*
    Key table?
 */
@@ -3116,6 +3127,40 @@ static void draw_move_list( colour_t *col_normal, colour_t *col_high )
     }
 }
 
+/* Draw .. health bars? */
+static void draw_health_bars()
+{
+   float white_health_percent;
+   float black_health_percent;
+   int black_health;
+   int white_health;
+
+   /* This function really stinks, and will be fixed ;) .... eventually */
+   /* Full health = 39 */
+   /* pawn  1, knight 3, bishop 3, rook 5, queen 9 */
+
+   /* Get da new healths? */
+   white_health = 39 -((board.captured[WHITE_PAWN])+
+      (board.captured[WHITE_ROOK]*5)+(board.captured[WHITE_BISHOP]*3)+
+      (board.captured[WHITE_KNIGHT]*3)+(board.captured[WHITE_QUEEN]*9));  
+   black_health = 39 -((board.captured[BLACK_PAWN])+
+      (board.captured[BLACK_ROOK]*5)+(board.captured[BLACK_BISHOP]*3)+
+      (board.captured[BLACK_KNIGHT]*3)+(board.captured[BLACK_QUEEN]*9));   
+
+   white_health_percent=(float)white_health/39;
+   black_health_percent=(float)black_health/39;
+
+   /* Draw da bar? */
+   draw_rect_fill( 80, 400, 200, 20, &col_yellow );
+   draw_rect_fill( 640-80-200, 400, 200, 20, &col_yellow );
+
+   draw_rect_fill( 80, 400, 200*white_health_percent, 20, &col_red );
+   draw_rect_fill( 640-80-(200*black_health_percent), 400, 200*black_health_percent, 20, &col_red );
+
+   draw_rect( 80, 400, 200, 20, &col_black );
+   draw_rect( 640-80-200, 400, 200, 20, &col_black );
+}
+
 /** @brief Renders the list of captured pieces for both sides.
  *
  *  @param col The text colour to use.
@@ -3196,6 +3241,7 @@ static void draw_scene( board_t *b )
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
+    draw_health_bars();
 
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
