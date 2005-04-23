@@ -351,16 +351,21 @@ static config_t *config;
 #define FOCUS_ONE 1
 #define FOCUS_ALL 2
 
-typedef int w_class;
-#define CLASS_NONE -1
+typedef int w_class_id;
+#define CLASS_ID_NONE -1
+
+#define CAST_ERROR(C) ((C *) cast_error(__FILE__, __LINE__, #C))
+
+#define CHECK_CAST(W, I, C) ((w_check_cast((w_widget_t *) W, I)) ? (C *) W \
+    : CAST_ERROR(C))
 
 #define CHILD(C) \
-    static w_class class = CLASS_NONE;\
-    if (class == CLASS_NONE) \
-        class = w_register_class(C); \
-    return class;
+    static w_class_id class_id = CLASS_ID_NONE;\
+    if (class_id == CLASS_ID_NONE) \
+        class_id = w_register_class(C); \
+    return class_id;
 
-#define W_WIDGET(W) ((widget_t *) W)
+#define W_WIDGET(W) CHECK_CAST(W, w_widget_get_class_id(), w_widget_t)
 
 #define W_WIDGET_DATA \
     void (* render) (struct widget *widget, int x, int y, int focus); \
@@ -369,6 +374,7 @@ typedef int w_class;
     void (* get_focus_pos) (struct widget *widget, int *x, int *y); \
     void (* set_focus_pos) (struct widget *widget, int x, int y); \
     void (* destroy) (struct widget *widget); \
+    w_class_id id; \
     void *data; \
     int enabled; \
     int width; \
@@ -385,6 +391,43 @@ typedef struct widget
 widget_t;
 
 typedef widget_t w_widget_t;
+
+static int classes = 0;
+static w_class_id *parent_class = NULL;
+
+w_widget_t *cast_error(char *file, int line, char *type)
+{
+    fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
+    exit(1);
+    return NULL;
+}
+
+w_class_id w_register_class(w_class_id parent)
+{
+    parent_class = realloc(parent_class, (classes + 1) * sizeof(w_class_id));
+
+    parent_class[classes] = parent;
+
+    return classes++;
+}
+
+w_class_id w_widget_get_class_id()
+{
+    CHILD(CLASS_ID_NONE)
+}
+
+int w_check_cast(w_widget_t *widget, w_class_id id)
+{
+    w_class_id parent = parent_class[widget->id];
+
+    if (widget->id == id)
+        return 1;
+
+    while ((parent != CLASS_ID_NONE) && (parent != id))
+        parent = parent_class[parent];
+
+    return parent != CLASS_ID_NONE;
+}
 
 void w_widget_destroy(widget_t *widget)
 {
@@ -414,27 +457,11 @@ static void w_widget_init(widget_t *widget)
     widget->set_size = w_set_size;
     widget->get_focus_pos = w_get_focus_pos;
     widget->set_focus_pos = w_set_focus_pos;
+    widget->id = w_widget_get_class_id();
     widget->enabled = 0;
     widget->width = widget->height = 0;
     widget->width_f = widget->height_f = -1;
     widget->width_a = widget->height_a = 0;
-}
-
-static int classes = 0;
-static w_class *parent_class = NULL;
-
-w_class w_register_class(w_class parent)
-{
-    parent_class = realloc(parent_class, (classes + 1) * sizeof(w_class));
-
-    parent_class[classes] = parent;
-
-    return classes++;
-}
-
-w_class w_widget_get_class()
-{
-    CHILD(CLASS_NONE)
 }
 
 typedef struct widget_list
@@ -737,7 +764,7 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
 
 /* Text widget. */
 
-#define W_LABEL(W) ((w_label_t *) W)
+#define W_LABEL(W) CHECK_CAST(W, w_label_get_class_id(), w_label_t)
 
 #define W_LABEL_DATA \
     W_WIDGET_DATA \
@@ -753,9 +780,9 @@ typedef struct w_label
 }
 w_label_t;
 
-w_class w_label_get_class()
+w_class_id w_label_get_class_id()
 {
-    CHILD(w_widget_get_class())
+    CHILD(w_widget_get_class_id())
 }
 
 /** Implements widget::render for text widgets. */
@@ -804,10 +831,11 @@ void w_label_destroy(widget_t *widget)
 
 void w_label_init(w_label_t *label, char *text)
 {
-    w_widget_init(W_WIDGET(label));
+    w_widget_init((w_widget_t *) label);
 
     label->render = w_label_render;
     label->destroy = w_label_destroy;
+    label->id = w_label_get_class_id();
     label->label = strdup(text);
     label->xalign = 0.5f;
     label->yalign = 0.5f;
@@ -836,7 +864,7 @@ w_widget_t *w_label_create(char *string)
 
 /* Image widget. */
 
-#define W_IMAGE(W) ((w_image_t *) W)
+#define W_IMAGE(W) CHECK_CAST(W, w_image_get_class_id(), w_image_t)
 
 #define W_IMAGE_DATA \
     W_WIDGET_DATA \
@@ -850,6 +878,11 @@ typedef struct w_image
     W_IMAGE_DATA
 }
 w_image_t;
+
+w_class_id w_image_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
 
 /** Implements widget::render for image widgets. */
 static void w_image_render(w_widget_t *widget, int x, int y, int focus)
@@ -890,6 +923,7 @@ void w_image_init(w_image_t *image, texture_t *texture)
     w_widget_init(W_WIDGET(image));
 
     image->render = w_image_render;
+    image->id = w_image_get_class_id();
     image->xalign = 0.5f;
     image->yalign = 0.5f;
     image->image = texture;
@@ -911,7 +945,7 @@ w_widget_t *w_image_create(texture_t *texture)
 
 /* Action widget. */
 
-#define W_ACTION(W) ((w_action_t *) W)
+#define W_ACTION(W) CHECK_CAST(W, w_action_get_class_id(), w_action_t)
 
 #define W_ACTION_DATA \
     W_WIDGET_DATA \
@@ -925,6 +959,11 @@ typedef struct w_action
     W_ACTION_DATA
 }
 w_action_t;
+
+w_class_id w_action_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
 
 /** Implements widget::render for action widgets. */
 static void w_action_render(w_widget_t *widget, int x, int y, int focus)
@@ -978,12 +1017,13 @@ void w_action_destroy(w_widget_t *widget)
 
 void w_action_init(w_action_t *action, w_widget_t *widget)
 {
-    w_widget_init(W_WIDGET(action));
+    w_widget_init((w_widget_t *) action);
 
     action->render = w_action_render;
     action->input = w_action_input;
     action->destroy = w_action_destroy;
     action->set_size = w_action_set_size;
+    action->id = w_action_get_class_id();
     action->child = widget;
     action->func = NULL;
     action->func_data = NULL;
@@ -1034,7 +1074,7 @@ void w_action_set_callback(w_action_t *action, void (* callback) (w_widget_t *, 
 
 /* Option widget. */
 
-#define W_OPTION(W) ((w_option_t *) W)
+#define W_OPTION(W) CHECK_CAST(W, w_option_get_class_id(), w_option_t)
 
 #define W_OPTION_DATA \
     W_WIDGET_DATA \
@@ -1048,6 +1088,11 @@ typedef struct w_option
     W_OPTION_DATA
 }
 w_option_t;
+
+w_class_id w_option_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
 
 #define OPTION_ARROW_LEFT "\253 "
 #define OPTION_ARROW_RIGHT " \273"
@@ -1152,12 +1197,13 @@ void w_option_destroy(widget_t *widget)
 
 void w_option_init(w_option_t *option)
 {
-    w_widget_init(W_WIDGET(option));
+    w_widget_init((w_widget_t *) option);
 
     option->render = w_option_render;
     option->input = w_option_input;
     option->destroy = w_option_destroy;
     option->set_size = w_option_set_size;
+    option->id = w_option_get_class_id();
     option->list.item = NULL;
     option->list.nr = 0;
     option->list.sel = -1;
@@ -1245,7 +1291,7 @@ void w_option_set_callback(w_option_t *option, void (* callback) (w_widget_t *, 
 
 /* Vertical box widget. */
 
-#define W_BOX(W) ((w_box_t *) W)
+#define W_BOX(W) CHECK_CAST(W, w_box_get_class_id(), w_box_t)
 
 #define W_BOX_DATA \
     W_WIDGET_DATA \
@@ -1257,6 +1303,11 @@ typedef struct w_box
     W_BOX_DATA
 }
 w_box_t;
+
+w_class_id w_box_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
 
 /* Vertical box widget. */
 
@@ -1389,7 +1440,7 @@ void w_vbox_destroy(w_widget_t *widget)
 
 void w_vbox_init(w_box_t *box, int spacing)
 {
-    w_widget_init(W_WIDGET(box));
+    w_widget_init((w_widget_t *) box);
 
     box->render = w_vbox_render;
     box->input = w_vbox_input;
@@ -1397,6 +1448,7 @@ void w_vbox_init(w_box_t *box, int spacing)
     box->set_size = w_vbox_set_size;
     box->get_focus_pos = w_vbox_get_focus_pos;
     box->set_focus_pos = w_vbox_set_focus_pos;
+    box->id = w_box_get_class_id();
     box->list.item = NULL;
     box->list.nr = 0;
     box->list.sel = -1;
@@ -1577,7 +1629,7 @@ void w_hbox_destroy(w_widget_t *widget)
 
 void w_hbox_init(w_box_t *box, int spacing)
 {
-    w_widget_init(W_WIDGET(box));
+    w_widget_init((w_widget_t *) box);
 
     box->render = w_hbox_render;
     box->input = w_hbox_input;
@@ -1585,6 +1637,7 @@ void w_hbox_init(w_box_t *box, int spacing)
     box->set_size = w_hbox_set_size;
     box->get_focus_pos = w_hbox_get_focus_pos;
     box->set_focus_pos = w_hbox_set_focus_pos;
+    box->id = w_box_get_class_id();
     box->list.item = NULL;
     box->list.nr = 0;
     box->list.sel = -1;
@@ -1640,7 +1693,7 @@ void w_hbox_append(w_box_t *box, widget_t *widget)
 #define ENTRY_MAX_LEN 255
 #define ENTRY_CURSOR "|"
 
-#define W_ENTRY(W) ((w_entry_t *) W)
+#define W_ENTRY(W) CHECK_CAST(W, w_entry_get_class_id(), w_entry_t)
 
 #define W_ENTRY_DATA \
     W_WIDGET_DATA \
@@ -1656,6 +1709,11 @@ typedef struct w_entry
     W_ENTRY_DATA
 }
 w_entry_t;
+
+w_class_id w_entry_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
 
 /** Implements widget::render for text entry widgets. */
 void w_entry_render(w_widget_t *widget, int x, int y, int focus)
@@ -1737,10 +1795,11 @@ static int w_entry_input(widget_t *widget, ui_event_t event)
 
 void w_entry_init(w_entry_t *entry)
 {
-    w_widget_init(W_WIDGET(entry));
+    w_widget_init((w_widget_t *) entry);
 
     entry->render = w_entry_render;
     entry->input = w_entry_input;
+    entry->id = w_entry_get_class_id();
     entry->max_len = ENTRY_MAX_LEN;
     entry->cursor_pos = 0;
     entry->text[0] = '\0';
