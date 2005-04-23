@@ -146,12 +146,12 @@ ui_event_t keys[94];
 
 void PopulateKeyTable()
 {
-   int i;
+    int i;
 
-   for ( i=0; i<94; i++ )
-   {
-      keys[i]=i+33;
-   }
+    for ( i=0; i<94; i++ )
+    {
+        keys[i]=i+33;
+    }
 }
 
 /** Describes a texture. The OpenGL texture ID is paired with texture
@@ -202,6 +202,9 @@ static ui_event_t convert_event(SDL_Event *event)
             return UI_EVENT_DOWN;
         case SDLK_RETURN:
             return UI_EVENT_ACTION;
+        default:
+            if (event->key.keysym.unicode <= 0xff)
+                return event->key.keysym.unicode;
         }
         break;
 
@@ -348,65 +351,55 @@ static config_t *config;
 #define FOCUS_ONE 1
 #define FOCUS_ALL 2
 
-/** Widget instance. */
+typedef int w_class;
+#define CLASS_NONE -1
+
+#define CHILD(C) \
+    static w_class class = CLASS_NONE;\
+    if (class == CLASS_NONE) \
+        class = w_register_class(C); \
+    return class;
+
+#define W_WIDGET(W) ((widget_t *) W)
+
+#define W_WIDGET_DATA \
+    void (* render) (struct widget *widget, int x, int y, int focus); \
+    int (* input) (struct widget *widget, ui_event_t event); \
+    void (* set_size) (struct widget *widget, int width, int height); \
+    void (* get_focus_pos) (struct widget *widget, int *x, int *y); \
+    void (* set_focus_pos) (struct widget *widget, int x, int y); \
+    void (* destroy) (struct widget *widget); \
+    void *data; \
+    int enabled; \
+    int width; \
+    int height; \
+    int width_f; \
+    int height_f; \
+    int width_a; \
+    int height_a;
+
 typedef struct widget
 {
-    /** @brief Renders a widget.
-     *
-     *  @param data Widget state.
-     *  @param x Leftmost x-coordinate where widget should be rendered.
-     *  @param y Lowermost y-coordinate where widget should be rendered.
-     *  @param focus Indicates whether the widget has focus. 1 = focus,
-     *               0 = no focus.
-     */
-    void (* render) (struct widget *widget, int x, int y, int focus);
-
-    /** @brief Handles a widget input event.
-     *
-     *  @param data Widget state.
-     *  @param event The event to handle.
-     *  @return 0 = Event not supported in this state, 1 = event processed.
-     */
-    int (* input) (struct widget *widget, ui_event_t event);
-
-    void (* set_size) (struct widget *widget, int width, int height);
-
-    void (* get_focus_pos) (struct widget *widget, int *x, int *y);
-
-    void (* set_focus_pos) (struct widget *widget, int x, int y);
-
-    void (* destroy) (struct widget *widget);
-
-    /** Label to be rendered left of widget. Can be NULL. */
-    char *label;
-
-    /** Widget state. */
-    void *data;
-
-    /** Whether or not the widget instance can be selected at this time.
-     *  1 = yes, 0 = no.
-     */
-    int enabled;
-
-    /** Minimum widget width in pixels. */
-    int width;
-
-    /** Minimum widget height in pixels. */
-    int height;
-
-    /** Minimum widget width override. */
-    int width_f;
-
-    /** Minimum widget width override. */
-    int height_f;
-
-    /** Allocated widget width in pixels. */
-    int width_a;
-
-    /** Allocated widget height in pixels. */
-    int height_a;
+    W_WIDGET_DATA
 }
 widget_t;
+
+static int classes = 0;
+static w_class *parent_class = NULL;
+
+w_class w_register_class(w_class parent)
+{
+    parent_class = realloc(parent_class, (classes + 1) * sizeof(w_class));
+
+    parent_class[classes] = parent;
+
+    return classes++;
+}
+
+w_class w_widget_get_class()
+{
+    CHILD(CLASS_NONE)
+}
 
 typedef struct widget_list
 {
@@ -694,8 +687,7 @@ static void w_get_focus_pos(widget_t *widget, int *x, int *y)
 }
 
 static void w_set_focus_pos(widget_t *widget, int x, int y)
-{
-}
+{}
 
 static void w_get_requested_size(widget_t *widget, int *width, int *height)
 {
@@ -724,69 +716,68 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
 
 /* Text widget. */
 
-/** Text widget state. */
-typedef struct w_text_data
-{
-    /** The string that should be rendered. */
-    char *label;
+#define W_TEXT(W) ((w_label_t *) W)
 
-    /** Horizontal alignment. Ranges from 0.0f (left) to 1.0f (right). */
-    float xalign;
-
-    /** Vertical alignment. Ranges from 0.0f (top) to 1.0f (bottom). */
-    float yalign;
-
-    /** Bounce on focus. 0 = no, 1 = yes. */
+#define W_TEXT_DATA \
+    W_WIDGET_DATA \
+    char *label; \
+    float xalign; \
+    float yalign; \
     int bouncy;
+
+/** Text widget state. */
+typedef struct w_label
+{
+    W_TEXT_DATA
 }
-w_text_data_t;
+w_label_t;
+
+w_class w_label_get_class()
+{
+    CHILD(w_widget_get_class())
+}
 
 /** Implements widget::render for text widgets. */
-static void w_text_render(widget_t *widget, int x, int y, int focus)
+static void w_label_render(widget_t *widget, int x, int y, int focus)
 {
-    w_text_data_t *text_data = widget->data;
+    w_label_t *text = W_TEXT(widget);
 
-    x += text_data->xalign * (widget->width_a - widget->width);
-    y += (1.0f - text_data->yalign) * (widget->height_a - widget->height);
+    x += text->xalign * (text->width_a - text->width);
+    y += (1.0f - text->yalign) * (text->height_a - text->height);
 
     if (focus != FOCUS_NONE)
     {
-        if (text_data->bouncy)
-            text_draw_string_bouncy(x, y, text_data->label, 1, &col_dark_red);
+        if (text->bouncy)
+            text_draw_string_bouncy(x, y, text->label, 1, &col_dark_red);
         else
-            text_draw_string(x, y, text_data->label, 1, &col_dark_red);
+            text_draw_string(x, y, text->label, 1, &col_dark_red);
     }
     else
-        text_draw_string(x, y, text_data->label, 1, &col_black);
+        text_draw_string(x, y, text->label, 1, &col_black);
 }
 
-static void w_text_set_alignment(widget_t *widget, float xalign, float yalign)
+static void w_label_set_alignment(w_label_t *widget, float xalign, float yalign)
 {
-    w_text_data_t *data = widget->data;
-
-    data->xalign = xalign;
-    data->yalign = yalign;
+    widget->xalign = xalign;
+    widget->yalign = yalign;
 }
 
-static void w_text_set_bouncy(widget_t *widget, int bouncy)
+static void w_label_set_bouncy(w_label_t *widget, int bouncy)
 {
-    w_text_data_t *data = widget->data;
-
-    data->bouncy = bouncy;
+    widget->bouncy = bouncy;
 }
 
 /** @brief Destroys a text widget.
  *
  *  @param widget The text widget.
  */
-void w_text_destroy(widget_t *widget)
+void w_label_destroy(widget_t *widget)
 {
-    w_text_data_t *data = widget->data;
+    w_label_t *text = W_TEXT(widget);
 
-    if (data->label)
-        free(data->label);
-    free(data);
-    free(widget);
+    if (text->label)
+        free(text->label);
+    free(text);
 }
 
 /** @brief Creates a text widget.
@@ -797,41 +788,42 @@ void w_text_destroy(widget_t *widget)
  *  @param string The text for the widget.
  *  @return The created text widget.
  */
-widget_t *w_text_create(char *string)
+w_label_t *w_label_create(char *string)
 {
-    widget_t *item = malloc(sizeof(widget_t));
-    w_text_data_t *data = malloc(sizeof(w_text_data_t));
+    w_label_t *widget = malloc(sizeof(w_label_t));
 
-    item->render = w_text_render;
-    item->input = NULL;
-    item->destroy = w_text_destroy;
-    item->set_size = w_set_size;
-    item->get_focus_pos = w_get_focus_pos;
-    item->set_focus_pos = w_set_focus_pos;
-    data->label = strdup(string);
-    data->xalign = 0.5f;
-    data->yalign = 0.5f;
-    data->bouncy = 0;
-    item->label = NULL;
-    item->data = data;
-    item->enabled = 1;
-    item->width = text_width(string);
-    item->height = text_height() + BOUNCE_AMP;
-    item->width_f = -1;
-    item->height_f = -1;
+    widget->render = w_label_render;
+    widget->input = NULL;
+    widget->destroy = w_label_destroy;
+    widget->set_size = w_set_size;
+    widget->get_focus_pos = w_get_focus_pos;
+    widget->set_focus_pos = w_set_focus_pos;
+    widget->label = strdup(string);
+    widget->xalign = 0.5f;
+    widget->yalign = 0.5f;
+    widget->bouncy = 0;
+    widget->enabled = 1;
+    widget->width = text_width(string);
+    widget->height = text_height() + BOUNCE_AMP;
+    widget->width_f = -1;
+    widget->height_f = -1;
 
-    return item;
+    return widget;
 }
 
 
 /* Image widget. */
 
+#define W_IMAGE_DATA \
+    W_WIDGET_DATA \
+    texture_t *image; \
+    float xalign; \
+    float yalign;
+
 /** Image widget state. */
 typedef struct w_image_data
 {
-    texture_t *image;
-
-    float xalign, yalign;
+    W_IMAGE_DATA
 }
 w_image_data_t;
 
@@ -892,7 +884,6 @@ widget_t *w_image_create(texture_t *image)
     data->xalign = 0.5f;
     data->yalign = 0.5f;
     data->image = image;
-    item->label = NULL;
     item->data = data;
     item->enabled = 1;
     item->width = image->width;
@@ -906,19 +897,16 @@ widget_t *w_image_create(texture_t *image)
 
 /* Action widget. */
 
+#define W_ACTION_DATA \
+    W_WIDGET_DATA \
+    widget_t *child; \
+    void (* func) (widget_t *widget, void *data); \
+    void *func_data;
+
 /** Action widget state. */
 typedef struct w_action_data
 {
-    /** The child that should be rendered. */
-    widget_t *child;
-
-    /** The function to be executed when activated. If NULL then no action
-     *  is taken.
-     */
-    void (* func) (widget_t *widget, void *data);
-
-    /** Data to be passed to the callback function. */
-    void *func_data;
+    W_ACTION_DATA
 }
 w_action_data_t;
 
@@ -994,7 +982,6 @@ widget_t *w_action_create(widget_t *widget)
     data->child = widget;
     data->func = NULL;
     data->func_data = NULL;
-    item->label = NULL;
     item->data = data;
     item->enabled = 1; /*widget->enabled;*/
     item->width = widget->width;
@@ -1007,12 +994,12 @@ widget_t *w_action_create(widget_t *widget)
 
 widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
 {
-    widget_t *label = w_text_create(text);
+    w_label_t *label = w_label_create(text);
     widget_t *action;
 
-    w_text_set_bouncy(label, 1);
-    w_text_set_alignment(label, xalign, yalign);
-    action = w_action_create(label);
+    w_label_set_bouncy(label, 1);
+    w_label_set_alignment(label, xalign, yalign);
+    action = w_action_create(W_WIDGET(label));
     return action;
 }
 
@@ -1032,18 +1019,16 @@ void w_action_set_callback(widget_t *widget, void (* callback) (widget_t *, void
 
 /* Option widget. */
 
+#define W_OPTION_DATA \
+    W_WIDGET_DATA \
+    widget_list_t list; \
+    void (* func) (widget_t *widget, void *data); \
+    void *func_data;
+
 /** Option widget state. */
 typedef struct w_option_data
 {
-    widget_list_t list;
-
-    /** The function to be executed when an option is selected. If NULL then
-     *  no action is taken.
-     */
-    void (* func) (widget_t *widget, void *data);
-
-    /** Data to be passed to the callback function. */
-    void *func_data;
+    W_OPTION_DATA
 }
 w_option_data_t;
 
@@ -1171,7 +1156,6 @@ widget_t *w_option_create()
     data->list.item = NULL;
     data->list.nr = 0;
     data->list.sel = -1;
-    item->label = NULL;
     item->data = data;
     item->enabled = 0;
     item->width = 0;
@@ -1218,9 +1202,9 @@ void w_option_append(widget_t *widget, widget_t *child)
 
 void w_option_append_label(widget_t *widget, char *text, float xalign, float yalign)
 {
-    widget_t *label = w_text_create(text);
-    w_text_set_alignment(label, xalign, yalign);
-    w_option_append(widget, label);
+    w_label_t *label = w_label_create(text);
+    w_label_set_alignment(label, xalign, yalign);
+    w_option_append(widget, W_WIDGET(label));
 }
 
 /** @brief Returns the index of the selected option of an option widget.
@@ -1253,13 +1237,14 @@ void w_option_set_callback(widget_t *widget, void (* callback) (widget_t *, void
 
 /* Vertical box widget. */
 
+#define W_BOX_DATA \
+    W_WIDGET_DATA \
+    widget_list_t list; \
+    int spacing;
+
 typedef struct w_box_data
 {
-    /** Widget list. */
-    widget_list_t list;
-
-    /** Space between each widget in pixels. */
-    int spacing;
+    W_BOX_DATA
 }
 w_box_data_t;
 
@@ -1414,7 +1399,6 @@ widget_t *w_vbox_create(int spacing)
     data->list.nr = 0;
     data->list.sel = -1;
     data->spacing = spacing;
-    item->label = NULL;
     item->data = data;
     item->enabled = 0;
     item->width = 0;
@@ -1604,7 +1588,6 @@ widget_t *w_hbox_create(int spacing)
     data->list.nr = 0;
     data->list.sel = -1;
     data->spacing = spacing;
-    item->label = NULL;
     item->data = data;
     item->enabled = 0;
     item->width = 0;
@@ -1650,18 +1633,18 @@ void w_hbox_append(widget_t *hbox, widget_t *widget)
 #define ENTRY_MAX_LEN 255
 #define ENTRY_CURSOR "|"
 
-/** Text entry widget state. */
-typedef struct w_entry_data
-{
-    char text[ENTRY_MAX_LEN + 1];
-
-    int max_len;
-
-    int cursor_pos;
-
-    int display_pos;
-
+#define W_ENTRY_DATA \
+    W_WIDGET_DATA \
+    char text[ENTRY_MAX_LEN + 1]; \
+    int max_len; \
+    int cursor_pos; \
+    int display_pos; \
     int display_len;
+
+/** Text entry widget state. */
+typedef struct w_entry
+{
+    W_ENTRY_DATA
 }
 w_entry_data_t;
 
@@ -1998,13 +1981,14 @@ static void dialog_close_cb(widget_t *widget, void *data)
 static dialog_t *dialog_quit_create()
 {
     dialog_t *dialog;
+    widget_t *widget;
     widget_t *vbox = w_vbox_create(0);
 
-    widget_t *widget = w_text_create("You don't really want to quit do ya?");
-    w_vbox_append(vbox, widget);
+    w_label_t *text = w_label_create("You don't really want to quit do ya?");
+    w_vbox_append(vbox, W_WIDGET(text));
 
-    widget = w_text_create("");
-    w_vbox_append(vbox, widget);
+    text = w_label_create("");
+    w_vbox_append(vbox, W_WIDGET(text));
 
     widget = w_action_create_with_label("Yeah.. I suck..", 0.5f, 0.0f);
     w_action_set_callback(widget, dialog_quit_ok, NULL);
@@ -2064,36 +2048,37 @@ dialog_t *dialog_victory_create(result_t *result)
     widget_t *hbox = w_hbox_create(20);
     widget_t *vbox = w_vbox_create(0);
     widget_t *image_l, *image_r;
-    widget_t *text;
+    widget_t *action;
+    w_label_t *text;
 
     switch (result->code)
     {
     case RESULT_WHITE_WINS:
         image_l = w_image_create(&white_pieces[GUI_PIECE_KING]);
         image_r = w_image_create(&white_pieces[GUI_PIECE_QUEEN]);
-        text = w_text_create("White won the match!");
+        text = w_label_create("White won the match!");
         break;
 
     case RESULT_BLACK_WINS:
         image_l = w_image_create(&black_pieces[GUI_PIECE_KING]);
         image_r = w_image_create(&black_pieces[GUI_PIECE_QUEEN]);
-        text = w_text_create("Black won the match!");
+        text = w_label_create("Black won the match!");
         break;
 
     default:
         image_l = w_image_create(&white_pieces[GUI_PIECE_KING]);
         image_r = w_image_create(&black_pieces[GUI_PIECE_KING]);
-        text = w_text_create("The game ended in a draw!");
+        text = w_label_create("The game ended in a draw!");
     }
 
-    w_vbox_append(vbox, text);
-    text = w_text_create(result->reason);
-    w_vbox_append(vbox, text);
-    text = w_text_create("");
-    w_vbox_append(vbox, text);
-    text = w_action_create_with_label("Ok", 0.5f, 0.5f);
-    w_action_set_callback(text, dialog_close_cb, NULL);
-    w_vbox_append(vbox, text);
+    w_vbox_append(vbox, W_WIDGET(text));
+    text = w_label_create(result->reason);
+    w_vbox_append(vbox, W_WIDGET(text));
+    text = w_label_create("");
+    w_vbox_append(vbox, W_WIDGET(text));
+    action = w_action_create_with_label("Ok", 0.5f, 0.5f);
+    w_action_set_callback(action, dialog_close_cb, NULL);
+    w_vbox_append(vbox, action);
     w_hbox_append(hbox, image_l);
     w_hbox_append(hbox, vbox);
     w_hbox_append(hbox, image_r);
@@ -2170,7 +2155,7 @@ static dialog_t *dialog_title_create()
     widget_t *widget;
     widget_t *vbox2;
     widget_t *hbox;
-    widget_t *label;
+    w_label_t *label;
     int i;
 
     config = malloc(sizeof(config_t));
@@ -2185,30 +2170,30 @@ static dialog_t *dialog_title_create()
     vbox = w_vbox_create(0);
     w_vbox_append(vbox, widget);
 
-    label = w_text_create("Players:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
+    label = w_label_create("Players:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
     vbox2 = w_vbox_create(0);
-    w_vbox_append(vbox2, label);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
-    label = w_text_create("Difficulty:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, label);
+    label = w_label_create("Difficulty:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
-    label = w_text_create("Theme:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, label);
+    label = w_label_create("Theme:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
-    label = w_text_create("Chess Set:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, label);
+    label = w_label_create("Chess Set:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
-    label = w_text_create("Board:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, label);
+    label = w_label_create("Board:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
-    label = w_text_create("Name:");
-    w_text_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, label);
+    label = w_label_create("Name:");
+    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_vbox_append(vbox2, W_WIDGET(label));
 
     hbox = w_hbox_create(20);
     w_hbox_append(hbox, vbox2);
@@ -2273,7 +2258,7 @@ static void dialog_vkeyboard_key(widget_t *widget, void *data)
 static dialog_t *dialog_vkeyboard_create()
 {
     dialog_t *dialog;
-    widget_t *label;
+    w_label_t *label;
     widget_t *action;
     widget_t *vbox;
     widget_t *hbox;
@@ -2283,8 +2268,8 @@ static dialog_t *dialog_vkeyboard_create()
     int max_width = 0;
 
     hbox=w_hbox_create(0);
-    label=w_text_create("Type stuff, k?" );
-    w_hbox_append(hbox, label);
+    label=w_label_create("Type stuff, k?" );
+    w_hbox_append(hbox, W_WIDGET(label));
     vbox2=w_vbox_create(0);
     w_vbox_append(vbox2, hbox );
 
@@ -2303,16 +2288,16 @@ static dialog_t *dialog_vkeyboard_create()
         {
             if ( k < 127-33 )
             {
-               char key_str[2];
-               key=k+33;
-               key_str[0] = key;
-               key_str[1] = '\0';
-               action = w_action_create_with_label(key_str, 0.5f, 0.5f);
-               w_set_requested_size(action, max_width, 0);
-               w_action_set_callback(action, dialog_vkeyboard_key, &keys[k]);
+                char key_str[2];
+                key=k+33;
+                key_str[0] = key;
+                key_str[1] = '\0';
+                action = w_action_create_with_label(key_str, 0.5f, 0.5f);
+                w_set_requested_size(action, max_width, 0);
+                w_action_set_callback(action, dialog_vkeyboard_key, &keys[k]);
 
-               w_hbox_append(hbox, action);
-               k++;
+                w_hbox_append(hbox, action);
+                k++;
             }
         }
         w_vbox_append(vbox2, hbox);
@@ -2602,8 +2587,8 @@ dialog_t *dialog_promote_create(int colour)
     widget_t *action;
     widget_t *vbox = w_vbox_create(0);
     widget_t *hbox = w_hbox_create(0);
-
-    widget_t *widget = w_text_create("Promotion! Choose new piece!");
+    widget_t *widget;
+    w_label_t *text = w_label_create("Promotion! Choose new piece!");
 
     dialog_promote_piece = NONE;
     cb_pieces[0] = QUEEN + colour;
@@ -2611,7 +2596,7 @@ dialog_t *dialog_promote_create(int colour)
     cb_pieces[2] = BISHOP + colour;
     cb_pieces[3] = KNIGHT + colour;
 
-    w_vbox_append(vbox, widget);
+    w_vbox_append(vbox, W_WIDGET(text));
 
     if (IS_WHITE(colour))
         pieces = white_pieces;
@@ -2650,10 +2635,10 @@ dialog_t *dialog_message_create(char *message)
     widget_t *widget;
 
     widget_t *vbox = w_vbox_create(0);
-    w_vbox_append(vbox, w_text_create("Important message from engine"));
-    w_vbox_append(vbox, w_text_create(""));
-    w_vbox_append(vbox, w_text_create(message));
-    w_vbox_append(vbox, w_text_create(""));
+    w_vbox_append(vbox, W_WIDGET(w_label_create("Important message from engine")));
+    w_vbox_append(vbox, W_WIDGET(w_label_create("")));
+    w_vbox_append(vbox, W_WIDGET(w_label_create(message)));
+    w_vbox_append(vbox, W_WIDGET(w_label_create("")));
     widget = w_action_create_with_label("Ok", 0.5f, 0.5f);
     w_action_set_callback(widget, dialog_close_cb, NULL);
     w_vbox_append(vbox, widget);
@@ -2919,8 +2904,8 @@ static void init_gui()
     /* Fill board list. */
     ch_datadir();
 
-   /* Make key table? */
-   PopulateKeyTable();
+    /* Make key table? */
+    PopulateKeyTable();
 
     if ((themedir=opendir("boards")) != NULL )
     {
@@ -3130,35 +3115,35 @@ static void draw_move_list( colour_t *col_normal, colour_t *col_high )
 /* Draw .. health bars? */
 static void draw_health_bars()
 {
-   float white_health_percent;
-   float black_health_percent;
-   int black_health;
-   int white_health;
+    float white_health_percent;
+    float black_health_percent;
+    int black_health;
+    int white_health;
 
-   /* This function really stinks, and will be fixed ;) .... eventually */
-   /* Full health = 39 */
-   /* pawn  1, knight 3, bishop 3, rook 5, queen 9 */
+    /* This function really stinks, and will be fixed ;) .... eventually */
+    /* Full health = 39 */
+    /* pawn  1, knight 3, bishop 3, rook 5, queen 9 */
 
-   /* Get da new healths? */
-   white_health = 39 -((board.captured[WHITE_PAWN])+
-      (board.captured[WHITE_ROOK]*5)+(board.captured[WHITE_BISHOP]*3)+
-      (board.captured[WHITE_KNIGHT]*3)+(board.captured[WHITE_QUEEN]*9));  
-   black_health = 39 -((board.captured[BLACK_PAWN])+
-      (board.captured[BLACK_ROOK]*5)+(board.captured[BLACK_BISHOP]*3)+
-      (board.captured[BLACK_KNIGHT]*3)+(board.captured[BLACK_QUEEN]*9));   
+    /* Get da new healths? */
+    white_health = 39 -((board.captured[WHITE_PAWN])+
+                        (board.captured[WHITE_ROOK]*5)+(board.captured[WHITE_BISHOP]*3)+
+                        (board.captured[WHITE_KNIGHT]*3)+(board.captured[WHITE_QUEEN]*9));
+    black_health = 39 -((board.captured[BLACK_PAWN])+
+                        (board.captured[BLACK_ROOK]*5)+(board.captured[BLACK_BISHOP]*3)+
+                        (board.captured[BLACK_KNIGHT]*3)+(board.captured[BLACK_QUEEN]*9));
 
-   white_health_percent=(float)white_health/39;
-   black_health_percent=(float)black_health/39;
+    white_health_percent=(float)white_health/39;
+    black_health_percent=(float)black_health/39;
 
-   /* Draw da bar? */
-   draw_rect_fill( 80, 400, 200, 20, &col_yellow );
-   draw_rect_fill( 640-80-200, 400, 200, 20, &col_yellow );
+    /* Draw da bar? */
+    draw_rect_fill( 80, 400, 200, 20, &col_yellow );
+    draw_rect_fill( 640-80-200, 400, 200, 20, &col_yellow );
 
-   draw_rect_fill( 80, 400, 200*white_health_percent, 20, &col_red );
-   draw_rect_fill( 640-80-(200*black_health_percent), 400, 200*black_health_percent, 20, &col_red );
+    draw_rect_fill( 80, 400, 200*white_health_percent, 20, &col_red );
+    draw_rect_fill( 640-80-(200*black_health_percent), 400, 200*black_health_percent, 20, &col_red );
 
-   draw_rect( 80, 400, 200, 20, &col_black );
-   draw_rect( 640-80-200, 400, 200, 20, &col_black );
+    draw_rect( 80, 400, 200, 20, &col_black );
+    draw_rect( 640-80-200, 400, 200, 20, &col_black );
 }
 
 /** @brief Renders the list of captured pieces for both sides.
@@ -3359,7 +3344,7 @@ static int text_height()
 
 static int text_max_width()
 {
-    static width = -1;
+    static int width = -1;
     int i;
 
     if (width >= 0)
@@ -3645,6 +3630,9 @@ static int GetMove()
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;
+                break;
+            default:
+                printf("Ignoring event %i\n", ui_event);
             }
         break;
 #if 0
