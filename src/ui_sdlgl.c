@@ -384,6 +384,42 @@ typedef struct widget
 }
 widget_t;
 
+typedef widget_t w_widget_t;
+
+void w_widget_destroy(widget_t *widget)
+{
+    free(widget);
+}
+
+static void w_set_size(widget_t *widget, int width, int height)
+{
+    widget->width_a = width;
+    widget->height_a = height;
+}
+
+static void w_get_focus_pos(widget_t *widget, int *x, int *y)
+{
+    *x = widget->width_a / 2;
+    *y = widget->height_a / 2;
+}
+
+static void w_set_focus_pos(widget_t *widget, int x, int y)
+{}
+
+static void w_widget_init(widget_t *widget)
+{
+    widget->render = NULL;
+    widget->input = NULL;
+    widget->destroy = w_widget_destroy;
+    widget->set_size = w_set_size;
+    widget->get_focus_pos = w_get_focus_pos;
+    widget->set_focus_pos = w_set_focus_pos;
+    widget->enabled = 0;
+    widget->width = widget->height = 0;
+    widget->width_f = widget->height_f = -1;
+    widget->width_a = widget->height_a = 0;
+}
+
 static int classes = 0;
 static w_class *parent_class = NULL;
 
@@ -674,21 +710,6 @@ static position_t pos_title =
         ALIGN_CENTER, ALIGN_CENTER
     };
 
-static void w_set_size(widget_t *widget, int width, int height)
-{
-    widget->width_a = width;
-    widget->height_a = height;
-}
-
-static void w_get_focus_pos(widget_t *widget, int *x, int *y)
-{
-    *x = widget->width_a / 2;
-    *y = widget->height_a / 2;
-}
-
-static void w_set_focus_pos(widget_t *widget, int x, int y)
-{}
-
 static void w_get_requested_size(widget_t *widget, int *width, int *height)
 {
     if (width)
@@ -716,9 +737,9 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
 
 /* Text widget. */
 
-#define W_TEXT(W) ((w_label_t *) W)
+#define W_LABEL(W) ((w_label_t *) W)
 
-#define W_TEXT_DATA \
+#define W_LABEL_DATA \
     W_WIDGET_DATA \
     char *label; \
     float xalign; \
@@ -728,7 +749,7 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
 /** Text widget state. */
 typedef struct w_label
 {
-    W_TEXT_DATA
+    W_LABEL_DATA
 }
 w_label_t;
 
@@ -740,7 +761,7 @@ w_class w_label_get_class()
 /** Implements widget::render for text widgets. */
 static void w_label_render(widget_t *widget, int x, int y, int focus)
 {
-    w_label_t *text = W_TEXT(widget);
+    w_label_t *text = W_LABEL(widget);
 
     x += text->xalign * (text->width_a - text->width);
     y += (1.0f - text->yalign) * (text->height_a - text->height);
@@ -773,11 +794,26 @@ static void w_label_set_bouncy(w_label_t *widget, int bouncy)
  */
 void w_label_destroy(widget_t *widget)
 {
-    w_label_t *text = W_TEXT(widget);
+    w_label_t *label = W_LABEL(widget);
 
-    if (text->label)
-        free(text->label);
-    free(text);
+    if (label->label)
+        free(label->label);
+
+    w_widget_destroy(widget);
+}
+
+void w_label_init(w_label_t *label, char *text)
+{
+    w_widget_init(W_WIDGET(label));
+
+    label->render = w_label_render;
+    label->destroy = w_label_destroy;
+    label->label = strdup(text);
+    label->xalign = 0.5f;
+    label->yalign = 0.5f;
+    label->bouncy = 0;
+    label->width = text_width(text);
+    label->height = text_height() + BOUNCE_AMP;
 }
 
 /** @brief Creates a text widget.
@@ -788,31 +824,19 @@ void w_label_destroy(widget_t *widget)
  *  @param string The text for the widget.
  *  @return The created text widget.
  */
-w_label_t *w_label_create(char *string)
+w_widget_t *w_label_create(char *string)
 {
-    w_label_t *widget = malloc(sizeof(w_label_t));
+    w_label_t *label = malloc(sizeof(w_label_t));
 
-    widget->render = w_label_render;
-    widget->input = NULL;
-    widget->destroy = w_label_destroy;
-    widget->set_size = w_set_size;
-    widget->get_focus_pos = w_get_focus_pos;
-    widget->set_focus_pos = w_set_focus_pos;
-    widget->label = strdup(string);
-    widget->xalign = 0.5f;
-    widget->yalign = 0.5f;
-    widget->bouncy = 0;
-    widget->enabled = 1;
-    widget->width = text_width(string);
-    widget->height = text_height() + BOUNCE_AMP;
-    widget->width_f = -1;
-    widget->height_f = -1;
+    w_label_init(label, string);
 
-    return widget;
+    return W_WIDGET(label);
 }
 
 
 /* Image widget. */
+
+#define W_IMAGE(W) ((w_image_t *) W)
 
 #define W_IMAGE_DATA \
     W_WIDGET_DATA \
@@ -821,18 +845,18 @@ w_label_t *w_label_create(char *string)
     float yalign;
 
 /** Image widget state. */
-typedef struct w_image_data
+typedef struct w_image
 {
     W_IMAGE_DATA
 }
-w_image_data_t;
+w_image_t;
 
 /** Implements widget::render for image widgets. */
 static void w_image_render(widget_t *widget, int x, int y, int focus)
 {
-    w_image_data_t *image_data = widget->data;
-    int w = widget->width;
-    int h = widget->height;
+    w_image_t *w_image = W_IMAGE(widget);
+    int w = w_image->width;
+    int h = w_image->height;
     Uint32 ticks = SDL_GetTicks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
@@ -842,8 +866,8 @@ static void w_image_render(widget_t *widget, int x, int y, int focus)
     else
         factor = 1.0f + IMAGE_SCALE * ((1.0f - phase) * 2);
 
-    x += image_data->xalign * (widget->width_a - widget->width);
-    y += (1.0f - image_data->yalign) * (widget->height_a - widget->height);
+    x += w_image->xalign * (w_image->width_a - w_image->width);
+    y += (1.0f - w_image->yalign) * (w_image->height_a - w_image->height);
 
 
     if (focus != FOCUS_NONE)
@@ -852,50 +876,42 @@ static void w_image_render(widget_t *widget, int x, int y, int focus)
         h *= factor;
     }
 
-    draw_texture(image_data->image, x - (w - widget->width)/2, y - (h - widget->height)/2, w, h, 1.0f, &col_white);
+    draw_texture(w_image->image, x - (w - w_image->width)/2, y - (h - w_image->height)/2, w, h, 1.0f, &col_white);
 }
 
-static void w_image_set_alignment(widget_t *widget, float xalign, float yalign)
+static void w_image_set_alignment(w_image_t *w_image, float xalign, float yalign)
 {
-    w_image_data_t *data = widget->data;
-
-    data->xalign = xalign;
-    data->yalign = yalign;
+    w_image->xalign = xalign;
+    w_image->yalign = yalign;
 }
 
-void w_image_destroy(widget_t *widget)
+void w_image_init(w_image_t *w_image, texture_t *image)
 {
-    free(widget->data);
-    free(widget);
+    w_widget_init(W_WIDGET(w_image));
+
+    w_image->render = w_image_render;
+    w_image->xalign = 0.5f;
+    w_image->yalign = 0.5f;
+    w_image->image = image;
+    w_image->enabled = 1;
+    w_image->width = image->width;
+    w_image->height = image->height;
 }
 
 /** @brief Creates an image widget. */
-widget_t *w_image_create(texture_t *image)
+w_widget_t *w_image_create(texture_t *image)
 {
-    widget_t *item = malloc(sizeof(widget_t));
-    w_image_data_t *data = malloc(sizeof(w_image_data_t));
+    w_image_t *w_image = malloc(sizeof(w_image_t));
 
-    item->render = w_image_render;
-    item->input = NULL;
-    item->destroy = w_image_destroy;
-    item->set_size = w_set_size;
-    item->get_focus_pos = w_get_focus_pos;
-    item->set_focus_pos = w_set_focus_pos;
-    data->xalign = 0.5f;
-    data->yalign = 0.5f;
-    data->image = image;
-    item->data = data;
-    item->enabled = 1;
-    item->width = image->width;
-    item->height = image->height;
-    item->width_f = -1;
-    item->height_f = -1;
+    w_image_init(w_image, image);
 
-    return item;
+    return W_WIDGET(w_image);
 }
 
 
 /* Action widget. */
+
+#define W_ACTION(W) ((w_action_t *) W)
 
 #define W_ACTION_DATA \
     W_WIDGET_DATA \
@@ -904,32 +920,32 @@ widget_t *w_image_create(texture_t *image)
     void *func_data;
 
 /** Action widget state. */
-typedef struct w_action_data
+typedef struct w_action
 {
     W_ACTION_DATA
 }
-w_action_data_t;
+w_action_t;
 
 /** Implements widget::render for action widgets. */
 static void w_action_render(widget_t *widget, int x, int y, int focus)
 {
-    w_action_data_t *action_data = widget->data;
+    w_action_t *w_action = W_ACTION(widget);
 
     if (focus != FOCUS_NONE)
         focus = FOCUS_ALL;
 
-    action_data->child->render(action_data->child, x, y, focus);
+    w_action->child->render(w_action->child, x, y, focus);
 }
 
 /** Implements widget::input for action widgets. */
 static int w_action_input(widget_t *widget, ui_event_t event)
 {
-    w_action_data_t *action_data = widget->data;
+    w_action_t *w_action = W_ACTION(widget);
 
     if (event == UI_EVENT_ACTION)
     {
-        if (action_data->func)
-            action_data->func(widget, action_data->func_data);
+        if (w_action->func)
+            w_action->func(widget, w_action->func_data);
         return 1;
     }
 
@@ -938,10 +954,10 @@ static int w_action_input(widget_t *widget, ui_event_t event)
 
 void w_action_set_size(widget_t *widget, int width, int height)
 {
-    w_action_data_t *data = widget->data;
+    w_action_t *w_action = W_ACTION(widget);
 
-    if (data->child)
-        data->child->set_size(data->child, width, height);
+    if (w_action->child)
+        w_action->child->set_size(w_action->child, width, height);
 
     w_set_size(widget, width, height);
 }
@@ -952,12 +968,28 @@ void w_action_set_size(widget_t *widget, int width, int height)
  */
 void w_action_destroy(widget_t *widget)
 {
-    w_action_data_t *data = widget->data;
+    w_action_t *w_action = W_ACTION(widget);
 
-    if (data->child)
-        data->child->destroy(data->child);
-    free(data);
-    free(widget);
+    if (w_action->child)
+        w_action->child->destroy(w_action->child);
+
+    w_widget_destroy(widget);
+}
+
+void w_action_init(w_action_t *w_action, w_widget_t *widget)
+{
+    w_widget_init(W_WIDGET(w_action));
+
+    w_action->render = w_action_render;
+    w_action->input = w_action_input;
+    w_action->destroy = w_action_destroy;
+    w_action->set_size = w_action_set_size;
+    w_action->child = widget;
+    w_action->func = NULL;
+    w_action->func_data = NULL;
+    w_action->enabled = 1;
+    w_action->width = widget->width; /* FIXME */
+    w_action->height = widget->height; /* FIXME */
 }
 
 /** @brief Creates an action widget.
@@ -968,38 +1000,23 @@ void w_action_destroy(widget_t *widget)
  *  @param string The text for the widget.
  *  @return The created action widget.
  */
-widget_t *w_action_create(widget_t *widget)
+w_widget_t *w_action_create(w_widget_t *widget)
 {
-    widget_t *item = malloc(sizeof(widget_t));
-    w_action_data_t *data = malloc(sizeof(w_action_data_t));
+    w_action_t *w_action = malloc(sizeof(w_action_t));
 
-    item->render = w_action_render;
-    item->input = w_action_input;
-    item->destroy = w_action_destroy;
-    item->set_size = w_action_set_size;
-    item->get_focus_pos = w_get_focus_pos;
-    item->set_focus_pos = w_set_focus_pos;
-    data->child = widget;
-    data->func = NULL;
-    data->func_data = NULL;
-    item->data = data;
-    item->enabled = 1; /*widget->enabled;*/
-    item->width = widget->width;
-    item->height = widget->height;
-    item->width_f = -1;
-    item->height_f = -1;
+    w_action_init(w_action, widget);
 
-    return item;
+    return W_WIDGET(w_action);
 }
 
-widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
+w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
 {
-    w_label_t *label = w_label_create(text);
-    widget_t *action;
+    w_widget_t *label = w_label_create(text);
+    w_widget_t *action;
 
-    w_label_set_bouncy(label, 1);
-    w_label_set_alignment(label, xalign, yalign);
-    action = w_action_create(W_WIDGET(label));
+    w_label_set_bouncy(W_LABEL(label), 1);
+    w_label_set_alignment(W_LABEL(label), xalign, yalign);
+    action = w_action_create(label);
     return action;
 }
 
@@ -1008,12 +1025,10 @@ widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
  *  @param widget The action widget.
  *  @param callback Function that should be called when widget is activated.
  */
-void w_action_set_callback(widget_t *widget, void (* callback) (widget_t *, void *), void *func_data)
+void w_action_set_callback(w_action_t *w_action, void (* callback) (w_widget_t *, void *), void *func_data)
 {
-    w_action_data_t *data = widget->data;
-
-    data->func = callback;
-    data->func_data = func_data;
+    w_action->func = callback;
+    w_action->func_data = func_data;
 }
 
 
@@ -1202,9 +1217,9 @@ void w_option_append(widget_t *widget, widget_t *child)
 
 void w_option_append_label(widget_t *widget, char *text, float xalign, float yalign)
 {
-    w_label_t *label = w_label_create(text);
-    w_label_set_alignment(label, xalign, yalign);
-    w_option_append(widget, W_WIDGET(label));
+    w_widget_t *label = w_label_create(text);
+    w_label_set_alignment(W_LABEL(label), xalign, yalign);
+    w_option_append(widget, label);
 }
 
 /** @brief Returns the index of the selected option of an option widget.
@@ -1932,20 +1947,20 @@ static dialog_t *dialog_ingame_create()
     dialog_t *dialog;
     widget_t *vbox = w_vbox_create(0);
 
-    widget_t *widget = w_action_create_with_label("Retract Move", 0.0f, 0.0f);
-    w_action_set_callback(widget, retract_move, NULL);
+    w_widget_t *widget = w_action_create_with_label("Retract Move", 0.0f, 0.0f);
+    w_action_set_callback(W_ACTION(widget), retract_move, NULL);
     w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("Move Now", 0.0f, 0.0f);
-    w_action_set_callback(widget, move_now, NULL);
+    w_action_set_callback(W_ACTION(widget), move_now, NULL);
     w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("View Previous Move", 0.0f, 0.0f);
-    w_action_set_callback(widget, view_prev, NULL);
+    w_action_set_callback(W_ACTION(widget), view_prev, NULL);
     w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("View Next Move", 0.0f, 0.0f);
-    w_action_set_callback(widget, view_next, NULL);
+    w_action_set_callback(W_ACTION(widget), view_next, NULL);
     w_vbox_append(vbox, widget);
 
     dialog = dialog_create(vbox);
@@ -1981,21 +1996,20 @@ static void dialog_close_cb(widget_t *widget, void *data)
 static dialog_t *dialog_quit_create()
 {
     dialog_t *dialog;
-    widget_t *widget;
     widget_t *vbox = w_vbox_create(0);
 
-    w_label_t *text = w_label_create("You don't really want to quit do ya?");
-    w_vbox_append(vbox, W_WIDGET(text));
+    w_widget_t *widget = w_label_create("You don't really want to quit do ya?");
+    w_vbox_append(vbox, widget);
 
-    text = w_label_create("");
-    w_vbox_append(vbox, W_WIDGET(text));
+    widget = w_label_create("");
+    w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("Yeah.. I suck..", 0.5f, 0.0f);
-    w_action_set_callback(widget, dialog_quit_ok, NULL);
+    w_action_set_callback(W_ACTION(widget), dialog_quit_ok, NULL);
     w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("Of course not!", 0.5f, 0.0f);
-    w_action_set_callback(widget, dialog_close_cb, NULL);
+    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
     w_vbox_append(vbox, widget);
 
     dialog = dialog_create(vbox);
@@ -2025,14 +2039,14 @@ static dialog_t *dialog_system_create()
 {
     dialog_t *dialog;
     widget_t *vbox = w_vbox_create(0);
-    widget_t *widget;
+    w_widget_t *widget;
 
     widget = w_action_create_with_label("Return To Game", 0.0f, 0.0f);
-    w_action_set_callback(widget, dialog_close_cb, NULL);
+    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
     w_vbox_append(vbox, widget);
 
     widget = w_action_create_with_label("Quit Game", 0.0f, 0.0f);
-    w_action_set_callback(widget, dialog_quit_open, NULL);
+    w_action_set_callback(W_ACTION(widget), dialog_quit_open, NULL);
     w_vbox_append(vbox, widget);
 
     dialog = dialog_create(vbox);
@@ -2047,9 +2061,9 @@ dialog_t *dialog_victory_create(result_t *result)
     dialog_t *dialog;
     widget_t *hbox = w_hbox_create(20);
     widget_t *vbox = w_vbox_create(0);
-    widget_t *image_l, *image_r;
-    widget_t *action;
-    w_label_t *text;
+    w_widget_t *image_l, *image_r;
+    w_widget_t *action;
+    w_widget_t *text;
 
     switch (result->code)
     {
@@ -2071,13 +2085,13 @@ dialog_t *dialog_victory_create(result_t *result)
         text = w_label_create("The game ended in a draw!");
     }
 
-    w_vbox_append(vbox, W_WIDGET(text));
+    w_vbox_append(vbox, text);
     text = w_label_create(result->reason);
-    w_vbox_append(vbox, W_WIDGET(text));
+    w_vbox_append(vbox, text);
     text = w_label_create("");
-    w_vbox_append(vbox, W_WIDGET(text));
+    w_vbox_append(vbox, text);
     action = w_action_create_with_label("Ok", 0.5f, 0.5f);
-    w_action_set_callback(action, dialog_close_cb, NULL);
+    w_action_set_callback(W_ACTION(action), dialog_close_cb, NULL);
     w_vbox_append(vbox, action);
     w_hbox_append(hbox, image_l);
     w_hbox_append(hbox, vbox);
@@ -2152,10 +2166,10 @@ static dialog_t *dialog_title_create()
 {
     dialog_t *dialog;
     widget_t *vbox;
-    widget_t *widget;
+    w_widget_t *widget;
     widget_t *vbox2;
     widget_t *hbox;
-    w_label_t *label;
+    w_widget_t *label;
     int i;
 
     config = malloc(sizeof(config_t));
@@ -2166,34 +2180,34 @@ static dialog_t *dialog_title_create()
     flip_board = 0;
 
     widget = w_action_create_with_label("Start Game", 0.0f, 0.0f);
-    w_action_set_callback(widget, menu_title_start, NULL);
+    w_action_set_callback(W_ACTION(widget), menu_title_start, NULL);
     vbox = w_vbox_create(0);
     w_vbox_append(vbox, widget);
 
     label = w_label_create("Players:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
     vbox2 = w_vbox_create(0);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_vbox_append(vbox2, label);
 
     label = w_label_create("Difficulty:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
 
     label = w_label_create("Theme:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
 
     label = w_label_create("Chess Set:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
 
     label = w_label_create("Board:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
 
     label = w_label_create("Name:");
-    w_label_set_alignment(label, 0.0f, 0.0f);
-    w_vbox_append(vbox2, W_WIDGET(label));
+    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_vbox_append(vbox2, label);
 
     hbox = w_hbox_create(20);
     w_hbox_append(hbox, vbox2);
@@ -2239,7 +2253,7 @@ static dialog_t *dialog_title_create()
     w_vbox_append(vbox, hbox);
 
     widget = w_action_create_with_label("Quit Game", 0.0f, 0.0f);
-    w_action_set_callback(widget, menu_title_quit, NULL);
+    w_action_set_callback(W_ACTION(widget), menu_title_quit, NULL);
     w_vbox_append(vbox, widget);
 
     dialog = dialog_create(vbox);
@@ -2258,9 +2272,8 @@ static void dialog_vkeyboard_key(widget_t *widget, void *data)
 static dialog_t *dialog_vkeyboard_create()
 {
     dialog_t *dialog;
-    w_label_t *label;
-    widget_t *action;
-    widget_t *vbox;
+    w_widget_t *label;
+    w_widget_t *action;
     widget_t *hbox;
     widget_t *vbox2;
     static ui_event_t key;
@@ -2269,7 +2282,7 @@ static dialog_t *dialog_vkeyboard_create()
 
     hbox=w_hbox_create(0);
     label=w_label_create("Type stuff, k?" );
-    w_hbox_append(hbox, W_WIDGET(label));
+    w_hbox_append(hbox, label);
     vbox2=w_vbox_create(0);
     w_vbox_append(vbox2, hbox );
 
@@ -2294,7 +2307,7 @@ static dialog_t *dialog_vkeyboard_create()
                 key_str[1] = '\0';
                 action = w_action_create_with_label(key_str, 0.5f, 0.5f);
                 w_set_requested_size(action, max_width, 0);
-                w_action_set_callback(action, dialog_vkeyboard_key, &keys[k]);
+                w_action_set_callback(W_ACTION(action), dialog_vkeyboard_key, &keys[k]);
 
                 w_hbox_append(hbox, action);
                 k++;
@@ -2584,11 +2597,11 @@ dialog_t *dialog_promote_create(int colour)
 
     texture_t *pieces;
     dialog_t *dialog;
-    widget_t *action;
+    w_widget_t *action;
     widget_t *vbox = w_vbox_create(0);
     widget_t *hbox = w_hbox_create(0);
-    widget_t *widget;
-    w_label_t *text = w_label_create("Promotion! Choose new piece!");
+    w_widget_t *w_image;
+    w_widget_t *text = w_label_create("Promotion! Choose new piece!");
 
     dialog_promote_piece = NONE;
     cb_pieces[0] = QUEEN + colour;
@@ -2596,31 +2609,31 @@ dialog_t *dialog_promote_create(int colour)
     cb_pieces[2] = BISHOP + colour;
     cb_pieces[3] = KNIGHT + colour;
 
-    w_vbox_append(vbox, W_WIDGET(text));
+    w_vbox_append(vbox, text);
 
     if (IS_WHITE(colour))
         pieces = white_pieces;
     else
         pieces = black_pieces;
 
-    widget = w_image_create(&pieces[GUI_PIECE_QUEEN]);
-    action = w_action_create(widget);
-    w_action_set_callback(action, dialog_promote_cb, &cb_pieces[0]);
+    w_image = w_image_create(&pieces[GUI_PIECE_QUEEN]);
+    action = w_action_create(w_image);
+    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[0]);
     w_hbox_append(hbox, action);
 
-    widget = w_image_create(&pieces[GUI_PIECE_ROOK]);
-    action = w_action_create(widget);
-    w_action_set_callback(action, dialog_promote_cb, &cb_pieces[1]);
+    w_image = w_image_create(&pieces[GUI_PIECE_ROOK]);
+    action = w_action_create(w_image);
+    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[1]);
     w_hbox_append(hbox, action);
 
-    widget = w_image_create(&pieces[GUI_PIECE_BISHOP]);
-    action = w_action_create(widget);
-    w_action_set_callback(action, dialog_promote_cb, &cb_pieces[2]);
+    w_image = w_image_create(&pieces[GUI_PIECE_BISHOP]);
+    action = w_action_create(w_image);
+    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[2]);
     w_hbox_append(hbox, action);
 
-    widget = w_image_create(&pieces[GUI_PIECE_KNIGHT]);
-    action = w_action_create(widget);
-    w_action_set_callback(action, dialog_promote_cb, &cb_pieces[3]);
+    w_image = w_image_create(&pieces[GUI_PIECE_KNIGHT]);
+    action = w_action_create(w_image);
+    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[3]);
     w_hbox_append(hbox, action);
     w_vbox_append(vbox, hbox);
 
@@ -2632,7 +2645,7 @@ dialog_t *dialog_promote_create(int colour)
 dialog_t *dialog_message_create(char *message)
 {
     dialog_t *dialog;
-    widget_t *widget;
+    w_widget_t *widget;
 
     widget_t *vbox = w_vbox_create(0);
     w_vbox_append(vbox, W_WIDGET(w_label_create("Important message from engine")));
@@ -2640,7 +2653,7 @@ dialog_t *dialog_message_create(char *message)
     w_vbox_append(vbox, W_WIDGET(w_label_create(message)));
     w_vbox_append(vbox, W_WIDGET(w_label_create("")));
     widget = w_action_create_with_label("Ok", 0.5f, 0.5f);
-    w_action_set_callback(widget, dialog_close_cb, NULL);
+    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
     w_vbox_append(vbox, widget);
     dialog = dialog_create(vbox);
     dialog_set_modal(dialog, 1);
