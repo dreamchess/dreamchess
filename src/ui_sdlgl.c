@@ -1034,6 +1034,8 @@ void w_action_set_callback(w_action_t *w_action, void (* callback) (w_widget_t *
 
 /* Option widget. */
 
+#define W_OPTION(W) ((w_option_t *) W)
+
 #define W_OPTION_DATA \
     W_WIDGET_DATA \
     widget_list_t list; \
@@ -1041,25 +1043,25 @@ void w_action_set_callback(w_action_t *w_action, void (* callback) (w_widget_t *
     void *func_data;
 
 /** Option widget state. */
-typedef struct w_option_data
+typedef struct w_option
 {
     W_OPTION_DATA
 }
-w_option_data_t;
+w_option_t;
 
 #define OPTION_ARROW_LEFT "\253 "
 #define OPTION_ARROW_RIGHT " \273"
 
 /** Implements widget::render for option widgets. */
-static void w_option_render(widget_t *widget, int x, int y, int focus)
+static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_option_data_t *multi_data = widget->data;
-    widget_list_t *list = &multi_data->list;
-    widget_t *child;
+    w_option_t *w_option = W_OPTION(widget);
+    widget_list_t *list = &w_option->list;
+    w_widget_t *child;
     int xx, yy;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
-    yy = y + widget->height_a / 2 - text_height() / 2;
+    yy = y + w_option->height_a / 2 - text_height() / 2;
 
     if (list->sel == -1)
         return;
@@ -1076,7 +1078,7 @@ static void w_option_render(widget_t *widget, int x, int y, int focus)
 
     child = list->item[list->sel];
     child->render(child, xx, y, focus);
-    xx = x + widget->width_a - border_r;
+    xx = x + w_option->width_a - border_r;
     if (list->sel < list->nr - 1)
     {
         if (focus != FOCUS_NONE)
@@ -1089,10 +1091,10 @@ static void w_option_render(widget_t *widget, int x, int y, int focus)
 }
 
 /** Implements widget::input for option widgets. */
-static int w_option_input(widget_t *widget, ui_event_t event)
+static int w_option_input(w_widget_t *widget, ui_event_t event)
 {
-    w_option_data_t *multi_data = widget->data;
-    widget_list_t *list = &multi_data->list;
+    w_option_t *w_option = W_OPTION(widget);
+    widget_list_t *list = &w_option->list;
 
     if (list->sel == -1)
         return 0;
@@ -1101,8 +1103,8 @@ static int w_option_input(widget_t *widget, ui_event_t event)
     {
         if (widget_list_select_next(list, 0, 0))
         {
-            if (multi_data->func)
-                multi_data->func(widget, multi_data->func_data);
+            if (w_option->func)
+                w_option->func(widget, w_option->func_data);
         }
 
         return 1;
@@ -1111,8 +1113,8 @@ static int w_option_input(widget_t *widget, ui_event_t event)
     {
         if (widget_list_select_prev(list, 0, 0))
         {
-            if (multi_data->func)
-                multi_data->func(widget, multi_data->func_data);
+            if (w_option->func)
+                w_option->func(widget, w_option->func_data);
         }
 
         return 1;
@@ -1121,10 +1123,10 @@ static int w_option_input(widget_t *widget, ui_event_t event)
     return 0;
 }
 
-void w_option_set_size(widget_t *widget, int width, int height)
+void w_option_set_size(w_widget_t *widget, int width, int height)
 {
-    w_option_data_t *multi_data = widget->data;
-    widget_list_t *list = &multi_data->list;
+    w_option_t *w_option = W_OPTION(widget);
+    widget_list_t *list = &w_option->list;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
     int i;
@@ -1142,11 +1144,23 @@ void w_option_set_size(widget_t *widget, int width, int height)
  */
 void w_option_destroy(widget_t *widget)
 {
-    w_option_data_t *multi_data = widget->data;
+    w_option_t *w_option = W_OPTION(widget);
 
-    widget_list_destroy(&multi_data->list);
-    free(multi_data);
-    free(widget);
+    widget_list_destroy(&w_option->list);
+    w_widget_destroy(widget);
+}
+
+void w_option_init(w_option_t *w_option)
+{
+    w_widget_init(W_WIDGET(w_option));
+
+    w_option->render = w_option_render;
+    w_option->input = w_option_input;
+    w_option->destroy = w_option_destroy;
+    w_option->set_size = w_option_set_size;
+    w_option->list.item = NULL;
+    w_option->list.nr = 0;
+    w_option->list.sel = -1;
 }
 
 /** @brief Creates an option widget.
@@ -1159,26 +1173,11 @@ void w_option_destroy(widget_t *widget)
  */
 widget_t *w_option_create()
 {
-    widget_t *item = malloc(sizeof(widget_t));
-    w_option_data_t *data = malloc(sizeof(w_option_data_t));
+    w_option_t *w_option = malloc(sizeof(w_option_t));
 
-    item->render = w_option_render;
-    item->input = w_option_input;
-    item->destroy = w_option_destroy;
-    item->set_size = w_option_set_size;
-    item->get_focus_pos = w_get_focus_pos;
-    item->set_focus_pos = w_set_focus_pos;
-    data->list.item = NULL;
-    data->list.nr = 0;
-    data->list.sel = -1;
-    item->data = data;
-    item->enabled = 0;
-    item->width = 0;
-    item->height = 0;
-    item->width_f = -1;
-    item->height_f = -1;
+    w_option_init(w_option);
 
-    return item;
+    return W_WIDGET(w_option);
 }
 
 /** @brief Appends an option to the option widget's option list.
@@ -1186,10 +1185,9 @@ widget_t *w_option_create()
  *  @param widget The option widget.
  *  @param string The option to append.
  */
-void w_option_append(widget_t *widget, widget_t *child)
+void w_option_append(w_option_t *w_option, widget_t *child)
 {
-    w_option_data_t *data = widget->data;
-    widget_list_t *list = &data->list;
+    widget_list_t *list = &w_option->list;
     int width, child_height;
     int height = text_height();
 
@@ -1202,24 +1200,24 @@ void w_option_append(widget_t *widget, widget_t *child)
 
     widget_list_append(list, child);
 
-    if (width > widget->width)
-        widget->width = width;
+    if (width > w_option->width)
+        w_option->width = width;
 
-    if (height > widget->height)
-        widget->height = height;
+    if (height > w_option->height)
+        w_option->height = height;
 
     if (list->nr == 2)
-        widget->enabled = 1;
+        w_option->enabled = 1;
 
     if (list->sel == -1)
         list->sel = 0;
 }
 
-void w_option_append_label(widget_t *widget, char *text, float xalign, float yalign)
+void w_option_append_label(w_option_t *w_option, char *text, float xalign, float yalign)
 {
     w_widget_t *label = w_label_create(text);
     w_label_set_alignment(W_LABEL(label), xalign, yalign);
-    w_option_append(widget, label);
+    w_option_append(w_option, W_WIDGET(label));
 }
 
 /** @brief Returns the index of the selected option of an option widget.
@@ -1227,12 +1225,9 @@ void w_option_append_label(widget_t *widget, char *text, float xalign, float yal
  *  @param widget The option widget.
  *  @return Index of the selected option.
  */
-int w_option_get_selected(widget_t *widget)
+int w_option_get_selected(w_option_t *w_option)
 {
-    w_option_data_t *data = widget->data;
-    widget_list_t *list = &data->list;
-
-    return list->sel;
+    return w_option->list.sel;
 }
 
 /** @brief Sets option widget callback.
@@ -1241,12 +1236,10 @@ int w_option_get_selected(widget_t *widget)
  *  @param callback Function that should be called when an option is
  *                  selected.
  */
-void w_option_set_callback(widget_t *widget, void (* callback) (widget_t *, void *), void *func_data)
+void w_option_set_callback(w_option_t *w_option, void (* callback) (widget_t *, void *), void *func_data)
 {
-    w_option_data_t *data = widget->data;
-
-    data->func = callback;
-    data->func_data = func_data;
+    w_option->func = callback;
+    w_option->func_data = func_data;
 }
 
 
@@ -2121,9 +2114,9 @@ static void menu_title_quit(widget_t *widget, void *data)
     dialog_close();
 }
 
-void dialog_title_players(widget_t *widget, void *data)
+void dialog_title_players(w_widget_t *widget, void *data)
 {
-    switch (w_option_get_selected(widget))
+    switch (w_option_get_selected(W_OPTION(widget)))
     {
     case GAME_TYPE_HUMAN_VS_CPU:
         config->player[WHITE] = PLAYER_UI;
@@ -2142,24 +2135,24 @@ void dialog_title_players(widget_t *widget, void *data)
     }
 }
 
-static void dialog_title_level(widget_t *widget, void *data)
+static void dialog_title_level(w_widget_t *widget, void *data)
 {
-    config->cpu_level = w_option_get_selected(widget) + 1;
+    config->cpu_level = w_option_get_selected(W_OPTION(widget)) + 1;
 }
 
-static void dialog_title_theme(widget_t *widget, void *data)
+static void dialog_title_theme(w_widget_t *widget, void *data)
 {
-    cur_theme = w_option_get_selected(widget);
+    cur_theme = w_option_get_selected(W_OPTION(widget));
 }
 
-static void dialog_title_pieces(widget_t *widget, void *data)
+static void dialog_title_pieces(w_widget_t *widget, void *data)
 {
-    pieces_list_cur = w_option_get_selected(widget);
+    pieces_list_cur = w_option_get_selected(W_OPTION(widget));
 }
 
-static void dialog_title_board(widget_t *widget, void *data)
+static void dialog_title_board(w_widget_t *widget, void *data)
 {
-    board_list_cur = w_option_get_selected(widget);
+    board_list_cur = w_option_get_selected(W_OPTION(widget));
 }
 
 static dialog_t *dialog_title_create()
@@ -2213,37 +2206,37 @@ static dialog_t *dialog_title_create()
     w_hbox_append(hbox, vbox2);
 
     widget = w_option_create();
-    w_option_append_label(widget, "Human vs. CPU", 0.5f, 0.0f);
-    w_option_append_label(widget, "CPU vs. Human", 0.5f, 0.0f);
-    w_option_append_label(widget, "Human vs. Human", 0.5f, 0.0f);
-    w_option_set_callback(widget, dialog_title_players, NULL);
+    w_option_append_label(W_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
+    w_option_append_label(W_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
+    w_option_append_label(W_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
+    w_option_set_callback(W_OPTION(widget), dialog_title_players, NULL);
     vbox2 = w_vbox_create(0);
     w_vbox_append(vbox2, widget);
 
     widget = w_option_create();
-    w_option_append_label(widget, "Level 1", 0.5f, 0.0f);
-    w_option_append_label(widget, "Level 2", 0.5f, 0.0f);
-    w_option_append_label(widget, "Level 3", 0.5f, 0.0f);
-    w_option_append_label(widget, "Level 4", 0.5f, 0.0f);
-    w_option_set_callback(widget, dialog_title_level, NULL);
+    w_option_append_label(W_OPTION(widget), "Level 1", 0.5f, 0.0f);
+    w_option_append_label(W_OPTION(widget), "Level 2", 0.5f, 0.0f);
+    w_option_append_label(W_OPTION(widget), "Level 3", 0.5f, 0.0f);
+    w_option_append_label(W_OPTION(widget), "Level 4", 0.5f, 0.0f);
+    w_option_set_callback(W_OPTION(widget), dialog_title_level, NULL);
     w_vbox_append(vbox2, widget);
 
     widget = w_option_create();
     for (i = 0; i < num_theme; i++)
-        w_option_append_label(widget, themelist[i], 0.5f, 0.0f);
-    w_option_set_callback(widget, dialog_title_theme, NULL);
+        w_option_append_label(W_OPTION(widget), themelist[i], 0.5f, 0.0f);
+    w_option_set_callback(W_OPTION(widget), dialog_title_theme, NULL);
     w_vbox_append(vbox2, widget);
 
     widget = w_option_create();
     for (i = 0; i < pieces_list_total; i++)
-        w_option_append_label(widget, pieces_list[i], 0.5f, 0.0f);
-    w_option_set_callback(widget, dialog_title_pieces, NULL);
+        w_option_append_label(W_OPTION(widget), pieces_list[i], 0.5f, 0.0f);
+    w_option_set_callback(W_OPTION(widget), dialog_title_pieces, NULL);
     w_vbox_append(vbox2, widget);
 
     widget = w_option_create();
     for (i = 0; i < board_list_total; i++)
-        w_option_append_label(widget, board_list[i], 0.5f, 0.0f);
-    w_option_set_callback(widget, dialog_title_board, NULL);
+        w_option_append_label(W_OPTION(widget), board_list[i], 0.5f, 0.0f);
+    w_option_set_callback(W_OPTION(widget), dialog_title_board, NULL);
     w_vbox_append(vbox2, widget);
 
     widget = w_entry_create();
