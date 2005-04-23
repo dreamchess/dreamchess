@@ -762,15 +762,46 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
     widget->height_f = height;
 }
 
+#define W_ALIGNABLE(W) CHECK_CAST(W, w_alignable_get_class_id(), w_alignable_t)
+
+#define W_ALIGNABLE_DATA \
+    W_WIDGET_DATA \
+    float xalign; \
+    float yalign;
+
+typedef struct w_alignable
+{
+    W_ALIGNABLE_DATA
+}
+w_alignable_t;
+
+w_class_id w_alignable_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
+
+void w_alignable_init(w_alignable_t *alignable)
+{
+    w_widget_init((w_widget_t *) alignable);
+
+    alignable->id = w_alignable_get_class_id();
+    alignable->xalign = 0.0f;
+    alignable->yalign = 0.0f;
+}
+
+static void w_alignable_set_alignment(w_alignable_t *alignable, float xalign, float yalign)
+{
+    alignable->xalign = xalign;
+    alignable->yalign = yalign;
+}
+
 /* Text widget. */
 
 #define W_LABEL(W) CHECK_CAST(W, w_label_get_class_id(), w_label_t)
 
 #define W_LABEL_DATA \
-    W_WIDGET_DATA \
+    W_ALIGNABLE_DATA \
     char *label; \
-    float xalign; \
-    float yalign; \
     int bouncy;
 
 /** Text widget state. */
@@ -782,7 +813,7 @@ w_label_t;
 
 w_class_id w_label_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    CHILD(w_alignable_get_class_id())
 }
 
 /** Implements widget::render for text widgets. */
@@ -802,12 +833,6 @@ static void w_label_render(widget_t *widget, int x, int y, int focus)
     }
     else
         text_draw_string(x, y, label->label, 1, &col_black);
-}
-
-static void w_label_set_alignment(w_label_t *label, float xalign, float yalign)
-{
-    label->xalign = xalign;
-    label->yalign = yalign;
 }
 
 static void w_label_set_bouncy(w_label_t *label, int bouncy)
@@ -831,14 +856,12 @@ void w_label_destroy(widget_t *widget)
 
 void w_label_init(w_label_t *label, char *text)
 {
-    w_widget_init((w_widget_t *) label);
+    w_alignable_init((w_alignable_t *) label);
 
     label->render = w_label_render;
     label->destroy = w_label_destroy;
     label->id = w_label_get_class_id();
     label->label = strdup(text);
-    label->xalign = 0.5f;
-    label->yalign = 0.5f;
     label->bouncy = 0;
     label->width = text_width(text);
     label->height = text_height() + BOUNCE_AMP;
@@ -867,10 +890,8 @@ w_widget_t *w_label_create(char *string)
 #define W_IMAGE(W) CHECK_CAST(W, w_image_get_class_id(), w_image_t)
 
 #define W_IMAGE_DATA \
-    W_WIDGET_DATA \
-    texture_t *image; \
-    float xalign; \
-    float yalign;
+    W_ALIGNABLE_DATA \
+    texture_t *image;
 
 /** Image widget state. */
 typedef struct w_image
@@ -881,7 +902,7 @@ w_image_t;
 
 w_class_id w_image_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    CHILD(w_alignable_get_class_id())
 }
 
 /** Implements widget::render for image widgets. */
@@ -912,20 +933,12 @@ static void w_image_render(w_widget_t *widget, int x, int y, int focus)
     draw_texture(image->image, x - (w - image->width)/2, y - (h - image->height)/2, w, h, 1.0f, &col_white);
 }
 
-static void w_image_set_alignment(w_image_t *image, float xalign, float yalign)
-{
-    image->xalign = xalign;
-    image->yalign = yalign;
-}
-
 void w_image_init(w_image_t *image, texture_t *texture)
 {
-    w_widget_init(W_WIDGET(image));
+    w_alignable_init((w_alignable_t *) image);
 
     image->render = w_image_render;
     image->id = w_image_get_class_id();
-    image->xalign = 0.5f;
-    image->yalign = 0.5f;
     image->image = texture;
     image->enabled = 1;
     image->width = texture->width;
@@ -1055,7 +1068,7 @@ w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
     w_widget_t *action;
 
     w_label_set_bouncy(W_LABEL(label), 1);
-    w_label_set_alignment(W_LABEL(label), xalign, yalign);
+    w_alignable_set_alignment(W_ALIGNABLE(label), xalign, yalign);
     action = w_action_create(label);
     return action;
 }
@@ -1262,7 +1275,7 @@ void w_option_append(w_option_t *option, widget_t *child)
 void w_option_append_label(w_option_t *option, char *text, float xalign, float yalign)
 {
     w_widget_t *label = w_label_create(text);
-    w_label_set_alignment(W_LABEL(label), xalign, yalign);
+    w_alignable_set_alignment(W_ALIGNABLE(label), xalign, yalign);
     w_option_append(option, label);
 }
 
@@ -2225,28 +2238,28 @@ static dialog_t *dialog_title_create()
     w_vbox_append(W_BOX(vbox), widget);
 
     label = w_label_create("Players:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     vbox2 = w_vbox_create(0);
     w_vbox_append(W_BOX(vbox2), label);
 
     label = w_label_create("Difficulty:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_vbox_append(W_BOX(vbox2), label);
 
     label = w_label_create("Theme:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_vbox_append(W_BOX(vbox2), label);
 
     label = w_label_create("Chess Set:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_vbox_append(W_BOX(vbox2), label);
 
     label = w_label_create("Board:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_vbox_append(W_BOX(vbox2), label);
 
     label = w_label_create("Name:");
-    w_label_set_alignment(W_LABEL(label), 0.0f, 0.0f);
+    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_vbox_append(W_BOX(vbox2), label);
 
     hbox = w_hbox_create(20);
