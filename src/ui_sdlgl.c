@@ -761,31 +761,31 @@ w_class w_label_get_class()
 /** Implements widget::render for text widgets. */
 static void w_label_render(widget_t *widget, int x, int y, int focus)
 {
-    w_label_t *text = W_LABEL(widget);
+    w_label_t *label = W_LABEL(widget);
 
-    x += text->xalign * (text->width_a - text->width);
-    y += (1.0f - text->yalign) * (text->height_a - text->height);
+    x += label->xalign * (label->width_a - label->width);
+    y += (1.0f - label->yalign) * (label->height_a - label->height);
 
     if (focus != FOCUS_NONE)
     {
-        if (text->bouncy)
-            text_draw_string_bouncy(x, y, text->label, 1, &col_dark_red);
+        if (label->bouncy)
+            text_draw_string_bouncy(x, y, label->label, 1, &col_dark_red);
         else
-            text_draw_string(x, y, text->label, 1, &col_dark_red);
+            text_draw_string(x, y, label->label, 1, &col_dark_red);
     }
     else
-        text_draw_string(x, y, text->label, 1, &col_black);
+        text_draw_string(x, y, label->label, 1, &col_black);
 }
 
-static void w_label_set_alignment(w_label_t *widget, float xalign, float yalign)
+static void w_label_set_alignment(w_label_t *label, float xalign, float yalign)
 {
-    widget->xalign = xalign;
-    widget->yalign = yalign;
+    label->xalign = xalign;
+    label->yalign = yalign;
 }
 
-static void w_label_set_bouncy(w_label_t *widget, int bouncy)
+static void w_label_set_bouncy(w_label_t *label, int bouncy)
 {
-    widget->bouncy = bouncy;
+    label->bouncy = bouncy;
 }
 
 /** @brief Destroys a text widget.
@@ -852,11 +852,11 @@ typedef struct w_image
 w_image_t;
 
 /** Implements widget::render for image widgets. */
-static void w_image_render(widget_t *widget, int x, int y, int focus)
+static void w_image_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_image_t *w_image = W_IMAGE(widget);
-    int w = w_image->width;
-    int h = w_image->height;
+    w_image_t *image = W_IMAGE(widget);
+    int w = image->width;
+    int h = image->height;
     Uint32 ticks = SDL_GetTicks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
@@ -866,8 +866,8 @@ static void w_image_render(widget_t *widget, int x, int y, int focus)
     else
         factor = 1.0f + IMAGE_SCALE * ((1.0f - phase) * 2);
 
-    x += w_image->xalign * (w_image->width_a - w_image->width);
-    y += (1.0f - w_image->yalign) * (w_image->height_a - w_image->height);
+    x += image->xalign * (image->width_a - image->width);
+    y += (1.0f - image->yalign) * (image->height_a - image->height);
 
 
     if (focus != FOCUS_NONE)
@@ -876,36 +876,36 @@ static void w_image_render(widget_t *widget, int x, int y, int focus)
         h *= factor;
     }
 
-    draw_texture(w_image->image, x - (w - w_image->width)/2, y - (h - w_image->height)/2, w, h, 1.0f, &col_white);
+    draw_texture(image->image, x - (w - image->width)/2, y - (h - image->height)/2, w, h, 1.0f, &col_white);
 }
 
-static void w_image_set_alignment(w_image_t *w_image, float xalign, float yalign)
+static void w_image_set_alignment(w_image_t *image, float xalign, float yalign)
 {
-    w_image->xalign = xalign;
-    w_image->yalign = yalign;
+    image->xalign = xalign;
+    image->yalign = yalign;
 }
 
-void w_image_init(w_image_t *w_image, texture_t *image)
+void w_image_init(w_image_t *image, texture_t *texture)
 {
-    w_widget_init(W_WIDGET(w_image));
+    w_widget_init(W_WIDGET(image));
 
-    w_image->render = w_image_render;
-    w_image->xalign = 0.5f;
-    w_image->yalign = 0.5f;
-    w_image->image = image;
-    w_image->enabled = 1;
-    w_image->width = image->width;
-    w_image->height = image->height;
+    image->render = w_image_render;
+    image->xalign = 0.5f;
+    image->yalign = 0.5f;
+    image->image = texture;
+    image->enabled = 1;
+    image->width = texture->width;
+    image->height = texture->height;
 }
 
 /** @brief Creates an image widget. */
-w_widget_t *w_image_create(texture_t *image)
+w_widget_t *w_image_create(texture_t *texture)
 {
-    w_image_t *w_image = malloc(sizeof(w_image_t));
+    w_image_t *image = malloc(sizeof(w_image_t));
 
-    w_image_init(w_image, image);
+    w_image_init(image, texture);
 
-    return W_WIDGET(w_image);
+    return W_WIDGET(image);
 }
 
 
@@ -927,37 +927,37 @@ typedef struct w_action
 w_action_t;
 
 /** Implements widget::render for action widgets. */
-static void w_action_render(widget_t *widget, int x, int y, int focus)
+static void w_action_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_action_t *w_action = W_ACTION(widget);
+    w_action_t *action = W_ACTION(widget);
 
     if (focus != FOCUS_NONE)
         focus = FOCUS_ALL;
 
-    w_action->child->render(w_action->child, x, y, focus);
+    action->child->render(action->child, x, y, focus);
 }
 
 /** Implements widget::input for action widgets. */
-static int w_action_input(widget_t *widget, ui_event_t event)
+static int w_action_input(w_widget_t *widget, ui_event_t event)
 {
-    w_action_t *w_action = W_ACTION(widget);
+    w_action_t *action = W_ACTION(widget);
 
     if (event == UI_EVENT_ACTION)
     {
-        if (w_action->func)
-            w_action->func(widget, w_action->func_data);
+        if (action->func)
+            action->func(widget, action->func_data);
         return 1;
     }
 
     return 0;
 }
 
-void w_action_set_size(widget_t *widget, int width, int height)
+void w_action_set_size(w_widget_t *widget, int width, int height)
 {
-    w_action_t *w_action = W_ACTION(widget);
+    w_action_t *action = W_ACTION(widget);
 
-    if (w_action->child)
-        w_action->child->set_size(w_action->child, width, height);
+    if (action->child)
+        action->child->set_size(action->child, width, height);
 
     w_set_size(widget, width, height);
 }
@@ -966,30 +966,30 @@ void w_action_set_size(widget_t *widget, int width, int height)
  *
  *  @param widget The action widget.
  */
-void w_action_destroy(widget_t *widget)
+void w_action_destroy(w_widget_t *widget)
 {
-    w_action_t *w_action = W_ACTION(widget);
+    w_action_t *action = W_ACTION(widget);
 
-    if (w_action->child)
-        w_action->child->destroy(w_action->child);
+    if (action->child)
+        action->child->destroy(action->child);
 
     w_widget_destroy(widget);
 }
 
-void w_action_init(w_action_t *w_action, w_widget_t *widget)
+void w_action_init(w_action_t *action, w_widget_t *widget)
 {
-    w_widget_init(W_WIDGET(w_action));
+    w_widget_init(W_WIDGET(action));
 
-    w_action->render = w_action_render;
-    w_action->input = w_action_input;
-    w_action->destroy = w_action_destroy;
-    w_action->set_size = w_action_set_size;
-    w_action->child = widget;
-    w_action->func = NULL;
-    w_action->func_data = NULL;
-    w_action->enabled = 1;
-    w_action->width = widget->width; /* FIXME */
-    w_action->height = widget->height; /* FIXME */
+    action->render = w_action_render;
+    action->input = w_action_input;
+    action->destroy = w_action_destroy;
+    action->set_size = w_action_set_size;
+    action->child = widget;
+    action->func = NULL;
+    action->func_data = NULL;
+    action->enabled = 1;
+    action->width = widget->width; /* FIXME */
+    action->height = widget->height; /* FIXME */
 }
 
 /** @brief Creates an action widget.
@@ -1002,11 +1002,11 @@ void w_action_init(w_action_t *w_action, w_widget_t *widget)
  */
 w_widget_t *w_action_create(w_widget_t *widget)
 {
-    w_action_t *w_action = malloc(sizeof(w_action_t));
+    w_action_t *action = malloc(sizeof(w_action_t));
 
-    w_action_init(w_action, widget);
+    w_action_init(action, widget);
 
-    return W_WIDGET(w_action);
+    return W_WIDGET(action);
 }
 
 w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
@@ -1025,10 +1025,10 @@ w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
  *  @param widget The action widget.
  *  @param callback Function that should be called when widget is activated.
  */
-void w_action_set_callback(w_action_t *w_action, void (* callback) (w_widget_t *, void *), void *func_data)
+void w_action_set_callback(w_action_t *action, void (* callback) (w_widget_t *, void *), void *func_data)
 {
-    w_action->func = callback;
-    w_action->func_data = func_data;
+    action->func = callback;
+    action->func_data = func_data;
 }
 
 
@@ -1055,13 +1055,13 @@ w_option_t;
 /** Implements widget::render for option widgets. */
 static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_option_t *w_option = W_OPTION(widget);
-    widget_list_t *list = &w_option->list;
+    w_option_t *option = W_OPTION(widget);
+    widget_list_t *list = &option->list;
     w_widget_t *child;
     int xx, yy;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
-    yy = y + w_option->height_a / 2 - text_height() / 2;
+    yy = y + option->height_a / 2 - text_height() / 2;
 
     if (list->sel == -1)
         return;
@@ -1078,7 +1078,7 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 
     child = list->item[list->sel];
     child->render(child, xx, y, focus);
-    xx = x + w_option->width_a - border_r;
+    xx = x + option->width_a - border_r;
     if (list->sel < list->nr - 1)
     {
         if (focus != FOCUS_NONE)
@@ -1093,8 +1093,8 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 /** Implements widget::input for option widgets. */
 static int w_option_input(w_widget_t *widget, ui_event_t event)
 {
-    w_option_t *w_option = W_OPTION(widget);
-    widget_list_t *list = &w_option->list;
+    w_option_t *option = W_OPTION(widget);
+    widget_list_t *list = &option->list;
 
     if (list->sel == -1)
         return 0;
@@ -1103,8 +1103,8 @@ static int w_option_input(w_widget_t *widget, ui_event_t event)
     {
         if (widget_list_select_next(list, 0, 0))
         {
-            if (w_option->func)
-                w_option->func(widget, w_option->func_data);
+            if (option->func)
+                option->func(widget, option->func_data);
         }
 
         return 1;
@@ -1113,8 +1113,8 @@ static int w_option_input(w_widget_t *widget, ui_event_t event)
     {
         if (widget_list_select_prev(list, 0, 0))
         {
-            if (w_option->func)
-                w_option->func(widget, w_option->func_data);
+            if (option->func)
+                option->func(widget, option->func_data);
         }
 
         return 1;
@@ -1125,8 +1125,8 @@ static int w_option_input(w_widget_t *widget, ui_event_t event)
 
 void w_option_set_size(w_widget_t *widget, int width, int height)
 {
-    w_option_t *w_option = W_OPTION(widget);
-    widget_list_t *list = &w_option->list;
+    w_option_t *option = W_OPTION(widget);
+    widget_list_t *list = &option->list;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
     int i;
@@ -1144,23 +1144,23 @@ void w_option_set_size(w_widget_t *widget, int width, int height)
  */
 void w_option_destroy(widget_t *widget)
 {
-    w_option_t *w_option = W_OPTION(widget);
+    w_option_t *option = W_OPTION(widget);
 
-    widget_list_destroy(&w_option->list);
+    widget_list_destroy(&option->list);
     w_widget_destroy(widget);
 }
 
-void w_option_init(w_option_t *w_option)
+void w_option_init(w_option_t *option)
 {
-    w_widget_init(W_WIDGET(w_option));
+    w_widget_init(W_WIDGET(option));
 
-    w_option->render = w_option_render;
-    w_option->input = w_option_input;
-    w_option->destroy = w_option_destroy;
-    w_option->set_size = w_option_set_size;
-    w_option->list.item = NULL;
-    w_option->list.nr = 0;
-    w_option->list.sel = -1;
+    option->render = w_option_render;
+    option->input = w_option_input;
+    option->destroy = w_option_destroy;
+    option->set_size = w_option_set_size;
+    option->list.item = NULL;
+    option->list.nr = 0;
+    option->list.sel = -1;
 }
 
 /** @brief Creates an option widget.
@@ -1173,11 +1173,11 @@ void w_option_init(w_option_t *w_option)
  */
 widget_t *w_option_create()
 {
-    w_option_t *w_option = malloc(sizeof(w_option_t));
+    w_option_t *option = malloc(sizeof(w_option_t));
 
-    w_option_init(w_option);
+    w_option_init(option);
 
-    return W_WIDGET(w_option);
+    return W_WIDGET(option);
 }
 
 /** @brief Appends an option to the option widget's option list.
@@ -1185,9 +1185,9 @@ widget_t *w_option_create()
  *  @param widget The option widget.
  *  @param string The option to append.
  */
-void w_option_append(w_option_t *w_option, widget_t *child)
+void w_option_append(w_option_t *option, widget_t *child)
 {
-    widget_list_t *list = &w_option->list;
+    widget_list_t *list = &option->list;
     int width, child_height;
     int height = text_height();
 
@@ -1200,24 +1200,24 @@ void w_option_append(w_option_t *w_option, widget_t *child)
 
     widget_list_append(list, child);
 
-    if (width > w_option->width)
-        w_option->width = width;
+    if (width > option->width)
+        option->width = width;
 
-    if (height > w_option->height)
-        w_option->height = height;
+    if (height > option->height)
+        option->height = height;
 
     if (list->nr == 2)
-        w_option->enabled = 1;
+        option->enabled = 1;
 
     if (list->sel == -1)
         list->sel = 0;
 }
 
-void w_option_append_label(w_option_t *w_option, char *text, float xalign, float yalign)
+void w_option_append_label(w_option_t *option, char *text, float xalign, float yalign)
 {
     w_widget_t *label = w_label_create(text);
     w_label_set_alignment(W_LABEL(label), xalign, yalign);
-    w_option_append(w_option, W_WIDGET(label));
+    w_option_append(option, label);
 }
 
 /** @brief Returns the index of the selected option of an option widget.
@@ -1225,9 +1225,9 @@ void w_option_append_label(w_option_t *w_option, char *text, float xalign, float
  *  @param widget The option widget.
  *  @return Index of the selected option.
  */
-int w_option_get_selected(w_option_t *w_option)
+int w_option_get_selected(w_option_t *option)
 {
-    return w_option->list.sel;
+    return option->list.sel;
 }
 
 /** @brief Sets option widget callback.
@@ -1236,10 +1236,10 @@ int w_option_get_selected(w_option_t *w_option)
  *  @param callback Function that should be called when an option is
  *                  selected.
  */
-void w_option_set_callback(w_option_t *w_option, void (* callback) (widget_t *, void *), void *func_data)
+void w_option_set_callback(w_option_t *option, void (* callback) (w_widget_t *, void *), void *func_data)
 {
-    w_option->func = callback;
-    w_option->func_data = func_data;
+    option->func = callback;
+    option->func_data = func_data;
 }
 
 
@@ -1262,11 +1262,11 @@ w_box_t;
 
 void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int nr = list->nr;
 
-    y += w_box->height_a - w_box->height;
+    y += box->height_a - box->height;
 
     while (--nr >= 0)
     {
@@ -1281,14 +1281,14 @@ void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
 
         list->item[nr]->render(list->item[nr], x, y, focus_child);
         y += list->item[nr]->height_a;
-        y += w_box->spacing;
+        y += box->spacing;
     }
 }
 
 static int w_vbox_input(w_widget_t *widget, ui_event_t event)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int retval = 0, x, y;
 
     if (list->sel == -1)
@@ -1322,8 +1322,8 @@ static int w_vbox_input(w_widget_t *widget, ui_event_t event)
 
 static void w_vbox_set_size(w_widget_t *widget, int width, int height)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int i;
 
     for (i = 0; i < list->nr; i++)
@@ -1334,13 +1334,13 @@ static void w_vbox_set_size(w_widget_t *widget, int width, int height)
         list->item[i]->set_size(list->item[i], width, item_height);
     }
 
-    w_set_size(W_WIDGET(widget), width, height);
+    w_set_size(widget, width, height);
 }
 
 static void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int nr = list->nr - 1;
 
     assert(list->sel != -1);
@@ -1353,14 +1353,14 @@ static void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
         nr--;
     }
 
-    *y += (list->nr - list->sel - 1)  * w_box->spacing;
+    *y += (list->nr - list->sel - 1) * box->spacing;
 }
 
 static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
-    int cur_y = w_box->height_a - w_box->height;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
+    int cur_y = box->height_a - box->height;
 
     list->sel = list->nr;
 
@@ -1369,7 +1369,7 @@ static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
         cur_y += list->item[list->sel]->height_a;
         if (cur_y >= y)
             break;
-        cur_y += w_box->spacing;
+        cur_y += box->spacing;
     }
 
     assert (list->sel != list->nr);
@@ -1381,26 +1381,26 @@ static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
  */
 void w_vbox_destroy(w_widget_t *widget)
 {
-    w_box_t *w_box = W_BOX(widget);
+    w_box_t *box = W_BOX(widget);
 
-    widget_list_destroy(&w_box->list);
+    widget_list_destroy(&box->list);
     w_widget_destroy(widget);
 }
 
-void w_vbox_init(w_box_t *w_box, int spacing)
+void w_vbox_init(w_box_t *box, int spacing)
 {
-    w_widget_init(W_WIDGET(w_box));
+    w_widget_init(W_WIDGET(box));
 
-    w_box->render = w_vbox_render;
-    w_box->input = w_vbox_input;
-    w_box->destroy = w_vbox_destroy;
-    w_box->set_size = w_vbox_set_size;
-    w_box->get_focus_pos = w_vbox_get_focus_pos;
-    w_box->set_focus_pos = w_vbox_set_focus_pos;
-    w_box->list.item = NULL;
-    w_box->list.nr = 0;
-    w_box->list.sel = -1;
-    w_box->spacing = spacing;
+    box->render = w_vbox_render;
+    box->input = w_vbox_input;
+    box->destroy = w_vbox_destroy;
+    box->set_size = w_vbox_set_size;
+    box->get_focus_pos = w_vbox_get_focus_pos;
+    box->set_focus_pos = w_vbox_set_focus_pos;
+    box->list.item = NULL;
+    box->list.nr = 0;
+    box->list.sel = -1;
+    box->spacing = spacing;
 }
 
 /** @brief Creates a vertical box widget.
@@ -1411,11 +1411,11 @@ void w_vbox_init(w_box_t *w_box, int spacing)
  */
 w_widget_t *w_vbox_create(int spacing)
 {
-    w_box_t *w_box = malloc(sizeof(w_box_t));
+    w_box_t *box = malloc(sizeof(w_box_t));
 
-    w_vbox_init(w_box, spacing);
+    w_vbox_init(box, spacing);
 
-    return W_WIDGET(w_box);
+    return W_WIDGET(box);
 }
 
 /** @brief Appends a widget to vertical box widget.
@@ -1423,26 +1423,26 @@ w_widget_t *w_vbox_create(int spacing)
  *  @param vbox The vbox widget.
  *  @param widget The widget to append.
  */
-void w_vbox_append(w_box_t *w_box, w_widget_t *widget)
+void w_vbox_append(w_box_t *box, w_widget_t *widget)
 {
-    widget_list_t *list = &w_box->list;
+    widget_list_t *list = &box->list;
     int widget_width, widget_height;
 
     widget_list_append(list, widget);
     w_get_requested_size(widget, &widget_width, &widget_height);
 
-    if (widget_width > w_box->width)
-        w_box->width = widget_width;
+    if (widget_width > box->width)
+        box->width = widget_width;
 
-    w_box->height += widget_height;
+    box->height += widget_height;
     if (list->nr != 1)
-        w_box->height += w_box->spacing;
+        box->height += box->spacing;
 
     if (widget->enabled && widget->input)
     {
         if (list->sel == -1)
             list->sel = list->nr - 1;
-        w_box->enabled = 1;
+        box->enabled = 1;
     }
 }
 
@@ -1450,8 +1450,8 @@ void w_vbox_append(w_box_t *w_box, w_widget_t *widget)
 
 void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int nr = 0;
 
     while (nr < list->nr)
@@ -1467,15 +1467,15 @@ void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
 
         list->item[nr]->render(list->item[nr], x, y, focus_child);
         x += list->item[nr]->width_a;
-        x += w_box->spacing;
+        x += box->spacing;
         nr++;
     }
 }
 
 static int w_hbox_input(widget_t *widget, ui_event_t event)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int retval = 0, x, y;
 
     if (list->sel == -1)
@@ -1509,8 +1509,8 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
 
 static void w_hbox_set_size(w_widget_t *widget, int width, int height)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int i;
 
     for (i = 0; i < list->nr; i++)
@@ -1526,8 +1526,8 @@ static void w_hbox_set_size(w_widget_t *widget, int width, int height)
 
 static void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int nr = 0;
 
     assert(list->sel != -1);
@@ -1540,13 +1540,13 @@ static void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
         nr++;
     }
 
-    *x += list->sel * w_box->spacing;
+    *x += list->sel * box->spacing;
 }
 
 static void w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
 {
-    w_box_t *w_box = W_BOX(widget);
-    widget_list_t *list = &w_box->list;
+    w_box_t *box = W_BOX(widget);
+    widget_list_t *list = &box->list;
     int cur_x = 0;
 
     list->sel = -1;
@@ -1556,7 +1556,7 @@ static void w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
         cur_x += list->item[list->sel]->width_a;
         if (cur_x >= x)
             break;
-        cur_x += w_box->spacing;
+        cur_x += box->spacing;
     }
 
     assert (list->sel != -1);
@@ -1568,27 +1568,27 @@ static void w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
  */
 void w_hbox_destroy(w_widget_t *widget)
 {
-    w_box_t *w_box = W_BOX(widget);
+    w_box_t *box = W_BOX(widget);
 
-    widget_list_destroy(&w_box->list);
+    widget_list_destroy(&box->list);
 
     w_widget_destroy(widget);
 }
 
-void w_hbox_init(w_box_t *w_box, int spacing)
+void w_hbox_init(w_box_t *box, int spacing)
 {
-    w_widget_init(W_WIDGET(w_box));
+    w_widget_init(W_WIDGET(box));
 
-    w_box->render = w_hbox_render;
-    w_box->input = w_hbox_input;
-    w_box->destroy = w_hbox_destroy;
-    w_box->set_size = w_hbox_set_size;
-    w_box->get_focus_pos = w_hbox_get_focus_pos;
-    w_box->set_focus_pos = w_hbox_set_focus_pos;
-    w_box->list.item = NULL;
-    w_box->list.nr = 0;
-    w_box->list.sel = -1;
-    w_box->spacing = spacing;
+    box->render = w_hbox_render;
+    box->input = w_hbox_input;
+    box->destroy = w_hbox_destroy;
+    box->set_size = w_hbox_set_size;
+    box->get_focus_pos = w_hbox_get_focus_pos;
+    box->set_focus_pos = w_hbox_set_focus_pos;
+    box->list.item = NULL;
+    box->list.nr = 0;
+    box->list.sel = -1;
+    box->spacing = spacing;
 }
 
 /** @brief Creates a horizontal box widget.
@@ -1599,11 +1599,11 @@ void w_hbox_init(w_box_t *w_box, int spacing)
  */
 widget_t *w_hbox_create(int spacing)
 {
-    w_box_t *w_box = malloc(sizeof(w_box_t));
+    w_box_t *box = malloc(sizeof(w_box_t));
 
-    w_hbox_init(w_box, spacing);
+    w_hbox_init(box, spacing);
 
-    return W_WIDGET(w_box);
+    return W_WIDGET(box);
 }
 
 /** @brief Appends a widget to vertical box widget.
@@ -1611,26 +1611,26 @@ widget_t *w_hbox_create(int spacing)
  *  @param vbox The vbox widget.
  *  @param widget The widget to append.
  */
-void w_hbox_append(w_box_t *w_box, widget_t *widget)
+void w_hbox_append(w_box_t *box, widget_t *widget)
 {
-    widget_list_t *list = &w_box->list;
+    widget_list_t *list = &box->list;
     int widget_width, widget_height;
 
     widget_list_append(list, widget);
     w_get_requested_size(widget, &widget_width, &widget_height);
 
-    if (widget_height > w_box->height)
-        w_box->height = widget_height;
+    if (widget_height > box->height)
+        box->height = widget_height;
 
-    w_box->width += widget_width;
+    box->width += widget_width;
     if (list->nr != 1)
-        w_box->width += w_box->spacing;
+        box->width += box->spacing;
 
     if (widget->enabled && widget->input)
     {
         if (list->sel == -1)
             list->sel = list->nr - 1;
-        w_box->enabled = 1;
+        box->enabled = 1;
     }
 }
 
@@ -1639,6 +1639,8 @@ void w_hbox_append(w_box_t *w_box, widget_t *widget)
 #define ENTRY_SPACING 2
 #define ENTRY_MAX_LEN 255
 #define ENTRY_CURSOR "|"
+
+#define W_ENTRY(W) ((w_entry_t *) W)
 
 #define W_ENTRY_DATA \
     W_WIDGET_DATA \
@@ -1653,20 +1655,20 @@ typedef struct w_entry
 {
     W_ENTRY_DATA
 }
-w_entry_data_t;
+w_entry_t;
 
 /** Implements widget::render for text entry widgets. */
-void w_entry_render(widget_t *widget, int x, int y, int focus)
+void w_entry_render(w_widget_t *widget, int x, int y, int focus)
 {
-    w_entry_data_t *data = widget->data;
+    w_entry_t *entry = W_ENTRY(widget);
     int len;
 
-    len = text_width_n(data->text, data->cursor_pos);
+    len = text_width_n(entry->text, entry->cursor_pos);
 
     if (focus != FOCUS_NONE)
-        draw_rect(x, y, widget->width_a, widget->height_a, &col_dark_red);
+        draw_rect(x, y, entry->width_a, entry->height_a, &col_dark_red);
     else
-        draw_rect(x, y, widget->width_a, widget->height_a, &col_black);
+        draw_rect(x, y, entry->width_a, entry->height_a, &col_black);
 
     x += ENTRY_SPACING;
     y += ENTRY_SPACING;
@@ -1674,44 +1676,44 @@ void w_entry_render(widget_t *widget, int x, int y, int focus)
     if (focus != FOCUS_NONE)
     {
         int cursor_width = text_width(ENTRY_CURSOR);
-        text_draw_string(x, y, data->text, 1, &col_dark_red);
+        text_draw_string(x, y, entry->text, 1, &col_dark_red);
         if (SDL_GetTicks() % 400 < 200)
             text_draw_string(x + len - cursor_width / 2, y, ENTRY_CURSOR,1,
                              &col_dark_red);
     }
     else
-        text_draw_string(x, y, data->text, 1, &col_black);
+        text_draw_string(x, y, entry->text, 1, &col_black);
 }
 
 /** Implements widget::input for text entry widgets. */
 static int w_entry_input(widget_t *widget, ui_event_t event)
 {
-    w_entry_data_t *data = widget->data;
+    w_entry_t *entry = W_ENTRY(widget);
     int c = -1;
-    int len = strlen(data->text);
+    int len = strlen(entry->text);
 
     if (event == UI_EVENT_LEFT)
     {
-        if (data->cursor_pos > 0)
-            data->cursor_pos--;
+        if (entry->cursor_pos > 0)
+            entry->cursor_pos--;
         return 1;
     }
 
     if (event == UI_EVENT_RIGHT)
     {
-        if (data->cursor_pos < len)
-            data->cursor_pos++;
+        if (entry->cursor_pos < len)
+            entry->cursor_pos++;
         return 1;
     }
 
     if (event == UI_EVENT_BACKSPACE)
     {
-        if (data->cursor_pos > 0)
+        if (entry->cursor_pos > 0)
         {
             int i;
-            for (i = data->cursor_pos; i <= len; i++)
-                data->text[i - 1] = data->text[i];
-            data->cursor_pos--;
+            for (i = entry->cursor_pos; i <= len; i++)
+                entry->text[i - 1] = entry->text[i];
+            entry->cursor_pos--;
         }
 
         return 1;
@@ -1722,27 +1724,29 @@ static int w_entry_input(widget_t *widget, ui_event_t event)
     else
         return 0;
 
-    if (len < data->max_len)
+    if (len < entry->max_len)
     {
         int i;
-        for (i = len; i >= data->cursor_pos; i--)
-            data->text[i + 1] = data->text[i];
-        data->text[data->cursor_pos++] = c;
+        for (i = len; i >= entry->cursor_pos; i--)
+            entry->text[i + 1] = entry->text[i];
+        entry->text[entry->cursor_pos++] = c;
     }
 
     return 1;
 }
 
-/** @brief Destroys a text entry widget.
- *
- *  @param widget The widget to destroy.
- */
-void w_entry_destroy(widget_t *widget)
+void w_entry_init(w_entry_t *entry)
 {
-    w_entry_data_t *data = widget->data;
+    w_widget_init(W_WIDGET(entry));
 
-    free(data);
-    free(widget);
+    entry->render = w_entry_render;
+    entry->input = w_entry_input;
+    entry->max_len = ENTRY_MAX_LEN;
+    entry->cursor_pos = 0;
+    entry->text[0] = '\0';
+    entry->enabled = 1;
+    entry->width = text_width("Visible text") + ENTRY_SPACING * 2;
+    entry->height = text_height() + ENTRY_SPACING * 2;
 }
 
 /** @brief Creates a text entry widget.
@@ -1751,28 +1755,13 @@ void w_entry_destroy(widget_t *widget)
  *
  *  @return The created widget.
  */
-widget_t *w_entry_create()
+w_widget_t *w_entry_create()
 {
-    widget_t *item = malloc(sizeof(widget_t));
-    w_entry_data_t *data = malloc(sizeof(w_entry_data_t));
+    w_entry_t *entry = malloc(sizeof(w_entry_t));
 
-    item->render = w_entry_render;
-    item->input = w_entry_input;
-    item->destroy = w_entry_destroy;
-    item->set_size = w_set_size;
-    item->get_focus_pos = w_get_focus_pos;
-    item->set_focus_pos = w_set_focus_pos;
-    data->max_len = ENTRY_MAX_LEN;
-    data->cursor_pos = 0;
-    data->text[0] = '\0';
-    item->data = data;
-    item->enabled = 1;
-    item->width = text_width("Visible text") + ENTRY_SPACING * 2;
-    item->height = text_height() + ENTRY_SPACING * 2;
-    item->width_f = -1;
-    item->height_f = -1;
+    w_entry_init(entry);
 
-    return item;
+    return W_WIDGET(entry);
 }
 
 void dialog_set_modal(dialog_t *dialog, int modal)
