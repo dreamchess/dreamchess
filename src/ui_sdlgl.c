@@ -2391,7 +2391,6 @@ void load_texture_png( texture_t *texture, char *filename, int alpha );
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
 
 static texture_t backdrop;
-static texture_t boardimg;
 static int mouse_x_pos, mouse_y_pos;
 static int can_load=FALSE;
 
@@ -3066,7 +3065,6 @@ static void load_theme(char* name, char* pieces, char *board)
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
-    load_texture_png( &boardimg, "board.png", 0 );
     load_pieces();
 
     ch_datadir();
@@ -3336,7 +3334,6 @@ static void unload_theme()
 {
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);
-    glDeleteTextures(1, &boardimg.id);
     freemodels();
 }
 
