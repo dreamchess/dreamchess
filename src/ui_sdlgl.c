@@ -1302,6 +1302,15 @@ void w_option_set_callback(w_option_t *option, void (* callback) (w_widget_t *, 
 }
 
 
+/* Container class. */
+
+#define W_CONTAINER CHECK_CAST(W, w_container_get_class_id(), w_container_t)
+
+#define W_CONTAINER_DATA \
+    W_WIDGET_DATA \
+    int children; \
+    widget_t **child;
+
 /* Vertical box widget. */
 
 #define W_BOX(W) CHECK_CAST(W, w_box_get_class_id(), w_box_t)
