@@ -191,6 +191,11 @@ else
 		DREAMCHESS_LIBS="libs/libpipe_win32.a"
 		DREAMER_LIBS="../libs/libpipe_win32.a"
 		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
+	elif test "$host_os" = "beos"; then
+		AC_SUBST(PIPE_LIB, "libpipe_beos.a")
+		DREAMCHESS_LIBS="libs/libpipe_beos.a"
+		DREAMER_LIBS="../libs/libpipe_beos.a"
+		AC_DEFINE([COMM_PIPE_UNIX], [1])
 	else
 		AC_SUBST(PIPE_LIB, "libpipe_unix.a")
 		DREAMCHESS_LIBS="libs/libpipe_unix.a"

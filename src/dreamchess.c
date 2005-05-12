@@ -331,8 +331,6 @@ int dreamchess(void *data)
     comm_init(engine);
     comm_send("xboard\n");
 
-    ch_datadir();
-
     ui->init();
     while (1)
     {

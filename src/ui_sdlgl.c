@@ -2936,7 +2936,9 @@ static void init_gui()
 
     SDL_WM_SetCaption( "DreamChess", NULL );
 
-    init_gl( );
+    init_gl();
+
+    ch_datadir();
 
     /* New text stuff. */
     generate_text_chars();
