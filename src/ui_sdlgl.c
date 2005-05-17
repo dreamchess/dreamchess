@@ -185,6 +185,8 @@ texture_t;
 /* Menu stuff */
 static texture_t menu_title_tex;
 
+static texture_t backdrop;
+
 static ui_event_t convert_event(SDL_Event *event)
 {
     switch (event->type)
@@ -715,6 +717,8 @@ static dialog_t *dialog_current()
 /** Dialog box style. */
 typedef struct style
 {
+    char border_textured;
+
     /** Border size in pixels. */
     int border;
 
@@ -766,7 +770,7 @@ position_t;
 /** Style used for all dialog boxes except the title menu. */
 static style_t style_ingame =
     {
-        5, 20, 10,
+        1, 5, 20, 10,
         {0.0f, 0.0f, 0.0f, 0.5f},
         {0.0f, 0.0f, 0.0f, 1.0f},
         {0.8f, 0.8f, 0.8f, 1.0f}
@@ -789,7 +793,7 @@ static position_t pos_vkeyboard =
 /** Style used for the title menu. */
 static style_t style_title =
     {
-        0, 50, 10,
+        1, 0, 50, 10,
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.7f, 0.7f, 0.7f, 0.85f}
@@ -2027,6 +2031,49 @@ void dialog_destroy(dialog_t *dialog)
     free(dialog);
 }
 
+void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
+{
+   switch ( section )
+   {
+      case 0: // Top left.
+         draw_texture( &backdrop, xmin-16, ymax, 16, 16, 0.95f, &col_white );
+         break;
+      case 1: // Top right.
+         draw_texture( &backdrop, xmax, ymax, 16, 16, 0.95f, &col_white );
+         break;
+      case 2: // Bottom left.
+         draw_texture( &backdrop, xmin-16, ymin-16, 16, 16, 0.95f, &col_white );
+         break;
+      case 3: // Bottom right.
+         draw_texture( &backdrop, xmax, ymin-16, 16, 16, 0.95f, &col_white );
+         break;
+      case 4: // Top
+         /* Make tileable.. */
+         draw_texture( &backdrop, xmin, ymax, xmax-xmin, 16, 0.95f, &col_white );
+         break;
+      case 5: // Bottom
+         /* Make tileable.. */
+         draw_texture( &backdrop, xmin, ymin-16, xmax-xmin, 16, 0.95f, &col_white );
+         break;
+      case 6: // Left
+         /* Make tileable.. */
+         draw_texture( &backdrop, xmin-16, ymin, 16, ymax-ymin, 0.95f, &col_white );
+         break;
+      case 7: // Right
+         /* Make tileable.. */
+         draw_texture( &backdrop, xmax, ymin, 16, ymax-ymin, 0.95f, &col_white );
+         break;
+   }
+}
+
+void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
+{
+   int i=0;
+
+   for ( i; i<8; i++ )
+      dialog_render_border_section( i, xmin, ymin, xmax, ymax );   
+}
+
 /** @brief Renders a dialog.
  *
  *  Renders a dialog in a specific style and at a specific position.
@@ -2075,21 +2122,28 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
     glVertex3f( 0, 0, 0.9f );
     glEnd( );
 
-    /* Draw the border. */
-    col = style->border_col;
-    glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
+    if ( style->border_textured )
+    {  
+      dialog_render_border( xmin, ymin, xmax, ymax );
+    }
+    else
+    {
+      /* Draw the border. */
+      col = style->border_col;
+      glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
 
-    glBegin( GL_QUADS );
-    glVertex3f(xmax, ymin, 0.9f);
-    glVertex3f(xmax, ymax, 0.9f);
-    glVertex3f(xmin, ymax, 0.9f);
-    glVertex3f(xmin, ymin, 0.9f);
-    glEnd();
+      glBegin( GL_QUADS );
+      glVertex3f(xmax, ymin, 0.9f);
+      glVertex3f(xmax, ymax, 0.9f);
+      glVertex3f(xmin, ymax, 0.9f);
+      glVertex3f(xmin, ymin, 0.9f);
+      glEnd();
 
-    xmin += style->border;
-    xmax -= style->border;
-    ymin += style->border;
-    ymax -= style->border;
+      xmin += style->border;
+      xmax -= style->border;
+      ymin += style->border;
+      ymax -= style->border;
+    }  
 
     /* Draw the backdrop. */
     col = style->bg_col;
@@ -2552,7 +2606,6 @@ static int GetMove();
 void load_texture_png( texture_t *texture, char *filename, int alpha );
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
 
-static texture_t backdrop;
 static int mouse_x_pos, mouse_y_pos;
 static int can_load=FALSE;
 
