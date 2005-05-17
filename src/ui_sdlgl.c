@@ -186,6 +186,7 @@ texture_t;
 static texture_t menu_title_tex;
 
 static texture_t backdrop;
+static texture_t border;
 
 static ui_event_t convert_event(SDL_Event *event)
 {
@@ -300,6 +301,29 @@ static void draw_texture( texture_t *texture, float xpos,
     glTexCoord2f(texture->u2, texture->v2);
     glVertex3f( xpos+width,  ypos, zpos );
     glTexCoord2f(texture->u1, texture->v2);
+    glVertex3f( xpos, ypos, zpos );
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+static void draw_texture_uv( texture_t *texture, float xpos,
+                          float ypos, float width, float height, float zpos,
+                          colour_t *col, float u1, float v1, float u2, float v2 )
+{
+    glEnable( GL_TEXTURE_2D );
+
+    glColor4f( col->r, col->g, col->b, col->a );
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(u1, v1);
+    glVertex3f( xpos, ypos+height, zpos );
+    glTexCoord2f(u2, v1);
+    glVertex3f( xpos+width,  ypos+height, zpos );
+    glTexCoord2f(u2, v2);
+    glVertex3f( xpos+width,  ypos, zpos );
+    glTexCoord2f(u1, v2);
     glVertex3f( xpos, ypos, zpos );
     glEnd();
 
@@ -741,6 +765,12 @@ typedef struct style
 
     /** Background colour inside the dialog. */
     colour_t bg_col;
+
+    /** Text Colour */
+    colour_t text_col;
+
+    /** Active Text Colour */
+    colour_t active_text_col;
 }
 style_t;
 
@@ -773,7 +803,9 @@ static style_t style_ingame =
         1, 5, 20, 10,
         {0.0f, 0.0f, 0.0f, 0.5f},
         {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.8f, 0.8f, 0.8f, 1.0f}
+        {0.8f, 0.8f, 0.8f, 1.0f},
+        {1.0f, 1.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f, 1.0f}
     };
 
 /** Position used for all dialog boxes except the title menu. */
@@ -796,7 +828,9 @@ static style_t style_title =
         1, 0, 50, 10,
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.7f, 0.7f, 0.7f, 0.85f}
+        {0.7f, 0.7f, 0.7f, 0.85f},
+        {1.0f, 1.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f, 1.0f}
     };
 
 /** Position used for the title menu. */
@@ -2033,35 +2067,76 @@ void dialog_destroy(dialog_t *dialog)
 
 void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
 {
+   int i=0;
+   float tile_width=border.u2/3;
+
+   //printf( "Border U/V: %f %f %f %f\n\r", border.u1, border.v1, border.u2, border.v2  );
+
    switch ( section )
    {
-      case 0: // Top left.
-         draw_texture( &backdrop, xmin-16, ymax, 16, 16, 0.95f, &col_white );
+      case 0: /* Top */
+         for ( i=0; i<((xmax-xmin)/16); i++ )
+         {
+            if ( i > (int)(((xmax-xmin)/16)-1) )
+               draw_texture_uv( &border, xmin+(i*16), ymax, 
+                  (int)(xmax-xmin)-(int)(i*16), 16, 0.95f, &col_white, 
+                  tile_width, 0.0f, tile_width*2, tile_width );
+            else
+               draw_texture_uv( &border, xmin+(i*16), ymax, 16, 16, 0.95f, &col_white,
+                  tile_width, 0.0f, tile_width*2, tile_width );
+         }
          break;
-      case 1: // Top right.
-         draw_texture( &backdrop, xmax, ymax, 16, 16, 0.95f, &col_white );
+      case 1: /* Bottom */
+         for ( i=0; i<((xmax-xmin)/16); i++ )
+         {
+            if ( i > (int)(((xmax-xmin)/16)-1) )
+               draw_texture_uv( &border, xmin+(i*16), ymin-16, (int)(xmax-xmin)-(int)(i*16),
+                  16, 0.95f, &col_white, tile_width, border.v2-tile_width, tile_width*2,
+                  border.v2 );
+            else
+               draw_texture_uv( &border, xmin+(i*16), ymin-16, 16, 16, 0.95f, &col_white,
+                  tile_width, border.v2-tile_width, tile_width*2, border.v2 );     
+         }          
          break;
-      case 2: // Bottom left.
-         draw_texture( &backdrop, xmin-16, ymin-16, 16, 16, 0.95f, &col_white );
+      case 2: /* Left */
+         for ( i=0; i<((ymax-ymin)/16); i++ )
+         {
+            if ( i > (int)(((ymax-ymin)/16)-1) )
+               draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 
+                  (int)(ymax-ymin)-(int)(i*16), 0.95f, &col_white, 0.0f, tile_width, 
+                  tile_width, tile_width*2 );
+            else
+               draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 16, 0.95f, &col_white,
+                  0.0f, tile_width, tile_width, tile_width*2 ); 
+         }
          break;
-      case 3: // Bottom right.
-         draw_texture( &backdrop, xmax, ymin-16, 16, 16, 0.95f, &col_white );
+      case 3: /* Right */
+         for ( i=0; i<((ymax-ymin)/16); i++ )
+         {
+            if ( i > (int)(((ymax-ymin)/16)-1) )
+               draw_texture_uv( &border, xmax, ymin+(i*16), 16, (int)(ymax-ymin)-(int)(i*16),
+                  0.95f, &col_white, border.u2-tile_width, tile_width, border.u2,
+                  tile_width*2 ); 
+            else
+               draw_texture_uv( &border, xmax, ymin+(i*16), 16, 16, 0.95f, &col_white,
+                  border.u2-tile_width, tile_width, border.u2, tile_width*2 ); 
+         }
          break;
-      case 4: // Top
-         /* Make tileable.. */
-         draw_texture( &backdrop, xmin, ymax, xmax-xmin, 16, 0.95f, &col_white );
+      case 4: /* Top left. */
+         draw_texture_uv( &border, xmin-16, ymax, 16, 16, 0.95f, &col_white, 
+            0.0f, 0.0f, tile_width, tile_width );
          break;
-      case 5: // Bottom
-         /* Make tileable.. */
-         draw_texture( &backdrop, xmin, ymin-16, xmax-xmin, 16, 0.95f, &col_white );
+      case 5: /* Top right. */
+         draw_texture_uv( &border, xmax, ymax, 16, 16, 0.95f, &col_white, 
+            border.u2-tile_width, 0.0f, border.u2, tile_width );
          break;
-      case 6: // Left
-         /* Make tileable.. */
-         draw_texture( &backdrop, xmin-16, ymin, 16, ymax-ymin, 0.95f, &col_white );
+      case 6: /* Bottom left.*/
+         draw_texture_uv( &border, xmin-16, ymin-16, 16, 16, 0.95f, &col_white,
+            0.0f, border.v2-tile_width, tile_width, border.v2 ); 
          break;
-      case 7: // Right
-         /* Make tileable.. */
-         draw_texture( &backdrop, xmax, ymin, 16, ymax-ymin, 0.95f, &col_white );
+      case 7: /* Bottom right. */
+         draw_texture_uv( &border, xmax, ymin-16, 16, 16, 0.95f, &col_white,
+            border.u2-tile_width, border.v2-tile_width, border.u2, border.v2 ); 
          break;
    }
 }
@@ -2071,7 +2146,7 @@ void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
    int i=0;
 
    for ( i; i<8; i++ )
-      dialog_render_border_section( i, xmin, ymin, xmax, ymax );   
+      dialog_render_border_section( i, xmin, ymin, xmax, ymax );
 }
 
 /** @brief Renders a dialog.
@@ -2088,6 +2163,9 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
     int total_height, total_width;
     int xmin, xmax, ymin, ymax;
     colour_t col;
+    float tile_width=border.u2/3;
+    int i,j;
+    float width2, height2;  
 
     height = menu->height;
     width = menu->width;
@@ -2124,6 +2202,26 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
 
     if ( style->border_textured )
     {  
+      /* Draw backdrop.. */
+      for ( j=0; j<=((ymax-ymin)/16); j++ )
+      for ( i=0; i<=((xmax-xmin)/16); i++ )
+      {
+         if ( i > (int)(((xmax-xmin)/16)-1) )
+            width2=(int)(xmax-xmin)-(int)(i*16);
+         else 
+            width2=16;
+
+         if ( j > (int)(((ymax-ymin)/16)-1) )
+            height2=(int)(ymax-ymin)-(int)(j*16);
+         else 
+            height2=16;
+
+
+         draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2, 
+            0.95f, &col_white, tile_width, tile_width, tile_width*2,
+            tile_width*2 );            
+      }
+      /* Border. */
       dialog_render_border( xmin, ymin, xmax, ymax );
     }
     else
@@ -2143,18 +2241,18 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
       xmax -= style->border;
       ymin += style->border;
       ymax -= style->border;
+
+      /* Draw the backdrop. */
+      col = style->bg_col;
+      glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
+
+      glBegin( GL_QUADS );
+      glVertex3f(xmax, ymin, 0.95f);
+      glVertex3f(xmax, ymax, 0.95f);
+      glVertex3f(xmin, ymax, 0.95f);
+      glVertex3f(xmin, ymin, 0.95f);
+      glEnd();
     }  
-
-    /* Draw the backdrop. */
-    col = style->bg_col;
-    glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
-
-    glBegin( GL_QUADS );
-    glVertex3f(xmax, ymin, 0.95f);
-    glVertex3f(xmax, ymax, 0.95f);
-    glVertex3f(xmin, ymax, 0.95f);
-    glVertex3f(xmin, ymin, 0.95f);
-    glEnd();
 
     xmin += style->hor_pad;
     xmax -= style->hor_pad;
@@ -3151,6 +3249,7 @@ static void init_gui()
 
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0);
+    load_texture_png( &border, "menu_border.png" , 1);
 
     /* Fill theme list. */
     if ( (themedir=opendir("themes")) != NULL )
@@ -3282,6 +3381,7 @@ static void load_theme(char* name, char* pieces, char *board)
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
+    load_texture_png( &border, "border.png", 1 );
     load_pieces();
 
     ch_datadir();
