@@ -191,7 +191,6 @@ static texture_t menu_title_tex;
 
 static texture_t backdrop;
 static texture_t border;
-static texture_t ground;
 
 static ui_event_t convert_event(SDL_Event *event)
 {
@@ -2965,9 +2964,9 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos, ypos+5, name, 1, &col_black, 999 );
+        text_draw_string( xpos, ypos+7, name, 1, &col_black, 999 );
     else
-        text_draw_string( xpos+width-(strlen(name)*8), ypos+5, name, 1, &col_black,
+        text_draw_string( xpos+width-(strlen(name)*8), ypos+7, name, 1, &col_black,
            999 );
 }
 
@@ -3407,7 +3406,6 @@ static void load_theme(char* name, char* pieces, char *board)
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
     load_texture_png( &border, "border.png", 1 );
-    //load_texture_png( &border, "ground.png", 1 );
     load_pieces();
 
     ch_datadir();
@@ -3543,14 +3541,14 @@ static void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    draw_rect_fill( 100, 410, 200, 20, &col_yellow );
-    draw_rect_fill( 640-100-200, 410, 200, 20, &col_yellow );
+    draw_rect_fill( 100, 425, 200, 10, &col_yellow );
+    draw_rect_fill( 640-100-200, 425, 200, 10, &col_yellow );
 
-    draw_rect_fill( 100, 410, 200*white_health_percent, 20, &col_red );
-    draw_rect_fill( 640-100-(200*black_health_percent), 410, 200*black_health_percent, 20, &col_red );
+    draw_rect_fill( 100, 425, 200*white_health_percent, 10, &col_red );
+    draw_rect_fill( 640-100-(200*black_health_percent), 425, 200*black_health_percent, 10, &col_red );
 
-    draw_rect( 100, 410, 200, 20, &col_black );
-    draw_rect( 640-100-200, 410, 200, 20, &col_black );
+    draw_rect( 100, 425, 200, 10, &col_black );
+    draw_rect( 640-100-200, 425, 200, 10, &col_black );
 }
 
 /** @brief Renders the list of captured pieces for both sides.
@@ -3625,6 +3623,8 @@ static void draw_scene( board_t *b )
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDisable(GL_BLEND);
     glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
     glDepthMask(GL_TRUE);
@@ -3635,13 +3635,10 @@ static void draw_scene( board_t *b )
 
     //draw_backdrop();
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
-    dialog_render_border( 20, 400, 620, 460 );
+    dialog_render_border( 20, 420, 620, 460 );
     draw_health_bars();
 
     draw_name_dialog( 50, 430, "White", TRUE, 1 );

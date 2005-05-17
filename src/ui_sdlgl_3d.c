@@ -659,7 +659,7 @@ void reset_3d()
     selector = 0;
     if (is_2d)
     {
-        x_rotation = 0.0f;
+        x_rotation = -10.0f;
         z_rotation = 0.0f;
     }
     else
