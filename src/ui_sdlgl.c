@@ -191,6 +191,8 @@ static texture_t menu_title_tex;
 
 static texture_t backdrop;
 static texture_t border;
+static texture_t ground;
+static texture_t sky;
 
 static ui_event_t convert_event(SDL_Event *event)
 {
@@ -2085,8 +2087,10 @@ void dialog_destroy(dialog_t *dialog)
 
 void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
 {
-   int i=0;
    float tile_width=border.u2/3;
+   int i,j;
+   float width2, height2;  
+   colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
 
    //printf( "Border U/V: %f %f %f %f\n\r", border.u1, border.v1, border.u2, border.v2  );
 
@@ -2156,6 +2160,26 @@ void dialog_render_border_section( int section, float xmin, float ymin, float xm
          draw_texture_uv( &border, xmax, ymin-16, 16, 16, 0.95f, &col_white,
             border.u2-tile_width, border.v2-tile_width, border.u2, border.v2 ); 
          break;
+      case 8: /* Middle. */
+      /* Draw backdrop.. */
+      for ( j=0; j<=((ymax-ymin)/16); j++ )
+      for ( i=0; i<=((xmax-xmin)/16); i++ )
+      {
+         if ( i > (int)(((xmax-xmin)/16)-1) )
+            width2=(int)(xmax-xmin)-(int)(i*16);
+         else 
+            width2=16;
+
+         if ( j > (int)(((ymax-ymin)/16)-1) )
+            height2=(int)(ymax-ymin)-(int)(j*16);
+         else 
+            height2=16;
+
+         draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2, 
+            0.95f, &back, tile_width, tile_width, tile_width*2,
+            tile_width*2 );            
+      }
+         break;
    }
 }
 
@@ -2163,7 +2187,7 @@ void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
 {
    int i=0;
 
-   for ( i; i<8; i++ )
+   for ( i; i<9; i++ )
       dialog_render_border_section( i, xmin, ymin, xmax, ymax );
 }
 
@@ -2182,9 +2206,6 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
     int xmin, xmax, ymin, ymax;
     colour_t col;
     float tile_width=border.u2/3;
-    int i,j;
-    float width2, height2;  
-    colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
 
     height = menu->height;
     width = menu->width;
@@ -2221,24 +2242,6 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
 
     if ( style->border_textured )
     {  
-      /* Draw backdrop.. */
-      for ( j=0; j<=((ymax-ymin)/16); j++ )
-      for ( i=0; i<=((xmax-xmin)/16); i++ )
-      {
-         if ( i > (int)(((xmax-xmin)/16)-1) )
-            width2=(int)(xmax-xmin)-(int)(i*16);
-         else 
-            width2=16;
-
-         if ( j > (int)(((ymax-ymin)/16)-1) )
-            height2=(int)(ymax-ymin)-(int)(j*16);
-         else 
-            height2=16;
-
-         draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2, 
-            0.95f, &back, tile_width, tile_width, tile_width*2,
-            tile_width*2 );            
-      }
       /* Border. */
       dialog_render_border( xmin, ymin, xmax, ymax );
     }
@@ -2957,15 +2960,15 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* draw avatar */
     if ( white == 1 )
-        draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45, ypos-50, 100, 100, 0.8f, &col_white);
+        draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45, ypos-50, 100, 100, 0.95f, &col_white);
     else
-        draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45, ypos-50, 100, 100, 0.8f, &col_white);
+        draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45, ypos-50, 100, 100, 0.95f, &col_white);
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos+10, ypos+5, name, 1, &col_black, 999 );
+        text_draw_string( xpos, ypos+5, name, 1, &col_black, 999 );
     else
-        text_draw_string( xpos+width-10-(strlen(name)*8), ypos+5, name, 1, &col_black,
+        text_draw_string( xpos+width-(strlen(name)*8), ypos+5, name, 1, &col_black,
            999 );
 }
 
@@ -3405,6 +3408,8 @@ static void load_theme(char* name, char* pieces, char *board)
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
     load_texture_png( &border, "border.png", 1 );
+    //load_texture_png( &sky, "sky.png", 1 );
+    load_texture_png( &ground, "ground.png", 0 );
     load_pieces();
 
     ch_datadir();
@@ -3540,14 +3545,14 @@ static void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    draw_rect_fill( 80, 400, 200, 20, &col_yellow );
-    draw_rect_fill( 640-80-200, 400, 200, 20, &col_yellow );
+    draw_rect_fill( 100, 410, 200, 20, &col_yellow );
+    draw_rect_fill( 640-100-200, 410, 200, 20, &col_yellow );
 
-    draw_rect_fill( 80, 400, 200*white_health_percent, 20, &col_red );
-    draw_rect_fill( 640-80-(200*black_health_percent), 400, 200*black_health_percent, 20, &col_red );
+    draw_rect_fill( 100, 410, 200*white_health_percent, 20, &col_red );
+    draw_rect_fill( 640-100-(200*black_health_percent), 410, 200*black_health_percent, 20, &col_red );
 
-    draw_rect( 80, 400, 200, 20, &col_black );
-    draw_rect( 640-80-200, 400, 200, 20, &col_black );
+    draw_rect( 100, 410, 200, 20, &col_black );
+    draw_rect( 640-100-200, 410, 200, 20, &col_black );
 }
 
 /** @brief Renders the list of captured pieces for both sides.
@@ -3623,7 +3628,14 @@ static void draw_scene( board_t *b )
     glDisable(GL_BLEND);
     glDepthMask(GL_FALSE);
 
-    draw_backdrop();
+    go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
+    glDepthMask(GL_TRUE);
+
+    render_scene_3d(b);
+
+    resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    //draw_backdrop();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -3631,6 +3643,7 @@ static void draw_scene( board_t *b )
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
+    dialog_render_border( 20, 400, 620, 460 );
     draw_health_bars();
 
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
@@ -3642,13 +3655,6 @@ static void draw_scene( board_t *b )
     else if ( black_in_check == TRUE )
         text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white,
            string_type_pos );
-
-    go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glDepthMask(GL_TRUE);
-
-    render_scene_3d(b);
-
-    resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     if (dialog_current())
         dialog_render(dialog_current(), &style_ingame, &pos_ingame);
