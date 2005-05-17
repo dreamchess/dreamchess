@@ -2184,6 +2184,7 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
     float tile_width=border.u2/3;
     int i,j;
     float width2, height2;  
+    colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
 
     height = menu->height;
     width = menu->width;
@@ -2234,9 +2235,8 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
          else 
             height2=16;
 
-
          draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2, 
-            0.95f, &col_white, tile_width, tile_width, tile_width*2,
+            0.95f, &back, tile_width, tile_width, tile_width*2,
             tile_width*2 );            
       }
       /* Border. */
@@ -2963,10 +2963,10 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos+10, ypos+5, name, 1, &col_black, string_type_pos );
+        text_draw_string( xpos+10, ypos+5, name, 1, &col_black, 999 );
     else
         text_draw_string( xpos+width-10-(strlen(name)*8), ypos+5, name, 1, &col_black,
-           string_type_pos );
+           999 );
 }
 
 void dialog_promote_cb(widget_t *widget, void *data)
@@ -3500,18 +3500,18 @@ static void draw_move_list( colour_t *col_normal, colour_t *col_high )
         if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
             exit(1);
         if (i != view)
-            text_draw_string( x_white+5, y-5, s, 1, col_normal, string_type_pos );
+            text_draw_string( x_white+5, y-5, s, 1, col_normal, 999 );
         else
-            text_draw_string( x_white+5, y-5, s, 1, col_high, string_type_pos );
+            text_draw_string( x_white+5, y-5, s, 1, col_high, 999 );
         y -= text_height();
     }
     y = y_black;
     for (i = start + 1; i <= view; i += 2)
     {
         if (i != view)
-            text_draw_string_right( x_black-5, y-5, list[i], 1, col_normal, string_type_pos );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, col_normal, 999 );
         else
-            text_draw_string_right( x_black-5, y-5, list[i], 1, col_high, string_type_pos );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, col_high, 999 );
         y -= text_height();
     }
 }
@@ -3569,14 +3569,14 @@ static void draw_capture_list(colour_t *col)
         {
             if (snprintf(s, 4, "%i", board.captured[i]) >= 4)
                 exit(1);
-            text_draw_string( x_white, y_white, s, 1, col, string_type_pos);
+            text_draw_string( x_white, y_white, s, 1, col, 999);
         }
         y_white -= text_characters['a'].height;
         if (board.captured[i - 1] != 0)
         {
             if (snprintf(s, 4, "%i", board.captured[i - 1]) >= 4)
                 exit(1);
-            text_draw_string_right( x_black, y_black, s, 1, col, string_type_pos);
+            text_draw_string_right( x_black, y_black, s, 1, col, 999);
         }
         y_black -= text_characters['a'].height;
     }
