@@ -162,6 +162,8 @@ static void data_col_add(data_col_t *data_col, char *name, void *data)
 static data_col_t textures;
 static data_col_t meshes;
 
+texture_t ground;
+
 #define BUF_SIZE 256
 #define FN_LEN 256
 

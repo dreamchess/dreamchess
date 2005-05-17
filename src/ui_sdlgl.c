@@ -192,7 +192,6 @@ static texture_t menu_title_tex;
 static texture_t backdrop;
 static texture_t border;
 static texture_t ground;
-static texture_t sky;
 
 static ui_event_t convert_event(SDL_Event *event)
 {
@@ -3408,8 +3407,7 @@ static void load_theme(char* name, char* pieces, char *board)
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
     load_texture_png( &border, "border.png", 1 );
-    //load_texture_png( &sky, "sky.png", 1 );
-    load_texture_png( &ground, "ground.png", 0 );
+    //load_texture_png( &border, "ground.png", 1 );
     load_pieces();
 
     ch_datadir();
