@@ -3541,14 +3541,15 @@ static void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    draw_rect_fill( 100, 425, 200, 10, &col_yellow );
-    draw_rect_fill( 640-100-200, 425, 200, 10, &col_yellow );
+    draw_rect_fill( 100, 425, 75, 10, &col_yellow );
+    //draw_rect_fill( 640-100-75, 425, 100, 10, &col_yellow );
 
-    draw_rect_fill( 100, 425, 200*white_health_percent, 10, &col_red );
-    draw_rect_fill( 640-100-(200*black_health_percent), 425, 200*black_health_percent, 10, &col_red );
+    draw_rect_fill( 100, 425, 75*white_health_percent, 10, &col_red );
+    draw_rect_fill( 640-75-(100*black_health_percent), 425, 75*black_health_percent, 
+      10, &col_red );
 
-    draw_rect( 100, 425, 200, 10, &col_black );
-    draw_rect( 640-100-200, 425, 200, 10, &col_black );
+    draw_rect( 100, 425, 75, 10, &col_black );
+    draw_rect( 640-75-100, 425, 75, 10, &col_black );
 }
 
 /** @brief Renders the list of captured pieces for both sides.
@@ -3626,6 +3627,8 @@ static void draw_scene( board_t *b )
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    draw_backdrop();
+
     go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
     glDepthMask(GL_TRUE);
 
@@ -3633,12 +3636,12 @@ static void draw_scene( board_t *b )
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    //draw_backdrop();
-
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
-    dialog_render_border( 20, 420, 620, 460 );
+    dialog_render_border( 20, 420, 185, 460 );
+    dialog_render_border( 455, 420, 620, 460 );
+//    dialog_render_border( 20, 420, 620, 460 );
     draw_health_bars();
 
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
