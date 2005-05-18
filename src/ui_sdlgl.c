@@ -553,7 +553,7 @@ static list_t *list_create()
     list->items = 0;
     list->item = NULL;
 
-	return list;
+    return list;
 }
 
 static void list_append_item(list_t *list, void *item)
@@ -578,185 +578,6 @@ static void *list_get_item(list_t *list, int index)
 static void list_destroy(list_t *list)
 {
     free(list);
-}
-
-typedef struct widget_list
-{
-    /** Total number of widgets in the dialog box. */
-    int nr;
-
-    /** Currently selected widget. -1 = no widget selected. */
-    int sel;
-
-    /** The widgets in the list. */
-    widget_t **item;
-}
-widget_list_t;
-
-/** @brief Moves the box selector backwards to the next enabled widget.
- *
- *  If no enabled widget is found, the selector is not moved.
- *
- *  @param box The box to update.
- */
-static int widget_list_select_prev(widget_list_t *list, int input, int enabled)
-{
-    int sel = list->sel - 1;
-
-    while ((sel >= 0) && ((enabled && !list->item[sel]->enabled) || (input && !list->item[sel]->input)))
-        sel--;
-
-    if (sel >= 0)
-    {
-        list->sel = sel;
-        return 1;
-    }
-
-    return 0;
-}
-
-/** @brief Moves the box selector forwards to the next enabled widget.
- *
- *  If no enabled widget is found, the selector is not moved.
- *
- *  @param box The box to update.
- */
-static int widget_list_select_next(widget_list_t *list, int input, int enabled)
-{
-    int sel = list->sel + 1;
-
-    while ((sel < list->nr) && ((enabled && !list->item[sel]->enabled) || (input && !list->item[sel]->input)))
-        sel++;
-
-    if (sel < list->nr)
-    {
-        list->sel = sel;
-        return 1;
-    }
-
-    return 0;
-}
-
-static void widget_list_append(widget_list_t *list, widget_t *widget)
-{
-    list->item = realloc(list->item, (list->nr + 1) * sizeof(widget_t *));
-    list->item[list->nr++] = widget;
-}
-
-static void widget_list_destroy(widget_list_t *list)
-{
-    int i;
-
-    for (i = 0; i < list->nr; i++)
-        list->item[i]->destroy(list->item[i]);
-
-    if (list->item)
-        free(list->item);
-}
-
-static void widget_list_set_size(widget_list_t *list, int width, int height)
-{
-    int i;
-
-    for (i = 0; i < list->nr; i++)
-        list->item[i]->set_size(list->item[i], width, height);
-}
-
-/** Dialog box. */
-typedef struct dialog
-{
-    /** Width in pixels. */
-    int width;
-
-    /** Height in pixels. */
-    int height;
-
-    /** Whether or not dialog is escapable. 0 = yes, 1 = no. */
-    int modal;
-
-    /** The widget. */
-    widget_t *widget;
-}
-dialog_t;
-
-void dialog_destroy(dialog_t *dialog);
-
-/** The maximum amount of open dialogs that the dialog system can handle. */
-#define DIALOG_MAX 10
-
-/** The dialog stack. */
-dialog_t *dialog_stack[DIALOG_MAX];
-
-/** The amount of dialogs that are currently open. */
-int dialog_nr = 0;
-
-/** To-be-destroyed dialogs. */
-dialog_t *dialog_closed[DIALOG_MAX];
-
-/** The amount of dialogs that need to be destroyed. */
-int dialog_closed_nr = 0;
-
-static void dialog_cleanup()
-{
-    int i;
-
-    for (i = 0; i < dialog_closed_nr; i++)
-    {
-        dialog_t *dialog = dialog_closed[i];
-        dialog_destroy(dialog);
-    }
-
-    dialog_closed_nr = 0;
-}
-
-/** @brief Adds a dialog to the top of the dialog stack.
- *  @param menu The dialog to add.
- */
-static void dialog_open(dialog_t *menu)
-{
-    if (dialog_nr == DIALOG_MAX)
-    {
-        printf("Too many open dialogs.\n");
-        return;
-    }
-
-    reset_string_type_length();
-    dialog_stack[dialog_nr++] = menu;
-}
-
-/** @brief Closes the dialog that's on top of the dialog stack. */
-static void dialog_close()
-{
-    dialog_t *menu;
-
-    if (dialog_nr == 0)
-    {
-        printf("No open dialogs.\n");
-        return;
-    }
-
-    menu = dialog_stack[dialog_nr-- - 1];
-
-    if (dialog_closed_nr == DIALOG_MAX)
-    {
-        printf("Too many to-be-destroyed dialogs.\n");
-        return;
-    }
-
-    dialog_closed[dialog_closed_nr++] = menu;
-}
-
-/** @brief Returns the dialog that's on top of the stack.
- *
- *  @return The dialog that's on top of the stack, or NULL if the stack is
- *          empty.
- */
-static dialog_t *dialog_current()
-{
-    if (dialog_nr == 0)
-        return NULL;
-
-    return dialog_stack[dialog_nr - 1];
 }
 
 /** Amount of pixels that widgets containing a label will add to the
@@ -860,6 +681,107 @@ static void w_set_requested_size(widget_t *widget, int width, int height)
 {
     widget->width_f = width;
     widget->height_f = height;
+}
+
+/* Container class. */
+
+#define W_CONTAINER(W) CHECK_CAST(W, w_container_get_class_id(), w_container_t)
+
+#define W_CONTAINER_DATA \
+    W_WIDGET_DATA \
+    list_t *widget_list;
+
+typedef struct w_container
+{
+    W_CONTAINER_DATA
+}
+w_container_t;
+
+static w_class_id w_container_get_class_id()
+{
+    CHILD(w_widget_get_class_id())
+}
+
+static void w_container_destroy(w_widget_t *widget)
+{
+    w_container_t *container = W_CONTAINER(widget);
+    int i;
+
+    for (i = 0; i < list_get_size(container->widget_list); i++)
+    {
+        w_widget_t *item = W_WIDGET(list_get_item(container->widget_list, i));
+        item->destroy(item);
+    }
+
+    list_destroy(container->widget_list);
+    w_widget_destroy(widget);
+}
+
+static void w_container_init(w_container_t *container)
+{
+    w_widget_init((w_widget_t *) container);
+
+    container->destroy = w_container_destroy;
+    container->id = w_container_get_class_id();
+    container->widget_list = list_create();
+}
+
+static void w_container_append(w_container_t *container, widget_t *widget)
+{
+    list_append_item(container->widget_list, widget);
+}
+
+static int w_container_get_size(w_container_t *container)
+{
+    return list_get_size(container->widget_list);
+}
+
+static widget_t *w_container_get_child(w_container_t *container, int index)
+{
+    return list_get_item(container->widget_list, index);
+}
+
+/* Bin class. */
+
+#define W_BIN(W) CHECK_CAST(W, w_bin_get_class_id(), w_bin_t)
+
+#define W_BIN_DATA \
+    W_CONTAINER_DATA
+
+typedef struct w_bin
+{
+    W_BIN_DATA
+}
+w_bin_t;
+
+static w_class_id w_bin_get_class_id()
+{
+    CHILD(w_container_get_class_id())
+}
+
+
+static widget_t *w_bin_get_child(w_bin_t *bin)
+{
+    return w_container_get_child(W_CONTAINER(bin), 0);
+}
+
+void w_bin_set_size(w_widget_t *widget, int width, int height)
+{
+    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+
+    if (child)
+        child->set_size(child, width, height);
+
+    w_set_size(widget, width, height);
+}
+
+static void w_bin_init(w_bin_t *bin, w_widget_t *child)
+{
+    w_container_init((w_container_t *) bin);
+
+    bin->set_size = w_bin_set_size;
+    bin->id = w_bin_get_class_id();
+    w_container_append(W_CONTAINER(bin), child);
 }
 
 #define W_ALIGNABLE(W) CHECK_CAST(W, w_alignable_get_class_id(), w_alignable_t)
@@ -1061,8 +983,7 @@ w_widget_t *w_image_create(texture_t *texture)
 #define W_ACTION(W) CHECK_CAST(W, w_action_get_class_id(), w_action_t)
 
 #define W_ACTION_DATA \
-    W_WIDGET_DATA \
-    widget_t *child; \
+    W_BIN_DATA \
     void (* func) (widget_t *widget, void *data); \
     void *func_data;
 
@@ -1075,18 +996,19 @@ w_action_t;
 
 w_class_id w_action_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    CHILD(w_bin_get_class_id())
 }
 
 /** Implements widget::render for action widgets. */
 static void w_action_render(w_widget_t *widget, int x, int y, int focus)
 {
     w_action_t *action = W_ACTION(widget);
+    w_widget_t *child = w_bin_get_child(W_BIN(widget));
 
     if (focus != FOCUS_NONE)
         focus = FOCUS_ALL;
 
-    action->child->render(action->child, x, y, focus);
+    child->render(child, x, y, focus);
 }
 
 /** Implements widget::input for action widgets. */
@@ -1104,40 +1026,13 @@ static int w_action_input(w_widget_t *widget, ui_event_t event)
     return 0;
 }
 
-void w_action_set_size(w_widget_t *widget, int width, int height)
-{
-    w_action_t *action = W_ACTION(widget);
-
-    if (action->child)
-        action->child->set_size(action->child, width, height);
-
-    w_set_size(widget, width, height);
-}
-
-/** @brief Destroys an action widget.
- *
- *  @param widget The action widget.
- */
-void w_action_destroy(w_widget_t *widget)
-{
-    w_action_t *action = W_ACTION(widget);
-
-    if (action->child)
-        action->child->destroy(action->child);
-
-    w_widget_destroy(widget);
-}
-
 void w_action_init(w_action_t *action, w_widget_t *widget)
 {
-    w_widget_init((w_widget_t *) action);
+    w_bin_init((w_bin_t *) action, widget);
 
     action->render = w_action_render;
     action->input = w_action_input;
-    action->destroy = w_action_destroy;
-    action->set_size = w_action_set_size;
     action->id = w_action_get_class_id();
-    action->child = widget;
     action->func = NULL;
     action->func_data = NULL;
     action->enabled = 1;
@@ -1185,13 +1080,115 @@ void w_action_set_callback(w_action_t *action, void (* callback) (w_widget_t *, 
 }
 
 
+/* Select widget. */
+
+#define W_SELECT(W) CHECK_CAST(W, w_select_get_class_id(), w_select_t)
+
+#define W_SELECT_DATA \
+    W_CONTAINER_DATA \
+    int sel;
+
+typedef struct w_select
+{
+    W_SELECT_DATA
+}
+w_select_t;
+
+w_class_id w_select_get_class_id()
+{
+    CHILD(w_container_get_class_id())
+}
+
+static void w_select_init(w_select_t *select)
+{
+    w_container_init((w_container_t *) select);
+
+    select->id = w_select_get_class_id();
+    select->sel = -1;
+}
+
+static int w_select_prev(w_select_t *select, int input, int enabled)
+{
+    int sel = select->sel - 1;
+
+    while (sel >= 0)
+    {
+        widget_t *child = w_container_get_child(W_CONTAINER(select), sel);
+
+        if ((enabled && !child->enabled)
+                || (input && !child->input))
+            sel--;
+        else
+            break;
+    }
+
+    if (sel >= 0)
+    {
+        select->sel = sel;
+        return 1;
+    }
+
+    return 0;
+}
+
+static int w_select_next(w_select_t *select, int input, int enabled)
+{
+    int sel = select->sel + 1;
+    int size = w_container_get_size(W_CONTAINER(select));
+
+    while (sel < size)
+    {
+        widget_t *child = w_container_get_child(W_CONTAINER(select), sel);
+
+        if ((enabled && !child->enabled)
+                || (input && !child->input))
+            sel++;
+        else
+            break;
+    }
+
+    if (sel < size)
+    {
+        select->sel = sel;
+        return 1;
+    }
+
+    return 0;
+}
+
+/* Vertical box widget. */
+
+#define W_BOX(W) CHECK_CAST(W, w_box_get_class_id(), w_box_t)
+
+#define W_BOX_DATA \
+    W_SELECT_DATA \
+    int spacing;
+
+typedef struct w_box
+{
+    W_BOX_DATA
+}
+w_box_t;
+
+w_class_id w_box_get_class_id()
+{
+    CHILD(w_select_get_class_id())
+}
+
+static void w_box_init(w_box_t *box, int spacing)
+{
+    w_select_init((w_select_t *) box);
+
+    box->id = w_box_get_class_id();
+    box->spacing = spacing;
+}
+
 /* Option widget. */
 
 #define W_OPTION(W) CHECK_CAST(W, w_option_get_class_id(), w_option_t)
 
 #define W_OPTION_DATA \
-    W_WIDGET_DATA \
-    widget_list_t list; \
+    W_SELECT_DATA \
     void (* func) (widget_t *widget, void *data); \
     void *func_data;
 
@@ -1204,7 +1201,7 @@ w_option_t;
 
 w_class_id w_option_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    CHILD(w_select_get_class_id())
 }
 
 #define OPTION_ARROW_LEFT "\253 "
@@ -1214,16 +1211,15 @@ w_class_id w_option_get_class_id()
 static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 {
     w_option_t *option = W_OPTION(widget);
-    widget_list_t *list = &option->list;
     w_widget_t *child;
     int xx, yy;
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
     yy = y + option->height_a / 2 - text_height() / 2;
 
-    if (list->sel == -1)
+    if (option->sel == -1)
         return;
-    if (list->sel > 0)
+    if (option->sel > 0)
     {
         if (focus != FOCUS_NONE)
             text_draw_string_bouncy(x, yy, OPTION_ARROW_LEFT, 1, &col_dark_red,
@@ -1235,10 +1231,10 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
         text_draw_string(x, yy, OPTION_ARROW_LEFT, 1, &col_grey, string_type_pos);
     xx = x + border_l;
 
-    child = list->item[list->sel];
+    child = w_container_get_child(W_CONTAINER(widget), option->sel);
     child->render(child, xx, y, focus);
     xx = x + option->width_a - border_r;
-    if (list->sel < list->nr - 1)
+    if (option->sel < w_container_get_size(W_CONTAINER(widget)) - 1)
     {
         if (focus != FOCUS_NONE)
             text_draw_string_bouncy(xx, yy, OPTION_ARROW_RIGHT, 1, &col_dark_red, 
@@ -1254,14 +1250,14 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
 static int w_option_input(w_widget_t *widget, ui_event_t event)
 {
     w_option_t *option = W_OPTION(widget);
-    widget_list_t *list = &option->list;
+    w_select_t *select = W_SELECT(widget);
 
-    if (list->sel == -1)
+    if (option->sel == -1)
         return 0;
 
     if (event == UI_EVENT_RIGHT)
     {
-        if (widget_list_select_next(list, 0, 0))
+        if (w_select_next(select, 0, 0))
         {
             if (option->func)
                 option->func(widget, option->func_data);
@@ -1271,7 +1267,7 @@ static int w_option_input(w_widget_t *widget, ui_event_t event)
     }
     if (event == UI_EVENT_LEFT)
     {
-        if (widget_list_select_prev(list, 0, 0))
+        if (w_select_prev(select, 0, 0))
         {
             if (option->func)
                 option->func(widget, option->func_data);
@@ -1286,42 +1282,28 @@ static int w_option_input(w_widget_t *widget, ui_event_t event)
 void w_option_set_size(w_widget_t *widget, int width, int height)
 {
     w_option_t *option = W_OPTION(widget);
-    widget_list_t *list = &option->list;
+    w_container_t *container = W_CONTAINER(widget);
     int border_l = text_width(OPTION_ARROW_LEFT);
     int border_r = text_width(OPTION_ARROW_RIGHT);
     int i;
 
-    for (i = 0; i < list->nr; i++)
-        list->item[i]->set_size(list->item[i], width - border_l - border_r,
-                                height);
+    for (i = 0; i < w_container_get_size(container); i++)
+    {
+        w_widget_t *child = w_container_get_child(container, i);
+        child->set_size(child, width - border_l - border_r, height);
+    }
 
     w_set_size(widget, width, height);
 }
 
-/** @brief Destroys an option widget.
- *
- *  @param widget The option widget.
- */
-void w_option_destroy(widget_t *widget)
-{
-    w_option_t *option = W_OPTION(widget);
-
-    widget_list_destroy(&option->list);
-    w_widget_destroy(widget);
-}
-
 void w_option_init(w_option_t *option)
 {
-    w_widget_init((w_widget_t *) option);
+    w_select_init((w_select_t *) option);
 
     option->render = w_option_render;
     option->input = w_option_input;
-    option->destroy = w_option_destroy;
     option->set_size = w_option_set_size;
     option->id = w_option_get_class_id();
-    option->list.item = NULL;
-    option->list.nr = 0;
-    option->list.sel = -1;
 }
 
 /** @brief Creates an option widget.
@@ -1348,7 +1330,6 @@ widget_t *w_option_create()
  */
 void w_option_append(w_option_t *option, widget_t *child)
 {
-    widget_list_t *list = &option->list;
     int width, child_height;
     int height = text_height();
 
@@ -1359,7 +1340,7 @@ void w_option_append(w_option_t *option, widget_t *child)
     if (child_height > height)
         height = child_height;
 
-    widget_list_append(list, child);
+    w_container_append(W_CONTAINER(option), child);
 
     if (width > option->width)
         option->width = width;
@@ -1367,11 +1348,11 @@ void w_option_append(w_option_t *option, widget_t *child)
     if (height > option->height)
         option->height = height;
 
-    if (list->nr == 2)
+    if (w_container_get_size(W_CONTAINER(option)) == 2)
         option->enabled = 1;
 
-    if (list->sel == -1)
-        list->sel = 0;
+    if (option->sel == -1)
+        option->sel = 0;
 }
 
 void w_option_append_label(w_option_t *option, char *text, float xalign, float yalign)
@@ -1388,7 +1369,7 @@ void w_option_append_label(w_option_t *option, char *text, float xalign, float y
  */
 int w_option_get_selected(w_option_t *option)
 {
-    return option->list.sel;
+    return option->sel;
 }
 
 /** @brief Sets option widget callback.
@@ -1404,143 +1385,23 @@ void w_option_set_callback(w_option_t *option, void (* callback) (w_widget_t *, 
 }
 
 
-/* Container class. */
-
-#define W_CONTAINER(W) CHECK_CAST(W, w_container_get_class_id(), w_container_t)
-
-#define W_CONTAINER_DATA \
-    W_WIDGET_DATA \
-    list_t *widget_list;
-
-typedef struct w_container
-{
-    W_CONTAINER_DATA
-}
-w_container_t;
-
-static w_class_id w_container_get_class_id()
-{
-    CHILD(w_widget_get_class_id())
-}
-
-static void w_container_destroy(w_widget_t *widget)
-{
-    w_container_t *container = W_CONTAINER(widget);
-    int i;
-
-    for (i = 0; i < list_get_size(container->widget_list); i++)
-    {
-         w_widget_t *item = W_WIDGET(list_get_item(container->widget_list, i));
-         item->destroy(item);
-    }
-
-    list_destroy(container->widget_list);
-    w_widget_destroy(widget);
-}
-
-static void w_container_init(w_container_t *container)
-{
-    w_widget_init((w_widget_t *) container);
-
-    container->destroy = w_container_destroy;
-    container->id = w_container_get_class_id();
-    container->widget_list = list_create();
-}
-
-static void w_container_append(w_container_t *container, widget_t *widget)
-{
-    list_append_item(container->widget_list, widget);
-}
-
-static int w_container_get_size(w_container_t *container)
-{
-    return list_get_size(container->widget_list);
-}
-
-static widget_t *w_container_get_child(w_container_t *container, int index)
-{
-    return list_get_item(container->widget_list, index);
-}
-
 /* Vertical box widget. */
 
-#define W_BOX(W) CHECK_CAST(W, w_box_get_class_id(), w_box_t)
+#define W_VBOX(W) CHECK_CAST(W, w_vbox_get_class_id(), w_vbox_t)
 
-#define W_BOX_DATA \
-    W_CONTAINER_DATA \
-    int sel; \
-    int spacing;
-
-typedef struct w_box
-{
+#define W_VBOX_DATA \
     W_BOX_DATA
-}
-w_box_t;
 
-w_class_id w_box_get_class_id()
+typedef struct w_vbox
 {
-    CHILD(w_container_get_class_id())
+    W_VBOX_DATA
 }
+w_vbox_t;
 
-static void w_box_init(w_box_t *box, int spacing)
+w_class_id w_vbox_get_class_id()
 {
-    w_container_init((w_container_t *) box);
-
-    box->id = w_box_get_class_id();
-    box->spacing = spacing;
-    box->sel = -1;
+    CHILD(w_box_get_class_id())
 }
-
-static int w_box_select_prev(w_box_t *box, int input, int enabled)
-{
-    int sel = box->sel - 1;
-
-    while (sel >= 0)
-    {
-        widget_t *child = w_container_get_child(W_CONTAINER(box), sel);
-
-        if ((enabled && !child->enabled)
-            || (input && !child->input))
-            sel--;
-        else
-            break;
-    }
-
-    if (sel >= 0)
-    {
-        box->sel = sel;
-        return 1;
-    }
-
-    return 0;
-}
-
-static int w_box_select_next(w_box_t *box, int input, int enabled)
-{
-    int sel = box->sel + 1;
-    int size = w_container_get_size(W_CONTAINER(box));
-
-    while (sel < size)
-    {
-        widget_t *child = w_container_get_child(W_CONTAINER(box), sel);
-
-        if ((enabled && !child->enabled)
-            || (input && !child->input))
-            sel++;
-        else
-            break;
-    }
-
-    if (sel < size)
-    {
-        box->sel = sel;
-        return 1;
-    }
-
-    return 0;
-}
-
-/* Vertical box widget. */
 
 void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
 {
@@ -1569,14 +1430,14 @@ void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
 
 static int w_vbox_input(w_widget_t *widget, ui_event_t event)
 {
-    w_box_t *box = W_BOX(widget);
+    w_select_t *select = W_SELECT(widget);
     widget_t *child;
     int retval = 0, x, y;
 
-    if (box->sel == -1)
+    if (select->sel == -1)
         return 0;
 
-    child = list_get_item(box->widget_list, box->sel);
+    child = w_container_get_child(W_CONTAINER(widget), select->sel);
 
     if (child->input(child, event))
         return 1;
@@ -1585,15 +1446,15 @@ static int w_vbox_input(w_widget_t *widget, ui_event_t event)
 
     if (event == UI_EVENT_UP)
     {
-        retval = w_box_select_prev(box, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), box->sel);
+        retval = w_select_prev(select, 1, 1);
+        child = w_container_get_child(W_CONTAINER(widget), select->sel);
         y = 0;
     }
 
     if (event == UI_EVENT_DOWN)
     {
-        retval = w_box_select_next(box, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), box->sel);
+        retval = w_select_next(select, 1, 1);
+        child = w_container_get_child(W_CONTAINER(widget), select->sel);
         y = child->height_a - 1;
     }
 
@@ -1613,7 +1474,7 @@ static void w_vbox_get_requested_size(widget_t *widget, int *width, int *height)
     int size = w_container_get_size(container);
     int i;
 
-	int nr = w_container_get_size(container);
+    int nr = w_container_get_size(container);
 
     widget->width = 0;
     widget->height = (size - 1) * box->spacing;
@@ -1626,17 +1487,17 @@ static void w_vbox_get_requested_size(widget_t *widget, int *width, int *height)
 
         child->get_requested_size(child, &child_width, &child_height);
 
-	    if (child_width > widget->width)
-    	    widget->width = child_width;
+        if (child_width > widget->width)
+            widget->width = child_width;
 
-	    widget->height += child_height;
+        widget->height += child_height;
 
-	    if (child->enabled && child->input)
+        if (child->enabled && child->input)
         {
-   	        if (box->sel == -1)
-   	            box->sel = i;
-   	        widget->enabled = 1;
-  	    }
+            if (box->sel == -1)
+                box->sel = i;
+            widget->enabled = 1;
+        }
     }
 
     w_widget_get_requested_size(widget, width, height);
@@ -1691,29 +1552,32 @@ static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
 
     box->sel = size;
 
-    while (w_box_select_prev(box, 1, 1))
+    while (w_select_prev(W_SELECT(widget), 1, 1))
     {
         widget_t *child = w_container_get_child(container, box->sel);
 
         cur_y += child->height_a;
         if (cur_y >= y)
+        {
+            child->set_focus_pos(child, x, cur_y - y);
             break;
+        }
         cur_y += box->spacing;
     }
 
     assert(box->sel != size);
 }
 
-void w_vbox_init(w_box_t *box, int spacing)
+void w_vbox_init(w_vbox_t *vbox, int spacing)
 {
-    w_box_init(box, spacing);
+    w_box_init((w_box_t *) vbox, spacing);
 
-    box->render = w_vbox_render;
-    box->input = w_vbox_input;
-    box->get_requested_size = w_vbox_get_requested_size;
-    box->set_size = w_vbox_set_size;
-    box->get_focus_pos = w_vbox_get_focus_pos;
-    box->set_focus_pos = w_vbox_set_focus_pos;
+    vbox->render = w_vbox_render;
+    vbox->input = w_vbox_input;
+    vbox->get_requested_size = w_vbox_get_requested_size;
+    vbox->set_size = w_vbox_set_size;
+    vbox->get_focus_pos = w_vbox_get_focus_pos;
+    vbox->set_focus_pos = w_vbox_set_focus_pos;
 }
 
 /** @brief Creates a vertical box widget.
@@ -1724,14 +1588,30 @@ void w_vbox_init(w_box_t *box, int spacing)
  */
 w_widget_t *w_vbox_create(int spacing)
 {
-    w_box_t *box = malloc(sizeof(w_box_t));
+    w_vbox_t *vbox = malloc(sizeof(w_vbox_t));
 
-    w_vbox_init(box, spacing);
+    w_vbox_init(vbox, spacing);
 
-    return W_WIDGET(box);
+    return W_WIDGET(vbox);
 }
 
 /* Horizontal box widget. */
+
+#define W_HBOX(W) CHECK_CAST(W, w_hbox_get_class_id(), w_hbox_t)
+
+#define W_HBOX_DATA \
+    W_BOX_DATA
+
+typedef struct w_hbox
+{
+    W_HBOX_DATA
+}
+w_hbox_t;
+
+w_class_id w_hbox_get_class_id()
+{
+    CHILD(w_box_get_class_id())
+}
 
 void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
 {
@@ -1759,14 +1639,14 @@ void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
 
 static int w_hbox_input(widget_t *widget, ui_event_t event)
 {
-    w_box_t *box = W_BOX(widget);
+    w_select_t *select = W_SELECT(widget);
     widget_t *child;
     int retval = 0, x, y;
 
-    if (box->sel == -1)
+    if (select->sel == -1)
         return 0;
 
-    child = w_container_get_child(W_CONTAINER(widget), box->sel);
+    child = w_container_get_child(W_CONTAINER(widget), select->sel);
 
     if (child->input(child, event))
         return 1;
@@ -1775,15 +1655,15 @@ static int w_hbox_input(widget_t *widget, ui_event_t event)
 
     if (event == UI_EVENT_LEFT)
     {
-        retval = w_box_select_prev(box, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), box->sel);
+        retval = w_select_prev(select, 1, 1);
+        child = w_container_get_child(W_CONTAINER(widget), select->sel);
         x = child->width_a - 1;
     }
 
     if (event == UI_EVENT_RIGHT)
     {
-        retval = w_box_select_next(box, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), box->sel);
+        retval = w_select_next(select, 1, 1);
+        child = w_container_get_child(W_CONTAINER(widget), select->sel);
         x = 0;
     }
 
@@ -1814,17 +1694,17 @@ static void w_hbox_get_requested_size(widget_t *widget, int *width, int *height)
 
         child->get_requested_size(child, &child_width, &child_height);
 
-	    if (child_height > widget->height)
-    	    widget->height = child_height;
+        if (child_height > widget->height)
+            widget->height = child_height;
 
-	    widget->width += child_width;
+        widget->width += child_width;
 
-	    if (child->enabled && child->input)
+        if (child->enabled && child->input)
         {
-   	        if (box->sel == -1)
-   	            box->sel = i;
-   	        widget->enabled = 1;
-  	    }
+            if (box->sel == -1)
+                box->sel = i;
+            widget->enabled = 1;
+        }
     }
 
     w_widget_get_requested_size(widget, width, height);
@@ -1878,29 +1758,32 @@ static void w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
 
     box->sel = -1;
 
-    while (w_box_select_next(box, 1, 1))
+    while (w_select_next(W_SELECT(widget), 1, 1))
     {
         w_widget_t *child = w_container_get_child(container, box->sel);
 
         cur_x += child->width_a;
         if (cur_x >= x)
+        {
+            child->set_focus_pos(child, cur_x - x, y);
             break;
+        }
         cur_x += box->spacing;
     }
 
     assert (box->sel != -1);
 }
 
-void w_hbox_init(w_box_t *box, int spacing)
+void w_hbox_init(w_hbox_t *hbox, int spacing)
 {
-    w_box_init(box, spacing);
+    w_box_init((w_box_t *) hbox, spacing);
 
-    box->render = w_hbox_render;
-    box->input = w_hbox_input;
-    box->get_requested_size = w_hbox_get_requested_size;
-    box->set_size = w_hbox_set_size;
-    box->get_focus_pos = w_hbox_get_focus_pos;
-    box->set_focus_pos = w_hbox_set_focus_pos;
+    hbox->render = w_hbox_render;
+    hbox->input = w_hbox_input;
+    hbox->get_requested_size = w_hbox_get_requested_size;
+    hbox->set_size = w_hbox_set_size;
+    hbox->get_focus_pos = w_hbox_get_focus_pos;
+    hbox->set_focus_pos = w_hbox_set_focus_pos;
 }
 
 /** @brief Creates a horizontal box widget.
@@ -1911,11 +1794,11 @@ void w_hbox_init(w_box_t *box, int spacing)
  */
 widget_t *w_hbox_create(int spacing)
 {
-    w_box_t *box = malloc(sizeof(w_box_t));
+    w_hbox_t *hbox = malloc(sizeof(w_hbox_t));
 
-    w_hbox_init(box, spacing);
+    w_hbox_init(hbox, spacing);
 
-    return W_WIDGET(box);
+    return W_WIDGET(hbox);
 }
 
 /* Text entry widget. */
@@ -2054,33 +1937,100 @@ w_widget_t *w_entry_create()
     return W_WIDGET(entry);
 }
 
-void dialog_set_modal(dialog_t *dialog, int modal)
+#define W_DIALOG(W) CHECK_CAST(W, w_dialog_get_class_id(), w_dialog_t)
+
+#define W_DIALOG_DATA \
+    W_BIN_DATA \
+    int modal;
+
+/** Dialog state. */
+typedef struct w_dialog
 {
-    dialog->modal = modal;
+    W_DIALOG_DATA
+}
+w_dialog_t;
+
+w_class_id w_dialog_get_class_id()
+{
+    CHILD(w_bin_get_class_id())
 }
 
-/** @brief Creates a dialog.
- *
- *  @param widget The widget the dialog contains.
- *  @return The created dialog.
+/** The maximum amount of open dialogs that the dialog system can handle. */
+#define DIALOG_MAX 10
+
+/** The dialog stack. */
+w_dialog_t *dialog_stack[DIALOG_MAX];
+
+/** The amount of dialogs that are currently open. */
+int dialog_nr = 0;
+
+/** To-be-destroyed dialogs. */
+w_dialog_t *dialog_closed[DIALOG_MAX];
+
+/** The amount of dialogs that need to be destroyed. */
+int dialog_closed_nr = 0;
+
+static void dialog_cleanup()
+{
+    int i;
+
+    for (i = 0; i < dialog_closed_nr; i++)
+    {
+        w_dialog_t *dialog = dialog_closed[i];
+        dialog->destroy(W_WIDGET(dialog));
+    }
+
+    dialog_closed_nr = 0;
+}
+
+/** @brief Adds a dialog to the top of the dialog stack.
+ *  @param menu The dialog to add.
  */
-dialog_t *dialog_create(widget_t *widget)
+static void dialog_open(w_dialog_t *menu)
 {
-    dialog_t *dialog = malloc(sizeof(dialog_t));
+    if (dialog_nr == DIALOG_MAX)
+    {
+        printf("Too many open dialogs.\n");
+        return;
+    }
 
-    dialog->widget = widget;
-    dialog->modal = 0;
-    widget->get_requested_size(widget, &dialog->width, &dialog->height);
-
-    widget->set_size(widget, dialog->width, dialog->height);
-
-    return dialog;
+    reset_string_type_length();
+    dialog_stack[dialog_nr++] = menu;
 }
 
-void dialog_destroy(dialog_t *dialog)
+/** @brief Closes the dialog that's on top of the dialog stack. */
+static void dialog_close()
 {
-    dialog->widget->destroy(dialog->widget);
-    free(dialog);
+    w_dialog_t *menu;
+
+    if (dialog_nr == 0)
+    {
+        printf("No open dialogs.\n");
+        return;
+    }
+
+    menu = dialog_stack[dialog_nr-- - 1];
+
+    if (dialog_closed_nr == DIALOG_MAX)
+    {
+        printf("Too many to-be-destroyed dialogs.\n");
+        return;
+    }
+
+    dialog_closed[dialog_closed_nr++] = menu;
+}
+
+/** @brief Returns the dialog that's on top of the stack.
+ *
+ *  @return The dialog that's on top of the stack, or NULL if the stack is
+ *          empty.
+ */
+static w_dialog_t *dialog_current()
+{
+    if (dialog_nr == 0)
+        return NULL;
+
+    return dialog_stack[dialog_nr - 1];
 }
 
 void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
@@ -2197,8 +2147,13 @@ void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
  *  @param style The style to render in.
  *  @param pos The position to render at.
  */
-static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
+static void w_dialog_render(w_widget_t *widget, int x, int y, int focus)
 {
+    style_t *style = &style_ingame;
+    position_t *pos = &pos_ingame;
+    w_dialog_t *menu = W_DIALOG(widget);
+    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+
     int height, width;
     int total_height, total_width;
     int xmin, xmax, ymin, ymax;
@@ -2278,24 +2233,64 @@ static void dialog_render(dialog_t *menu, style_t *style, position_t *pos)
     ymin += style->vert_pad;
     ymax -= style->vert_pad;
 
-    menu->widget->render(menu->widget, xmin, ymin, 1);
+    child->render(child, xmin, ymin, 1);
 }
 
 /** @brief Processes an input event for a specific dialog.
  *
  *  @param event The event to process.
  */
-static void dialog_input(ui_event_t event)
+static int w_dialog_input(w_widget_t *widget, ui_event_t event)
 {
-    dialog_t *dialog = dialog_current();
-
-    if (!dialog)
-        return;
+    w_dialog_t *dialog = W_DIALOG(widget);
+    w_widget_t *child = w_bin_get_child(W_BIN(widget));
 
     if (!dialog->modal && (event == UI_EVENT_ESCAPE))
         dialog_close();
 
-    dialog->widget->input(dialog->widget, event);
+    child->input(child, event);
+}
+
+static void dialog_input(ui_event_t event)
+{
+    w_dialog_t *dialog = dialog_current();
+
+    if (!dialog)
+        return;
+
+    w_dialog_input(W_WIDGET(dialog), event);
+}
+
+void w_dialog_set_modal(w_dialog_t *dialog, int modal)
+{
+    dialog->modal = modal;
+}
+
+void w_dialog_init(w_dialog_t *dialog, w_widget_t *child)
+{
+    w_bin_init((w_bin_t *) dialog, child);
+
+    dialog->render = w_dialog_render;
+    dialog->input = w_dialog_input;
+    dialog->id = w_dialog_get_class_id();
+    dialog->modal = 0;
+}
+
+/** @brief Creates a dialog.
+ *
+ *  @param widget The widget the dialog contains.
+ *  @return The created dialog.
+ */
+w_widget_t *w_dialog_create(w_widget_t *child)
+{
+    w_dialog_t *dialog = malloc(sizeof(w_dialog_t));
+
+    w_dialog_init(dialog, child);
+
+    child->get_requested_size(child, &dialog->width, &dialog->height);
+    child->set_size(child, dialog->width, dialog->height);
+
+    return W_WIDGET(dialog);
 }
 
 /* In-game dialog. */
@@ -2328,9 +2323,9 @@ static void view_next(widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static dialog_t *dialog_ingame_create()
+static w_dialog_t *dialog_ingame_create()
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     w_widget_t *vbox = w_vbox_create(0);
 
     w_widget_t *widget = w_action_create_with_label("Retract Move", 0.0f, 0.0f);
@@ -2349,8 +2344,8 @@ static dialog_t *dialog_ingame_create()
     w_action_set_callback(W_ACTION(widget), view_next, NULL);
     w_container_append(W_CONTAINER(vbox), widget);
 
-    dialog = dialog_create(vbox);
-    return dialog;
+    dialog = w_dialog_create(vbox);
+    return W_DIALOG(dialog);
 }
 
 
@@ -2379,9 +2374,9 @@ static void dialog_close_cb(widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static dialog_t *dialog_quit_create()
+static w_dialog_t *dialog_quit_create()
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     widget_t *vbox = w_vbox_create(0);
 
     w_widget_t *widget = w_label_create("You don't really want to quit do ya?");
@@ -2398,8 +2393,8 @@ static dialog_t *dialog_quit_create()
     w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
     w_container_append(W_CONTAINER(vbox), widget);
 
-    dialog = dialog_create(vbox);
-    return dialog;
+    dialog = w_dialog_create(vbox);
+    return W_DIALOG(dialog);
 }
 
 
@@ -2421,9 +2416,9 @@ static void dialog_quit_open(widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static dialog_t *dialog_system_create()
+static w_dialog_t *dialog_system_create()
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     widget_t *vbox = w_vbox_create(0);
     w_widget_t *widget;
 
@@ -2435,16 +2430,16 @@ static dialog_t *dialog_system_create()
     w_action_set_callback(W_ACTION(widget), dialog_quit_open, NULL);
     w_container_append(W_CONTAINER(vbox), widget);
 
-    dialog = dialog_create(vbox);
-    return dialog;
+    dialog = w_dialog_create(vbox);
+    return W_DIALOG(dialog);
 }
 
 
 /* Victory dialog. */
 
-dialog_t *dialog_victory_create(result_t *result)
+static w_dialog_t *dialog_victory_create(result_t *result)
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     widget_t *hbox = w_hbox_create(20);
     widget_t *vbox = w_vbox_create(0);
     w_widget_t *image_l, *image_r;
@@ -2482,9 +2477,9 @@ dialog_t *dialog_victory_create(result_t *result)
     w_container_append(W_CONTAINER(hbox), image_l);
     w_container_append(W_CONTAINER(hbox), vbox);
     w_container_append(W_CONTAINER(hbox), image_r);
-    dialog = dialog_create(hbox);
-    dialog_set_modal(dialog, 1);
-    return dialog;
+    dialog = w_dialog_create(hbox);
+    w_dialog_set_modal(W_DIALOG(dialog), 1);
+    return W_DIALOG(dialog);
 }
 
 /* Title dialog. */
@@ -2548,9 +2543,9 @@ static void dialog_title_board(w_widget_t *widget, void *data)
     board_list_cur = w_option_get_selected(W_OPTION(widget));
 }
 
-static dialog_t *dialog_title_create()
+static w_dialog_t *dialog_title_create()
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     widget_t *vbox;
     w_widget_t *widget;
     widget_t *vbox2;
@@ -2642,9 +2637,9 @@ static dialog_t *dialog_title_create()
     w_action_set_callback(W_ACTION(widget), menu_title_quit, NULL);
     w_container_append(W_CONTAINER(vbox), widget);
 
-    dialog = dialog_create(vbox);
-    dialog_set_modal(dialog, 1);
-    return dialog;
+    dialog = w_dialog_create(vbox);
+    w_dialog_set_modal(W_DIALOG(dialog), 1);
+    return W_DIALOG(dialog);
 }
 
 static void dialog_vkeyboard_key(widget_t *widget, void *data)
@@ -2655,9 +2650,9 @@ static void dialog_vkeyboard_key(widget_t *widget, void *data)
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
 
-static dialog_t *dialog_vkeyboard_create()
+static w_dialog_t *dialog_vkeyboard_create()
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     w_widget_t *label;
     w_widget_t *action;
     widget_t *hbox;
@@ -2702,8 +2697,8 @@ static dialog_t *dialog_vkeyboard_create()
         w_container_append(W_CONTAINER(vbox2), hbox);
     }
 
-    dialog = dialog_create(vbox2);
-    return dialog;
+    dialog = w_dialog_create(vbox2);
+    return W_DIALOG(dialog);
 }
 
 #define SCREEN_WIDTH  640
@@ -2976,12 +2971,12 @@ void dialog_promote_cb(widget_t *widget, void *data)
     dialog_close();
 }
 
-dialog_t *dialog_promote_create(int colour)
+w_dialog_t *dialog_promote_create(int colour)
 {
     static int cb_pieces[4];
 
     texture_t *pieces;
-    dialog_t *dialog;
+    w_widget_t *dialog;
     w_widget_t *action;
     widget_t *vbox = w_vbox_create(0);
     widget_t *hbox = w_hbox_create(0);
@@ -3022,14 +3017,14 @@ dialog_t *dialog_promote_create(int colour)
     w_container_append(W_CONTAINER(hbox), action);
     w_container_append(W_CONTAINER(vbox), hbox);
 
-    dialog = dialog_create(vbox);
-    dialog_set_modal(dialog, 1);
-    return dialog;
+    dialog = w_dialog_create(vbox);
+    w_dialog_set_modal(W_DIALOG(dialog), 1);
+    return W_DIALOG(dialog);
 }
 
-dialog_t *dialog_message_create(char *message)
+w_dialog_t *dialog_message_create(char *message)
 {
-    dialog_t *dialog;
+    w_widget_t *dialog;
     w_widget_t *widget;
 
     widget_t *vbox = w_vbox_create(0);
@@ -3040,10 +3035,10 @@ dialog_t *dialog_message_create(char *message)
     widget = w_action_create_with_label("Ok", 0.5f, 0.5f);
     w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
     w_container_append(W_CONTAINER(vbox), widget);
-    dialog = dialog_create(vbox);
-    dialog_set_modal(dialog, 1);
+    dialog = w_dialog_create(vbox);
+    w_dialog_set_modal(W_DIALOG(dialog), 1);
 
-    return dialog;
+    return W_DIALOG(dialog);
 }
 
 /** @brief Swaps the OpenGL buffer.
@@ -3081,7 +3076,7 @@ static void gl_swap()
 /** Implements ui_driver::menu */
 static config_t *do_menu()
 {
-    dialog_t *keyboard = dialog_vkeyboard_create();
+    w_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
@@ -3109,7 +3104,21 @@ static config_t *do_menu()
         /* Precess input */
         while ( SDL_PollEvent( &event ) )
         {
-            ui_event_t ui_event = convert_event(&event);
+            ui_event_t ui_event;
+
+            if (event.type == SDL_MOUSEMOTION)
+            {
+#if 0
+                w_dialog_t *dialog = dialog_current();
+                if (dialog && dialog->widget)
+                    dialog->widget->set_focus_pos(dialog->widget,
+                                                  event.motion.x,
+                                                  479 - event.motion.y);
+#endif
+                continue;
+            }
+
+            ui_event = convert_event(&event);
 
             if (wait_menu)
             {
@@ -3134,7 +3143,7 @@ static config_t *do_menu()
             }
 
             if (vkeyboard_enabled)
-                keyboard->widget->input(keyboard->widget, ui_event);
+                keyboard->input(W_WIDGET(keyboard), ui_event);
             else
                 dialog_input(ui_event);
 
@@ -3164,10 +3173,13 @@ static config_t *do_menu()
                 text_draw_string_bouncy( 140, 30, "Press any key or button to start", 
                    1.5, &col_white, string_type_pos );
             else
-                dialog_render(dialog_current(), &style_title, &pos_title);
+            {
+                w_dialog_t *dialog = dialog_current();
+                dialog->render(W_WIDGET(dialog), 0, 0, 1);
+            }
 
             if (vkeyboard_enabled)
-                dialog_render(keyboard, &style_title, &pos_vkeyboard);
+                keyboard->render(W_WIDGET(keyboard), 0, 0, 1);
 
             draw_credits(0);
         }
@@ -3616,7 +3628,6 @@ static void show_result(result_t *res)
 static void draw_scene( board_t *b )
 {
     float square_size = 48;
-    dialog_t *menu;
 
     dialog_cleanup();
     update_string_type_length();
@@ -3668,7 +3679,10 @@ static void draw_scene( board_t *b )
            string_type_pos );
 
     if (dialog_current())
-        dialog_render(dialog_current(), &style_ingame, &pos_ingame);
+    {
+        w_dialog_t *dialog = dialog_current();
+        dialog->render(W_WIDGET(dialog), 0, 0, 1);
+    }
 
     /* Draw it to the screen */
     gl_swap();
