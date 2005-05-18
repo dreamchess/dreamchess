@@ -2959,9 +2959,9 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos, ypos+7, name, 1, &col_black, 999 );
+        text_draw_string( xpos, ypos+10, name, 1, &col_black, 999 );
     else
-        text_draw_string( xpos+width-(strlen(name)*8), ypos+7, name, 1, &col_black,
+        text_draw_string( xpos+width-(strlen(name)*8), ypos+10, name, 1, &col_black,
            999 );
 }
 
@@ -3553,15 +3553,15 @@ static void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    draw_rect_fill( 100, 425, 75, 10, &col_yellow );
-    //draw_rect_fill( 640-100-75, 425, 100, 10, &col_yellow );
+    draw_rect_fill( 100, 423, 75, 10, &col_yellow );
+    draw_rect_fill( 640-100-75, 423, 75, 10, &col_yellow );
 
-    draw_rect_fill( 100, 425, 75*white_health_percent, 10, &col_red );
-    draw_rect_fill( 640-75-(100*black_health_percent), 425, 75*black_health_percent, 
+    draw_rect_fill( 100, 423, 75*white_health_percent, 10, &col_red );
+    draw_rect_fill( 640-75-(100*black_health_percent), 423, 75*black_health_percent, 
       10, &col_red );
 
-    draw_rect( 100, 425, 75, 10, &col_black );
-    draw_rect( 640-75-100, 425, 75, 10, &col_black );
+    draw_rect( 100, 423, 75, 10, &col_black );
+    draw_rect( 640-75-100, 423, 75, 10, &col_black );
 }
 
 /** @brief Renders the list of captured pieces for both sides.
@@ -3650,13 +3650,26 @@ static void draw_scene( board_t *b )
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
-    dialog_render_border( 20, 420, 185, 460 );
-    dialog_render_border( 455, 420, 620, 460 );
-//    dialog_render_border( 20, 420, 620, 460 );
-    draw_health_bars();
+    glPushMatrix();
+     glScalef( 0.5f, 0.5f, 0.5f );
+     dialog_render_border( 200, 850, 350, 870 );
+     dialog_render_border( 40, 880, 370, 920 );
 
-    draw_name_dialog( 50, 430, "White", TRUE, 1 );
-    draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+     dialog_render_border( 930, 850, 1080, 870 );
+     dialog_render_border( 910, 880, 1240, 920 );
+
+     /* Da clocken */
+     dialog_render_border( 580, 880, 700, 920 );
+    glPopMatrix();
+
+    //dialog_render_border( 20, 420, 620, 460 );
+   
+    glPushMatrix();
+     glTranslatef( 0.0f, 0.0f, -0.1f );
+     draw_health_bars();
+     draw_name_dialog( 50, 430, "White", TRUE, 1 );
+     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+    glPopMatrix();
 
     if ( white_in_check == TRUE )
         text_draw_string_bouncy( 180, 420, "White is in check!", 2, &col_white,
