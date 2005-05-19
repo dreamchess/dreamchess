@@ -74,6 +74,8 @@
 /** Focussed image enlargement speed in enlargements per second. */
 #define IMAGE_SPEED 2.0f
 
+static void poll_move();
+
 int piece_moving_done=1;
 int piece_moving_start;
 int piece_moving_dest;
