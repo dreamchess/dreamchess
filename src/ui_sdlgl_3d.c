@@ -578,7 +578,12 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                   {
                      piece_moving_done=1;
                   }
-                  glTranslatef(-3.5f + piece_moving_xpos, -3.5f + piece_moving_ypos, 0.02);
+                  if (is_2d)
+                     glTranslatef(-3.5f + piece_moving_xpos, -3.5f + 
+                        piece_moving_ypos, 0.03);
+                  else 
+                     glTranslatef(-3.5f + piece_moving_xpos, -3.5f + 
+                        piece_moving_ypos, 0.02);
                 }
                 else
                   glTranslatef(-3.5f + j, -3.5f + i, 0.02);
