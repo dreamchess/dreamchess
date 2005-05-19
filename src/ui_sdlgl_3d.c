@@ -494,14 +494,33 @@ void freemodels()
     data_col_free(&textures, free_texture);
 }
 
+/* How many squares per second? */
+#define PIECE_MOVE_SPEED 0.5
+
+extern float piece_moving_source_xpos;
+extern float piece_moving_source_ypos;
+extern float piece_moving_dest_xpos;
+extern float piece_moving_dest_ypos;
+extern float piece_moving_xpos;
+extern float piece_moving_ypos;
+extern int piece_moving_dest;
+extern int piece_moving_source;
+extern int piece_moving_start;
+extern int piece_moving_x_done;
+extern int piece_moving_y_done;
+extern int piece_moving_done;
+
 static void draw_pieces(board_t *board, float rot_x, float rot_z)
 {
     int i,j,k;
+    float moved=0;
     coord3_t light_inv;
 
     light_inv.x = -light.x;
     light_inv.y = -light.y;
     light_inv.z = light.z;
+
+    moved=(float)((SDL_GetTicks()-piece_moving_start)/(1000/PIECE_MOVE_SPEED));
 
     /* Draw the pieces.. */
     for (i = 7; i >= 0; i--)
@@ -514,7 +533,56 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                 glTranslatef(0, -0.5f, -12.0f );
                 glRotatef(rot_x, 1, 0, 0);
                 glRotatef(rot_z, 0, 0, 1);
-                glTranslatef(-3.5f + j, -3.5f + i, 0.02);
+
+                // printf( "The piece is moving to.. %d\n\r", piece_moving_dest );
+                
+                if ( (i*8+j) == piece_moving_dest )
+                {
+                  if ( piece_moving_dest_xpos > piece_moving_source_xpos )
+                  {
+                     if ( piece_moving_xpos+moved >= piece_moving_dest_xpos )
+                        piece_moving_xpos=piece_moving_dest_xpos;
+                     else
+                        piece_moving_xpos+=moved;   
+                  }
+                  else if ( piece_moving_dest_xpos < piece_moving_source_xpos )
+                  {
+                     if ( piece_moving_xpos-moved <= piece_moving_dest_xpos )
+                        piece_moving_xpos=piece_moving_dest_xpos;
+                     else 
+                        piece_moving_xpos-=moved;
+                  }
+
+                  if ( piece_moving_dest_ypos > piece_moving_source_ypos )
+                  {
+                     if ( piece_moving_ypos+moved >= piece_moving_dest_ypos )
+                        piece_moving_ypos=piece_moving_dest_ypos;
+                     else 
+                        piece_moving_ypos+=moved;
+                  }
+                  else if ( piece_moving_dest_ypos < piece_moving_source_ypos )
+                  {
+                     if ( piece_moving_ypos-moved <= piece_moving_dest_ypos )
+                        piece_moving_ypos=piece_moving_dest_ypos;
+                     else 
+                        piece_moving_ypos-=moved;
+                  }
+      
+                  /*printf( "%i\n\r", piece_moving_done );
+                  printf( "%f\n\r", moved );
+                  printf( "%f %f\n\r", piece_moving_dest_xpos, piece_moving_dest_ypos );
+                  printf( "%f %f\n\r", piece_moving_xpos, piece_moving_ypos );*/
+
+                  if ( piece_moving_xpos == piece_moving_dest_xpos &&
+                     piece_moving_ypos == piece_moving_dest_ypos )
+                  {
+                     piece_moving_done=1;
+                  }
+                  glTranslatef(-3.5f + piece_moving_xpos, -3.5f + piece_moving_ypos, 0.02);
+                }
+                else
+                  glTranslatef(-3.5f + j, -3.5f + i, 0.02);
+
                 if (is_2d)
                 {
                     int steps = (z_rotation + 45.0f) / 90.0f;

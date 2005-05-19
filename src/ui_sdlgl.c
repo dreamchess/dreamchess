@@ -74,6 +74,45 @@
 /** Focussed image enlargement speed in enlargements per second. */
 #define IMAGE_SPEED 2.0f
 
+int piece_moving_done=1;
+int piece_moving_start;
+int piece_moving_dest;
+int piece_moving_source;
+int piece_moving_x_done;
+int piece_moving_y_done;
+float piece_moving_source_xpos;
+float piece_moving_source_ypos;
+float piece_moving_dest_xpos;
+float piece_moving_dest_ypos;
+float piece_moving_xpos;
+float piece_moving_ypos;
+
+void start_piece_move( int source, int dest )
+{
+   piece_moving_start=SDL_GetTicks();
+
+   piece_moving_done=0;
+
+   piece_moving_dest=dest;
+   piece_moving_source=source;
+   
+   piece_moving_source_xpos=(float)(source%8);
+   piece_moving_source_ypos=(float)(source/8);
+
+   piece_moving_dest_xpos=(float)(dest%8);
+   piece_moving_dest_ypos=(float)(dest/8);
+
+   piece_moving_xpos=piece_moving_source_xpos;
+   piece_moving_ypos=piece_moving_source_ypos;
+
+   piece_moving_x_done=0;
+   piece_moving_y_done=0;
+
+   //printf( "Piece moving from %i:%f,%f to %i:%f,%f\n\r", piece_moving_source,
+   //   piece_moving_source_xpos, piece_moving_source_ypos, piece_moving_dest,
+   //   piece_moving_dest_xpos, piece_moving_dest_ypos );
+}
+
 /** Colour description. */
 typedef struct colour
 {
@@ -3686,7 +3725,13 @@ static void draw_capture_list(colour_t *col)
 /** Implements ui_driver::update. */
 static void update(board_t *b, move_t *move)
 {
+   while ( piece_moving_done == 0 )
+      poll_move();
+
     board = *b;
+
+    if ( move != NULL )
+       start_piece_move( move->source, move->destination );    
 
     if ( board.state == BOARD_CHECK )
     {
@@ -3700,6 +3745,7 @@ static void update(board_t *b, move_t *move)
         black_in_check=FALSE;
         white_in_check=FALSE;
     }
+   
 }
 
 /** Implements ui_driver::show_result. */
@@ -3721,6 +3767,7 @@ static void draw_scene( board_t *b )
 
     dialog_cleanup();
     update_string_type_length();
+    //printf( "Piece is moving from %i to %i..\n\r", piece_moving_source, piece_moving_dest );
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDisable(GL_BLEND);
@@ -4088,6 +4135,9 @@ static void poll_move()
     else
         move->promotion_piece = NONE;
     needprom = 0;
+
+    //start_piece_move( source, dest );
+
     source = -1;
     dest = -1;
     game_make_move(move);
