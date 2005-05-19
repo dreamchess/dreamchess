@@ -59,8 +59,8 @@
 /** Desired frames per second. */
 #define FPS 9999
 
-/* fix meeee..... */
-#define STRING_TYPE_SPEED 1
+/* Speed that text types, characters per second. */
+#define STRING_TYPE_SPEED 20
 
 /** Bouncy text amplitude. */
 #define BOUNCE_AMP 2
@@ -151,6 +151,13 @@ void draw_rect_fill(int x, int y, int w, int h, colour_t *col)
 ui_event_t keys[94];
 
 int string_type_pos=0;
+
+int turn_counter_start=0;
+
+void reset_turn_counter()
+{
+   turn_counter_start=SDL_GetTicks();
+}
 
 void PopulateKeyTable()
 {
@@ -276,24 +283,36 @@ void set_perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zF
 }
 
 int string_type_cur=0;
+int string_type_start=0;
 
 void reset_string_type_length()
 {
+    Uint32 ticks = SDL_GetTicks();
     string_type_pos=0;
     string_type_cur=0;
+    string_type_start=ticks;
 }
 
 void update_string_type_length()
 {
+   string_type_pos=999;
+    //Uint32 ticks = SDL_GetTicks();
+   // float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
     //printf( "In type loop thingy. %i %i\n\r", string_type_cur, string_type_pos );
-    if ( string_type_cur > STRING_TYPE_SPEED )
+
+  // printf( "FART %i\n\r", (ticks-string_type_start) );
+
+  // string_type_pos=((ticks-string_type_start))/(STRING_TYPE_SPEED*1000);
+
+/*    if ( string_type_cur > STRING_TYPE_SPEED )
     {
+
         string_type_cur=0;
         if ( string_type_pos < 100 )
             string_type_pos++;
     }
     else
-        string_type_cur++;
+        string_type_cur++;*/
 }
 
 static void go_3d(int width, int height)
@@ -392,9 +411,9 @@ static int flip_board;
 static int dialog_promote_piece;
 
 #define GUI_PIECE_PAWN     0
-#define GUI_PIECE_ROOK     1
+#define GUI_PIECE_ROOK     3
 #define GUI_PIECE_BISHOP   2
-#define GUI_PIECE_KNIGHT   3
+#define GUI_PIECE_KNIGHT   1
 #define GUI_PIECE_QUEEN    4
 #define GUI_PIECE_KING     5
 #define GUI_PIECE_AVATAR   6
@@ -2646,9 +2665,9 @@ static w_dialog_t *dialog_title_create()
     w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
     w_container_append(W_CONTAINER(vbox2), label);
 
-    label = w_label_create("Name:");
+ /*   label = w_label_create("Name:");
     w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);
+    w_container_append(W_CONTAINER(vbox2), label);*/
 
     hbox = w_hbox_create(20);
     w_container_append(W_CONTAINER(hbox), vbox2);
@@ -2687,8 +2706,8 @@ static w_dialog_t *dialog_title_create()
     w_option_set_callback(W_OPTION(widget), dialog_title_board, NULL);
     w_container_append(W_CONTAINER(vbox2), widget);
 
-    widget = w_entry_create();
-    w_container_append(W_CONTAINER(vbox2), widget);
+  /*  widget = w_entry_create();
+    w_container_append(W_CONTAINER(vbox2), widget);*/
 
     w_container_append(W_CONTAINER(hbox), vbox2);
     w_container_append(W_CONTAINER(vbox), hbox);
@@ -3133,6 +3152,8 @@ static void gl_swap()
 /** Implements ui_driver::menu */
 static config_t *do_menu()
 {
+    GLuint ticks;
+    float fadehuh;
     w_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
     game_difficulty=1;
@@ -3549,9 +3570,11 @@ static void draw_move_list( colour_t *col_normal, colour_t *col_high )
     int y;
     int start;
     float x_white = 30;
-    float y_white = 360;
+    float y_white = 350;
     float x_black = 610;
-    float y_black = 360;
+    float y_black = 350;
+    colour_t col_normal2=*col_normal;
+    colour_t col_high2=*col_normal;
 
     game_get_move_list(&list, &entries, &view);
 
@@ -3561,25 +3584,31 @@ static void draw_move_list( colour_t *col_normal, colour_t *col_high )
         start = (view - 9 < 0 ? 0 : view - 9);
 
     y = y_white;
-    for (i = start; i <= view; i += 2)
+    for (i = view -1; i >= start; i -= 2)
     {
         char s[11];
         if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
             exit(1);
         if (i != view)
-            text_draw_string( x_white+5, y-5, s, 1, col_normal, 999 );
+            text_draw_string( x_white+5, y-5, s, 1, &col_normal2, 999 );
         else
-            text_draw_string( x_white+5, y-5, s, 1, col_high, 999 );
+            text_draw_string( x_white+5, y-5, s, 1, &col_high2, 999 );
         y -= text_height();
+        col_normal2.a-=0.15f;
+        col_high2.a-=0.15f;
     }
+    col_normal2=*col_normal;
+    col_high2=*col_normal;
     y = y_black;
-    for (i = start + 1; i <= view; i += 2)
+    for (i = view; i >= start; i -= 2)
     {
         if (i != view)
-            text_draw_string_right( x_black-5, y-5, list[i], 1, col_normal, 999 );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_normal2, 999 );
         else
-            text_draw_string_right( x_black-5, y-5, list[i], 1, col_high, 999 );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_high2, 999 );
         y -= text_height();
+        col_normal2.a-=0.15f;
+        col_high2.a-=0.15f;
     }
 }
 
@@ -3638,6 +3667,8 @@ static void draw_capture_list(colour_t *col)
             if (snprintf(s, 4, "%i", board.captured[i]) >= 4)
                 exit(1);
             text_draw_string( x_white, y_white, s, 1, col, 999);
+            draw_texture( &black_pieces[i/2], x_white-24, y_white, 24, 
+               24, 1.0f, &col_white );
         }
         y_white -= text_characters['a'].height;
         if (board.captured[i - 1] != 0)
@@ -3645,6 +3676,8 @@ static void draw_capture_list(colour_t *col)
             if (snprintf(s, 4, "%i", board.captured[i - 1]) >= 4)
                 exit(1);
             text_draw_string_right( x_black, y_black, s, 1, col, 999);
+            draw_texture( &white_pieces[(i-1)/2], x_black, y_black, 24, 
+               24, 1.0f, &col_white );
         }
         y_black -= text_characters['a'].height;
     }
@@ -3682,6 +3715,9 @@ static void show_result(result_t *res)
 static void draw_scene( board_t *b )
 {
     float square_size = 48;
+    char temp[80];
+    int clock_seconds=0;
+    int clock_minutes=0;
 
     dialog_cleanup();
     update_string_type_length();
@@ -3701,8 +3737,6 @@ static void draw_scene( board_t *b )
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    draw_move_list(&col_white, &col_yellow);
-    draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
     glScalef( 0.5f, 0.5f, 0.5f );
@@ -3723,6 +3757,13 @@ static void draw_scene( board_t *b )
     draw_health_bars();
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+    draw_move_list(&col_white, &col_yellow);
+    draw_capture_list(&col_white);
+
+    clock_minutes=(((SDL_GetTicks()-turn_counter_start)/1000)/60);
+    clock_seconds=((SDL_GetTicks()-turn_counter_start)/1000)-(clock_minutes*60);
+    sprintf( temp, "%i:%02i", clock_minutes, clock_seconds );
+    text_draw_string( 303, 440, temp, 1, &col_black, 999 );
     glPopMatrix();
 
     if ( white_in_check == TRUE )
@@ -4050,6 +4091,7 @@ static void poll_move()
     source = -1;
     dest = -1;
     game_make_move(move);
+    reset_turn_counter();
     return;
 }
 

@@ -28,7 +28,7 @@ static char* programming[] = { "Programming by",
                                NULL };
 
 static char* graphics[] = { "Graphics by",
-                            "Andrew Ball",
+                            "Drew 'Hawke' Ball",
                             "Rogier van Schaijk",
                             NULL };
 
