@@ -52,6 +52,10 @@
 #define TRUE  1
 #define FALSE 0
 
+#define SCREEN_WIDTH  640
+#define SCREEN_HEIGHT 480
+#define SCREEN_BPP     16
+
 /** Desired frames per second. */
 #define FPS 9999
 
@@ -243,8 +247,13 @@ static ui_event_t convert_event(SDL_Event *event)
         case 4:
             return UI_EVENT_EXTRA3;
         }
+    case SDL_MOUSEBUTTONDOWN:
+        switch (event->button.button)
+        {
+        case SDL_BUTTON_LEFT:
+            return UI_EVENT_ACTION;
+        }
     }
-
     if ((event->type == SDL_KEYDOWN) && (event->key.keysym.unicode <= 0xff))
         return event->key.keysym.unicode;
 
@@ -270,21 +279,21 @@ int string_type_cur=0;
 
 void reset_string_type_length()
 {
-   string_type_pos=0;
-   string_type_cur=0;
+    string_type_pos=0;
+    string_type_cur=0;
 }
 
 void update_string_type_length()
 {
-   //printf( "In type loop thingy. %i %i\n\r", string_type_cur, string_type_pos );
-   if ( string_type_cur > STRING_TYPE_SPEED )
-   {
-      string_type_cur=0;
-      if ( string_type_pos < 100 )
-         string_type_pos++;   
-   }
-   else
-      string_type_cur++;
+    //printf( "In type loop thingy. %i %i\n\r", string_type_cur, string_type_pos );
+    if ( string_type_cur > STRING_TYPE_SPEED )
+    {
+        string_type_cur=0;
+        if ( string_type_pos < 100 )
+            string_type_pos++;
+    }
+    else
+        string_type_cur++;
 }
 
 static void go_3d(int width, int height)
@@ -333,8 +342,8 @@ static void draw_texture( texture_t *texture, float xpos,
 }
 
 static void draw_texture_uv( texture_t *texture, float xpos,
-                          float ypos, float width, float height, float zpos,
-                          colour_t *col, float u1, float v1, float u2, float v2 )
+                             float ypos, float width, float height, float zpos,
+                             colour_t *col, float u1, float v1, float u2, float v2 )
 {
     glEnable( GL_TEXTURE_2D );
 
@@ -424,7 +433,7 @@ typedef int w_class_id;
     void (* set_size) (struct widget *widget, int width, int height); \
     void (* get_requested_size) (struct widget *widget, int *width, int *height); \
     void (* get_focus_pos) (struct widget *widget, int *x, int *y); \
-    void (* set_focus_pos) (struct widget *widget, int x, int y); \
+    int (* set_focus_pos) (struct widget *widget, int x, int y); \
     void (* destroy) (struct widget *widget); \
     w_class_id id; \
     void *data; \
@@ -517,8 +526,10 @@ static void w_get_focus_pos(widget_t *widget, int *x, int *y)
     *y = widget->height_a / 2;
 }
 
-static void w_set_focus_pos(widget_t *widget, int x, int y)
-{}
+static int w_set_focus_pos(widget_t *widget, int x, int y)
+{
+    return 1;
+}
 
 static void w_widget_init(widget_t *widget)
 {
@@ -775,11 +786,22 @@ void w_bin_set_size(w_widget_t *widget, int width, int height)
     w_set_size(widget, width, height);
 }
 
+static int w_bin_set_focus_pos(widget_t *widget, int x, int y)
+{
+    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+
+    if (child)
+        return child->set_focus_pos(child, x, y);
+
+    return 0;
+}
+
 static void w_bin_init(w_bin_t *bin, w_widget_t *child)
 {
     w_container_init((w_container_t *) bin);
 
     bin->set_size = w_bin_set_size;
+    bin->set_focus_pos = w_bin_set_focus_pos;
     bin->id = w_bin_get_class_id();
     w_container_append(W_CONTAINER(bin), child);
 }
@@ -1223,7 +1245,7 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
     {
         if (focus != FOCUS_NONE)
             text_draw_string_bouncy(x, yy, OPTION_ARROW_LEFT, 1, &col_dark_red,
-               string_type_pos);
+                                    string_type_pos);
         else
             text_draw_string(x, yy, OPTION_ARROW_LEFT, 1, &col_black, string_type_pos);
     }
@@ -1237,8 +1259,8 @@ static void w_option_render(w_widget_t *widget, int x, int y, int focus)
     if (option->sel < w_container_get_size(W_CONTAINER(widget)) - 1)
     {
         if (focus != FOCUS_NONE)
-            text_draw_string_bouncy(xx, yy, OPTION_ARROW_RIGHT, 1, &col_dark_red, 
-               string_type_pos );
+            text_draw_string_bouncy(xx, yy, OPTION_ARROW_RIGHT, 1, &col_dark_red,
+                                    string_type_pos );
         else
             text_draw_string(xx, yy, OPTION_ARROW_RIGHT, 1, &col_black, string_type_pos);
     }
@@ -1543,29 +1565,34 @@ static void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
     *y += (size - box->sel - 1) * box->spacing;
 }
 
-static void w_vbox_set_focus_pos(widget_t *widget, int x , int y)
+static int w_vbox_set_focus_pos(widget_t *widget, int x , int y)
 {
     w_box_t *box = W_BOX(widget);
     w_container_t *container = W_CONTAINER(widget);
     int size = w_container_get_size(container);
     int cur_y = box->height_a - box->height;
+    int prev = box->sel;
 
     box->sel = size;
 
-    while (w_select_prev(W_SELECT(widget), 1, 1))
+    while (w_select_prev(W_SELECT(widget), 0, 0))
     {
         widget_t *child = w_container_get_child(container, box->sel);
 
         cur_y += child->height_a;
         if (cur_y >= y)
         {
-            child->set_focus_pos(child, x, cur_y - y);
-            break;
+            if (!child->input || !child->enabled || !
+                child->set_focus_pos(child, x, child->height_a - (cur_y - y)))
+                break;
+            else
+                return 1;
         }
         cur_y += box->spacing;
     }
 
-    assert(box->sel != size);
+    box->sel = prev;
+    return 0;
 }
 
 void w_vbox_init(w_vbox_t *vbox, int spacing)
@@ -1750,28 +1777,33 @@ static void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
     *x += box->sel * box->spacing;
 }
 
-static void w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
+static int w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
 {
     w_box_t *box = W_BOX(widget);
     w_container_t *container = W_CONTAINER(widget);
     int cur_x = 0;
+    int prev = box->sel;
 
     box->sel = -1;
 
-    while (w_select_next(W_SELECT(widget), 1, 1))
+    while (w_select_next(W_SELECT(widget), 0, 0))
     {
         w_widget_t *child = w_container_get_child(container, box->sel);
 
         cur_x += child->width_a;
         if (cur_x >= x)
         {
-            child->set_focus_pos(child, cur_x - x, y);
-            break;
+            if (!child->input || !child->enabled ||
+                (!child->set_focus_pos(child, x - cur_x + child->width_a, y)))
+                break;
+            else
+                return 1;
         }
         cur_x += box->spacing;
     }
 
-    assert (box->sel != -1);
+    box->sel = prev;
+    return 0;
 }
 
 void w_hbox_init(w_hbox_t *hbox, int spacing)
@@ -1941,7 +1973,9 @@ w_widget_t *w_entry_create()
 
 #define W_DIALOG_DATA \
     W_BIN_DATA \
-    int modal;
+    int modal; \
+    position_t pos; \
+    style_t *style;
 
 /** Dialog state. */
 typedef struct w_dialog
@@ -2035,108 +2069,125 @@ static w_dialog_t *dialog_current()
 
 void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
 {
-   float tile_width=border.u2/3;
-   int i,j;
-   float width2, height2;  
-   colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
+    float tile_width=border.u2/3;
+    int i,j;
+    float width2, height2;
+    colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
 
-   //printf( "Border U/V: %f %f %f %f\n\r", border.u1, border.v1, border.u2, border.v2  );
+    //printf( "Border U/V: %f %f %f %f\n\r", border.u1, border.v1, border.u2, border.v2  );
 
-   switch ( section )
-   {
-      case 0: /* Top */
-         for ( i=0; i<((xmax-xmin)/16); i++ )
-         {
+    switch ( section )
+    {
+    case 0: /* Top */
+        for ( i=0; i<((xmax-xmin)/16); i++ )
+        {
             if ( i > (int)(((xmax-xmin)/16)-1) )
-               draw_texture_uv( &border, xmin+(i*16), ymax, 
-                  (int)(xmax-xmin)-(int)(i*16), 16, 0.95f, &col_white, 
-                  tile_width, 0.0f, tile_width*2, tile_width );
+                draw_texture_uv( &border, xmin+(i*16), ymax,
+                                 (int)(xmax-xmin)-(int)(i*16), 16, 0.95f, &col_white,
+                                 tile_width, 0.0f, tile_width*2, tile_width );
             else
-               draw_texture_uv( &border, xmin+(i*16), ymax, 16, 16, 0.95f, &col_white,
-                  tile_width, 0.0f, tile_width*2, tile_width );
-         }
-         break;
-      case 1: /* Bottom */
-         for ( i=0; i<((xmax-xmin)/16); i++ )
-         {
+                draw_texture_uv( &border, xmin+(i*16), ymax, 16, 16, 0.95f, &col_white,
+                                 tile_width, 0.0f, tile_width*2, tile_width );
+        }
+        break;
+    case 1: /* Bottom */
+        for ( i=0; i<((xmax-xmin)/16); i++ )
+        {
             if ( i > (int)(((xmax-xmin)/16)-1) )
-               draw_texture_uv( &border, xmin+(i*16), ymin-16, (int)(xmax-xmin)-(int)(i*16),
-                  16, 0.95f, &col_white, tile_width, border.v2-tile_width, tile_width*2,
-                  border.v2 );
+                draw_texture_uv( &border, xmin+(i*16), ymin-16, (int)(xmax-xmin)-(int)(i*16),
+                                 16, 0.95f, &col_white, tile_width, border.v2-tile_width, tile_width*2,
+                                 border.v2 );
             else
-               draw_texture_uv( &border, xmin+(i*16), ymin-16, 16, 16, 0.95f, &col_white,
-                  tile_width, border.v2-tile_width, tile_width*2, border.v2 );     
-         }          
-         break;
-      case 2: /* Left */
-         for ( i=0; i<((ymax-ymin)/16); i++ )
-         {
+                draw_texture_uv( &border, xmin+(i*16), ymin-16, 16, 16, 0.95f, &col_white,
+                                 tile_width, border.v2-tile_width, tile_width*2, border.v2 );
+        }
+        break;
+    case 2: /* Left */
+        for ( i=0; i<((ymax-ymin)/16); i++ )
+        {
             if ( i > (int)(((ymax-ymin)/16)-1) )
-               draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 
-                  (int)(ymax-ymin)-(int)(i*16), 0.95f, &col_white, 0.0f, tile_width, 
-                  tile_width, tile_width*2 );
+                draw_texture_uv( &border, xmin-16, ymin+(i*16), 16,
+                                 (int)(ymax-ymin)-(int)(i*16), 0.95f, &col_white, 0.0f, tile_width,
+                                 tile_width, tile_width*2 );
             else
-               draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 16, 0.95f, &col_white,
-                  0.0f, tile_width, tile_width, tile_width*2 ); 
-         }
-         break;
-      case 3: /* Right */
-         for ( i=0; i<((ymax-ymin)/16); i++ )
-         {
+                draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 16, 0.95f, &col_white,
+                                 0.0f, tile_width, tile_width, tile_width*2 );
+        }
+        break;
+    case 3: /* Right */
+        for ( i=0; i<((ymax-ymin)/16); i++ )
+        {
             if ( i > (int)(((ymax-ymin)/16)-1) )
-               draw_texture_uv( &border, xmax, ymin+(i*16), 16, (int)(ymax-ymin)-(int)(i*16),
-                  0.95f, &col_white, border.u2-tile_width, tile_width, border.u2,
-                  tile_width*2 ); 
+                draw_texture_uv( &border, xmax, ymin+(i*16), 16, (int)(ymax-ymin)-(int)(i*16),
+                                 0.95f, &col_white, border.u2-tile_width, tile_width, border.u2,
+                                 tile_width*2 );
             else
-               draw_texture_uv( &border, xmax, ymin+(i*16), 16, 16, 0.95f, &col_white,
-                  border.u2-tile_width, tile_width, border.u2, tile_width*2 ); 
-         }
-         break;
-      case 4: /* Top left. */
-         draw_texture_uv( &border, xmin-16, ymax, 16, 16, 0.95f, &col_white, 
-            0.0f, 0.0f, tile_width, tile_width );
-         break;
-      case 5: /* Top right. */
-         draw_texture_uv( &border, xmax, ymax, 16, 16, 0.95f, &col_white, 
-            border.u2-tile_width, 0.0f, border.u2, tile_width );
-         break;
-      case 6: /* Bottom left.*/
-         draw_texture_uv( &border, xmin-16, ymin-16, 16, 16, 0.95f, &col_white,
-            0.0f, border.v2-tile_width, tile_width, border.v2 ); 
-         break;
-      case 7: /* Bottom right. */
-         draw_texture_uv( &border, xmax, ymin-16, 16, 16, 0.95f, &col_white,
-            border.u2-tile_width, border.v2-tile_width, border.u2, border.v2 ); 
-         break;
-      case 8: /* Middle. */
-      /* Draw backdrop.. */
-      for ( j=0; j<=((ymax-ymin)/16); j++ )
-      for ( i=0; i<=((xmax-xmin)/16); i++ )
-      {
-         if ( i > (int)(((xmax-xmin)/16)-1) )
-            width2=(int)(xmax-xmin)-(int)(i*16);
-         else 
-            width2=16;
+                draw_texture_uv( &border, xmax, ymin+(i*16), 16, 16, 0.95f, &col_white,
+                                 border.u2-tile_width, tile_width, border.u2, tile_width*2 );
+        }
+        break;
+    case 4: /* Top left. */
+        draw_texture_uv( &border, xmin-16, ymax, 16, 16, 0.95f, &col_white,
+                         0.0f, 0.0f, tile_width, tile_width );
+        break;
+    case 5: /* Top right. */
+        draw_texture_uv( &border, xmax, ymax, 16, 16, 0.95f, &col_white,
+                         border.u2-tile_width, 0.0f, border.u2, tile_width );
+        break;
+    case 6: /* Bottom left.*/
+        draw_texture_uv( &border, xmin-16, ymin-16, 16, 16, 0.95f, &col_white,
+                         0.0f, border.v2-tile_width, tile_width, border.v2 );
+        break;
+    case 7: /* Bottom right. */
+        draw_texture_uv( &border, xmax, ymin-16, 16, 16, 0.95f, &col_white,
+                         border.u2-tile_width, border.v2-tile_width, border.u2, border.v2 );
+        break;
+    case 8: /* Middle. */
+        /* Draw backdrop.. */
+        for ( j=0; j<=((ymax-ymin)/16); j++ )
+            for ( i=0; i<=((xmax-xmin)/16); i++ )
+            {
+                if ( i > (int)(((xmax-xmin)/16)-1) )
+                    width2=(int)(xmax-xmin)-(int)(i*16);
+                else
+                    width2=16;
 
-         if ( j > (int)(((ymax-ymin)/16)-1) )
-            height2=(int)(ymax-ymin)-(int)(j*16);
-         else 
-            height2=16;
+                if ( j > (int)(((ymax-ymin)/16)-1) )
+                    height2=(int)(ymax-ymin)-(int)(j*16);
+                else
+                    height2=16;
 
-         draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2, 
-            0.95f, &back, tile_width, tile_width, tile_width*2,
-            tile_width*2 );            
-      }
-         break;
-   }
+                draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2,
+                                 0.95f, &back, tile_width, tile_width, tile_width*2,
+                                 tile_width*2 );
+            }
+        break;
+    }
 }
 
 void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
 {
-   int i=0;
+    int i=0;
 
-   for ( i; i<9; i++ )
-      dialog_render_border_section( i, xmin, ymin, xmax, ymax );
+    for ( i; i<9; i++ )
+        dialog_render_border_section( i, xmin, ymin, xmax, ymax );
+}
+
+static void w_dialog_get_screen_pos(w_dialog_t *dialog, int *x, int *y)
+{
+    if (dialog->pos.x_align == ALIGN_LEFT)
+        *x = dialog->pos.x;
+    else if (dialog->pos.x_align == ALIGN_RIGHT)
+        *x = dialog->pos.x - dialog->width;
+    else
+        *x = dialog->pos.x - dialog->width / 2;
+
+    if (dialog->pos.y_align == ALIGN_TOP)
+        *y = dialog->pos.y - dialog->height;
+    else if (dialog->pos.y_align == ALIGN_BOTTOM)
+        *y = dialog->pos.y;
+    else
+        *y = dialog->pos.y - dialog->height / 2;
 }
 
 /** @brief Renders a dialog.
@@ -2147,40 +2198,19 @@ void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
  *  @param style The style to render in.
  *  @param pos The position to render at.
  */
-static void w_dialog_render(w_widget_t *widget, int x, int y, int focus)
+static void w_dialog_render(w_dialog_t *dialog)
 {
-    style_t *style = &style_ingame;
-    position_t *pos = &pos_ingame;
-    w_dialog_t *menu = W_DIALOG(widget);
-    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+    style_t *style = dialog->style;
+    w_widget_t *child = w_bin_get_child(W_BIN(dialog));
 
-    int height, width;
-    int total_height, total_width;
     int xmin, xmax, ymin, ymax;
     colour_t col;
     float tile_width=border.u2/3;
 
-    height = menu->height;
-    width = menu->width;
-    total_height = height + 2 * style->vert_pad + 2 * style->border;
-    total_width = width + 2 * style->hor_pad + 2 * style->border;
+    w_dialog_get_screen_pos(dialog, &xmin, &ymin);
 
-    if (pos->x_align == ALIGN_LEFT)
-        xmin = pos->x;
-    else if (pos->x_align == ALIGN_RIGHT)
-        xmin = pos->x - total_width;
-    else
-        xmin = pos->x - total_width / 2;
-
-    if (pos->y_align == ALIGN_TOP)
-        ymin = pos->y - total_height;
-    else if (pos->y_align == ALIGN_BOTTOM)
-        ymin = pos->y;
-    else
-        ymin = pos->y - total_height / 2;
-
-    xmax = xmin + total_width;
-    ymax = ymin + total_height;
+    xmax = xmin + dialog->width;
+    ymax = ymin + dialog->height;
 
     /* Draw the 'fade' */
     col = style->fade_col;
@@ -2194,39 +2224,39 @@ static void w_dialog_render(w_widget_t *widget, int x, int y, int focus)
     glEnd( );
 
     if ( style->border_textured )
-    {  
-      /* Border. */
-      dialog_render_border( xmin, ymin, xmax, ymax );
+    {
+        /* Border. */
+        dialog_render_border( xmin, ymin, xmax, ymax );
     }
     else
     {
-      /* Draw the border. */
-      col = style->border_col;
-      glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
+        /* Draw the border. */
+        col = style->border_col;
+        glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
 
-      glBegin( GL_QUADS );
-      glVertex3f(xmax, ymin, 0.9f);
-      glVertex3f(xmax, ymax, 0.9f);
-      glVertex3f(xmin, ymax, 0.9f);
-      glVertex3f(xmin, ymin, 0.9f);
-      glEnd();
+        glBegin( GL_QUADS );
+        glVertex3f(xmax, ymin, 0.9f);
+        glVertex3f(xmax, ymax, 0.9f);
+        glVertex3f(xmin, ymax, 0.9f);
+        glVertex3f(xmin, ymin, 0.9f);
+        glEnd();
 
-      xmin += style->border;
-      xmax -= style->border;
-      ymin += style->border;
-      ymax -= style->border;
+        xmin += style->border;
+        xmax -= style->border;
+        ymin += style->border;
+        ymax -= style->border;
 
-      /* Draw the backdrop. */
-      col = style->bg_col;
-      glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
+        /* Draw the backdrop. */
+        col = style->bg_col;
+        glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
 
-      glBegin( GL_QUADS );
-      glVertex3f(xmax, ymin, 0.95f);
-      glVertex3f(xmax, ymax, 0.95f);
-      glVertex3f(xmin, ymax, 0.95f);
-      glVertex3f(xmin, ymin, 0.95f);
-      glEnd();
-    }  
+        glBegin( GL_QUADS );
+        glVertex3f(xmax, ymin, 0.95f);
+        glVertex3f(xmax, ymax, 0.95f);
+        glVertex3f(xmin, ymax, 0.95f);
+        glVertex3f(xmin, ymin, 0.95f);
+        glEnd();
+    }
 
     xmin += style->hor_pad;
     xmax -= style->hor_pad;
@@ -2234,6 +2264,24 @@ static void w_dialog_render(w_widget_t *widget, int x, int y, int focus)
     ymax -= style->vert_pad;
 
     child->render(child, xmin, ymin, 1);
+}
+
+static void w_dialog_mouse_movement(w_dialog_t *dialog, int x, int y)
+{
+    int xmin, xmax, ymin, ymax;
+
+    w_dialog_get_screen_pos(dialog, &xmin, &ymin);
+
+    xmax = xmin + dialog->width;
+    ymax = ymin + dialog->height;
+
+    if ((x < xmin) || (x >= xmax) || (y < ymin) || (y >= ymax))
+        return;
+
+    x -= xmin + dialog->style->hor_pad;
+    y -= ymin + dialog->style->vert_pad;
+
+    dialog->set_focus_pos(W_WIDGET(dialog), x, y);
 }
 
 /** @brief Processes an input event for a specific dialog.
@@ -2266,14 +2314,29 @@ void w_dialog_set_modal(w_dialog_t *dialog, int modal)
     dialog->modal = modal;
 }
 
+void w_dialog_set_position(w_dialog_t *dialog, int x, int y, int x_align, int y_align)
+{
+    dialog->pos.x = x;
+    dialog->pos.y = y;
+    dialog->pos.x_align = x_align;
+    dialog->pos.y_align = y_align;
+}
+
 void w_dialog_init(w_dialog_t *dialog, w_widget_t *child)
 {
     w_bin_init((w_bin_t *) dialog, child);
 
-    dialog->render = w_dialog_render;
     dialog->input = w_dialog_input;
     dialog->id = w_dialog_get_class_id();
     dialog->modal = 0;
+    dialog->style = &style_ingame;
+
+    child->get_requested_size(child, &dialog->width, &dialog->height);
+    child->set_size(child, dialog->width, dialog->height);
+    dialog->height += 2 * dialog->style->vert_pad + 2 * dialog->style->border;
+    dialog->width += 2 * dialog->style->hor_pad + 2 * dialog->style->border;
+
+    w_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, ALIGN_CENTER, ALIGN_CENTER);
 }
 
 /** @brief Creates a dialog.
@@ -2286,9 +2349,6 @@ w_widget_t *w_dialog_create(w_widget_t *child)
     w_dialog_t *dialog = malloc(sizeof(w_dialog_t));
 
     w_dialog_init(dialog, child);
-
-    child->get_requested_size(child, &dialog->width, &dialog->height);
-    child->set_size(child, dialog->width, dialog->height);
 
     return W_WIDGET(dialog);
 }
@@ -2639,6 +2699,7 @@ static w_dialog_t *dialog_title_create()
 
     dialog = w_dialog_create(vbox);
     w_dialog_set_modal(W_DIALOG(dialog), 1);
+    w_dialog_set_position(W_DIALOG(dialog), 320, 15, ALIGN_CENTER, ALIGN_BOTTOM);
     return W_DIALOG(dialog);
 }
 
@@ -2700,10 +2761,6 @@ static w_dialog_t *dialog_vkeyboard_create()
     dialog = w_dialog_create(vbox2);
     return W_DIALOG(dialog);
 }
-
-#define SCREEN_WIDTH  640
-#define SCREEN_HEIGHT 480
-#define SCREEN_BPP     16
 
 /* This is our SDL surface */
 static SDL_Surface *surface;
@@ -2962,7 +3019,7 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
         text_draw_string( xpos, ypos+10, name, 1, &col_black, 999 );
     else
         text_draw_string( xpos+width-(strlen(name)*8), ypos+10, name, 1, &col_black,
-           999 );
+                          999 );
 }
 
 void dialog_promote_cb(widget_t *widget, void *data)
@@ -3108,13 +3165,10 @@ static config_t *do_menu()
 
             if (event.type == SDL_MOUSEMOTION)
             {
-#if 0
                 w_dialog_t *dialog = dialog_current();
-                if (dialog && dialog->widget)
-                    dialog->widget->set_focus_pos(dialog->widget,
-                                                  event.motion.x,
-                                                  479 - event.motion.y);
-#endif
+                if (dialog)
+                    w_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+
                 continue;
             }
 
@@ -3124,8 +3178,8 @@ static config_t *do_menu()
             {
                 if (ui_event != UI_EVENT_NONE)
                 {
-                   reset_string_type_length();
-                   wait_menu = 0;
+                    reset_string_type_length();
+                    wait_menu = 0;
                 }
                 continue;
             }
@@ -3170,16 +3224,16 @@ static config_t *do_menu()
         if ( set_loading == FALSE )
         {
             if (wait_menu)
-                text_draw_string_bouncy( 140, 30, "Press any key or button to start", 
-                   1.5, &col_white, string_type_pos );
+                text_draw_string_bouncy( 140, 30, "Press any key or button to start",
+                                         1.5, &col_white, string_type_pos );
             else
             {
                 w_dialog_t *dialog = dialog_current();
-                dialog->render(W_WIDGET(dialog), 0, 0, 1);
+                w_dialog_render(dialog);
             }
 
             if (vkeyboard_enabled)
-                keyboard->render(W_WIDGET(keyboard), 0, 0, 1);
+                w_dialog_render(keyboard);
 
             draw_credits(0);
         }
@@ -3557,8 +3611,8 @@ static void draw_health_bars()
     draw_rect_fill( 640-20-75, 375, 75, 10, &col_yellow );
 
     draw_rect_fill( 20, 375, 75*white_health_percent, 10, &col_red );
-    draw_rect_fill( 640-20-(75*black_health_percent), 375, 75*black_health_percent, 
-      10, &col_red );
+    draw_rect_fill( 640-20-(75*black_health_percent), 375, 75*black_health_percent,
+                    10, &col_red );
 
     draw_rect( 20, 375, 75, 10, &col_black );
     draw_rect( 640-75-20, 375, 75, 10, &col_black );
@@ -3651,37 +3705,37 @@ static void draw_scene( board_t *b )
     draw_capture_list(&col_white);
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
-     glScalef( 0.5f, 0.5f, 0.5f );
-     dialog_render_border( 40, 750, 190, 770 );
-     dialog_render_border( 40, 880, 370, 920 );
+    glScalef( 0.5f, 0.5f, 0.5f );
+    dialog_render_border( 40, 750, 190, 770 );
+    dialog_render_border( 40, 880, 370, 920 );
 
-     dialog_render_border( 1090, 750, 1240, 770 );
-     dialog_render_border( 910, 880, 1240, 920 );
+    dialog_render_border( 1090, 750, 1240, 770 );
+    dialog_render_border( 910, 880, 1240, 920 );
 
-     /* Da clocken */
-     dialog_render_border( 580, 880, 700, 920 );
+    /* Da clocken */
+    dialog_render_border( 580, 880, 700, 920 );
     glPopMatrix();
 
     //dialog_render_border( 20, 420, 620, 460 );
-   
+
     glPushMatrix();
-     glTranslatef( 0.0f, 0.0f, -0.1f );
-     draw_health_bars();
-     draw_name_dialog( 50, 430, "White", TRUE, 1 );
-     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+    glTranslatef( 0.0f, 0.0f, -0.1f );
+    draw_health_bars();
+    draw_name_dialog( 50, 430, "White", TRUE, 1 );
+    draw_name_dialog( 490, 430, "Black", FALSE, 0 );
     glPopMatrix();
 
     if ( white_in_check == TRUE )
         text_draw_string_bouncy( 180, 420, "White is in check!", 2, &col_white,
-           string_type_pos );
+                                 string_type_pos );
     else if ( black_in_check == TRUE )
         text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white,
-           string_type_pos );
+                                 string_type_pos );
 
     if (dialog_current())
     {
         w_dialog_t *dialog = dialog_current();
-        dialog->render(W_WIDGET(dialog), 0, 0, 1);
+        w_dialog_render(dialog);
     }
 
     /* Draw it to the screen */
@@ -3746,7 +3800,7 @@ void text_draw_string( float xpos, float ypos, unsigned char *text, float scale,
     int xposition=xpos;
 
     if ( length > strlen(text) )
-      length=strlen(text);
+        length=strlen(text);
 
     for ( i=0; i<length; i++ )
     {
@@ -3833,7 +3887,7 @@ void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float
     Uint32 ticks = SDL_GetTicks();
 
     if ( length > strlen(text) )
-      length=strlen(text);
+        length=strlen(text);
 
     for ( i=0; i<length; i++ )
     {
@@ -4033,6 +4087,15 @@ static int GetMove()
     while ( SDL_PollEvent( &event ) )
     {
         ui_event_t ui_event = convert_event(&event);
+
+        if (event.type == SDL_MOUSEMOTION)
+        {
+            w_dialog_t *dialog = dialog_current();
+            if (dialog)
+                w_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+
+            continue;
+        }
 
         if (dialog_current())
             dialog_input(ui_event);
