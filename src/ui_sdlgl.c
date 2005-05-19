@@ -3190,6 +3190,8 @@ static void gl_swap()
     }
 }
 
+float starscroll_pos=320;
+
 /** Implements ui_driver::menu */
 static config_t *do_menu()
 {
@@ -3200,6 +3202,7 @@ static config_t *do_menu()
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
+    colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     board_xpos=128;
     board_ypos=30;
@@ -3271,7 +3274,6 @@ static config_t *do_menu()
         }
 
         /* Draw the menu.. */
-
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 0.95f, &col_white );
         update_string_type_length();
 
@@ -3400,7 +3402,7 @@ static void init_gui()
     generate_text_chars();
 
     /* For the menu.. */
-    load_texture_png( &menu_title_tex, "menu_title.png" , 0);
+    load_texture_png( &menu_title_tex, "menu_title.png" , 1);
     load_texture_png( &border, "menu_border.png" , 1);
 
     /* Fill theme list. */

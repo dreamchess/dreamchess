@@ -620,7 +620,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                   (i*8+j) == piece_moving_dest )
                 {
                   glPushMatrix();
-                   glRotatef( 10.0f, xrot, yrot, 0.0f );
+                   //glRotatef( 10.0f, xrot, yrot, 0.0f );
                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
                   glPopMatrix();
                 }
