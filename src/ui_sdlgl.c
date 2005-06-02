@@ -2678,6 +2678,8 @@ static w_dialog_t *dialog_title_create()
     config->player[BLACK] = PLAYER_ENGINE;
     config->cpu_level = 1;
     cur_theme = 0;
+    pieces_list_cur = 0;
+    board_list_cur = 0;
     flip_board = 0;
 
     widget = w_action_create_with_label("Start Game", 0.0f, 0.0f);
