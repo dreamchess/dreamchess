@@ -495,7 +495,7 @@ void freemodels()
 }
 
 /* How many squares per second? */
-#define PIECE_MOVE_SPEED 0.5
+#define PIECE_MOVE_SPEED 0.01
 
 extern float piece_moving_source_xpos;
 extern float piece_moving_source_ypos;

@@ -229,6 +229,7 @@ AC_CONFIG_FILES([Makefile
 		m4/Makefile
 		src/Makefile
 		src/libs/Makefile
+		src/libs/gamegui/Makefile
 		src/include/Makefile
 		src/dreamer/Makefile])
 AC_OUTPUT

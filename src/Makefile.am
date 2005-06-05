@@ -7,4 +7,5 @@ AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 dreamchess_SOURCES = ui_sdlgl.c ui_sdl.c board.c history.c ui.c \
 	comm_unix.c comm_sdlthd.c dreamchess.c main.c main_sdlthd.c \
 	datadir.c comm.c comm_win32.c credits.c ui_sdlgl_3d.c
-dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ libs/libsan.a
+dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ libs/libsan.a \
+	libs/gamegui/libgamegui.a
