@@ -387,9 +387,9 @@ void model_render(model_t *model, float alpha, coord3_t *light)
             if (light)
             {
                 angle = arccos(dot_product(mesh->normal[data[i] * 3],
-                               mesh->normal[data[i] * 3 + 1],
-                               mesh->normal[data[i] * 3 + 2],
-                               light->x, light->y, light->z));
+                                           mesh->normal[data[i] * 3 + 1],
+                                           mesh->normal[data[i] * 3 + 2],
+                                           light->x, light->y, light->z));
 
                 angle /= 2.8;
 
@@ -495,7 +495,7 @@ void freemodels()
 }
 
 /* How many squares per second? */
-#define PIECE_MOVE_SPEED 0.01
+#define PIECE_MOVE_SPEED 3.0
 
 extern float piece_moving_source_xpos;
 extern float piece_moving_source_ypos;
@@ -524,7 +524,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
     light_inv.z = light.z;
 
     moved=(float)((SDL_GetTicks()-piece_moving_start)/(1000/PIECE_MOVE_SPEED));
-    xrot=0.0f; yrot=0.0f;  
 
     /* Draw the pieces.. */
     for (i = 7; i >= 0; i--)
@@ -538,71 +537,48 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                 glRotatef(rot_x, 1, 0, 0);
                 glRotatef(rot_z, 0, 0, 1);
 
-                // printf( "The piece is moving to.. %d\n\r", piece_moving_dest );
-                
                 if ( (i*8+j) == piece_moving_dest )
                 {
-                  if ( piece_moving_dest_xpos > piece_moving_source_xpos )
-                  {
-                     if ( piece_moving_xpos+moved >= piece_moving_dest_xpos )
-                        piece_moving_xpos=piece_moving_dest_xpos;
-                     else
-                     {
-                        piece_moving_xpos+=moved;        
-                        yrot=1.0f;
-                     }
-                  }
-                  else if ( piece_moving_dest_xpos < piece_moving_source_xpos )
-                  {
-                     if ( piece_moving_xpos-moved <= piece_moving_dest_xpos )
-                        piece_moving_xpos=piece_moving_dest_xpos;
-                     else 
-                     {
-                        piece_moving_xpos-=moved;
-                        yrot=-1.0f;
-                     }
-                  }
+                    if ( piece_moving_dest_xpos > piece_moving_source_xpos )
+                    {
+                        piece_moving_xpos = piece_moving_source_xpos + moved;
+                        if ( piece_moving_xpos >= piece_moving_dest_xpos )
+                            piece_moving_xpos = piece_moving_dest_xpos;
+                    }
+                    else if ( piece_moving_dest_xpos < piece_moving_source_xpos )
+                    {
+                        piece_moving_xpos = piece_moving_source_xpos - moved;
+                        if ( piece_moving_xpos <= piece_moving_dest_xpos )
+                            piece_moving_xpos = piece_moving_dest_xpos;
+                    }
 
-                  if ( piece_moving_dest_ypos > piece_moving_source_ypos )
-                  {
-                     if ( piece_moving_ypos+moved >= piece_moving_dest_ypos )
-                        piece_moving_ypos=piece_moving_dest_ypos;
-                     else 
-                     {
-                        piece_moving_ypos+=moved;     
-                        xrot=-1.0f;
-                     }
-                  }
-                  else if ( piece_moving_dest_ypos < piece_moving_source_ypos )
-                  {
-                     if ( piece_moving_ypos-moved <= piece_moving_dest_ypos )
-                        piece_moving_ypos=piece_moving_dest_ypos;
-                     else 
-                     {
-                        piece_moving_ypos-=moved;
-                        xrot=1.0f;
-                     }
-                  }
-      
-                  /*printf( "%i\n\r", piece_moving_done );
-                  printf( "%f\n\r", moved );
-                  printf( "%f %f\n\r", piece_moving_dest_xpos, piece_moving_dest_ypos );
-                  printf( "%f %f\n\r", piece_moving_xpos, piece_moving_ypos );*/
+                    if ( piece_moving_dest_ypos > piece_moving_source_ypos )
+                    {
+                        piece_moving_ypos = piece_moving_source_ypos + moved;
+                        if ( piece_moving_ypos >= piece_moving_dest_ypos )
+                            piece_moving_ypos = piece_moving_dest_ypos;
+                    }
+                    else if ( piece_moving_dest_ypos < piece_moving_source_ypos )
+                    {
+                        piece_moving_ypos = piece_moving_source_ypos - moved;
+                        if ( piece_moving_ypos <= piece_moving_dest_ypos )
+                            piece_moving_ypos = piece_moving_dest_ypos;
+                    }
 
-                  if ( piece_moving_xpos == piece_moving_dest_xpos &&
-                     piece_moving_ypos == piece_moving_dest_ypos )
-                  {
-                     piece_moving_done=1;
-                  }
-                  if (is_2d)
-                     glTranslatef(-3.5f + piece_moving_xpos, -3.5f + 
-                        piece_moving_ypos, 0.04);
-                  else 
-                     glTranslatef(-3.5f + piece_moving_xpos, -3.5f + 
-                        piece_moving_ypos, 0.02);
+                    if ( piece_moving_xpos == piece_moving_dest_xpos &&
+                            piece_moving_ypos == piece_moving_dest_ypos )
+                    {
+                        piece_moving_done = 1;
+                    }
+                    if (is_2d)
+                        glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
+                                     piece_moving_ypos, 0.04);
+                    else
+                        glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
+                                     piece_moving_ypos, 0.02);
                 }
                 else
-                  glTranslatef(-3.5f + j, -3.5f + i, 0.02);
+                    glTranslatef(-3.5f + j, -3.5f + i, 0.02);
 
                 if (is_2d)
                 {
@@ -617,15 +593,15 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                 }
 
                 if ( !is_2d && piece_moving_done == 0 &&
-                  (i*8+j) == piece_moving_dest )
+                        (i*8+j) == piece_moving_dest )
                 {
-                  glPushMatrix();
-                   //glRotatef( 10.0f, xrot, yrot, 0.0f );
-                   model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
-                  glPopMatrix();
+                    glPushMatrix();
+                    //glRotatef( 10.0f, xrot, yrot, 0.0f );
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
+                    glPopMatrix();
                 }
                 else
-                  model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
             }
         }
 }

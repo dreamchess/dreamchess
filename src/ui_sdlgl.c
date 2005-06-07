@@ -1705,7 +1705,7 @@ static void load_theme(char* name, char* pieces, char *board)
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
-    load_border("border.png");
+    /*load_border("border.png");*/
     load_pieces();
 
     ch_datadir();
@@ -2409,7 +2409,7 @@ static int GetMove()
                 fps_enabled = 1 - fps_enabled;
                 break;
             default:
-                printf("Ignoring event %i\n", ui_event);
+                break;
             }
         break;
 #if 0
