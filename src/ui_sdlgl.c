@@ -1572,7 +1572,7 @@ static void init_gui()
     generate_text_chars();
 
     /* For the menu.. */
-    load_texture_png( &menu_title_tex, "menu_title.png" , 1);
+    load_texture_png( &menu_title_tex, "menu_title.png" , 0);
     load_border("menu_border.png");
 
     /* Fill theme list. */
@@ -1946,10 +1946,11 @@ static void draw_scene( board_t *b )
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDisable(GL_BLEND);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     draw_backdrop();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
     glDepthMask(GL_TRUE);
