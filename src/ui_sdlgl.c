@@ -91,32 +91,32 @@ float piece_moving_dest_ypos;
 float piece_moving_xpos;
 float piece_moving_ypos;
 
+#ifdef _arch_dreamcast
+float dc_z;
+#endif
+
 int text_draw_char( float xpos, float ypos, float scale, int character, w_colour_t *col );
 
 void start_piece_move( int source, int dest )
 {
-   piece_moving_start=SDL_GetTicks();
+    piece_moving_start=SDL_GetTicks();
 
-   piece_moving_done=0;
+    piece_moving_done=0;
 
-   piece_moving_dest=dest;
-   piece_moving_source=source;
-   
-   piece_moving_source_xpos=(float)(source%8);
-   piece_moving_source_ypos=(float)(source/8);
+    piece_moving_dest=dest;
+    piece_moving_source=source;
 
-   piece_moving_dest_xpos=(float)(dest%8);
-   piece_moving_dest_ypos=(float)(dest/8);
+    piece_moving_source_xpos=(float)(source%8);
+    piece_moving_source_ypos=(float)(source/8);
 
-   piece_moving_xpos=piece_moving_source_xpos;
-   piece_moving_ypos=piece_moving_source_ypos;
+    piece_moving_dest_xpos=(float)(dest%8);
+    piece_moving_dest_ypos=(float)(dest/8);
 
-   piece_moving_x_done=0;
-   piece_moving_y_done=0;
+    piece_moving_xpos=piece_moving_source_xpos;
+    piece_moving_ypos=piece_moving_source_ypos;
 
-   //printf( "Piece moving from %i:%f,%f to %i:%f,%f\n\r", piece_moving_source,
-   //   piece_moving_source_xpos, piece_moving_source_ypos, piece_moving_dest,
-   //   piece_moving_dest_xpos, piece_moving_dest_ypos );
+    piece_moving_x_done=0;
+    piece_moving_y_done=0;
 }
 
 /* Some predefined colours. */
@@ -162,17 +162,30 @@ void draw_rect(int x, int y, int w, int h, w_colour_t *col)
     glEnd();
 }
 
+#ifdef _arch_dreamcast
+void draw_rect_fill(int x, int y, int w, int h, w_colour_t *col)
+{
+    glColor4f(col->r, col->g, col->b, col->a);
+    y = SCREEN_HEIGHT - y;
+    glBegin(GL_NT_QUADS);
+    glVertex3f(x, y, dc_z);
+    glVertex3f(x + w, y, dc_z);
+    glVertex3f(x + w, y - h, dc_z);
+    glVertex3f(x, y - h, dc_z);
+    glEnd();
+}
+#else
 void draw_rect_fill(int x, int y, int w, int h, w_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
     glBegin(GL_QUADS);
-    glVertex3f(x + 0.5f, y + 0.5f, 1.0f);
-    glVertex3f(x + w + 0.5f, y + 0.5f, 1.0f);
-    glVertex3f(x + w + 0.5f, y + h + 0.5f, 1.0f);
-    glVertex3f(x + 0.5f, y + h + 0.5f, 1.0f);
+    glVertex3f(x, y, 1.0f);
+    glVertex3f(x + w, y, 1.0f);
+    glVertex3f(x + w, y + h, 1.0f);
+    glVertex3f(x, y + h, 1.0f);
     glEnd();
 }
-
+#endif
 /*
    Key table?
 */
@@ -184,7 +197,7 @@ int turn_counter_start=0;
 
 void reset_turn_counter()
 {
-   turn_counter_start=SDL_GetTicks();
+    turn_counter_start=SDL_GetTicks();
 }
 
 void PopulateKeyTable()
@@ -230,6 +243,7 @@ static texture_t menu_title_tex;
 
 static texture_t backdrop;
 static texture_t border[9];
+static texture_t menu_border[9];
 
 static ui_event_t convert_event(SDL_Event *event)
 {
@@ -323,24 +337,24 @@ void reset_string_type_length()
 
 void update_string_type_length()
 {
-   string_type_pos=999;
+    string_type_pos=999;
     //Uint32 ticks = SDL_GetTicks();
-   // float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
+    // float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
     //printf( "In type loop thingy. %i %i\n\r", string_type_cur, string_type_pos );
 
-  // printf( "FART %i\n\r", (ticks-string_type_start) );
+    // printf( "FART %i\n\r", (ticks-string_type_start) );
 
-  // string_type_pos=((ticks-string_type_start))/(STRING_TYPE_SPEED*1000);
+    // string_type_pos=((ticks-string_type_start))/(STRING_TYPE_SPEED*1000);
 
-/*    if ( string_type_cur > STRING_TYPE_SPEED )
-    {
-
-        string_type_cur=0;
-        if ( string_type_pos < 100 )
-            string_type_pos++;
-    }
-    else
-        string_type_cur++;*/
+    /*    if ( string_type_cur > STRING_TYPE_SPEED )
+        {
+     
+            string_type_cur=0;
+            if ( string_type_pos < 100 )
+                string_type_pos++;
+        }
+        else
+            string_type_cur++;*/
 }
 
 static void go_3d(int width, int height)
@@ -365,6 +379,34 @@ static void go_3d(int width, int height)
  *  @param zpos The z-coordinate.
  *  @param col The colour to render with.
  */
+#ifdef _arch_dreamcast
+static void draw_texture( texture_t *texture, float xpos,
+                          float ypos, float width, float height, float zpos,
+                          w_colour_t *col )
+{
+    dc_z += 0.00001f;
+    zpos = dc_z;
+    glEnable( GL_TEXTURE_2D );
+
+    glColor4f( col->r, col->g, col->b, col->a );
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    ypos = SCREEN_HEIGHT - ypos;
+
+    glBegin(GL_NT_QUADS);
+    glTexCoord2f(texture->u1, texture->v1);
+    glVertex3f( xpos, ypos-height, zpos );
+    glTexCoord2f(texture->u2, texture->v1);
+    glVertex3f( xpos+width,  ypos-height, zpos );
+    glTexCoord2f(texture->u2, texture->v2);
+    glVertex3f( xpos+width,  ypos, zpos );
+    glTexCoord2f(texture->u1, texture->v2);
+    glVertex3f( xpos, ypos, zpos );
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+#else
 static void draw_texture( texture_t *texture, float xpos,
                           float ypos, float width, float height, float zpos,
                           w_colour_t *col )
@@ -387,7 +429,36 @@ static void draw_texture( texture_t *texture, float xpos,
 
     glDisable(GL_TEXTURE_2D);
 }
+#endif
 
+#ifdef _arch_dreamcast
+static void draw_texture_uv( texture_t *texture, float xpos,
+                             float ypos, float width, float height, float zpos,
+                             w_colour_t *col, float u1, float v1, float u2, float v2 )
+{
+    dc_z += 0.00001f;
+    zpos = dc_z;
+    glEnable( GL_TEXTURE_2D );
+
+    glColor4f( col->r, col->g, col->b, col->a );
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    ypos = SCREEN_HEIGHT - ypos;
+
+    glBegin(GL_NT_QUADS);
+    glTexCoord2f(u1, v1);
+    glVertex3f( xpos, ypos-height, zpos );
+    glTexCoord2f(u2, v1);
+    glVertex3f( xpos+width,  ypos-height, zpos );
+    glTexCoord2f(u2, v2);
+    glVertex3f( xpos+width,  ypos, zpos );
+    glTexCoord2f(u1, v2);
+    glVertex3f( xpos, ypos, zpos );
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+#else
 static void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
                              w_colour_t *col, float u1, float v1, float u2, float v2 )
@@ -410,6 +481,7 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 
     glDisable(GL_TEXTURE_2D);
 }
+#endif
 
 void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length );
 void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length );
@@ -454,7 +526,7 @@ static texture_t text_characters[256];
 
 static config_t *config;
 
-static dialog_style_t style_ingame;
+static dialog_style_t style_ingame, style_menu;
 
 #if 0
 /** Style used for all dialog boxes except the title menu. */
@@ -791,9 +863,9 @@ static w_dialog_t *dialog_title_create()
     w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
     w_container_append(W_CONTAINER(vbox2), label);
 
- /*   label = w_label_create("Name:");
-    w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);*/
+    /*   label = w_label_create("Name:");
+       w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
+       w_container_append(W_CONTAINER(vbox2), label);*/
 
     hbox = w_hbox_create(20);
     w_container_append(W_CONTAINER(hbox), vbox2);
@@ -832,8 +904,8 @@ static w_dialog_t *dialog_title_create()
     w_option_set_callback(W_OPTION(widget), dialog_title_board, NULL);
     w_container_append(W_CONTAINER(vbox2), widget);
 
-  /*  widget = w_entry_create();
-    w_container_append(W_CONTAINER(vbox2), widget);*/
+    /*  widget = w_entry_create();
+      w_container_append(W_CONTAINER(vbox2), widget);*/
 
     w_container_append(W_CONTAINER(hbox), vbox2);
     w_container_append(W_CONTAINER(vbox), hbox);
@@ -845,7 +917,7 @@ static w_dialog_t *dialog_title_create()
     dialog = w_dialog_create(vbox);
     w_dialog_set_modal(W_DIALOG(dialog), 1);
     w_dialog_set_position(W_DIALOG(dialog), 320, 0, ALIGN_CENTER, ALIGN_BOTTOM);
-    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
+    w_dialog_set_style(W_DIALOG(dialog), &style_menu);
     return W_DIALOG(dialog);
 }
 
@@ -1061,23 +1133,18 @@ static void draw_credits(int init)
  *               0 = Create texture without alpha channel.
  *  @return Texture created from surface.
  */
-static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, int alpha)
+static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha)
 {
     texture_t texture;
     int w, h;
     SDL_Surface *image;
-    SDL_Rect area;
+    SDL_Rect dest;
     Uint32 saved_flags;
     Uint8  saved_alpha;
-    GLfloat texcoord[4];
 
     /* Use the surface width and height expanded to powers of 2 */
-    w = power_of_two(surface->w);
-    h = power_of_two(surface->h);
-    texcoord[0] = 0.0f;			/* Min X */
-    texcoord[1] = 0.0f;			/* Min Y */
-    texcoord[2] = (GLfloat)surface->w / w;	/* Max X */
-    texcoord[3] = (GLfloat)surface->h / h;	/* Max Y */
+    w = power_of_two(area->w);
+    h = power_of_two(area->h);
 
     image = SDL_CreateRGBSurface(
                 SDL_SWSURFACE,
@@ -1109,11 +1176,11 @@ static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, int alpha)
     }
 
     /* Copy the surface into the GL texture image */
-    area.x = 0;
-    area.y = 0;
-    area.w = surface->w;
-    area.h = surface->h;
-    SDL_BlitSurface(surface, &area, image, &area);
+    dest.x = 0;
+    dest.y = 0;
+    dest.w = area->w;
+    dest.h = area->h;
+    SDL_BlitSurface(surface, area, image, &dest);
 
     /* Restore the alpha blending attributes */
     if ( (saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA )
@@ -1138,10 +1205,10 @@ static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, int alpha)
 
     texture.u1 = 0;
     texture.v1 = 0;
-    texture.u2 = surface->w / (float) w;
-    texture.v2 = surface->h / (float) h;
-    texture.width = surface->w;
-    texture.height = surface->h;
+    texture.u2 = area->w / (float) w;
+    texture.v2 = area->h / (float) h;
+    texture.width = area->w;
+    texture.height = area->h;
 
     return texture;
 }
@@ -1156,9 +1223,9 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* draw avatar */
     if ( white == 1 )
-        draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45, ypos-50, 100, 100, 0.95f, &col_white);
+        draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45, ypos-50, 100, 100, 1.0f, &col_white);
     else
-        draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45, ypos-50, 100, 100, 0.95f, &col_white);
+        draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45, ypos-50, 100, 100, 1.0f, &col_white);
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
@@ -1274,6 +1341,10 @@ static void gl_swap()
         frames = 0;
         fps_time = last;
     }
+
+#ifdef _arch_dreamcast
+    dc_z = 1.0f;
+#endif
 }
 
 float starscroll_pos=320;
@@ -1360,7 +1431,7 @@ static config_t *do_menu()
         }
 
         /* Draw the menu.. */
-        draw_texture( &menu_title_tex, 0, 0, 640, 480, 0.95f, &col_white );
+        draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, &col_white );
         update_string_type_length();
 
         if ( can_load == TRUE )
@@ -1412,7 +1483,12 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
     /* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
     if ( ( texture_image = IMG_Load( filename ) ) )
     {
-        *texture = SDL_GL_LoadTexture(texture_image, alpha);
+        SDL_Rect area;
+        area.x = 0;
+        area.y = 0;
+        area.w = texture_image->w;
+        area.h = texture_image->h;
+        *texture = SDL_GL_LoadTexture(texture_image, &area, alpha);
     }
     else
     {
@@ -1436,11 +1512,11 @@ void draw_image(void *image, w_rect_t source, w_rect_t dest)
     float ysrc = texture->v1 + source.y / tex_v;
 
     draw_texture_uv(texture, dest.x,
-                             dest.y, dest.width, dest.height, 1.0f,
-                             &col_white, xsrc,
-                             ysrc,
-                             xsrc + source.width / tex_h,
-                             ysrc + source.height / tex_v);
+                    dest.y, dest.width, dest.height, 1.0f,
+                    &col_white, xsrc,
+                    ysrc,
+                    xsrc + source.width / tex_h,
+                    ysrc + source.height / tex_v);
 }
 
 void draw_char(int c, int x, int y, w_colour_t *colour)
@@ -1469,42 +1545,51 @@ void get_char_size(int c, int *width, int *height)
 }
 
 w_driver_t w_driver_sdlgl =
-{
-    draw_rect,
-    draw_rect_fill,
-    draw_image,
-    draw_char,
-    get_image_size,
-    get_char_size
-};
+    {
+        draw_rect,
+        draw_rect_fill,
+        draw_image,
+        draw_char,
+        get_image_size,
+        get_char_size
+    };
 
-static void load_border(char *filename)
+static void load_border(texture_t border[9], char *filename)
+{
+    /* Create storage space for the texture */
+    SDL_Surface *surface;
+
+    /* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
+    if ((surface = IMG_Load(filename)))
+    {
+        int i;
+        for (i = 0; i < 9; i++)
+        {
+            SDL_Rect rect;
+            rect.x = (i % 3) * surface->w / 3;
+            rect.y = (i / 3) * surface->h / 3;
+            rect.w = surface->w / 3;
+            rect.h = surface->h / 3;
+            border[i] = SDL_GL_LoadTexture(surface, &rect, 1);
+        }
+        /* Free up any memory we may have used */
+        SDL_FreeSurface(surface);
+    }
+    else
+    {
+        fprintf(stderr, "Could not load texture: %s!\n", filename);
+        exit(1);
+    }
+}
+
+static void unload_border(texture_t border[9])
 {
     int i;
 
-    load_texture_png( &border[0], filename, 1);
-
-    for (i = 1; i < 9; i++)
-        border[i] = border[0];
-
     for (i = 0; i < 9; i++)
     {
-        border[i].u1 = (i % 3) / (float) 3 * border[i].u2;
-        border[i].v1 = (i / 3) / (float) 3 * border[i].v2;
-        border[i].u2 *= (i % 3 + 1) / (float) 3;
-        border[i].v2 *= (i / 3 + 1) / (float) 3;
-
-        border[i].width /= (float) 3;
-        border[i].height /= (float) 3;
+        glDeleteTextures(1, &border[i].id);
     }
-
-    style_ingame.textured = 1;
-    style_ingame.fade_col = (w_colour_t) {0.0f, 0.0f, 0.0f, 0.5f};
-    style_ingame.hor_pad = 20;
-    style_ingame.vert_pad = 10;
-
-    for (i = 0; i < 9; i++)
-        style_ingame.border.textured.image[i] = &border[i];
 }
 
 /** Implements ui_driver::init. */
@@ -1512,6 +1597,7 @@ static void init_gui()
 {
     int video_flags;
     const SDL_VideoInfo *video_info;
+    int i;
     DIR* themedir;
     struct dirent* themedir_entry;
 
@@ -1573,7 +1659,6 @@ static void init_gui()
 
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0);
-    load_border("menu_border.png");
 
     /* Fill theme list. */
     if ( (themedir=opendir("themes")) != NULL )
@@ -1587,6 +1672,10 @@ static void init_gui()
             themedir_entry=readdir(themedir);
         }
     }
+
+    chdir("themes");
+    chdir("default");
+    load_border(menu_border, "border.png");
 
     /* Fill pieces list. */
     ch_datadir();
@@ -1605,6 +1694,28 @@ static void init_gui()
             }
         }
     }
+
+    style_ingame.textured = 1;
+    style_ingame.fade_col = (w_colour_t)
+                            {
+                                0.0f, 0.0f, 0.0f, 0.5f
+                            };
+    style_ingame.hor_pad = 20;
+    style_ingame.vert_pad = 10;
+
+    for (i = 0; i < 9; i++)
+        style_ingame.border.textured.image[i] = &border[i];
+
+    style_menu.textured = 1;
+    style_menu.fade_col = (w_colour_t)
+                          {
+                              0.0f, 0.0f, 0.0f, 0.0f
+                          };
+    style_menu.hor_pad = 20;
+    style_menu.vert_pad = 10;
+
+    for (i = 0; i < 9; i++)
+        style_menu.border.textured.image[i] = &menu_border[i];
 
     /* Fill board list. */
     ch_datadir();
@@ -1699,13 +1810,14 @@ void load_pieces()
 static void load_theme(char* name, char* pieces, char *board)
 {
     printf( "Loading theme.\n" );
+
     ch_datadir();
     chdir("themes");
     chdir(name);
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
-    /*load_border("border.png");*/
+    load_border(border, "border.png");
     load_pieces();
 
     ch_datadir();
@@ -1764,7 +1876,7 @@ static void resize_window( int width, int height )
 /** @brief Renders the in-game backdrop. */
 static void draw_backdrop()
 {
-    draw_texture( &backdrop, 0, 0, 640, 480, 0.95f, &col_white );
+    draw_texture( &backdrop, 0, 0, 640, 480, 1.0f, &col_white );
 }
 
 /** @brief Renders the move list.
@@ -1880,8 +1992,8 @@ static void draw_capture_list(w_colour_t *col)
             if (snprintf(s, 4, "%i", board.captured[i]) >= 4)
                 exit(1);
             text_draw_string( x_white, y_white, s, 1, col, 999);
-            draw_texture( &black_pieces[i/2], x_white-24, y_white, 24, 
-               24, 1.0f, &col_white );
+            draw_texture( &black_pieces[i/2], x_white-24, y_white, 24,
+                          24, 1.0f, &col_white );
         }
         y_white -= text_characters['a'].height;
         if (board.captured[i - 1] != 0)
@@ -1889,8 +2001,8 @@ static void draw_capture_list(w_colour_t *col)
             if (snprintf(s, 4, "%i", board.captured[i - 1]) >= 4)
                 exit(1);
             text_draw_string_right( x_black, y_black, s, 1, col, 999);
-            draw_texture( &white_pieces[(i-1)/2], x_black, y_black, 24, 
-               24, 1.0f, &col_white );
+            draw_texture( &white_pieces[(i-1)/2], x_black, y_black, 24,
+                          24, 1.0f, &col_white );
         }
         y_black -= text_characters['a'].height;
     }
@@ -1899,13 +2011,13 @@ static void draw_capture_list(w_colour_t *col)
 /** Implements ui_driver::update. */
 static void update(board_t *b, move_t *move)
 {
-   while ( piece_moving_done == 0 )
-      poll_move();
+    while ( piece_moving_done == 0 )
+        poll_move();
 
     board = *b;
 
     if ( move != NULL )
-       start_piece_move( move->source, move->destination );    
+        start_piece_move( move->source, move->destination );
 
     if ( board.state == BOARD_CHECK )
     {
@@ -1919,7 +2031,7 @@ static void update(board_t *b, move_t *move)
         black_in_check=FALSE;
         white_in_check=FALSE;
     }
-   
+
 }
 
 /** Implements ui_driver::show_result. */
@@ -1961,24 +2073,40 @@ static void draw_scene( board_t *b )
 
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
-    glScalef( 0.5f, 0.5f, 0.5f );
-/*
-    dialog_render_border( 40, 750, 190, 770 );
-    dialog_render_border( 40, 880, 370, 920 );
 
-    dialog_render_border( 1090, 750, 1240, 770 );
-    dialog_render_border( 910, 880, 1240, 920 );
-*/
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    20, 375, 75, 10
+                }
+               );
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    20, 440, 170, 20
+                }
+               );
+
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    545, 375, 75, 10
+                }
+               );
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    455, 440, 170, 20
+                }
+               );
+
     /* Da clocken */
-/*
-    dialog_render_border( 580, 880, 700, 920 );
-*/
+
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    290, 440, 60, 20
+                }
+               );
+
     glPopMatrix();
 
-    //dialog_render_border( 20, 420, 620, 460 );
-
     glPushMatrix();
-    glTranslatef( 0.0f, 0.0f, -0.1f );
     draw_health_bars();
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
@@ -2028,6 +2156,7 @@ static void unload_theme()
 {
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);
+    unload_border(border);
     freemodels();
 }
 

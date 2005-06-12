@@ -139,11 +139,12 @@ static void tile_line(w_rect_t line, void *image, int size)
         source.width = width;
         dest.width = width;
         w_system_draw_image(image, source, dest);
+
         dest.x += width;
     }
 }
 
-static void bg_line(w_rect_t line, void *image[3], int size)
+static void bg_line(w_rect_t line, void *image[3], int size, int center)
 {
     w_rect_t source, dest;
 
@@ -158,14 +159,18 @@ static void bg_line(w_rect_t line, void *image[3], int size)
     w_system_draw_image(image[0], source, dest);
     dest.x = line.x + line.width - size;
     w_system_draw_image(image[2], source, dest);
-    dest.x = line.x + size;
-    dest.width = line.width - 2 * size;
-    tile_line(dest, image[1], size);
+    if (center)
+    {
+        dest.x = line.x + size;
+        dest.width = line.width - 2 * size;
+        tile_line(dest, image[1], size);
+    }
 }
 
 static void bg_area(w_rect_t area, void *image[3], int size)
 {
     w_rect_t line = area;
+    w_rect_t source;
 
     while (line.y - area.y < area.height)
     {
@@ -174,10 +179,46 @@ static void bg_area(w_rect_t area, void *image[3], int size)
         if (line.height > size)
             line.height = size;
 
-        bg_line(line, image, size);
+        bg_line(line, image, size, 0);
 
         line.y += line.height;
     }
+
+    line = area;
+    line.x += size;
+    line.width -= 2 * size;
+
+    source = line;
+    source.x = 0;
+    source.y = 0;
+
+    w_system_draw_image(image[1], source, line);
+}
+
+void draw_border(void *image[9], w_rect_t area)
+{
+    w_rect_t line;
+    int size;
+
+    w_system_get_image_size(image[0], &size, NULL);
+
+    area.x -= size;
+    area.y -= size;
+
+    area.width += 2*size;
+    area.height += 2*size;
+
+    line = area;
+    line.height = size;
+
+    bg_line(line, &image[6], size, 1);
+    line.y = area.y + area.height - size;
+
+    bg_line(line, &image[0], size, 1);
+    line.y = area.y + size;
+    line.height = area.height - 2 * size;
+
+    bg_area(line, &image[3], size);
 }
 
 /** @brief Renders a dialog.
@@ -194,8 +235,6 @@ void w_dialog_render(w_dialog_t *dialog)
     w_widget_t *child = w_bin_get_child(W_BIN(dialog));
 
     int xmin, xmax, ymin, ymax;
-    w_colour_t col;
-    /* float tile_width=border.u2/3; */
 
     w_dialog_get_screen_pos(dialog, &xmin, &ymin);
 
@@ -203,52 +242,31 @@ void w_dialog_render(w_dialog_t *dialog)
     ymax = ymin + dialog->height;
 
     /* Draw the 'fade' */
-    col = style->fade_col;
-    glColor4f(col.r, col.b, col.g, col.a); /* 0.0f 0.0f 0.0f 0.5f */
-
-    glBegin( GL_QUADS );
-    glVertex3f( 640, 0, 0.9f );
-    glVertex3f( 640, 480, 0.9f );
-    glVertex3f( 0, 480, 0.9f );
-    glVertex3f( 0, 0, 0.9f );
-    glEnd( );
+    w_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
 
     if (style->textured)
     {
         int size;
-        w_rect_t line;
+        w_rect_t area;
 
         w_system_get_image_size(style->border.textured.image[0], &size, NULL);
-
-        line.x = xmin;
-        line.y = ymin;
-        line.width = xmax - xmin;
-        line.height = size;
-
-        bg_line(line, &style->border.textured.image[6], size);
-        line.y = ymax - size;
-        bg_line(line, &style->border.textured.image[0], size);
-        line.y = ymin + size;
-        line.height = ymax - ymin - 2 * size;
-        bg_area(line, &style->border.textured.image[3], size);
 
         xmin += size;
         xmax -= size;
         ymin += size;
         ymax -= size;
+
+        area.x = xmin;
+        area.y = ymin;
+        area.width = xmax - xmin;
+        area.height = ymax - ymin;
+
+        draw_border(style->border.textured.image, area);
     }
     else
     {
         /* Draw the border. */
-        col = style->border.plain.border_col;
-        glColor4f(col.r, col.g, col.b, col.a); /* 0.0f 0.0f 0.0f 1.0f */
-
-        glBegin( GL_QUADS );
-        glVertex3f(xmax, ymin, 0.9f);
-        glVertex3f(xmax, ymax, 0.9f);
-        glVertex3f(xmin, ymax, 0.9f);
-        glVertex3f(xmin, ymin, 0.9f);
-        glEnd();
+        w_system_draw_filled_rect(xmin, ymin, xmax - xmin, ymax - ymin, &style->border.plain.border_col);
 
         xmin += style->border.plain.border;
         xmax -= style->border.plain.border;
@@ -256,15 +274,7 @@ void w_dialog_render(w_dialog_t *dialog)
         ymax -= style->border.plain.border;
 
         /* Draw the backdrop. */
-        col = style->border.plain.bg_col;
-        glColor4f(col.r, col.g, col.b, col.a); /* 0.8f 0.8f 0.8f 1.0f */
-
-        glBegin( GL_QUADS );
-        glVertex3f(xmax, ymin, 0.95f);
-        glVertex3f(xmax, ymax, 0.95f);
-        glVertex3f(xmin, ymax, 0.95f);
-        glVertex3f(xmin, ymin, 0.95f);
-        glEnd();
+        w_system_draw_filled_rect(xmin, ymin, xmax - xmin, ymax - ymin, &style->border.plain.bg_col);
     }
 
     xmin += style->hor_pad;
@@ -337,9 +347,18 @@ void w_dialog_init(w_dialog_t *dialog, w_widget_t *child)
 
     style.textured = 0;
     style.border.plain.border = 5;
-    style.border.plain.border_col = (w_colour_t) {0.0f, 0.0f, 0.0f, 1.0f};
-    style.border.plain.bg_col = (w_colour_t) {0.8f, 0.8f, 0.8f, 1.0f};
-    style.fade_col = (w_colour_t) {0.0f, 0.0f, 0.0f, 0.5f};
+    style.border.plain.border_col = (w_colour_t)
+                                    {
+                                        0.0f, 0.0f, 0.0f, 1.0f
+                                    };
+    style.border.plain.bg_col = (w_colour_t)
+                                {
+                                    0.8f, 0.8f, 0.8f, 1.0f
+                                };
+    style.fade_col = (w_colour_t)
+                     {
+                         0.0f, 0.0f, 0.0f, 0.5f
+                     };
     style.hor_pad = 20;
     style.vert_pad = 10;
 
@@ -393,128 +412,3 @@ void w_dialog_set_style(w_dialog_t *dialog, dialog_style_t *style)
         dialog->height += 2 * dialog->style.border.plain.border;
     }
 }
-
-#if 0
-void dialog_render_border_section( int section, float xmin, float ymin, float xmax, float ymax )
-{
-    float tile_width=border.u2/3;
-    int i,j;
-    float width2, height2;
-    colour_t back = {1.0f, 1.0f, 1.0f, 0.75f};
-
-    //printf( "Border U/V: %f %f %f %f\n\r", border.u1, border.v1, border.u2, border.v2  );
-
-    switch ( section )
-    {
-    case 0: /* Top */
-        for ( i=0; i<((xmax-xmin)/16); i++ )
-        {
-            if ( i > (int)(((xmax-xmin)/16)-1) )
-                draw_texture_uv( &border, xmin+(i*16), ymax,
-                                 (int)(xmax-xmin)-(int)(i*16), 16, 0.95f, &col_white,
-                                 tile_width, 0.0f, tile_width*2, tile_width );
-            else
-                draw_texture_uv( &border, xmin+(i*16), ymax, 16, 16, 0.95f, &col_white,
-                                 tile_width, 0.0f, tile_width*2, tile_width );
-        }
-        break;
-    case 1: /* Bottom */
-        for ( i=0; i<((xmax-xmin)/16); i++ )
-        {
-            if ( i > (int)(((xmax-xmin)/16)-1) )
-                draw_texture_uv( &border, xmin+(i*16), ymin-16, (int)(xmax-xmin)-(int)(i*16),
-                                 16, 0.95f, &col_white, tile_width, border.v2-tile_width, tile_width*2,
-                                 border.v2 );
-            else
-                draw_texture_uv( &border, xmin+(i*16), ymin-16, 16, 16, 0.95f, &col_white,
-                                 tile_width, border.v2-tile_width, tile_width*2, border.v2 );
-        }
-        break;
-    case 2: /* Left */
-        for ( i=0; i<((ymax-ymin)/16); i++ )
-        {
-            if ( i > (int)(((ymax-ymin)/16)-1) )
-                draw_texture_uv( &border, xmin-16, ymin+(i*16), 16,
-                                 (int)(ymax-ymin)-(int)(i*16), 0.95f, &col_white, 0.0f, tile_width,
-                                 tile_width, tile_width*2 );
-            else
-                draw_texture_uv( &border, xmin-16, ymin+(i*16), 16, 16, 0.95f, &col_white,
-                                 0.0f, tile_width, tile_width, tile_width*2 );
-        }
-        break;
-    case 3: /* Right */
-        for ( i=0; i<((ymax-ymin)/16); i++ )
-        {
-            if ( i > (int)(((ymax-ymin)/16)-1) )
-                draw_texture_uv( &border, xmax, ymin+(i*16), 16, (int)(ymax-ymin)-(int)(i*16),
-                                 0.95f, &col_white, border.u2-tile_width, tile_width, border.u2,
-                                 tile_width*2 );
-            else
-                draw_texture_uv( &border, xmax, ymin+(i*16), 16, 16, 0.95f, &col_white,
-                                 border.u2-tile_width, tile_width, border.u2, tile_width*2 );
-        }
-        break;
-    case 4: /* Top left. */
-        draw_texture_uv( &border, xmin-16, ymax, 16, 16, 0.95f, &col_white,
-                         0.0f, 0.0f, tile_width, tile_width );
-        break;
-    case 5: /* Top right. */
-        draw_texture_uv( &border, xmax, ymax, 16, 16, 0.95f, &col_white,
-                         border.u2-tile_width, 0.0f, border.u2, tile_width );
-        break;
-    case 6: /* Bottom left.*/
-        draw_texture_uv( &border, xmin-16, ymin-16, 16, 16, 0.95f, &col_white,
-                         0.0f, border.v2-tile_width, tile_width, border.v2 );
-        break;
-    case 7: /* Bottom right. */
-        draw_texture_uv( &border, xmax, ymin-16, 16, 16, 0.95f, &col_white,
-                         border.u2-tile_width, border.v2-tile_width, border.u2, border.v2 );
-        break;
-    case 8: /* Middle. */
-        /* Draw backdrop.. */
-        for ( j=0; j<=((ymax-ymin)/16); j++ )
-            for ( i=0; i<=((xmax-xmin)/16); i++ )
-            {
-                if ( i > (int)(((xmax-xmin)/16)-1) )
-                    width2=(int)(xmax-xmin)-(int)(i*16);
-                else
-                    width2=16;
-
-                if ( j > (int)(((ymax-ymin)/16)-1) )
-                    height2=(int)(ymax-ymin)-(int)(j*16);
-                else
-                    height2=16;
-
-                draw_texture_uv( &border, xmin+(i*16), ymin+(j*16), width2, height2,
-                                 0.95f, &back, tile_width, tile_width, tile_width*2,
-                                 tile_width*2 );
-            }
-        break;
-    }
-}
-
-void dialog_render_border( float xmin, float ymin, float xmax, float ymax )
-{
-    int i=0;
-
-    for ( i; i<9; i++ )
-        dialog_render_border_section( i, xmin, ymin, xmax, ymax );
-}
-
-void w_dialog_get_screen_pos(w_dialog_t *dialog, int *x, int *y)
-{
-    if (dialog->pos.x_align == ALIGN_LEFT)
-        *x = dialog->pos.x;
-    else if (dialog->pos.x_align == ALIGN_RIGHT)
-        *x = dialog->pos.x - dialog->width;
-    else
-        *x = dialog->pos.x - dialog->width / 2;
-
-    if (dialog->pos.y_align == ALIGN_TOP)
-        *y = dialog->pos.y - dialog->height;
-    else if (dialog->pos.y_align == ALIGN_BOTTOM)
-        *y = dialog->pos.y;
-    else
-        *y = dialog->pos.y - dialog->height / 2;
-}
-#endif

@@ -103,7 +103,7 @@ mesh_t;
 typedef struct model
 {
     mesh_t *mesh;
-    texture_t texture;
+    texture_t *texture;
 }
 model_t;
 
@@ -187,14 +187,14 @@ static int selector, selected;
 
 static float x_rotation, z_rotation;
 
-static texture_t load_piece_texture(char *filename)
+static texture_t *load_piece_texture(char *filename)
 {
     texture_t *tex = data_col_find(&textures, filename);
 
     if (tex)
     {
         printf("Already loaded %s\n", filename);
-        return *tex;
+        return tex;
     }
 
     tex = malloc(sizeof(texture_t));
@@ -202,7 +202,7 @@ static texture_t load_piece_texture(char *filename)
     printf("Loading %s\n", filename);
     load_texture_png(tex, filename, 1);
     data_col_add(&textures, filename, tex);
-    return *tex;
+    return tex;
 }
 
 mesh_t *dcm_load(char *filename)
@@ -362,7 +362,7 @@ void model_render(model_t *model, float alpha, coord3_t *light)
 {
     mesh_t *mesh = model->mesh;
     int g;
-    texture_t *texture = &model->texture;
+    texture_t *texture = model->texture;
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
@@ -463,8 +463,8 @@ void loadmodels(char *filename)
 
 void load_board(char *dcm_name, char *texture_name)
 {
-    board.mesh = dcm_load(dcm_name);
-    load_texture_png(&board.texture, texture_name, 0);
+    board.mesh = load_mesh(dcm_name);
+    board.texture = load_piece_texture(texture_name);
 }
 
 void free_mesh(void *data)
@@ -472,10 +472,8 @@ void free_mesh(void *data)
     mesh_t *mesh = data;
 
     free(mesh->vertex);
-#if 0
-
-    free(mesh->face);
-#endif
+    free(mesh->normal);
+    free(mesh->tex_coord);
 
     free(mesh);
 }
