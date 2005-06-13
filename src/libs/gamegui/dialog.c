@@ -118,86 +118,9 @@ void w_dialog_get_screen_pos(w_dialog_t *dialog, int *x, int *y)
         *y = dialog->pos.y - dialog->height / 2;
 }
 
-static void tile_line(w_rect_t line, void *image, int size)
-{
-    w_rect_t source, dest;
-
-    source.x = 0;
-    source.y = size - line.height;
-    source.height = line.height;
-    source.width = size;
-
-    dest = line;
-
-    while (dest.x - line.x < line.width)
-    {
-        int width = line.x + line.width - dest.x;
-
-        if (width > size)
-            width = size;
-
-        source.width = width;
-        dest.width = width;
-        w_system_draw_image(image, source, dest);
-
-        dest.x += width;
-    }
-}
-
-static void bg_line(w_rect_t line, void *image[3], int size, int center)
-{
-    w_rect_t source, dest;
-
-    source.x = 0;
-    source.y = 0;
-    source.height = line.height;
-    source.width = size;
-
-    dest = line;
-    dest.width = size;
-
-    w_system_draw_image(image[0], source, dest);
-    dest.x = line.x + line.width - size;
-    w_system_draw_image(image[2], source, dest);
-    if (center)
-    {
-        dest.x = line.x + size;
-        dest.width = line.width - 2 * size;
-        tile_line(dest, image[1], size);
-    }
-}
-
-static void bg_area(w_rect_t area, void *image[3], int size)
-{
-    w_rect_t line = area;
-    w_rect_t source;
-
-    while (line.y - area.y < area.height)
-    {
-        line.height = area.y + area.height - line.y;
-
-        if (line.height > size)
-            line.height = size;
-
-        bg_line(line, image, size, 0);
-
-        line.y += line.height;
-    }
-
-    line = area;
-    line.x += size;
-    line.width -= 2 * size;
-
-    source = line;
-    source.x = 0;
-    source.y = 0;
-
-    w_system_draw_image(image[1], source, line);
-}
-
 void draw_border(void *image[9], w_rect_t area)
 {
-    w_rect_t line;
+    w_rect_t source, dest;
     int size;
 
     w_system_get_image_size(image[0], &size, NULL);
@@ -205,20 +128,49 @@ void draw_border(void *image[9], w_rect_t area)
     area.x -= size;
     area.y -= size;
 
-    area.width += 2*size;
-    area.height += 2*size;
+    area.width += 2 * size;
+    area.height += 2 * size;
 
-    line = area;
-    line.height = size;
+    source.x = 0;
+    source.y = 0;
+    source.width = size;
+    source.height = size;
 
-    bg_line(line, &image[6], size, 1);
-    line.y = area.y + area.height - size;
+    dest = source;
+    dest.x = area.x;
+    dest.y = area.y;
 
-    bg_line(line, &image[0], size, 1);
-    line.y = area.y + size;
-    line.height = area.height - 2 * size;
+    w_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    dest.y += area.height - size;
+    w_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    dest.x += area.width - size;
+    w_system_draw_image(image[2], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    dest.y -= area.height - size;
+    w_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
 
-    bg_area(line, &image[3], size);
+    dest.x = area.x + size;
+    dest.y = area.y;
+    dest.width = area.width - 2 * size;
+    dest.height = size;
+    source.width = dest.width;
+    w_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    dest.y += area.height - size;
+    w_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+
+    dest.x = area.x;
+    dest.y = area.y + size;
+    dest.width = size;
+    dest.height = area.height - 2 * size;
+    source.width = size;
+    source.height = dest.height;
+    w_system_draw_image(image[3], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    dest.x += area.width - size;
+    w_system_draw_image(image[5], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+
+    dest.x = area.x + size;
+    dest.width = area.width - 2 * size;
+    source.width = dest.width;
+    w_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE);
 }
 
 /** @brief Renders a dialog.

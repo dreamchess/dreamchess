@@ -434,7 +434,7 @@ static void draw_texture( texture_t *texture, float xpos,
 #ifdef _arch_dreamcast
 static void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
-                             w_colour_t *col, float u1, float v1, float u2, float v2 )
+                             w_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
 {
     dc_z += 0.00001f;
     zpos = dc_z;
@@ -442,6 +442,9 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 
     glColor4f( col->r, col->g, col->b, col->a );
     glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_h);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_v);
 
     ypos = SCREEN_HEIGHT - ypos;
 
@@ -461,12 +464,15 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 #else
 static void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
-                             w_colour_t *col, float u1, float v1, float u2, float v2 )
+                             w_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
 {
     glEnable( GL_TEXTURE_2D );
 
     glColor4f( col->r, col->g, col->b, col->a );
     glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_h);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_v);
 
     glBegin(GL_QUADS);
     glTexCoord2f(u1, v1);
@@ -1501,7 +1507,7 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
         SDL_FreeSurface( texture_image );
 }
 
-void draw_image(void *image, w_rect_t source, w_rect_t dest)
+void draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v)
 {
     texture_t *texture = image;
     float hsize = texture->u2 - texture->u1;
@@ -1510,13 +1516,17 @@ void draw_image(void *image, w_rect_t source, w_rect_t dest)
     float tex_v = texture->height / vsize;
     float xsrc = texture->u1 + source.x / tex_h;
     float ysrc = texture->v1 + source.y / tex_v;
+    GLenum en_h, en_v;
+
+    en_h = (mode_h == GG_MODE_TILE ? GL_REPEAT : GL_CLAMP);
+    en_v = (mode_v == GG_MODE_TILE ? GL_REPEAT : GL_CLAMP);
 
     draw_texture_uv(texture, dest.x,
                     dest.y, dest.width, dest.height, 1.0f,
                     &col_white, xsrc,
                     ysrc,
                     xsrc + source.width / tex_h,
-                    ysrc + source.height / tex_v);
+                    ysrc + source.height / tex_v, en_h, en_v);
 }
 
 void draw_char(int c, int x, int y, w_colour_t *colour)

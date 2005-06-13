@@ -70,10 +70,10 @@ void w_system_draw_filled_rect(int x, int y, int width, int height, w_colour_t *
     driver->draw_filled_rect(x, y, width, height, colour);
 }
 
-void w_system_draw_image(void *image, w_rect_t source, w_rect_t dest)
+void w_system_draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v)
 {
 
-    driver->draw_image(image, source, dest);
+    driver->draw_image(image, source, dest, mode_h, mode_v);
 }
 
 void w_system_draw_char(int c, int x, int y, w_colour_t *colour)

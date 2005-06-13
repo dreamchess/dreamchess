@@ -55,11 +55,14 @@ typedef struct w_rect
 }
 w_rect_t;
 
+#define GG_MODE_TILE 0
+#define GG_MODE_SCALE 1
+
 typedef struct w_driver
 {
     void (* draw_rect) (int x, int y, int width, int height, w_colour_t *colour);
     void (* draw_filled_rect) (int x, int y, int width, int height, w_colour_t *colour);
-    void (* draw_image) (void *image, w_rect_t source, w_rect_t dest);
+    void (* draw_image) (void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v);
     void (* draw_char) (int c, int x, int y, w_colour_t *colour);
     void (* get_image_size) (void *image, int *width, int *height);
     void (* get_char_size) (int c, int *width, int *height);
@@ -91,7 +94,7 @@ void w_system_draw_rect(int x, int y, int width, int height, w_colour_t *colour)
 
 void w_system_draw_filled_rect(int x, int y, int width, int height, w_colour_t *colour);
 
-void w_system_draw_image(void *image, w_rect_t source, w_rect_t dest);
+void w_system_draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v);
 
 void w_system_draw_char(int c, int x, int y, w_colour_t *colour);
 
