@@ -118,12 +118,12 @@ void w_dialog_get_screen_pos(w_dialog_t *dialog, int *x, int *y)
         *y = dialog->pos.y - dialog->height / 2;
 }
 
-void draw_border(void *image[9], w_rect_t area)
+void draw_border(void *image[9], w_rect_t area, int size)
 {
     w_rect_t source, dest;
-    int size;
+    int image_size;
 
-    w_system_get_image_size(image[0], &size, NULL);
+    w_system_get_image_size(image[0], &image_size, NULL);
 
     area.x -= size;
     area.y -= size;
@@ -133,12 +133,13 @@ void draw_border(void *image[9], w_rect_t area)
 
     source.x = 0;
     source.y = 0;
-    source.width = size;
-    source.height = size;
+    source.width = image_size;
+    source.height = image_size;
 
-    dest = source;
     dest.x = area.x;
     dest.y = area.y;
+    dest.width = size;
+    dest.height = size;
 
     w_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
     dest.y += area.height - size;
@@ -152,7 +153,6 @@ void draw_border(void *image[9], w_rect_t area)
     dest.y = area.y;
     dest.width = area.width - 2 * size;
     dest.height = size;
-    source.width = dest.width;
     w_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
     dest.y += area.height - size;
     w_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
@@ -161,15 +161,12 @@ void draw_border(void *image[9], w_rect_t area)
     dest.y = area.y + size;
     dest.width = size;
     dest.height = area.height - 2 * size;
-    source.width = size;
-    source.height = dest.height;
-    w_system_draw_image(image[3], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    w_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE);
     dest.x += area.width - size;
-    w_system_draw_image(image[5], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    w_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE);
 
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
-    source.width = dest.width;
     w_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE);
 }
 
@@ -213,7 +210,7 @@ void w_dialog_render(w_dialog_t *dialog)
         area.width = xmax - xmin;
         area.height = ymax - ymin;
 
-        draw_border(style->border.textured.image, area);
+        draw_border(style->border.textured.image, area, size);
     }
     else
     {

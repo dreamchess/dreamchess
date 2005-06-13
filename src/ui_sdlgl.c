@@ -1516,17 +1516,36 @@ void draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mod
     float tex_v = texture->height / vsize;
     float xsrc = texture->u1 + source.x / tex_h;
     float ysrc = texture->v1 + source.y / tex_v;
+    float width, height;
     GLenum en_h, en_v;
 
-    en_h = (mode_h == GG_MODE_TILE ? GL_REPEAT : GL_CLAMP);
-    en_v = (mode_v == GG_MODE_TILE ? GL_REPEAT : GL_CLAMP);
+    if (mode_h == GG_MODE_TILE)
+    {
+        en_h = GL_REPEAT;
+        width = dest.width / tex_h;
+    }
+    else
+    {
+        en_h = GL_CLAMP;
+        width = source.width / tex_h;
+    }
+
+    if (mode_v == GG_MODE_TILE)
+    {
+        en_v = GL_REPEAT;
+        height = dest.height / tex_v;
+    }
+    else
+    {
+        en_v = GL_CLAMP;
+        height = source.height / tex_v;
+    }
 
     draw_texture_uv(texture, dest.x,
                     dest.y, dest.width, dest.height, 1.0f,
                     &col_white, xsrc,
                     ysrc,
-                    xsrc + source.width / tex_h,
-                    ysrc + source.height / tex_v, en_h, en_v);
+                    xsrc + width, ysrc + height, en_h, en_v);
 }
 
 void draw_char(int c, int x, int y, w_colour_t *colour)
@@ -2087,23 +2106,23 @@ static void draw_scene( board_t *b )
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     20, 375, 75, 10
-                }
+                }, 8
                );
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     20, 440, 170, 20
-                }
+                }, 8
                );
 
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     545, 375, 75, 10
-                }
+                }, 8
                );
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     455, 440, 170, 20
-                }
+                }, 8
                );
 
     /* Da clocken */
@@ -2111,7 +2130,7 @@ static void draw_scene( board_t *b )
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     290, 440, 60, 20
-                }
+                }, 8
                );
 
     glPopMatrix();

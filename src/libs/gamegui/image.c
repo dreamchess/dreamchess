@@ -42,23 +42,31 @@ void w_image_render(w_widget_t *widget, int x, int y, int focus)
     Uint32 ticks = SDL_GetTicks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
+    w_rect_t source, dest;
 
     if (phase < 0.5f)
         factor = 1.0f + IMAGE_SCALE * phase * 2;
     else
         factor = 1.0f + IMAGE_SCALE * ((1.0f - phase) * 2);
 
-    x += image->xalign * (image->width_a - image->width);
-    y += (1.0f - image->yalign) * (image->height_a - image->height);
-
+    dest.width = image->width;
+    dest.height = image->height;
 
     if (focus != FOCUS_NONE)
     {
-        w *= factor;
-        h *= factor;
+        dest.width *= factor;
+        dest.height *= factor;
     }
 
-/*    draw_texture(image->image, x - (w - image->width)/2, y - (h - image->height)/2, w, h, 1.0f, &col_white);*/
+    dest.x = x + image->xalign * (image->width_a - image->width) - (dest.width - image->width) / 2;
+    dest.y = y + (1.0f - image->yalign) * (image->height_a - image->height) - (dest.height - image->height) / 2;
+
+    source.x = 0;
+    source.y = 0;
+    source.width = image->width;
+    source.height = image->width;
+
+    w_system_draw_image(image->image, source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
 }
 
 void w_image_init(w_image_t *image, void *texture)
@@ -69,10 +77,7 @@ void w_image_init(w_image_t *image, void *texture)
     image->id = w_image_get_class_id();
     image->image = texture;
     image->enabled = 1;
-/*
-    image->width = texture->width;
-    image->height = texture->height;
-*/
+    w_system_get_image_size(texture, &image->width, &image->height);
 }
 
 /** @brief Creates an image widget. */
