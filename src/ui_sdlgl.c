@@ -76,6 +76,17 @@
 /** Focussed image enlargement speed in enlargements per second. */
 #define IMAGE_SPEED 2.0f
 
+#ifdef _arch_dreamcast
+#define AXIS_CURSOR_DISABLED
+#define AXIS_VIEW_X 0
+#define AXIS_VIEW_Y 1
+#else
+#define AXIS_CURSOR_X 0
+#define AXIS_CURSOR_Y 1
+#define AXIS_VIEW_X 2
+#define AXIS_VIEW_Y 3
+#endif
+
 static void poll_move();
 
 int piece_moving_done=1;
@@ -245,8 +256,15 @@ static texture_t backdrop;
 static texture_t border[9];
 static texture_t menu_border[9];
 
+#define LEFT (1 << 0)
+#define RIGHT (1 << 1)
+#define UP (1 << 2)
+#define DOWN (1 << 3)
+
 static ui_event_t convert_event(SDL_Event *event)
 {
+    static unsigned int pressed;
+
     switch (event->type)
     {
     case SDL_KEYDOWN:
@@ -290,12 +308,54 @@ static ui_event_t convert_event(SDL_Event *event)
         case 1:
             return UI_EVENT_ESCAPE;
         case 2:
-            return UI_EVENT_EXTRA1;
+            return UI_EVENT_EXTRA3;
         case 3:
             return UI_EVENT_EXTRA2;
         case 4:
-            return UI_EVENT_EXTRA3;
+            return UI_EVENT_ESCAPE;
         }
+
+#ifndef AXIS_CURSOR_DISABLED
+    case SDL_JOYAXISMOTION:
+        switch (event->jaxis.axis)
+        {
+        case AXIS_CURSOR_X:
+            if (event->jaxis.value >= -15000 && event->jaxis.value <= 15000)
+            {
+                pressed &= ~(LEFT | RIGHT);
+                return UI_EVENT_NONE;
+            }
+
+            if (!(pressed & LEFT) && (event->jaxis.value < 0))
+            {
+                pressed |= LEFT;
+                return UI_EVENT_LEFT;
+            }
+            if (!(pressed & RIGHT) && (event->jaxis.value > 0))
+            {
+                pressed |= RIGHT;
+                return UI_EVENT_RIGHT;
+            }
+            break;
+        case AXIS_CURSOR_Y:
+            if (event->jaxis.value >= -15000 && event->jaxis.value <= 15000)
+            {
+                pressed &= ~(UP | DOWN);
+                return UI_EVENT_NONE;
+            }
+            if (!(pressed & UP) && (event->jaxis.value < 0))
+            {
+                pressed |= UP;
+                return UI_EVENT_UP;
+            }
+            if (!(pressed & DOWN) && (event->jaxis.value > 0))
+            {
+                pressed |= DOWN;
+                return UI_EVENT_DOWN;
+            }
+        }
+#endif
+
     case SDL_MOUSEBUTTONDOWN:
         switch (event->button.button)
         {
@@ -2106,23 +2166,27 @@ static void draw_scene( board_t *b )
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     20, 375, 75, 10
-                }, 8
+                }
+                , 8
                );
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     20, 440, 170, 20
-                }, 8
+                }
+                , 8
                );
 
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     545, 375, 75, 10
-                }, 8
+                }
+                , 8
                );
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     455, 440, 170, 20
-                }, 8
+                }
+                , 8
                );
 
     /* Da clocken */
@@ -2130,7 +2194,8 @@ static void draw_scene( board_t *b )
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     290, 440, 60, 20
-                }, 8
+                }
+                , 8
                );
 
     glPopMatrix();
@@ -2494,6 +2559,7 @@ static void poll_move()
 static int GetMove()
 {
     int retval = -1;
+    static Sint16 rotx, roty;
     SDL_Event event;
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
@@ -2512,9 +2578,15 @@ static int GetMove()
             ;
     }
 
+    if ((roty < -3000) || (roty > 3000))
+       move_camera(-roty / (float) 32768 * 0.6f * MOVE_SPEED, 0.0f);
+
+    if ((rotx < -3000) || (rotx > 3000))
+        move_camera(0.0f, -rotx / (float) 32768 * 0.6f * MOVE_SPEED);
+
     while ( SDL_PollEvent( &event ) )
     {
-        ui_event_t ui_event = convert_event(&event);
+        ui_event_t ui_event;
 
         if (event.type == SDL_MOUSEMOTION)
         {
@@ -2524,6 +2596,23 @@ static int GetMove()
 
             continue;
         }
+
+        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_X))
+        {
+            rotx = event.jaxis.value;
+            continue;
+        }
+
+        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_Y))
+        {
+            roty = event.jaxis.value;
+            continue;
+        }
+
+        ui_event = convert_event(&event);
+
+        if (ui_event == UI_EVENT_NONE)
+            continue;
 
         if (dialog_current())
             dialog_input(ui_event);
