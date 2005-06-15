@@ -67,7 +67,6 @@ static int is_coord_move(char *ms)
 static move_t *get_coord_move(board_t *board, char *ms)
 {
     int source, dest;
-    int type = NORMAL_MOVE;
     move_t moves[28*16];
     int total_moves;
     int move_nr;
@@ -110,21 +109,21 @@ static move_t *get_coord_move(board_t *board, char *ms)
         if (move->type & MOVE_PROMOTION_MASK)
         {
             /* Set correct promotion piece. */
-            type &= ~MOVE_PROMOTION_MASK;
+            move->type &= ~MOVE_PROMOTION_MASK;
             if (strlen(ms) == 5)
                 switch(ms[4])
                 {
                 case 'q':
-                    type |= PROMOTION_MOVE_QUEEN;
+                    move->type |= PROMOTION_MOVE_QUEEN;
                     break;
                 case 'r':
-                    type |= PROMOTION_MOVE_ROOK;
+                    move->type |= PROMOTION_MOVE_ROOK;
                     break;
                 case 'n':
-                    type |= PROMOTION_MOVE_KNIGHT;
+                    move->type |= PROMOTION_MOVE_KNIGHT;
                     break;
                 case 'b':
-                    type |= PROMOTION_MOVE_BISHOP;
+                    move->type |= PROMOTION_MOVE_BISHOP;
                 }
             else
             {
