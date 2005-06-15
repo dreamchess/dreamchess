@@ -686,6 +686,7 @@ static w_dialog_t *dialog_ingame_create()
     w_container_append(W_CONTAINER(vbox), widget);
 
     dialog = w_dialog_create(vbox);
+    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
     return W_DIALOG(dialog);
 }
 
@@ -735,6 +736,7 @@ static w_dialog_t *dialog_quit_create()
     w_container_append(W_CONTAINER(vbox), widget);
 
     dialog = w_dialog_create(vbox);
+    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
     return W_DIALOG(dialog);
 }
 
@@ -772,6 +774,7 @@ static w_dialog_t *dialog_system_create()
     w_container_append(W_CONTAINER(vbox), widget);
 
     dialog = w_dialog_create(vbox);
+    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
     return W_DIALOG(dialog);
 }
 
@@ -820,6 +823,7 @@ static w_dialog_t *dialog_victory_create(result_t *result)
     w_container_append(W_CONTAINER(hbox), image_r);
     dialog = w_dialog_create(hbox);
     w_dialog_set_modal(W_DIALOG(dialog), 1);
+    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
     return W_DIALOG(dialog);
 }
 
@@ -2163,12 +2167,7 @@ static void draw_scene( board_t *b )
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
 
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
-                {
-                    20, 375, 75, 10
-                }
-                , 8
-               );
+
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     20, 440, 170, 20
@@ -2176,12 +2175,6 @@ static void draw_scene( board_t *b )
                 , 8
                );
 
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
-                {
-                    545, 375, 75, 10
-                }
-                , 8
-               );
     draw_border(style_ingame.border.textured.image, (w_rect_t)
                 {
                     455, 440, 170, 20
@@ -2201,9 +2194,21 @@ static void draw_scene( board_t *b )
     glPopMatrix();
 
     glPushMatrix();
-    draw_health_bars();
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    20, 375, 75, 10
+                }
+                , 8
+               );
+    draw_border(style_ingame.border.textured.image, (w_rect_t)
+                {
+                    545, 375, 75, 10
+                }
+                , 8
+               );
+    draw_health_bars();
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
 
