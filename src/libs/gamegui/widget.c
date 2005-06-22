@@ -19,23 +19,23 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
-w_class_id w_widget_get_class_id()
+gg_class_id gg_widget_get_class_id()
 {
-    CHILD(CLASS_ID_NONE)
+    GG_CHILD(GG_CLASS_ID_NONE)
 }
 
-void w_widget_destroy(w_widget_t *widget)
+void gg_widget_destroy(gg_widget_t *widget)
 {
     free(widget);
 }
 
-void w_set_requested_size(w_widget_t *widget, int width, int height)
+void gg_set_requested_size(gg_widget_t *widget, int width, int height)
 {
     widget->width_f = width;
     widget->height_f = height;
 }
 
-void w_widget_get_requested_size(w_widget_t *widget, int *width, int *height)
+void gg_widget_get_requested_size(gg_widget_t *widget, int *width, int *height)
 {
     if (width)
     {
@@ -54,33 +54,33 @@ void w_widget_get_requested_size(w_widget_t *widget, int *width, int *height)
     }
 }
 
-void w_set_size(w_widget_t *widget, int width, int height)
+void gg_set_size(gg_widget_t *widget, int width, int height)
 {
     widget->width_a = width;
     widget->height_a = height;
 }
 
-void w_get_focus_pos(w_widget_t *widget, int *x, int *y)
+void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y)
 {
     *x = widget->width_a / 2;
     *y = widget->height_a / 2;
 }
 
-int w_set_focus_pos(w_widget_t *widget, int x, int y)
+int gg_set_focus_pos(gg_widget_t *widget, int x, int y)
 {
     return 1;
 }
 
-void w_widget_init(w_widget_t *widget)
+void gg_widget_init(gg_widget_t *widget)
 {
     widget->render = NULL;
     widget->input = NULL;
-    widget->destroy = w_widget_destroy;
-    widget->get_requested_size = w_widget_get_requested_size;
-    widget->set_size = w_set_size;
-    widget->get_focus_pos = w_get_focus_pos;
-    widget->set_focus_pos = w_set_focus_pos;
-    widget->id = w_widget_get_class_id();
+    widget->destroy = gg_widget_destroy;
+    widget->get_requested_size = gg_widget_get_requested_size;
+    widget->set_size = gg_set_size;
+    widget->get_focus_pos = gg_get_focus_pos;
+    widget->set_focus_pos = gg_set_focus_pos;
+    widget->id = gg_widget_get_class_id();
     widget->enabled = 0;
     widget->width = widget->height = 0;
     widget->width_f = widget->height_f = -1;

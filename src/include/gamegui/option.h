@@ -22,35 +22,35 @@
 #include <gamegui/system.h>
 #include <gamegui/select.h>
 
-#define W_OPTION(W) CHECK_CAST(W, w_option_get_class_id(), w_option_t)
+#define GG_OPTION(W) GG_CHECK_CAST(W, gg_option_get_class_id(), gg_option_t)
 
-#define W_OPTION_DATA \
-    W_SELECT_DATA \
-    void (* func) (w_widget_t *widget, void *data); \
+#define GG_OPTION_DATA \
+    GG_SELECT_DATA \
+    void (* func) (gg_widget_t *widget, void *data); \
     void *func_data;
 
-typedef struct w_option
+typedef struct gg_option
 {
-    W_OPTION_DATA
+    GG_OPTION_DATA
 }
-w_option_t;
+gg_option_t;
 
-void w_option_render(w_widget_t *widget, int x, int y, int focus);
+void gg_option_render(gg_widget_t *widget, int x, int y, int focus);
 
-int w_option_input(w_widget_t *widget, ui_event_t event);
+int gg_option_input(gg_widget_t *widget, ui_event_t event);
 
-void w_option_set_size(w_widget_t *widget, int width, int height);
+void gg_option_set_size(gg_widget_t *widget, int width, int height);
 
-void w_option_init(w_option_t *option);
+void gg_option_init(gg_option_t *option);
 
-w_widget_t *w_option_create();
+gg_widget_t *gg_option_create();
 
-void w_option_append(w_option_t *option, w_widget_t *child);
+void gg_option_append(gg_option_t *option, gg_widget_t *child);
 
-void w_option_append_label(w_option_t *option, char *text, float xalign, float yalign);
+void gg_option_append_label(gg_option_t *option, char *text, float xalign, float yalign);
 
-int w_option_get_selected(w_option_t *option);
+int gg_option_get_selected(gg_option_t *option);
 
-void w_option_set_callback(w_option_t *option, void (* callback) (w_widget_t *, void *), void *func_data);
+void gg_option_set_callback(gg_option_t *option, void (* callback) (gg_widget_t *, void *), void *func_data);
 
 #endif /* GAMEGUI_OPTION_H */

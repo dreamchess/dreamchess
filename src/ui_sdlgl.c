@@ -106,7 +106,7 @@ float piece_moving_ypos;
 float dc_z;
 #endif
 
-int text_draw_char( float xpos, float ypos, float scale, int character, w_colour_t *col );
+int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );
 
 void start_piece_move( int source, int dest )
 {
@@ -132,37 +132,37 @@ void start_piece_move( int source, int dest )
 
 /* Some predefined colours. */
 
-static w_colour_t col_black =
+static gg_colour_t col_black =
     {
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-static w_colour_t col_grey =
+static gg_colour_t col_grey =
     {
         0.5f, 0.5f, 0.5f, 1.0f
     };
 
-static w_colour_t col_red =
+static gg_colour_t col_red =
     {
         1.0f, 0.0f, 0.0f, 1.0f
     };
 
-static w_colour_t col_dark_red =
+static gg_colour_t col_dark_red =
     {
         0.7f, 0.0f, 0.0f, 1.0f
     };
 
-static w_colour_t col_white =
+static gg_colour_t col_white =
     {
         1.0f, 1.0f, 1.0f, 1.0f
     };
 
-static w_colour_t col_yellow =
+static gg_colour_t col_yellow =
     {
         1.0f, 1.0f, 0.0f, 1.0f
     };
 
-void draw_rect(int x, int y, int w, int h, w_colour_t *col)
+void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
     glBegin(GL_LINE_LOOP);
@@ -174,7 +174,7 @@ void draw_rect(int x, int y, int w, int h, w_colour_t *col)
 }
 
 #ifdef _arch_dreamcast
-void draw_rect_fill(int x, int y, int w, int h, w_colour_t *col)
+void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
     y = SCREEN_HEIGHT - y;
@@ -186,7 +186,7 @@ void draw_rect_fill(int x, int y, int w, int h, w_colour_t *col)
     glEnd();
 }
 #else
-void draw_rect_fill(int x, int y, int w, int h, w_colour_t *col)
+void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
     glBegin(GL_QUADS);
@@ -442,7 +442,7 @@ static void go_3d(int width, int height)
 #ifdef _arch_dreamcast
 static void draw_texture( texture_t *texture, float xpos,
                           float ypos, float width, float height, float zpos,
-                          w_colour_t *col )
+                          gg_colour_t *col )
 {
     dc_z += 0.00001f;
     zpos = dc_z;
@@ -469,7 +469,7 @@ static void draw_texture( texture_t *texture, float xpos,
 #else
 static void draw_texture( texture_t *texture, float xpos,
                           float ypos, float width, float height, float zpos,
-                          w_colour_t *col )
+                          gg_colour_t *col )
 {
     glEnable( GL_TEXTURE_2D );
 
@@ -494,7 +494,7 @@ static void draw_texture( texture_t *texture, float xpos,
 #ifdef _arch_dreamcast
 static void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
-                             w_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
+                             gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
 {
     dc_z += 0.00001f;
     zpos = dc_z;
@@ -524,7 +524,7 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 #else
 static void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
-                             w_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
+                             gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
 {
     glEnable( GL_TEXTURE_2D );
 
@@ -549,9 +549,9 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 }
 #endif
 
-void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length );
-void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length );
-void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length );
+void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
+void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
+void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
 static int text_width(unsigned char *text);
 static int text_height();
 static int quit_to_menu;
@@ -640,22 +640,22 @@ static position_t pos_title =
  *  user.
  */
 
-static void retract_move(w_widget_t *widget, void *data)
+static void retract_move(gg_widget_t *widget, void *data)
 {
     game_retract_move();
 }
 
-static void move_now(w_widget_t *widget, void *data)
+static void move_now(gg_widget_t *widget, void *data)
 {
     game_move_now();
 }
 
-static void view_prev(w_widget_t *widget, void *data)
+static void view_prev(gg_widget_t *widget, void *data)
 {
     game_view_prev();
 }
 
-static void view_next(w_widget_t *widget, void *data)
+static void view_next(gg_widget_t *widget, void *data)
 {
     game_view_next();
 }
@@ -664,30 +664,30 @@ static void view_next(w_widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static w_dialog_t *dialog_ingame_create()
+static gg_dialog_t *dialog_ingame_create()
 {
-    w_widget_t *dialog;
-    w_widget_t *vbox = w_vbox_create(0);
+    gg_widget_t *dialog;
+    gg_widget_t *vbox = gg_vbox_create(0);
 
-    w_widget_t *widget = w_action_create_with_label("Retract Move", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), retract_move, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    gg_widget_t *widget = gg_action_create_with_label("Retract Move", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), retract_move, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("Move Now", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), move_now, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Move Now", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), move_now, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("View Previous Move", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), view_prev, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("View Previous Move", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), view_prev, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("View Next Move", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), view_next, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("View Next Move", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), view_next, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    return GG_DIALOG(dialog);
 }
 
 
@@ -697,14 +697,14 @@ static w_dialog_t *dialog_ingame_create()
  *
  *  Closes the dialog and causes the game to go back to the title menu.
  */
-static void dialog_quit_ok(w_widget_t *widget, void *data)
+static void dialog_quit_ok(gg_widget_t *widget, void *data)
 {
     dialog_close();
     dialog_close();
     quit_to_menu = 1;
 }
 
-static void dialog_close_cb(w_widget_t *widget, void *data)
+static void dialog_close_cb(gg_widget_t *widget, void *data)
 {
     dialog_close();
 }
@@ -716,28 +716,28 @@ static void dialog_close_cb(w_widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static w_dialog_t *dialog_quit_create()
+static gg_dialog_t *dialog_quit_create()
 {
-    w_widget_t *dialog;
-    w_widget_t *vbox = w_vbox_create(0);
+    gg_widget_t *dialog;
+    gg_widget_t *vbox = gg_vbox_create(0);
 
-    w_widget_t *widget = w_label_create("You don't really want to quit do ya?");
-    w_container_append(W_CONTAINER(vbox), widget);
+    gg_widget_t *widget = gg_label_create("You don't really want to quit do ya?");
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_label_create("");
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_label_create("");
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("Yeah.. I suck..", 0.5f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), dialog_quit_ok, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Yeah.. I suck..", 0.5f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_quit_ok, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("Of course not!", 0.5f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Of course not!", 0.5f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    return GG_DIALOG(dialog);
 }
 
 
@@ -750,7 +750,7 @@ static w_dialog_t *dialog_quit_create()
  */
 
 /** @brief Opens the quit dialog. */
-static void dialog_quit_open(w_widget_t *widget, void *data)
+static void dialog_quit_open(gg_widget_t *widget, void *data)
 {
     dialog_open(dialog_quit_create());
 }
@@ -759,72 +759,72 @@ static void dialog_quit_open(w_widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static w_dialog_t *dialog_system_create()
+static gg_dialog_t *dialog_system_create()
 {
-    w_widget_t *dialog;
-    w_widget_t *vbox = w_vbox_create(0);
-    w_widget_t *widget;
+    gg_widget_t *dialog;
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_widget_t *widget;
 
-    widget = w_action_create_with_label("Return To Game", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Return To Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = w_action_create_with_label("Quit Game", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), dialog_quit_open, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Quit Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_quit_open, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    return GG_DIALOG(dialog);
 }
 
 
 /* Victory dialog. */
 
-static w_dialog_t *dialog_victory_create(result_t *result)
+static gg_dialog_t *dialog_victory_create(result_t *result)
 {
-    w_widget_t *dialog;
-    w_widget_t *hbox = w_hbox_create(20);
-    w_widget_t *vbox = w_vbox_create(0);
-    w_widget_t *image_l, *image_r;
-    w_widget_t *action;
-    w_widget_t *text;
+    gg_widget_t *dialog;
+    gg_widget_t *hbox = gg_hbox_create(20);
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_widget_t *image_l, *image_r;
+    gg_widget_t *action;
+    gg_widget_t *text;
 
     switch (result->code)
     {
     case RESULT_WHITE_WINS:
-        image_l = w_image_create(&white_pieces[GUI_PIECE_KING]);
-        image_r = w_image_create(&white_pieces[GUI_PIECE_QUEEN]);
-        text = w_label_create("White won the match!");
+        image_l = gg_image_create(&white_pieces[GUI_PIECE_KING]);
+        image_r = gg_image_create(&white_pieces[GUI_PIECE_QUEEN]);
+        text = gg_label_create("White won the match!");
         break;
 
     case RESULT_BLACK_WINS:
-        image_l = w_image_create(&black_pieces[GUI_PIECE_KING]);
-        image_r = w_image_create(&black_pieces[GUI_PIECE_QUEEN]);
-        text = w_label_create("Black won the match!");
+        image_l = gg_image_create(&black_pieces[GUI_PIECE_KING]);
+        image_r = gg_image_create(&black_pieces[GUI_PIECE_QUEEN]);
+        text = gg_label_create("Black won the match!");
         break;
 
     default:
-        image_l = w_image_create(&white_pieces[GUI_PIECE_KING]);
-        image_r = w_image_create(&black_pieces[GUI_PIECE_KING]);
-        text = w_label_create("The game ended in a draw!");
+        image_l = gg_image_create(&white_pieces[GUI_PIECE_KING]);
+        image_r = gg_image_create(&black_pieces[GUI_PIECE_KING]);
+        text = gg_label_create("The game ended in a draw!");
     }
 
-    w_container_append(W_CONTAINER(vbox), text);
-    text = w_label_create(result->reason);
-    w_container_append(W_CONTAINER(vbox), text);
-    text = w_label_create("");
-    w_container_append(W_CONTAINER(vbox), text);
-    action = w_action_create_with_label("Ok", 0.5f, 0.5f);
-    w_action_set_callback(W_ACTION(action), dialog_close_cb, NULL);
-    w_container_append(W_CONTAINER(vbox), action);
-    w_container_append(W_CONTAINER(hbox), image_l);
-    w_container_append(W_CONTAINER(hbox), vbox);
-    w_container_append(W_CONTAINER(hbox), image_r);
-    dialog = w_dialog_create(hbox);
-    w_dialog_set_modal(W_DIALOG(dialog), 1);
-    w_dialog_set_style(W_DIALOG(dialog), &style_ingame);
-    return W_DIALOG(dialog);
+    gg_container_append(GG_CONTAINER(vbox), text);
+    text = gg_label_create(result->reason);
+    gg_container_append(GG_CONTAINER(vbox), text);
+    text = gg_label_create("");
+    gg_container_append(GG_CONTAINER(vbox), text);
+    action = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+    gg_action_set_callback(GG_ACTION(action), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), action);
+    gg_container_append(GG_CONTAINER(hbox), image_l);
+    gg_container_append(GG_CONTAINER(hbox), vbox);
+    gg_container_append(GG_CONTAINER(hbox), image_r);
+    dialog = gg_dialog_create(hbox);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    return GG_DIALOG(dialog);
 }
 
 /* Title dialog. */
@@ -834,22 +834,22 @@ static w_dialog_t *dialog_victory_create(result_t *result)
 #define GAME_TYPE_HUMAN_VS_HUMAN 2
 
 /** @brief Triggers gameplay start based on currently selected options. */
-static void menu_title_start(w_widget_t *widget, void *data)
+static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_loading=TRUE;
     dialog_close();
 }
 
 /** @brief Triggers DreamChess exit. */
-static void menu_title_quit(w_widget_t *widget, void *data)
+static void menu_title_quit(gg_widget_t *widget, void *data)
 {
     title_process_retval = 1;
     dialog_close();
 }
 
-void dialog_title_players(w_widget_t *widget, void *data)
+void dialog_title_players(gg_widget_t *widget, void *data)
 {
-    switch (w_option_get_selected(W_OPTION(widget)))
+    switch (gg_option_get_selected(GG_OPTION(widget)))
     {
     case GAME_TYPE_HUMAN_VS_CPU:
         config->player[WHITE] = PLAYER_UI;
@@ -868,34 +868,34 @@ void dialog_title_players(w_widget_t *widget, void *data)
     }
 }
 
-static void dialog_title_level(w_widget_t *widget, void *data)
+static void dialog_title_level(gg_widget_t *widget, void *data)
 {
-    config->cpu_level = w_option_get_selected(W_OPTION(widget)) + 1;
+    config->cpu_level = gg_option_get_selected(GG_OPTION(widget)) + 1;
 }
 
-static void dialog_title_theme(w_widget_t *widget, void *data)
+static void dialog_title_theme(gg_widget_t *widget, void *data)
 {
-    cur_theme = w_option_get_selected(W_OPTION(widget));
+    cur_theme = gg_option_get_selected(GG_OPTION(widget));
 }
 
-static void dialog_title_pieces(w_widget_t *widget, void *data)
+static void dialog_title_pieces(gg_widget_t *widget, void *data)
 {
-    pieces_list_cur = w_option_get_selected(W_OPTION(widget));
+    pieces_list_cur = gg_option_get_selected(GG_OPTION(widget));
 }
 
-static void dialog_title_board(w_widget_t *widget, void *data)
+static void dialog_title_board(gg_widget_t *widget, void *data)
 {
-    board_list_cur = w_option_get_selected(W_OPTION(widget));
+    board_list_cur = gg_option_get_selected(GG_OPTION(widget));
 }
 
-static w_dialog_t *dialog_title_create()
+static gg_dialog_t *dialog_title_create()
 {
-    w_widget_t *dialog;
-    w_widget_t *vbox;
-    w_widget_t *widget;
-    w_widget_t *vbox2;
-    w_widget_t *hbox;
-    w_widget_t *label;
+    gg_widget_t *dialog;
+    gg_widget_t *vbox;
+    gg_widget_t *widget;
+    gg_widget_t *vbox2;
+    gg_widget_t *hbox;
+    gg_widget_t *label;
     int i;
 
     config = malloc(sizeof(config_t));
@@ -907,91 +907,91 @@ static w_dialog_t *dialog_title_create()
     board_list_cur = 0;
     flip_board = 0;
 
-    widget = w_action_create_with_label("Start Game", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), menu_title_start, NULL);
-    vbox = w_vbox_create(0);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
+    vbox = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    label = w_label_create("Players:");
-    w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
-    vbox2 = w_vbox_create(0);
-    w_container_append(W_CONTAINER(vbox2), label);
+    label = gg_label_create("Players:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    vbox2 = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = w_label_create("Difficulty:");
-    w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);
+    label = gg_label_create("Difficulty:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = w_label_create("Theme:");
-    w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);
+    label = gg_label_create("Theme:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = w_label_create("Chess Set:");
-    w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);
+    label = gg_label_create("Chess Set:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = w_label_create("Board:");
-    w_align_set_alignment(W_ALIGN(label), 0.0f, 0.0f);
-    w_container_append(W_CONTAINER(vbox2), label);
+    label = gg_label_create("Board:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
-    /*   label = w_label_create("Name:");
-       w_alignable_set_alignment(W_ALIGNABLE(label), 0.0f, 0.0f);
-       w_container_append(W_CONTAINER(vbox2), label);*/
+    /*   label = gg_label_create("Name:");
+       gg_alignable_set_alignment(GG_ALIGNABLE(label), 0.0f, 0.0f);
+       gg_container_append(GG_CONTAINER(vbox2), label);*/
 
-    hbox = w_hbox_create(20);
-    w_container_append(W_CONTAINER(hbox), vbox2);
+    hbox = gg_hbox_create(20);
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
 
-    widget = w_option_create();
-    w_option_append_label(W_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
-    w_option_append_label(W_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
-    w_option_append_label(W_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
-    w_option_set_callback(W_OPTION(widget), dialog_title_players, NULL);
-    vbox2 = w_vbox_create(0);
-    w_container_append(W_CONTAINER(vbox2), widget);
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
+    vbox2 = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = w_option_create();
-    w_option_append_label(W_OPTION(widget), "Level 1", 0.5f, 0.0f);
-    w_option_append_label(W_OPTION(widget), "Level 2", 0.5f, 0.0f);
-    w_option_append_label(W_OPTION(widget), "Level 3", 0.5f, 0.0f);
-    w_option_append_label(W_OPTION(widget), "Level 4", 0.5f, 0.0f);
-    w_option_set_callback(W_OPTION(widget), dialog_title_level, NULL);
-    w_container_append(W_CONTAINER(vbox2), widget);
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "Level 1", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 2", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 3", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = w_option_create();
+    widget = gg_option_create();
     for (i = 0; i < num_theme; i++)
-        w_option_append_label(W_OPTION(widget), themelist[i], 0.5f, 0.0f);
-    w_option_set_callback(W_OPTION(widget), dialog_title_theme, NULL);
-    w_container_append(W_CONTAINER(vbox2), widget);
+        gg_option_append_label(GG_OPTION(widget), themelist[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = w_option_create();
+    widget = gg_option_create();
     for (i = 0; i < pieces_list_total; i++)
-        w_option_append_label(W_OPTION(widget), pieces_list[i], 0.5f, 0.0f);
-    w_option_set_callback(W_OPTION(widget), dialog_title_pieces, NULL);
-    w_container_append(W_CONTAINER(vbox2), widget);
+        gg_option_append_label(GG_OPTION(widget), pieces_list[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_pieces, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = w_option_create();
+    widget = gg_option_create();
     for (i = 0; i < board_list_total; i++)
-        w_option_append_label(W_OPTION(widget), board_list[i], 0.5f, 0.0f);
-    w_option_set_callback(W_OPTION(widget), dialog_title_board, NULL);
-    w_container_append(W_CONTAINER(vbox2), widget);
+        gg_option_append_label(GG_OPTION(widget), board_list[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    /*  widget = w_entry_create();
-      w_container_append(W_CONTAINER(vbox2), widget);*/
+    /*  widget = gg_entry_create();
+      gg_container_append(GG_CONTAINER(vbox2), widget);*/
 
-    w_container_append(W_CONTAINER(hbox), vbox2);
-    w_container_append(W_CONTAINER(vbox), hbox);
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
+    gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    widget = w_action_create_with_label("Quit Game", 0.0f, 0.0f);
-    w_action_set_callback(W_ACTION(widget), menu_title_quit, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
+    widget = gg_action_create_with_label("Quit Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_modal(W_DIALOG(dialog), 1);
-    w_dialog_set_position(W_DIALOG(dialog), 320, 0, ALIGN_CENTER, ALIGN_BOTTOM);
-    w_dialog_set_style(W_DIALOG(dialog), &style_menu);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, ALIGN_CENTER, ALIGN_BOTTOM);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
+    return GG_DIALOG(dialog);
 }
 
-static void dialog_vkeyboard_key(w_widget_t *widget, void *data)
+static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
 {
     if (dialog_current())
         dialog_input(*(ui_event_t *) data);
@@ -999,22 +999,22 @@ static void dialog_vkeyboard_key(w_widget_t *widget, void *data)
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
 
-static w_dialog_t *dialog_vkeyboard_create()
+static gg_dialog_t *dialog_vkeyboard_create()
 {
-    w_widget_t *dialog;
-    w_widget_t *label;
-    w_widget_t *action;
-    w_widget_t *hbox;
-    w_widget_t *vbox2;
+    gg_widget_t *dialog;
+    gg_widget_t *label;
+    gg_widget_t *action;
+    gg_widget_t *hbox;
+    gg_widget_t *vbox2;
     static ui_event_t key;
     int i,j,k;
     int max_width = 0;
 
-    hbox=w_hbox_create(0);
-    label=w_label_create("Type stuff, k?" );
-    w_container_append(W_CONTAINER(hbox), label);
-    vbox2=w_vbox_create(0);
-    w_container_append(W_CONTAINER(vbox2), hbox );
+    hbox=gg_hbox_create(0);
+    label=gg_label_create("Type stuff, k?" );
+    gg_container_append(GG_CONTAINER(hbox), label);
+    vbox2=gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox2), hbox );
 
     for (i = 0; i < 256; i++)
     {
@@ -1026,7 +1026,7 @@ static w_dialog_t *dialog_vkeyboard_create()
     k=0;
     for ( j=0; j<6; j++ )
     {
-        hbox = w_hbox_create(2);
+        hbox = gg_hbox_create(2);
         for ( i=0; i<16; i++ )
         {
             if ( k < 127-33 )
@@ -1035,19 +1035,19 @@ static w_dialog_t *dialog_vkeyboard_create()
                 key=k+33;
                 key_str[0] = key;
                 key_str[1] = '\0';
-                action = w_action_create_with_label(key_str, 0.5f, 0.5f);
-                w_set_requested_size(action, max_width, 0);
-                w_action_set_callback(W_ACTION(action), dialog_vkeyboard_key, &keys[k]);
+                action = gg_action_create_with_label(key_str, 0.5f, 0.5f);
+                gg_set_requested_size(action, max_width, 0);
+                gg_action_set_callback(GG_ACTION(action), dialog_vkeyboard_key, &keys[k]);
 
-                w_container_append(W_CONTAINER(hbox), action);
+                gg_container_append(GG_CONTAINER(hbox), action);
                 k++;
             }
         }
-        w_container_append(W_CONTAINER(vbox2), hbox);
+        gg_container_append(GG_CONTAINER(vbox2), hbox);
     }
 
-    dialog = w_dialog_create(vbox2);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox2);
+    return GG_DIALOG(dialog);
 }
 
 /* This is our SDL surface */
@@ -1111,8 +1111,8 @@ static void draw_credits(int init)
     Uint32 now;
     int x = 620;
     int y = 270;
-    w_colour_t col_cap = {0.55f, 0.75f, 0.95f, 0.0f};
-    w_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};
+    gg_colour_t col_cap = {0.55f, 0.75f, 0.95f, 0.0f};
+    gg_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};
 
     now = SDL_GetTicks();
     credits = get_credits();
@@ -1305,23 +1305,23 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
                           999 );
 }
 
-void dialog_promote_cb(w_widget_t *widget, void *data)
+void dialog_promote_cb(gg_widget_t *widget, void *data)
 {
     dialog_promote_piece = *(int *)data;
     dialog_close();
 }
 
-w_dialog_t *dialog_promote_create(int colour)
+gg_dialog_t *dialog_promote_create(int colour)
 {
     static int cb_pieces[4];
 
     texture_t *pieces;
-    w_widget_t *dialog;
-    w_widget_t *action;
-    w_widget_t *vbox = w_vbox_create(0);
-    w_widget_t *hbox = w_hbox_create(0);
-    w_widget_t *w_image;
-    w_widget_t *text = w_label_create("Promotion! Choose new piece!");
+    gg_widget_t *dialog;
+    gg_widget_t *action;
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_widget_t *hbox = gg_hbox_create(0);
+    gg_widget_t *gg_image;
+    gg_widget_t *text = gg_label_create("Promotion! Choose new piece!");
 
     dialog_promote_piece = NONE;
     cb_pieces[0] = QUEEN + colour;
@@ -1329,56 +1329,56 @@ w_dialog_t *dialog_promote_create(int colour)
     cb_pieces[2] = BISHOP + colour;
     cb_pieces[3] = KNIGHT + colour;
 
-    w_container_append(W_CONTAINER(vbox), text);
+    gg_container_append(GG_CONTAINER(vbox), text);
 
     if (IS_WHITE(colour))
         pieces = white_pieces;
     else
         pieces = black_pieces;
 
-    w_image = w_image_create(&pieces[GUI_PIECE_QUEEN]);
-    action = w_action_create(w_image);
-    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[0]);
-    w_container_append(W_CONTAINER(hbox), action);
+    gg_image = gg_image_create(&pieces[GUI_PIECE_QUEEN]);
+    action = gg_action_create(gg_image);
+    gg_action_set_callback(GG_ACTION(action), dialog_promote_cb, &cb_pieces[0]);
+    gg_container_append(GG_CONTAINER(hbox), action);
 
-    w_image = w_image_create(&pieces[GUI_PIECE_ROOK]);
-    action = w_action_create(w_image);
-    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[1]);
-    w_container_append(W_CONTAINER(hbox), action);
+    gg_image = gg_image_create(&pieces[GUI_PIECE_ROOK]);
+    action = gg_action_create(gg_image);
+    gg_action_set_callback(GG_ACTION(action), dialog_promote_cb, &cb_pieces[1]);
+    gg_container_append(GG_CONTAINER(hbox), action);
 
-    w_image = w_image_create(&pieces[GUI_PIECE_BISHOP]);
-    action = w_action_create(w_image);
-    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[2]);
-    w_container_append(W_CONTAINER(hbox), action);
+    gg_image = gg_image_create(&pieces[GUI_PIECE_BISHOP]);
+    action = gg_action_create(gg_image);
+    gg_action_set_callback(GG_ACTION(action), dialog_promote_cb, &cb_pieces[2]);
+    gg_container_append(GG_CONTAINER(hbox), action);
 
-    w_image = w_image_create(&pieces[GUI_PIECE_KNIGHT]);
-    action = w_action_create(w_image);
-    w_action_set_callback(W_ACTION(action), dialog_promote_cb, &cb_pieces[3]);
-    w_container_append(W_CONTAINER(hbox), action);
-    w_container_append(W_CONTAINER(vbox), hbox);
+    gg_image = gg_image_create(&pieces[GUI_PIECE_KNIGHT]);
+    action = gg_action_create(gg_image);
+    gg_action_set_callback(GG_ACTION(action), dialog_promote_cb, &cb_pieces[3]);
+    gg_container_append(GG_CONTAINER(hbox), action);
+    gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_modal(W_DIALOG(dialog), 1);
-    return W_DIALOG(dialog);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    return GG_DIALOG(dialog);
 }
 
-w_dialog_t *dialog_message_create(char *message)
+gg_dialog_t *dialog_message_create(char *message)
 {
-    w_widget_t *dialog;
-    w_widget_t *widget;
+    gg_widget_t *dialog;
+    gg_widget_t *widget;
 
-    w_widget_t *vbox = w_vbox_create(0);
-    w_container_append(W_CONTAINER(vbox), w_label_create("Important message from engine"));
-    w_container_append(W_CONTAINER(vbox), w_label_create(""));
-    w_container_append(W_CONTAINER(vbox), w_label_create(message));
-    w_container_append(W_CONTAINER(vbox), w_label_create(""));
-    widget = w_action_create_with_label("Ok", 0.5f, 0.5f);
-    w_action_set_callback(W_ACTION(widget), dialog_close_cb, NULL);
-    w_container_append(W_CONTAINER(vbox), widget);
-    dialog = w_dialog_create(vbox);
-    w_dialog_set_modal(W_DIALOG(dialog), 1);
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create("Important message from engine"));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create(""));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create(message));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create(""));
+    widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
 
-    return W_DIALOG(dialog);
+    return GG_DIALOG(dialog);
 }
 
 /** @brief Swaps the OpenGL buffer.
@@ -1424,12 +1424,12 @@ static config_t *do_menu()
 {
     GLuint ticks;
     float fadehuh;
-    w_dialog_t *keyboard = dialog_vkeyboard_create();
+    gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
-    w_colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
+    gg_colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     board_xpos=128;
     board_ypos=30;
@@ -1457,9 +1457,9 @@ static config_t *do_menu()
 
             if (event.type == SDL_MOUSEMOTION)
             {
-                w_dialog_t *dialog = dialog_current();
+                gg_dialog_t *dialog = dialog_current();
                 if (dialog)
-                    w_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+                    gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
 
                 continue;
             }
@@ -1489,7 +1489,7 @@ static config_t *do_menu()
             }
 
             if (vkeyboard_enabled)
-                keyboard->input(W_WIDGET(keyboard), ui_event);
+                keyboard->input(GG_WIDGET(keyboard), ui_event);
             else
                 dialog_input(ui_event);
 
@@ -1519,12 +1519,12 @@ static config_t *do_menu()
                                          1.5, &col_white, string_type_pos );
             else
             {
-                w_dialog_t *dialog = dialog_current();
-                w_dialog_render(dialog);
+                gg_dialog_t *dialog = dialog_current();
+                gg_dialog_render(dialog);
             }
 
             if (vkeyboard_enabled)
-                w_dialog_render(keyboard);
+                gg_dialog_render(keyboard);
 
             draw_credits(0);
         }
@@ -1571,7 +1571,7 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
         SDL_FreeSurface( texture_image );
 }
 
-void draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v)
+void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v)
 {
     texture_t *texture = image;
     float hsize = texture->u2 - texture->u1;
@@ -1612,7 +1612,7 @@ void draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mod
                     xsrc + width, ysrc + height, en_h, en_v);
 }
 
-void draw_char(int c, int x, int y, w_colour_t *colour)
+void draw_char(int c, int x, int y, gg_colour_t *colour)
 {
     text_draw_char(x, y, 1.0f, c, colour);
 }
@@ -1637,7 +1637,7 @@ void get_char_size(int c, int *width, int *height)
         *height = text_characters[c].height;
 }
 
-w_driver_t w_driver_sdlgl =
+gg_driver_t gg_driver_sdlgl =
     {
         draw_rect,
         draw_rect_fill,
@@ -1743,7 +1743,7 @@ static void init_gui()
 
     init_gl();
 
-    w_system_init(&w_driver_sdlgl);
+    gg_system_init(&gg_driver_sdlgl);
 
     ch_datadir();
 
@@ -1789,7 +1789,7 @@ static void init_gui()
     }
 
     style_ingame.textured = 1;
-    style_ingame.fade_col = (w_colour_t)
+    style_ingame.fade_col = (gg_colour_t)
                             {
                                 0.0f, 0.0f, 0.0f, 0.5f
                             };
@@ -1800,7 +1800,7 @@ static void init_gui()
         style_ingame.border.textured.image[i] = &border[i];
 
     style_menu.textured = 1;
-    style_menu.fade_col = (w_colour_t)
+    style_menu.fade_col = (gg_colour_t)
                           {
                               0.0f, 0.0f, 0.0f, 0.0f
                           };
@@ -1981,7 +1981,7 @@ static void draw_backdrop()
  *  @param col_normal Text colour for move list.
  *  @param col_high Text colour for highlighting the last move.
  */
-static void draw_move_list( w_colour_t *col_normal, w_colour_t *col_high )
+static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
 {
     char **list;
     int entries, view, i;
@@ -1991,8 +1991,8 @@ static void draw_move_list( w_colour_t *col_normal, w_colour_t *col_high )
     float y_white = 350;
     float x_black = 610;
     float y_black = 350;
-    w_colour_t col_normal2=*col_normal;
-    w_colour_t col_high2=*col_normal;
+    gg_colour_t col_normal2=*col_normal;
+    gg_colour_t col_high2=*col_normal;
 
     game_get_move_list(&list, &entries, &view);
 
@@ -2069,7 +2069,7 @@ static void draw_health_bars()
  *
  *  @param col The text colour to use.
  */
-static void draw_capture_list(w_colour_t *col)
+static void draw_capture_list(gg_colour_t *col)
 {
     float x_white = 70;
     float y_white = 180;
@@ -2168,14 +2168,14 @@ static void draw_scene( board_t *b )
     glPushMatrix();
 
 
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
+    draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     20, 440, 170, 20
                 }
                 , 8
                );
 
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
+    draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     455, 440, 170, 20
                 }
@@ -2184,7 +2184,7 @@ static void draw_scene( board_t *b )
 
     /* Da clocken */
 
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
+    draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     290, 440, 60, 20
                 }
@@ -2196,13 +2196,13 @@ static void draw_scene( board_t *b )
     glPushMatrix();
     draw_name_dialog( 50, 430, "White", TRUE, 1 );
     draw_name_dialog( 490, 430, "Black", FALSE, 0 );
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
+    draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     20, 375, 75, 10
                 }
                 , 8
                );
-    draw_border(style_ingame.border.textured.image, (w_rect_t)
+    draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     545, 375, 75, 10
                 }
@@ -2227,8 +2227,8 @@ static void draw_scene( board_t *b )
 
     if (dialog_current())
     {
-        w_dialog_t *dialog = dialog_current();
-        w_dialog_render(dialog);
+        gg_dialog_t *dialog = dialog_current();
+        gg_dialog_render(dialog);
     }
 
     /* Draw it to the screen */
@@ -2268,7 +2268,7 @@ static void unload_theme()
  *  @param col The colour to render with.
  *  @return The width of the textured quad in pixels.
  */
-int text_draw_char( float xpos, float ypos, float scale, int character, w_colour_t *col )
+int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col )
 {
     int index, offset;
 
@@ -2288,7 +2288,7 @@ int text_draw_char( float xpos, float ypos, float scale, int character, w_colour
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length )
+void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
 {
     int i;
     int xposition=xpos;
@@ -2357,7 +2357,7 @@ static int text_max_width()
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length )
+void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
 {
     text_draw_string(xpos - text_width(text), ypos, text, scale, col, length);
 }
@@ -2373,7 +2373,7 @@ void text_draw_string_right( float xpos, float ypos, unsigned char *text, float 
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, w_colour_t *col, int length )
+void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
 {
     int i;
     int xposition=xpos;
@@ -2595,9 +2595,9 @@ static int GetMove()
 
         if (event.type == SDL_MOUSEMOTION)
         {
-            w_dialog_t *dialog = dialog_current();
+            gg_dialog_t *dialog = dialog_current();
             if (dialog)
-                w_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+                gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
 
             continue;
         }

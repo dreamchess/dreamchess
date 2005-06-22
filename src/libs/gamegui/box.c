@@ -18,15 +18,15 @@
 
 #include <gamegui/box.h>
 
-w_class_id w_box_get_class_id()
+gg_class_id gg_box_get_class_id()
 {
-    CHILD(w_select_get_class_id())
+    GG_CHILD(gg_select_get_class_id())
 }
 
-void w_box_init(w_box_t *box, int spacing)
+void gg_box_init(gg_box_t *box, int spacing)
 {
-    w_select_init((w_select_t *) box);
+    gg_select_init((gg_select_t *) box);
 
-    box->id = w_box_get_class_id();
+    box->id = gg_box_get_class_id();
     box->spacing = spacing;
 }

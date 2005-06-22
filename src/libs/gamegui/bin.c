@@ -18,29 +18,29 @@
 
 #include <gamegui/bin.h>
 
-w_class_id w_bin_get_class_id()
+gg_class_id gg_bin_get_class_id()
 {
-    CHILD(w_container_get_class_id())
+    GG_CHILD(gg_container_get_class_id())
 }
 
-w_widget_t *w_bin_get_child(w_bin_t *bin)
+gg_widget_t *gg_bin_get_child(gg_bin_t *bin)
 {
-    return w_container_get_child(W_CONTAINER(bin), 0);
+    return gg_container_get_child(GG_CONTAINER(bin), 0);
 }
 
-void w_bin_set_size(w_widget_t *widget, int width, int height)
+void gg_bin_set_size(gg_widget_t *widget, int width, int height)
 {
-    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+    gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
     if (child)
         child->set_size(child, width, height);
 
-    w_set_size(widget, width, height);
+    gg_set_size(widget, width, height);
 }
 
-int w_bin_set_focus_pos(w_widget_t *widget, int x, int y)
+int gg_bin_set_focus_pos(gg_widget_t *widget, int x, int y)
 {
-    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+    gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
     if (child)
         return child->set_focus_pos(child, x, y);
@@ -48,12 +48,12 @@ int w_bin_set_focus_pos(w_widget_t *widget, int x, int y)
     return 0;
 }
 
-void w_bin_init(w_bin_t *bin, w_widget_t *child)
+void gg_bin_init(gg_bin_t *bin, gg_widget_t *child)
 {
-    w_container_init((w_container_t *) bin);
+    gg_container_init((gg_container_t *) bin);
 
-    bin->set_size = w_bin_set_size;
-    bin->set_focus_pos = w_bin_set_focus_pos;
-    bin->id = w_bin_get_class_id();
-    w_container_append(W_CONTAINER(bin), child);
+    bin->set_size = gg_bin_set_size;
+    bin->set_focus_pos = gg_bin_set_focus_pos;
+    bin->id = gg_bin_get_class_id();
+    gg_container_append(GG_CONTAINER(bin), child);
 }

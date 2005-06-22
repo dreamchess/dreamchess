@@ -18,26 +18,26 @@
 
 #include <gamegui/select.h>
 
-w_class_id w_select_get_class_id()
+gg_class_id gg_select_get_class_id()
 {
-    CHILD(w_container_get_class_id())
+    GG_CHILD(gg_container_get_class_id())
 }
 
-void w_select_init(w_select_t *select)
+void gg_select_init(gg_select_t *select)
 {
-    w_container_init((w_container_t *) select);
+    gg_container_init((gg_container_t *) select);
 
-    select->id = w_select_get_class_id();
+    select->id = gg_select_get_class_id();
     select->sel = -1;
 }
 
-int w_select_prev(w_select_t *select, int input, int enabled)
+int gg_select_prev(gg_select_t *select, int input, int enabled)
 {
     int sel = select->sel - 1;
 
     while (sel >= 0)
     {
-        w_widget_t *child = w_container_get_child(W_CONTAINER(select), sel);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
 
         if ((enabled && !child->enabled)
                 || (input && !child->input))
@@ -55,14 +55,14 @@ int w_select_prev(w_select_t *select, int input, int enabled)
     return 0;
 }
 
-int w_select_next(w_select_t *select, int input, int enabled)
+int gg_select_next(gg_select_t *select, int input, int enabled)
 {
     int sel = select->sel + 1;
-    int size = w_container_get_size(W_CONTAINER(select));
+    int size = gg_container_get_size(GG_CONTAINER(select));
 
     while (sel < size)
     {
-        w_widget_t *child = w_container_get_child(W_CONTAINER(select), sel);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
 
         if ((enabled && !child->enabled)
                 || (input && !child->input))

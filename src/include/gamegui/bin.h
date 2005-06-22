@@ -22,25 +22,25 @@
 #include <gamegui/system.h>
 #include <gamegui/container.h>
 
-#define W_BIN(W) CHECK_CAST(W, w_bin_get_class_id(), w_bin_t)
+#define GG_BIN(W) GG_CHECK_CAST(W, gg_bin_get_class_id(), gg_bin_t)
 
-#define W_BIN_DATA \
-    W_CONTAINER_DATA
+#define GG_BIN_DATA \
+    GG_CONTAINER_DATA
 
-typedef struct w_bin
+typedef struct gg_bin
 {
-    W_BIN_DATA
+    GG_BIN_DATA
 }
-w_bin_t;
+gg_bin_t;
 
-w_class_id w_bin_get_class_id();
+gg_class_id gg_bin_get_class_id();
 
-w_widget_t *w_bin_get_child(w_bin_t *bin);
+gg_widget_t *gg_bin_get_child(gg_bin_t *bin);
 
-void w_bin_set_size(w_widget_t *widget, int width, int height);
+void gg_bin_set_size(gg_widget_t *widget, int width, int height);
 
-int w_bin_set_focus_pos(w_widget_t *widget, int x, int y);
+int gg_bin_set_focus_pos(gg_widget_t *widget, int x, int y);
 
-void w_bin_init(w_bin_t *bin, w_widget_t *child);
+void gg_bin_init(gg_bin_t *bin, gg_widget_t *child);
 
 #endif /* GAMEGUI_BIN_H */

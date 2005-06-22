@@ -22,29 +22,29 @@
 #include <gamegui/system.h>
 #include <gamegui/align.h>
 
-#define W_LABEL(W) CHECK_CAST(W, w_label_get_class_id(), w_label_t)
+#define GG_LABEL(W) GG_CHECK_CAST(W, gg_label_get_class_id(), gg_label_t)
 
-#define W_LABEL_DATA \
-    W_ALIGN_DATA \
+#define GG_LABEL_DATA \
+    GG_ALIGN_DATA \
     char *label; \
     int bouncy;
 
-typedef struct w_label
+typedef struct gg_label
 {
-    W_LABEL_DATA
+    GG_LABEL_DATA
 }
-w_label_t;
+gg_label_t;
 
-w_class_id w_label_get_class_id();
+gg_class_id gg_label_get_class_id();
 
-void w_label_render(w_widget_t *widget, int x, int y, int focus);
+void gg_label_render(gg_widget_t *widget, int x, int y, int focus);
 
-void w_label_set_bouncy(w_label_t *label, int bouncy);
+void gg_label_set_bouncy(gg_label_t *label, int bouncy);
 
-void w_label_destroy(w_widget_t *widget);
+void gg_label_destroy(gg_widget_t *widget);
 
-void w_label_init(w_label_t *label, char *text);
+void gg_label_init(gg_label_t *label, char *text);
 
-w_widget_t *w_label_create(char *string);
+gg_widget_t *gg_label_create(char *string);
 
 #endif /* GAMEGUI_LABEL_H */

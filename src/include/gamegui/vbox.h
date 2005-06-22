@@ -22,33 +22,33 @@
 #include <gamegui/system.h>
 #include <gamegui/box.h>
 
-#define W_VBOX(W) CHECK_CAST(W, w_vbox_get_class_id(), w_vbox_t)
+#define GG_VBOX(W) GG_CHECK_CAST(W, gg_vbox_get_class_id(), gg_vbox_t)
 
-#define W_VBOX_DATA \
-    W_BOX_DATA
+#define GG_VBOX_DATA \
+    GG_BOX_DATA
 
-typedef struct w_vbox
+typedef struct gg_vbox
 {
-    W_VBOX_DATA
+    GG_VBOX_DATA
 }
-w_vbox_t;
+gg_vbox_t;
 
-w_class_id w_vbox_get_class_id();
+gg_class_id gg_vbox_get_class_id();
 
-void w_vbox_render(w_widget_t *widget, int x, int y, int focus);
+void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus);
 
-int w_vbox_input(w_widget_t *widget, ui_event_t event);
+int gg_vbox_input(gg_widget_t *widget, ui_event_t event);
 
-void w_vbox_get_requested_size(w_widget_t *widget, int *width, int *height);
+void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
-void w_vbox_set_size(w_widget_t *widget, int width, int height);
+void gg_vbox_set_size(gg_widget_t *widget, int width, int height);
 
-void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y);
+void gg_vbox_get_focus_pos(gg_widget_t *widget, int *x , int *y);
 
-int w_vbox_set_focus_pos(w_widget_t *widget, int x , int y);
+int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y);
 
-void w_vbox_init(w_vbox_t *vbox, int spacing);
+void gg_vbox_init(gg_vbox_t *vbox, int spacing);
 
-w_widget_t *w_vbox_create(int spacing);
+gg_widget_t *gg_vbox_create(int spacing);
 
 #endif /* GAMEGUI_VBOX_H */

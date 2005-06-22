@@ -18,25 +18,25 @@
 
 #include <gamegui/entry.h>
 
-static w_colour_t col_dark_red =
+static gg_colour_t col_dark_red =
     {
         0.7f, 0.0f, 0.0f, 1.0f
     };
 
-static w_colour_t col_black =
+static gg_colour_t col_black =
     {
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-w_class_id w_entry_get_class_id()
+gg_class_id gg_entry_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    GG_CHILD(gg_widget_get_class_id())
 }
 
 /** Implements widget::render for text entry widgets. */
-void w_entry_render(w_widget_t *widget, int x, int y, int focus)
+void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    w_entry_t *entry = W_ENTRY(widget);
+    gg_entry_t *entry = GG_ENTRY(widget);
     int len;
     int c;
 
@@ -45,7 +45,7 @@ void w_entry_render(w_widget_t *widget, int x, int y, int focus)
     w_system_get_string_size(entry->text, &len, NULL);
     entry->text[entry->cursor_pos] = c;
 
-    if (focus != FOCUS_NONE)
+    if (focus != GG_FOCUS_NONE)
         draw_rect(x, y, entry->width_a, entry->height_a, &col_dark_red);
     else
         draw_rect(x, y, entry->width_a, entry->height_a, &col_black);
@@ -53,24 +53,24 @@ void w_entry_render(w_widget_t *widget, int x, int y, int focus)
     x += ENTRY_SPACING;
     y += ENTRY_SPACING;
 
-    if (focus != FOCUS_NONE)
+    if (focus != GG_FOCUS_NONE)
     {
         int cursor_width;
 
-        w_system_get_string_size(ENTRY_CURSOR, &cursor_width, NULL);
-        w_system_draw_string(entry->text, x, y, &col_dark_red, 0, 0);
+        gg_system_get_string_size(ENTRY_CURSOR, &cursor_width, NULL);
+        gg_system_draw_string(entry->text, x, y, &col_dark_red, 0, 0);
         if (SDL_GetTicks() % 400 < 200)
             w_system_draw_string(ENTRY_CURSOR, x + len - cursor_width / 2, y,
                 &col_dark_red, 0, 0);
     }
     else
-        w_system_draw_string(entry->text, x, y, &col_black, 0, 0);
+        gg_system_draw_string(entry->text, x, y, &col_black, 0, 0);
 }
 
 /** Implements widget::input for text entry widgets. */
-int w_entry_input(w_widget_t *widget, ui_event_t event)
+int gg_entry_input(gg_widget_t *widget, ui_event_t event)
 {
-    w_entry_t *entry = W_ENTRY(widget);
+    gg_entry_t *entry = GG_ENTRY(widget);
     int c = -1;
     int len = strlen(entry->text);
 
@@ -117,18 +117,18 @@ int w_entry_input(w_widget_t *widget, ui_event_t event)
     return 1;
 }
 
-void w_entry_init(w_entry_t *entry)
+void gg_entry_init(gg_entry_t *entry)
 {
-    w_widget_init((w_widget_t *) entry);
+    gg_widget_init((gg_widget_t *) entry);
 
-    entry->render = w_entry_render;
-    entry->input = w_entry_input;
-    entry->id = w_entry_get_class_id();
+    entry->render = gg_entry_render;
+    entry->input = gg_entry_input;
+    entry->id = gg_entry_get_class_id();
     entry->max_len = ENTRY_MAX_LEN;
     entry->cursor_pos = 0;
     entry->text[0] = '\0';
     entry->enabled = 1;
-    w_system_get_string_size("Visible text", &entry->width, &entry->height);
+    gg_system_get_string_size("Visible text", &entry->width, &entry->height);
     entry->width += ENTRY_SPACING * 2;
     entry->height += ENTRY_SPACING * 2;
 }
@@ -139,11 +139,11 @@ void w_entry_init(w_entry_t *entry)
  *
  *  @return The created widget.
  */
-w_widget_t *w_entry_create()
+gg_widget_t *gg_entry_create()
 {
-    w_entry_t *entry = malloc(sizeof(w_entry_t));
+    gg_entry_t *entry = malloc(sizeof(gg_entry_t));
 
-    w_entry_init(entry);
+    gg_entry_init(entry);
 
-    return W_WIDGET(entry);
+    return GG_WIDGET(entry);
 }

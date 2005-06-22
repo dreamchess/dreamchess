@@ -20,27 +20,27 @@
 
 #include <gamegui/vbox.h>
 
-w_class_id w_vbox_get_class_id()
+gg_class_id gg_vbox_get_class_id()
 {
-    CHILD(w_box_get_class_id())
+    GG_CHILD(gg_box_get_class_id())
 }
 
-void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
+void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    w_box_t *box = W_BOX(widget);
-    int nr = w_container_get_size(W_CONTAINER(widget));
+    gg_box_t *box = GG_BOX(widget);
+    int nr = gg_container_get_size(GG_CONTAINER(widget));
 
     y += box->height_a - box->height;
 
     while (--nr >= 0)
     {
         int focus_child;
-        w_widget_t *child = w_container_get_child(W_CONTAINER(widget), nr);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(widget), nr);
 
-        if (focus == FOCUS_ALL)
-            focus_child = FOCUS_ALL;
-        else if (focus == FOCUS_ONE)
-            focus_child = (box->sel == nr ? FOCUS_ONE : FOCUS_NONE);
+        if (focus == GG_FOCUS_ALL)
+            focus_child = GG_FOCUS_ALL;
+        else if (focus == GG_FOCUS_ONE)
+            focus_child = (box->sel == nr ? GG_FOCUS_ONE : GG_FOCUS_NONE);
         else
             focus_child = 0;
 
@@ -50,16 +50,16 @@ void w_vbox_render(w_widget_t *widget, int x, int y, int focus)
     }
 }
 
-int w_vbox_input(w_widget_t *widget, ui_event_t event)
+int gg_vbox_input(gg_widget_t *widget, ui_event_t event)
 {
-    w_select_t *select = W_SELECT(widget);
-    w_widget_t *child;
+    gg_select_t *select = GG_SELECT(widget);
+    gg_widget_t *child;
     int retval = 0, x, y;
 
     if (select->sel == -1)
         return 0;
 
-    child = w_container_get_child(W_CONTAINER(widget), select->sel);
+    child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
 
     if (child->input(child, event))
         return 1;
@@ -68,15 +68,15 @@ int w_vbox_input(w_widget_t *widget, ui_event_t event)
 
     if (event == UI_EVENT_UP)
     {
-        retval = w_select_prev(select, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), select->sel);
+        retval = gg_select_prev(select, 1, 1);
+        child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         y = 0;
     }
 
     if (event == UI_EVENT_DOWN)
     {
-        retval = w_select_next(select, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), select->sel);
+        retval = gg_select_next(select, 1, 1);
+        child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         y = child->height_a - 1;
     }
 
@@ -89,14 +89,12 @@ int w_vbox_input(w_widget_t *widget, ui_event_t event)
     return 0;
 }
 
-void w_vbox_get_requested_size(w_widget_t *widget, int *width, int *height)
+void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 {
-    w_container_t *container = W_CONTAINER(widget);
-    w_box_t *box = W_BOX(widget);
-    int size = w_container_get_size(container);
+    gg_container_t *container = GG_CONTAINER(widget);
+    gg_box_t *box = GG_BOX(widget);
+    int size = gg_container_get_size(container);
     int i;
-
-    int nr = w_container_get_size(container);
 
     widget->width = 0;
     widget->height = (size - 1) * box->spacing;
@@ -105,7 +103,7 @@ void w_vbox_get_requested_size(w_widget_t *widget, int *width, int *height)
     for (i = 0; i < size; i++)
     {
         int child_width, child_height;
-        w_widget_t *child = w_container_get_child(container, i);
+        gg_widget_t *child = gg_container_get_child(container, i);
 
         child->get_requested_size(child, &child_width, &child_height);
 
@@ -122,42 +120,42 @@ void w_vbox_get_requested_size(w_widget_t *widget, int *width, int *height)
         }
     }
 
-    w_widget_get_requested_size(widget, width, height);
+    gg_widget_get_requested_size(widget, width, height);
 }
 
-void w_vbox_set_size(w_widget_t *widget, int width, int height)
+void gg_vbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    w_box_t *box = W_BOX(widget);
+    gg_box_t *box = GG_BOX(widget);
     int i;
 
-    for (i = 0; i < w_container_get_size(W_CONTAINER(widget)); i++)
+    for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)
     {
-        w_widget_t *child = w_container_get_child(W_CONTAINER(widget), i);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(widget), i);
         int item_height;
 
         child->get_requested_size(child, NULL, &item_height);
         child->set_size(child, width, item_height);
     }
 
-    w_set_size(widget, width, height);
+    gg_set_size(widget, width, height);
 }
 
-void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
+void gg_vbox_get_focus_pos(gg_widget_t *widget, int *x , int *y)
 {
-    w_box_t *box = W_BOX(widget);
-    w_container_t *container = W_CONTAINER(widget);
-    int size = w_container_get_size(container);
-    w_widget_t *child;
-    int nr = w_container_get_size(container) - 1;
+    gg_box_t *box = GG_BOX(widget);
+    gg_container_t *container = GG_CONTAINER(widget);
+    int size = gg_container_get_size(container);
+    gg_widget_t *child;
+    int nr = gg_container_get_size(container) - 1;
 
     assert(box->sel != -1);
 
-    child = w_container_get_child(container, box->sel);
+    child = gg_container_get_child(container, box->sel);
     child->get_focus_pos(child, x, y);
 
     while (nr > box->sel)
     {
-        w_widget_t *sibling = w_container_get_child(container, nr);
+        gg_widget_t *sibling = gg_container_get_child(container, nr);
         *y += sibling->height_a;
         nr--;
     }
@@ -165,19 +163,19 @@ void w_vbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
     *y += (size - box->sel - 1) * box->spacing;
 }
 
-int w_vbox_set_focus_pos(w_widget_t *widget, int x , int y)
+int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y)
 {
-    w_box_t *box = W_BOX(widget);
-    w_container_t *container = W_CONTAINER(widget);
-    int size = w_container_get_size(container);
+    gg_box_t *box = GG_BOX(widget);
+    gg_container_t *container = GG_CONTAINER(widget);
+    int size = gg_container_get_size(container);
     int cur_y = box->height_a - box->height;
     int prev = box->sel;
 
     box->sel = size;
 
-    while (w_select_prev(W_SELECT(widget), 0, 0))
+    while (gg_select_prev(GG_SELECT(widget), 0, 0))
     {
-        w_widget_t *child = w_container_get_child(container, box->sel);
+        gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_y += child->height_a;
         if (cur_y >= y)
@@ -195,16 +193,16 @@ int w_vbox_set_focus_pos(w_widget_t *widget, int x , int y)
     return 0;
 }
 
-void w_vbox_init(w_vbox_t *vbox, int spacing)
+void gg_vbox_init(gg_vbox_t *vbox, int spacing)
 {
-    w_box_init((w_box_t *) vbox, spacing);
+    gg_box_init((gg_box_t *) vbox, spacing);
 
-    vbox->render = w_vbox_render;
-    vbox->input = w_vbox_input;
-    vbox->get_requested_size = w_vbox_get_requested_size;
-    vbox->set_size = w_vbox_set_size;
-    vbox->get_focus_pos = w_vbox_get_focus_pos;
-    vbox->set_focus_pos = w_vbox_set_focus_pos;
+    vbox->render = gg_vbox_render;
+    vbox->input = gg_vbox_input;
+    vbox->get_requested_size = gg_vbox_get_requested_size;
+    vbox->set_size = gg_vbox_set_size;
+    vbox->get_focus_pos = gg_vbox_get_focus_pos;
+    vbox->set_focus_pos = gg_vbox_set_focus_pos;
 }
 
 /** @brief Creates a vertical box widget.
@@ -213,11 +211,11 @@ void w_vbox_init(w_vbox_t *vbox, int spacing)
  *
  *  @return The created widget.
  */
-w_widget_t *w_vbox_create(int spacing)
+gg_widget_t *gg_vbox_create(int spacing)
 {
-    w_vbox_t *vbox = malloc(sizeof(w_vbox_t));
+    gg_vbox_t *vbox = malloc(sizeof(gg_vbox_t));
 
-    w_vbox_init(vbox, spacing);
+    gg_vbox_init(vbox, spacing);
 
-    return W_WIDGET(vbox);
+    return GG_WIDGET(vbox);
 }

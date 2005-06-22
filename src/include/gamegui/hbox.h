@@ -22,33 +22,33 @@
 #include <gamegui/system.h>
 #include <gamegui/box.h>
 
-#define W_HBOX(W) CHECK_CAST(W, w_hbox_get_class_id(), w_hbox_t)
+#define GG_HBOX(W) GG_CHECK_CAST(W, gg_hbox_get_class_id(), gg_hbox_t)
 
-#define W_HBOX_DATA \
-    W_BOX_DATA
+#define GG_HBOX_DATA \
+    GG_BOX_DATA
 
-typedef struct w_hbox
+typedef struct gg_hbox
 {
-    W_HBOX_DATA
+    GG_HBOX_DATA
 }
-w_hbox_t;
+gg_hbox_t;
 
-w_class_id w_hbox_get_class_id();
+gg_class_id gg_hbox_get_class_id();
 
-void w_hbox_render(w_widget_t *widget, int x, int y, int focus);
+void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus);
 
-int w_hbox_input(w_widget_t *widget, ui_event_t event);
+int gg_hbox_input(gg_widget_t *widget, ui_event_t event);
 
-void w_hbox_get_requested_size(w_widget_t *widget, int *width, int *height);
+void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
-void w_hbox_set_size(w_widget_t *widget, int width, int height);
+void gg_hbox_set_size(gg_widget_t *widget, int width, int height);
 
-void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y);
+void gg_hbox_get_focus_pos(gg_widget_t *widget, int *x , int *y);
 
-int w_hbox_set_focus_pos(w_widget_t *widget, int x , int y);
+int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y);
 
-void w_hbox_init(w_hbox_t *hbox, int spacing);
+void gg_hbox_init(gg_hbox_t *hbox, int spacing);
 
-w_widget_t *w_hbox_create(int spacing);
+gg_widget_t *gg_hbox_create(int spacing);
 
 #endif /* GAMEGUI_HBOX_H */

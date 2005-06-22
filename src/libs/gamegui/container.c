@@ -54,47 +54,47 @@ static void list_destroy(list_t *list)
     free(list);
 }
 
-w_class_id w_container_get_class_id()
+gg_class_id gg_container_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    GG_CHILD(gg_widget_get_class_id())
 }
 
-void w_container_destroy(w_widget_t *widget)
+void gg_container_destroy(gg_widget_t *widget)
 {
-    w_container_t *container = W_CONTAINER(widget);
+    gg_container_t *container = GG_CONTAINER(widget);
     int i;
 
     for (i = 0; i < list_get_size(container->widget_list); i++)
     {
-        w_widget_t *item = W_WIDGET(list_get_item(container->widget_list, i));
+        gg_widget_t *item = GG_WIDGET(list_get_item(container->widget_list, i));
         item->destroy(item);
     }
 
     list_destroy(container->widget_list);
-    w_widget_destroy(widget);
+    gg_widget_destroy(widget);
 }
 
-void w_container_init(w_container_t *container)
+void gg_container_init(gg_container_t *container)
 {
-    w_widget_init((w_widget_t *) container);
+    gg_widget_init((gg_widget_t *) container);
 
-    container->destroy = w_container_destroy;
-    container->id = w_container_get_class_id();
+    container->destroy = gg_container_destroy;
+    container->id = gg_container_get_class_id();
     container->widget_list = list_create();
 }
 
-void w_container_append(w_container_t *container, w_widget_t *widget)
+void gg_container_append(gg_container_t *container, gg_widget_t *widget)
 {
     list_append_item(container->widget_list, widget);
-    widget->parent = W_WIDGET(container);
+    widget->parent = GG_WIDGET(container);
 }
 
-int w_container_get_size(w_container_t *container)
+int gg_container_get_size(gg_container_t *container)
 {
     return list_get_size(container->widget_list);
 }
 
-w_widget_t *w_container_get_child(w_container_t *container, int index)
+gg_widget_t *gg_container_get_child(gg_container_t *container, int index)
 {
     return list_get_item(container->widget_list, index);
 }

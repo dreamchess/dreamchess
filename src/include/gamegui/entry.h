@@ -26,10 +26,10 @@
 #define ENTRY_MAX_LEN 255
 #define ENTRY_CURSOR "|"
 
-#define W_ENTRY(W) CHECK_CAST(W, w_entry_get_class_id(), w_entry_t)
+#define GG_ENTRY(W) GG_CHECK_CAST(W, gg_entry_get_class_id(), gg_entry_t)
 
-#define W_ENTRY_DATA \
-    W_WIDGET_DATA \
+#define GG_ENTRY_DATA \
+    GG_WIDGET_DATA \
     char text[ENTRY_MAX_LEN + 1]; \
     int max_len; \
     int cursor_pos; \
@@ -39,16 +39,16 @@
 /** Text entry widget state. */
 typedef struct w_entry
 {
-    W_ENTRY_DATA
+    GG_ENTRY_DATA
 }
-w_entry_t;
+gg_entry_t;
 
-void w_entry_render(w_widget_t *widget, int x, int y, int focus);
+void gg_entry_render(gg_widget_t *widget, int x, int y, int focus);
 
-int w_entry_input(w_widget_t *widget, ui_event_t event);
+int gg_entry_input(gg_widget_t *widget, ui_event_t event);
 
-void w_entry_init(w_entry_t *entry);
+void gg_entry_init(gg_entry_t *entry);
 
-w_widget_t *w_entry_create();
+gg_widget_t *gg_entry_create();
 
 #endif /* GAMEGUI_ENTRY_H */

@@ -20,25 +20,25 @@
 
 #include <gamegui/hbox.h>
 
-w_class_id w_hbox_get_class_id()
+gg_class_id gg_hbox_get_class_id()
 {
-    CHILD(w_box_get_class_id())
+    GG_CHILD(gg_box_get_class_id())
 }
 
-void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
+void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    w_box_t *box = W_BOX(widget);
+    gg_box_t *box = GG_BOX(widget);
     int nr = 0;
 
-    while (nr < w_container_get_size(W_CONTAINER(widget)))
+    while (nr < gg_container_get_size(GG_CONTAINER(widget)))
     {
         int focus_child;
-        w_widget_t *child = w_container_get_child(W_CONTAINER(widget), nr);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(widget), nr);
 
-        if (focus == FOCUS_ALL)
-            focus_child = FOCUS_ALL;
-        else if (focus == FOCUS_ONE)
-            focus_child = (box->sel == nr ? FOCUS_ONE : FOCUS_NONE);
+        if (focus == GG_FOCUS_ALL)
+            focus_child = GG_FOCUS_ALL;
+        else if (focus == GG_FOCUS_ONE)
+            focus_child = (box->sel == nr ? GG_FOCUS_ONE : GG_FOCUS_NONE);
         else
             focus_child = 0;
 
@@ -49,16 +49,16 @@ void w_hbox_render(w_widget_t *widget, int x, int y, int focus)
     }
 }
 
-int w_hbox_input(w_widget_t *widget, ui_event_t event)
+int gg_hbox_input(gg_widget_t *widget, ui_event_t event)
 {
-    w_select_t *select = W_SELECT(widget);
-    w_widget_t *child;
+    gg_select_t *select = GG_SELECT(widget);
+    gg_widget_t *child;
     int retval = 0, x, y;
 
     if (select->sel == -1)
         return 0;
 
-    child = w_container_get_child(W_CONTAINER(widget), select->sel);
+    child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
 
     if (child->input(child, event))
         return 1;
@@ -67,15 +67,15 @@ int w_hbox_input(w_widget_t *widget, ui_event_t event)
 
     if (event == UI_EVENT_LEFT)
     {
-        retval = w_select_prev(select, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), select->sel);
+        retval = gg_select_prev(select, 1, 1);
+        child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         x = child->width_a - 1;
     }
 
     if (event == UI_EVENT_RIGHT)
     {
-        retval = w_select_next(select, 1, 1);
-        child = w_container_get_child(W_CONTAINER(widget), select->sel);
+        retval = gg_select_next(select, 1, 1);
+        child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         x = 0;
     }
 
@@ -88,11 +88,11 @@ int w_hbox_input(w_widget_t *widget, ui_event_t event)
     return 0;
 }
 
-void w_hbox_get_requested_size(w_widget_t *widget, int *width, int *height)
+void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 {
-    w_container_t *container = W_CONTAINER(widget);
-    w_box_t *box = W_BOX(widget);
-    int size = w_container_get_size(container);
+    gg_container_t *container = GG_CONTAINER(widget);
+    gg_box_t *box = GG_BOX(widget);
+    int size = gg_container_get_size(container);
     int i;
 
     widget->width = (size - 1) * box->spacing;
@@ -102,7 +102,7 @@ void w_hbox_get_requested_size(w_widget_t *widget, int *width, int *height)
     for (i = 0; i < size; i++)
     {
         int child_width, child_height;
-        w_widget_t *child = w_container_get_child(container, i);
+        gg_widget_t *child = gg_container_get_child(container, i);
 
         child->get_requested_size(child, &child_width, &child_height);
 
@@ -119,41 +119,41 @@ void w_hbox_get_requested_size(w_widget_t *widget, int *width, int *height)
         }
     }
 
-    w_widget_get_requested_size(widget, width, height);
+    gg_widget_get_requested_size(widget, width, height);
 }
 
-void w_hbox_set_size(w_widget_t *widget, int width, int height)
+void gg_hbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    w_box_t *box = W_BOX(widget);
+    gg_box_t *box = GG_BOX(widget);
     int i;
 
-    for (i = 0; i < w_container_get_size(W_CONTAINER(widget)); i++)
+    for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)
     {
-        w_widget_t *child = w_container_get_child(W_CONTAINER(widget), i);
+        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(widget), i);
         int item_width;
 
         child->get_requested_size(child, &item_width, NULL);
         child->set_size(child, item_width, height);
     }
 
-    w_set_size(widget, width, height);
+    gg_set_size(widget, width, height);
 }
 
-void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
+void gg_hbox_get_focus_pos(gg_widget_t *widget, int *x , int *y)
 {
-    w_box_t *box = W_BOX(widget);
-    w_container_t *container = W_CONTAINER(widget);
-    w_widget_t *child;
+    gg_box_t *box = GG_BOX(widget);
+    gg_container_t *container = GG_CONTAINER(widget);
+    gg_widget_t *child;
     int nr = 0;
 
     assert(box->sel != -1);
 
-    child = w_container_get_child(container, box->sel);
+    child = gg_container_get_child(container, box->sel);
     child->get_focus_pos(child, x, y);
 
     while (nr < box->sel)
     {
-        w_widget_t *sibling = w_container_get_child(container, nr);
+        gg_widget_t *sibling = gg_container_get_child(container, nr);
 
         *x += child->width_a;
         nr++;
@@ -162,18 +162,18 @@ void w_hbox_get_focus_pos(w_widget_t *widget, int *x , int *y)
     *x += box->sel * box->spacing;
 }
 
-int w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
+int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y)
 {
-    w_box_t *box = W_BOX(widget);
-    w_container_t *container = W_CONTAINER(widget);
+    gg_box_t *box = GG_BOX(widget);
+    gg_container_t *container = GG_CONTAINER(widget);
     int cur_x = 0;
     int prev = box->sel;
 
     box->sel = -1;
 
-    while (w_select_next(W_SELECT(widget), 0, 0))
+    while (gg_select_next(GG_SELECT(widget), 0, 0))
     {
-        w_widget_t *child = w_container_get_child(container, box->sel);
+        gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_x += child->width_a;
         if (cur_x >= x)
@@ -191,16 +191,16 @@ int w_hbox_set_focus_pos(w_widget_t *widget, int x , int y)
     return 0;
 }
 
-void w_hbox_init(w_hbox_t *hbox, int spacing)
+void gg_hbox_init(gg_hbox_t *hbox, int spacing)
 {
-    w_box_init((w_box_t *) hbox, spacing);
+    gg_box_init((gg_box_t *) hbox, spacing);
 
-    hbox->render = w_hbox_render;
-    hbox->input = w_hbox_input;
-    hbox->get_requested_size = w_hbox_get_requested_size;
-    hbox->set_size = w_hbox_set_size;
-    hbox->get_focus_pos = w_hbox_get_focus_pos;
-    hbox->set_focus_pos = w_hbox_set_focus_pos;
+    hbox->render = gg_hbox_render;
+    hbox->input = gg_hbox_input;
+    hbox->get_requested_size = gg_hbox_get_requested_size;
+    hbox->set_size = gg_hbox_set_size;
+    hbox->get_focus_pos = gg_hbox_get_focus_pos;
+    hbox->set_focus_pos = gg_hbox_set_focus_pos;
 }
 
 /** @brief Creates a horizontal box widget.
@@ -209,11 +209,11 @@ void w_hbox_init(w_hbox_t *hbox, int spacing)
  *
  *  @return The created widget.
  */
-w_widget_t *w_hbox_create(int spacing)
+gg_widget_t *gg_hbox_create(int spacing)
 {
-    w_hbox_t *hbox = malloc(sizeof(w_hbox_t));
+    gg_hbox_t *hbox = malloc(sizeof(gg_hbox_t));
 
-    w_hbox_init(hbox, spacing);
+    gg_hbox_init(hbox, spacing);
 
-    return W_WIDGET(hbox);
+    return GG_WIDGET(hbox);
 }

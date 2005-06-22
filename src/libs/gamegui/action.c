@@ -19,27 +19,27 @@
 #include <gamegui/action.h>
 #include <gamegui/label.h>
 
-w_class_id w_action_get_class_id()
+gg_class_id gg_action_get_class_id()
 {
-    CHILD(w_bin_get_class_id())
+    GG_CHILD(gg_bin_get_class_id())
 }
 
 /** Implements widget::render for action widgets. */
-void w_action_render(w_widget_t *widget, int x, int y, int focus)
+void gg_action_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    w_action_t *action = W_ACTION(widget);
-    w_widget_t *child = w_bin_get_child(W_BIN(widget));
+    gg_action_t *action = GG_ACTION(widget);
+    gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
-    if (focus != FOCUS_NONE)
-        focus = FOCUS_ALL;
+    if (focus != GG_FOCUS_NONE)
+        focus = GG_FOCUS_ALL;
 
     child->render(child, x, y, focus);
 }
 
 /** Implements widget::input for action widgets. */
-int w_action_input(w_widget_t *widget, ui_event_t event)
+int gg_action_input(gg_widget_t *widget, ui_event_t event)
 {
-    w_action_t *action = W_ACTION(widget);
+    gg_action_t *action = GG_ACTION(widget);
 
     if (event == UI_EVENT_ACTION)
     {
@@ -51,13 +51,13 @@ int w_action_input(w_widget_t *widget, ui_event_t event)
     return 0;
 }
 
-void w_action_init(w_action_t *action, w_widget_t *widget)
+void gg_action_init(gg_action_t *action, gg_widget_t *widget)
 {
-    w_bin_init((w_bin_t *) action, widget);
+    gg_bin_init((gg_bin_t *) action, widget);
 
-    action->render = w_action_render;
-    action->input = w_action_input;
-    action->id = w_action_get_class_id();
+    action->render = gg_action_render;
+    action->input = gg_action_input;
+    action->id = gg_action_get_class_id();
     action->func = NULL;
     action->func_data = NULL;
     action->enabled = 1;
@@ -73,23 +73,23 @@ void w_action_init(w_action_t *action, w_widget_t *widget)
  *  @param string The text for the widget.
  *  @return The created action widget.
  */
-w_widget_t *w_action_create(w_widget_t *widget)
+gg_widget_t *gg_action_create(gg_widget_t *widget)
 {
-    w_action_t *action = malloc(sizeof(w_action_t));
+    gg_action_t *action = malloc(sizeof(gg_action_t));
 
-    w_action_init(action, widget);
+    gg_action_init(action, widget);
 
-    return W_WIDGET(action);
+    return GG_WIDGET(action);
 }
 
-w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
+gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign)
 {
-    w_widget_t *label = w_label_create(text);
-    w_widget_t *action;
+    gg_widget_t *label = gg_label_create(text);
+    gg_widget_t *action;
 
-    w_label_set_bouncy(W_LABEL(label), 1);
-    w_align_set_alignment(W_ALIGN(label), xalign, yalign);
-    action = w_action_create(label);
+    gg_label_set_bouncy(GG_LABEL(label), 1);
+    gg_align_set_alignment(GG_ALIGN(label), xalign, yalign);
+    action = gg_action_create(label);
     return action;
 }
 
@@ -98,7 +98,7 @@ w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign)
  *  @param widget The action widget.
  *  @param callback Function that should be called when widget is activated.
  */
-void w_action_set_callback(w_action_t *action, void (* callback) (w_widget_t *, void *), void *func_data)
+void gg_action_set_callback(gg_action_t *action, void (* callback) (gg_widget_t *, void *), void *func_data)
 {
     action->func = callback;
     action->func_data = func_data;

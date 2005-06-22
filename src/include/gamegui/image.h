@@ -22,24 +22,24 @@
 #include <gamegui/system.h>
 #include <gamegui/align.h>
 
-#define W_IMAGE(W) CHECK_CAST(W, w_image_get_class_id(), w_image_t)
+#define GG_IMAGE(W) GG_CHECK_CAST(W, gg_image_get_class_id(), gg_image_t)
 
-#define W_IMAGE_DATA \
-    W_ALIGN_DATA \
+#define GG_IMAGE_DATA \
+    GG_ALIGN_DATA \
     void *image;
 
-typedef struct w_image
+typedef struct gg_image
 {
-    W_IMAGE_DATA
+    GG_IMAGE_DATA
 }
-w_image_t;
+gg_image_t;
 
-w_class_id w_image_get_class_id();
+gg_class_id gg_image_get_class_id();
 
-void w_image_render(w_widget_t *widget, int x, int y, int focus);
+void gg_image_render(gg_widget_t *widget, int x, int y, int focus);
 
-void w_image_init(w_image_t *image, void *texture);
+void gg_image_init(gg_image_t *image, void *texture);
 
-w_widget_t *w_image_create(void *texture);
+gg_widget_t *gg_image_create(void *texture);
 
 #endif /* GAMEGUI_IMAGE_H */

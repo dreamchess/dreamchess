@@ -23,26 +23,26 @@
 /** Focussed image enlargement speed in enlargements per second. */
 #define IMAGE_SPEED 2.0f
 
-static w_colour_t col_white =
+static gg_colour_t col_white =
     {
         1.0f, 1.0f, 1.0f, 1.0f
     };
 
-w_class_id w_image_get_class_id()
+gg_class_id gg_image_get_class_id()
 {
-    CHILD(w_align_get_class_id())
+    GG_CHILD(gg_align_get_class_id())
 }
 
 /** Implements widget::render for image widgets. */
-void w_image_render(w_widget_t *widget, int x, int y, int focus)
+void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    w_image_t *image = W_IMAGE(widget);
+    gg_image_t *image = GG_IMAGE(widget);
     int w = image->width;
     int h = image->height;
     Uint32 ticks = SDL_GetTicks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
-    w_rect_t source, dest;
+    gg_rect_t source, dest;
 
     if (phase < 0.5f)
         factor = 1.0f + IMAGE_SCALE * phase * 2;
@@ -52,7 +52,7 @@ void w_image_render(w_widget_t *widget, int x, int y, int focus)
     dest.width = image->width;
     dest.height = image->height;
 
-    if (focus != FOCUS_NONE)
+    if (focus != GG_FOCUS_NONE)
     {
         dest.width *= factor;
         dest.height *= factor;
@@ -66,26 +66,26 @@ void w_image_render(w_widget_t *widget, int x, int y, int focus)
     source.width = image->width;
     source.height = image->width;
 
-    w_system_draw_image(image->image, source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image->image, source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
 }
 
-void w_image_init(w_image_t *image, void *texture)
+void gg_image_init(gg_image_t *image, void *texture)
 {
-    w_align_init((w_align_t *) image);
+    gg_align_init((gg_align_t *) image);
 
-    image->render = w_image_render;
-    image->id = w_image_get_class_id();
+    image->render = gg_image_render;
+    image->id = gg_image_get_class_id();
     image->image = texture;
     image->enabled = 1;
-    w_system_get_image_size(texture, &image->width, &image->height);
+    gg_system_get_image_size(texture, &image->width, &image->height);
 }
 
 /** @brief Creates an image widget. */
-w_widget_t *w_image_create(void *texture)
+gg_widget_t *gg_image_create(void *texture)
 {
-    w_image_t *image = malloc(sizeof(w_image_t));
+    gg_image_t *image = malloc(sizeof(gg_image_t));
 
-    w_image_init(image, texture);
+    gg_image_init(image, texture);
 
-    return W_WIDGET(image);
+    return GG_WIDGET(image);
 }

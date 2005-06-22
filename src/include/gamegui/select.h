@@ -22,24 +22,24 @@
 #include <gamegui/system.h>
 #include <gamegui/bin.h>
 
-#define W_SELECT(W) CHECK_CAST(W, w_select_get_class_id(), w_select_t)
+#define GG_SELECT(W) GG_CHECK_CAST(W, gg_select_get_class_id(), gg_select_t)
 
-#define W_SELECT_DATA \
-    W_CONTAINER_DATA \
+#define GG_SELECT_DATA \
+    GG_CONTAINER_DATA \
     int sel;
 
-typedef struct w_select
+typedef struct gg_select
 {
-    W_SELECT_DATA
+    GG_SELECT_DATA
 }
-w_select_t;
+gg_select_t;
 
-w_class_id w_select_get_class_id();
+gg_class_id gg_select_get_class_id();
 
-void w_select_init(w_select_t *select);
+void gg_select_init(gg_select_t *select);
 
-int w_select_prev(w_select_t *select, int input, int enabled);
+int gg_select_prev(gg_select_t *select, int input, int enabled);
 
-int w_select_next(w_select_t *select, int input, int enabled);
+int gg_select_next(gg_select_t *select, int input, int enabled);
 
 #endif /* GAMEGUI_SELECT_H */

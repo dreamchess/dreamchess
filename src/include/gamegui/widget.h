@@ -25,18 +25,18 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-#define W_WIDGET(W) CHECK_CAST(W, w_widget_get_class_id(), w_widget_t)
+#define GG_WIDGET(W) GG_CHECK_CAST(W, gg_widget_get_class_id(), gg_widget_t)
 
-#define W_WIDGET_DATA \
-    void (* render) (struct w_widget *widget, int x, int y, int focus); \
-    int (* input) (struct w_widget *widget, ui_event_t event); \
-    void (* set_size) (struct w_widget *widget, int width, int height); \
-    void (* get_requested_size) (struct w_widget *widget, int *width, int *height); \
-    void (* get_focus_pos) (struct w_widget *widget, int *x, int *y); \
-    int (* set_focus_pos) (struct w_widget *widget, int x, int y); \
-    void (* destroy) (struct w_widget *widget); \
-    w_class_id id; \
-    struct w_widget *parent; \
+#define GG_WIDGET_DATA \
+    void (* render) (struct gg_widget *widget, int x, int y, int focus); \
+    int (* input) (struct gg_widget *widget, ui_event_t event); \
+    void (* set_size) (struct gg_widget *widget, int width, int height); \
+    void (* get_requested_size) (struct gg_widget *widget, int *width, int *height); \
+    void (* get_focus_pos) (struct gg_widget *widget, int *x, int *y); \
+    int (* set_focus_pos) (struct gg_widget *widget, int x, int y); \
+    void (* destroy) (struct gg_widget *widget); \
+    gg_class_id id; \
+    struct gg_widget *parent; \
     int enabled; \
     int width; \
     int height; \
@@ -45,26 +45,26 @@
     int width_a; \
     int height_a;
 
-typedef struct w_widget
+typedef struct gg_widget
 {
-    W_WIDGET_DATA
+    GG_WIDGET_DATA
 }
-w_widget_t;
+gg_widget_t;
 
-w_class_id w_widget_get_class_id();
+gg_class_id gg_widget_get_class_id();
 
-void w_widget_destroy(w_widget_t *widget);
+void gg_widget_destroy(gg_widget_t *widget);
 
-void w_set_requested_size(w_widget_t *widget, int width, int height);
+void gg_set_requested_size(gg_widget_t *widget, int width, int height);
 
-void w_widget_get_requested_size(w_widget_t *widget, int *width, int *height);
+void gg_widget_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
-void w_set_size(w_widget_t *widget, int width, int height);
+void gg_set_size(gg_widget_t *widget, int width, int height);
 
-void w_get_focus_pos(w_widget_t *widget, int *x, int *y);
+void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y);
 
-int w_set_focus_pos(w_widget_t *widget, int x, int y);
+int gg_set_focus_pos(gg_widget_t *widget, int x, int y);
 
-void w_widget_init(w_widget_t *widget);
+void gg_widget_init(gg_widget_t *widget);
 
 #endif /* GAMEGUI_WIDGET_H */

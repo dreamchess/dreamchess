@@ -22,10 +22,10 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
-#define W_CONTAINER(W) CHECK_CAST(W, w_container_get_class_id(), w_container_t)
+#define GG_CONTAINER(W) GG_CHECK_CAST(W, gg_container_get_class_id(), gg_container_t)
 
-#define W_CONTAINER_DATA \
-    W_WIDGET_DATA \
+#define GG_CONTAINER_DATA \
+    GG_WIDGET_DATA \
     list_t *widget_list;
 
 typedef struct list
@@ -38,22 +38,22 @@ typedef struct list
 }
 list_t;
 
-typedef struct w_container
+typedef struct gg_container
 {
-    W_CONTAINER_DATA
+    GG_CONTAINER_DATA
 }
-w_container_t;
+gg_container_t;
 
-w_class_id w_container_get_class_id();
+gg_class_id gg_container_get_class_id();
 
-void w_container_destroy(w_widget_t *widget);
+void gg_container_destroy(gg_widget_t *widget);
 
-void w_container_init(w_container_t *container);
+void gg_container_init(gg_container_t *container);
 
-void w_container_append(w_container_t *container, w_widget_t *widget);
+void gg_container_append(gg_container_t *container, gg_widget_t *widget);
 
-int w_container_get_size(w_container_t *container);
+int gg_container_get_size(gg_container_t *container);
 
-w_widget_t *w_container_get_child(w_container_t *container, int index);
+gg_widget_t *gg_container_get_child(gg_container_t *container, int index);
 
 #endif /* GAMEGUI_CONTAINER_H */

@@ -23,75 +23,74 @@
 #include <gamegui/widget.h>
 
 static int classes = 0;
-static w_class_id *parent_class = NULL;
-static w_driver_t *driver;
+static gg_class_id *parent_class = NULL;
+static gg_driver_t *driver;
 
-w_widget_t *cast_error(char *file, int line, char *type)
+gg_widget_t *gg_cast_error(char *file, int line, char *type)
 {
     fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
     exit(1);
     return NULL;
 }
 
-w_class_id w_register_class(w_class_id parent)
+gg_class_id gg_register_class(gg_class_id parent)
 {
-    parent_class = realloc(parent_class, (classes + 1) * sizeof(w_class_id));
+    parent_class = realloc(parent_class, (classes + 1) * sizeof(gg_class_id));
 
     parent_class[classes] = parent;
 
     return classes++;
 }
 
-int w_check_cast(w_widget_t *widget, w_class_id id)
+int gg_check_cast(gg_widget_t *widget, gg_class_id id)
 {
-    w_class_id parent = parent_class[widget->id];
+    gg_class_id parent = parent_class[widget->id];
 
     if (widget->id == id)
         return 1;
 
-    while ((parent != CLASS_ID_NONE) && (parent != id))
+    while ((parent != GG_CLASS_ID_NONE) && (parent != id))
         parent = parent_class[parent];
 
-    return parent != CLASS_ID_NONE;
+    return parent != GG_CLASS_ID_NONE;
 }
 
-void w_system_init(w_driver_t *d)
+void gg_system_init(gg_driver_t *d)
 {
     driver = d;
 }
 
-void w_system_draw_rect(int x, int y, int width, int height, w_colour_t *colour)
+void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
     driver->draw_rect(x, y, width, height, colour);
 }
 
-void w_system_draw_filled_rect(int x, int y, int width, int height, w_colour_t *colour)
+void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
     driver->draw_filled_rect(x, y, width, height, colour);
 }
 
-void w_system_draw_image(void *image, w_rect_t source, w_rect_t dest, int mode_h, int mode_v)
+void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v)
 {
-
     driver->draw_image(image, source, dest, mode_h, mode_v);
 }
 
-void w_system_draw_char(int c, int x, int y, w_colour_t *colour)
+void gg_system_draw_char(int c, int x, int y, gg_colour_t *colour)
 {
     driver->draw_char(c, x, y, colour);
 }
 
-void w_system_get_image_size(void *image, int *width, int *height)
+void gg_system_get_image_size(void *image, int *width, int *height)
 {
     driver->get_image_size(image, width, height);
 }
 
-void w_system_get_char_size(int c, int *width, int *height)
+void gg_system_get_char_size(int c, int *width, int *height)
 {
     driver->get_char_size(c, width, height);
 }
 
-void w_system_get_string_size(unsigned char *s, int *width, int *height)
+void gg_system_get_string_size(unsigned char *s, int *width, int *height)
 {
     int i;
 
@@ -112,7 +111,7 @@ void w_system_get_string_size(unsigned char *s, int *width, int *height)
     }
 }
 
-void w_system_draw_string(unsigned char *s, int x, int y, w_colour_t *colour, int bounce, float align)
+void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align)
 {
     int i;
     Uint32 ticks = SDL_GetTicks();
@@ -121,7 +120,7 @@ void w_system_draw_string(unsigned char *s, int x, int y, w_colour_t *colour, in
     {
         int width;
 
-        w_system_get_string_size(s, &width, NULL);
+        gg_system_get_string_size(s, &width, NULL);
 
         x -= width * align;
     }
@@ -133,18 +132,18 @@ void w_system_draw_string(unsigned char *s, int x, int y, w_colour_t *colour, in
 
         if (bounce)
         {
-            float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
+            float phase = ((ticks % (1000 / GG_BOUNCE_SPEED)) / (float) (1000 / GG_BOUNCE_SPEED));
 
             if (phase < 0.5)
-                y_off = phase * 2 * (BOUNCE_AMP + 1);
+                y_off = phase * 2 * (GG_BOUNCE_AMP + 1);
             else
-                y_off = ((1.0 - phase) * 2) * (BOUNCE_AMP + 1);
+                y_off = ((1.0 - phase) * 2) * (GG_BOUNCE_AMP + 1);
         }
 
         driver->get_char_size(s[i], &width, NULL);
         driver->draw_char(s[i], x, y + y_off, colour);
         x += width;
 
-        ticks += 1000 / BOUNCE_SPEED / BOUNCE_LEN;
+        ticks += 1000 / GG_BOUNCE_SPEED / GG_BOUNCE_LEN;
     }
 }

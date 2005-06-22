@@ -22,23 +22,23 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
-#define W_ALIGN(W) CHECK_CAST(W, w_align_get_class_id(), w_align_t)
+#define GG_ALIGN(W) GG_CHECK_CAST(W, gg_align_get_class_id(), gg_align_t)
 
-#define W_ALIGN_DATA \
-    W_WIDGET_DATA \
+#define GG_ALIGN_DATA \
+    GG_WIDGET_DATA \
     float xalign; \
     float yalign;
 
-typedef struct w_align
+typedef struct gg_align
 {
-    W_ALIGN_DATA
+    GG_ALIGN_DATA
 }
-w_align_t;
+gg_align_t;
 
-w_class_id w_align_get_class_id();
+gg_class_id gg_align_get_class_id();
 
-void w_align_init(w_align_t *align);
+void gg_align_init(gg_align_t *align);
 
-void w_align_set_alignment(w_align_t *align, float xalign, float yalign);
+void gg_align_set_alignment(gg_align_t *align, float xalign, float yalign);
 
 #endif /* GAMEGUI_ALIGN_H */

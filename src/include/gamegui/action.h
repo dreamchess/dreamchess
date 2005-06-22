@@ -22,31 +22,31 @@
 #include <gamegui/system.h>
 #include <gamegui/bin.h>
 
-#define W_ACTION(W) CHECK_CAST(W, w_action_get_class_id(), w_action_t)
+#define GG_ACTION(W) GG_CHECK_CAST(W, gg_action_get_class_id(), gg_action_t)
 
-#define W_ACTION_DATA \
-    W_BIN_DATA \
-    void (* func) (w_widget_t *widget, void *data); \
+#define GG_ACTION_DATA \
+    GG_BIN_DATA \
+    void (* func) (gg_widget_t *widget, void *data); \
     void *func_data;
 
-typedef struct w_action
+typedef struct gg_action
 {
-    W_ACTION_DATA
+    GG_ACTION_DATA
 }
-w_action_t;
+gg_action_t;
 
-w_class_id w_action_get_class_id();
+gg_class_id gg_action_get_class_id();
 
-void w_action_render(w_widget_t *widget, int x, int y, int focus);
+void gg_action_render(gg_widget_t *widget, int x, int y, int focus);
 
-int w_action_input(w_widget_t *widget, ui_event_t event);
+int gg_action_input(gg_widget_t *widget, ui_event_t event);
 
-void w_action_init(w_action_t *action, w_widget_t *widget);
+void gg_action_init(gg_action_t *action, gg_widget_t *widget);
 
-w_widget_t *w_action_create(w_widget_t *widget);
+gg_widget_t *gg_action_create(gg_widget_t *widget);
 
-w_widget_t *w_action_create_with_label(char *text, float xalign, float yalign);
+gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign);
 
-void w_action_set_callback(w_action_t *action, void (* callback) (w_widget_t *, void *), void *func_data);
+void gg_action_set_callback(gg_action_t *action, void (* callback) (gg_widget_t *, void *), void *func_data);
 
 #endif /* GAMEGUI_ACTION_H */

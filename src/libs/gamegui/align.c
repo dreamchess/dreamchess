@@ -18,21 +18,21 @@
 
 #include <gamegui/align.h>
 
-w_class_id w_align_get_class_id()
+gg_class_id gg_align_get_class_id()
 {
-    CHILD(w_widget_get_class_id())
+    GG_CHILD(gg_widget_get_class_id())
 }
 
-void w_align_init(w_align_t *align)
+void gg_align_init(gg_align_t *align)
 {
-    w_widget_init((w_widget_t *) align);
+    gg_widget_init((gg_widget_t *) align);
 
-    align->id = w_align_get_class_id();
+    align->id = gg_align_get_class_id();
     align->xalign = 0.0f;
     align->yalign = 0.0f;
 }
 
-void w_align_set_alignment(w_align_t *align, float xalign, float yalign)
+void gg_align_set_alignment(gg_align_t *align, float xalign, float yalign)
 {
     align->xalign = xalign;
     align->yalign = yalign;

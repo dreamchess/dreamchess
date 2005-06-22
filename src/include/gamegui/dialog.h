@@ -22,10 +22,10 @@
 #include <gamegui/system.h>
 #include <gamegui/bin.h>
 
-#define W_DIALOG(W) CHECK_CAST(W, w_dialog_get_class_id(), w_dialog_t)
+#define GG_DIALOG(W) GG_CHECK_CAST(W, gg_dialog_get_class_id(), gg_dialog_t)
 
-#define W_DIALOG_DATA \
-    W_BIN_DATA \
+#define GG_DIALOG_DATA \
+    GG_BIN_DATA \
     int modal; \
     position_t pos; \
     dialog_style_t style;
@@ -46,10 +46,10 @@ typedef struct dialog_border_plain
     int border;
 
     /** Border colour. */
-    w_colour_t border_col;
+    gg_colour_t border_col;
 
     /** Background colour inside the dialog. */
-    w_colour_t bg_col;
+    gg_colour_t bg_col;
 }
 dialog_border_plain_t;
 
@@ -74,7 +74,7 @@ typedef struct dialog_style
 
     /** Colour of the quad that will be drawn the size of the whole screen.
      */
-    w_colour_t fade_col;
+    gg_colour_t fade_col;
 
     /** Horizontal padding in pixels. This is the area between the border
      *  and the widgets.
@@ -106,38 +106,38 @@ typedef struct position
 position_t;
 
 /** Dialog state. */
-typedef struct w_dialog
+typedef struct gg_dialog
 {
-    W_DIALOG_DATA
+    GG_DIALOG_DATA
 }
-w_dialog_t;
+gg_dialog_t;
 
 void dialog_cleanup();
 
-void dialog_open(w_dialog_t *menu);
+void dialog_open(gg_dialog_t *menu);
 
 void dialog_close();
 
-w_dialog_t *dialog_current();
+gg_dialog_t *dialog_current();
 
-void w_dialog_get_screen_pos(w_dialog_t *dialog, int *x, int *y);
+void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y);
 
-void w_dialog_render(w_dialog_t *dialog);
+void gg_dialog_render(gg_dialog_t *dialog);
 
-void w_dialog_mouse_movement(w_dialog_t *dialog, int x, int y);
+void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y);
 
-int w_dialog_input(w_widget_t *widget, ui_event_t event);
+int gg_dialog_input(gg_widget_t *widget, ui_event_t event);
 
 void dialog_input(ui_event_t event);
 
-void w_dialog_set_modal(w_dialog_t *dialog, int modal);
+void gg_dialog_set_modal(gg_dialog_t *dialog, int modal);
 
-void w_dialog_set_position(w_dialog_t *dialog, int x, int y, int x_align, int y_align);
+void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, int x_align, int y_align);
 
-void w_dialog_init(w_dialog_t *dialog, w_widget_t *child);
+void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child);
 
-void w_dialog_set_style(w_dialog_t *dialog, dialog_style_t *style);
+void gg_dialog_set_style(gg_dialog_t *dialog, dialog_style_t *style);
 
-w_widget_t *w_dialog_create(w_widget_t *child);
+gg_widget_t *gg_dialog_create(gg_widget_t *child);
 
 #endif /* GAMEGUI_DIALOG_H */

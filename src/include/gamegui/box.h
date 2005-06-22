@@ -22,20 +22,20 @@
 #include <gamegui/system.h>
 #include <gamegui/select.h>
 
-#define W_BOX(W) CHECK_CAST(W, w_box_get_class_id(), w_box_t)
+#define GG_BOX(W) GG_CHECK_CAST(W, gg_box_get_class_id(), gg_box_t)
 
-#define W_BOX_DATA \
-    W_SELECT_DATA \
+#define GG_BOX_DATA \
+    GG_SELECT_DATA \
     int spacing;
 
-typedef struct w_box
+typedef struct gg_box
 {
-    W_BOX_DATA
+    GG_BOX_DATA
 }
-w_box_t;
+gg_box_t;
 
-w_class_id w_box_get_class_id();
+gg_class_id gg_box_get_class_id();
 
-void w_box_init(w_box_t *box, int spacing);
+void gg_box_init(gg_box_t *box, int spacing);
 
 #endif /* GAMEGUI_BOX_H */
