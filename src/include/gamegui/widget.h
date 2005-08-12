@@ -16,55 +16,159 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/** @file
+ *  @brief Widget class interface.
+ */
+
 #ifndef GAMEGUI_WIDGET_H
 #define GAMEGUI_WIDGET_H
 
 #include <gamegui/system.h>
 /* FIXME */
 #include <../ui.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
 
+/** Typecast to widget. */
 #define GG_WIDGET(W) GG_CHECK_CAST(W, gg_widget_get_class_id(), gg_widget_t)
 
-#define GG_WIDGET_DATA \
-    void (* render) (struct gg_widget *widget, int x, int y, int focus); \
-    int (* input) (struct gg_widget *widget, ui_event_t event); \
-    void (* set_size) (struct gg_widget *widget, int width, int height); \
-    void (* get_requested_size) (struct gg_widget *widget, int *width, int *height); \
-    void (* get_focus_pos) (struct gg_widget *widget, int *x, int *y); \
-    int (* set_focus_pos) (struct gg_widget *widget, int x, int y); \
+/** Widget methods and properties. */
+#define GG_WIDGET_DATA                                                       \
+    /** @brief Renders a widget.
+     *
+     *  @param widget The widget to render.
+     *  @param x Leftmost x coordinate where widget should be rendered.
+     *  @param y Lowermost y coordinate where widget should be rendered.
+     *  @param focus Current focus of widget.
+     */                                                                      \
+    void (* render) (struct gg_widget *widget, int x, int y, int focus);     \
+                                                                             \
+    /** @brief Processes a widget input event.
+     *
+     *  @param widget The widget that is to receive the event.
+     *  @param event The event to process.
+     *  @return 1 = event was handled. 0 = event was not handled.
+     */                                                                      \
+    int (* input) (struct gg_widget *widget, ui_event_t event);              \
+                                                                             \
+    /** @brief Sets a widget's requested size.
+     *
+     *  @param widget The widget.
+     *  @param width The width (in pixels) that the widget should request.
+     *               Ignored if smaller than minimum widget width.
+     *  @param height The height (in pixels) that the widget should request.
+     *                Ignored if smaller than minimum widget height.
+     */                                                                      \
+    void (* set_size) (struct gg_widget *widget, int width, int height);     \
+                                                                             \
+    /** @brief Gets a widget's requested size.
+     *
+     *  @param widget The widget.
+     *  @param width Returns the width (in pixels) that the widget requests.
+     *               Pointer can be NULL to ignore this dimension.
+     *  @param height Returns the height (in pixels) that the widget
+     *                requests. Pointer can be NULL to ignore this
+     *                dimension.
+     */                                                                      \
+    void (* get_requested_size) (struct gg_widget *widget, int *width,       \
+                                 int *height);                               \
+                                                                             \
+    /** @brief Gets a widget's focus position.
+     *
+     *  @param widget The widget.
+     *  @param x Returns the x-coordinate (in pixels, relative to widget
+     *           position) of the current focus position. Pointer can be
+     *           NULL to ignore this coordinate.
+     *  @param y Returns the y-coordinate (in pixels, relative to widget
+     *           position) of the current focus position. Pointer can be
+     *           NULL to ignore this coordinate.
+     */                                                                      \
+    void (* get_focus_pos) (struct gg_widget *widget, int *x, int *y);       \
+                                                                             \
+    /** @brief Sets a widget's focus position.
+     *
+     *  @param widget The widget.
+     *  @param x The x-coordinate (in pixels, relative to widget position)
+     *           of the new focus position.
+     *  @param y The y-coordinate (in pixels, relative to widget position)
+     *           of the new focus position.
+     *  @return 1 = focus set. 0 = focus not set.
+     */                                                                      \
+    int (* set_focus_pos) (struct gg_widget *widget, int x, int y);          \
+                                                                             \
+    /** @brief Destroys a widget and frees all its allocated resources.
+     *
+     *  @param widget The widget.
+     */                                                                      \
     void (* destroy) (struct gg_widget *widget); \
-    gg_class_id id; \
-    struct gg_widget *parent; \
-    int enabled; \
-    int width; \
-    int height; \
-    int width_f; \
-    int height_f; \
-    int width_a; \
+                                                                             \
+    /** Unique class ID */                                                   \
+    gg_class_id id;                                                          \
+                                                                             \
+    /** Widget that contains this widget, if any, NULL otherwise. */         \
+    struct gg_widget *parent;                                                \
+                                                                             \
+    /** Enabled flag. 1 = widget enabled, 0 = widget disabled. */            \
+    int enabled;                                                             \
+                                                                             \
+    /** Minimum required width in pixels. */                                 \
+    int width;                                                               \
+                                                                             \
+    /** Minimum required height in pixels. */                                \
+    int height;                                                              \
+                                                                             \
+    /** Forced required width. See gg_widget::set_size. */                   \
+    int width_f;                                                             \
+                                                                             \
+    /** Forced required height. See gg_widget::set_size. */                  \
+    int height_f;                                                            \
+                                                                             \
+    /** Allocated width in pixels. */                                        \
+    int width_a;                                                             \
+                                                                             \
+    /** Allocated height in pixels. */                                       \
     int height_a;
 
+/** Widget class. */
 typedef struct gg_widget
 {
     GG_WIDGET_DATA
 }
 gg_widget_t;
 
-gg_class_id gg_widget_get_class_id();
-
+/** Implements gg_widget::destroy. */
 void gg_widget_destroy(gg_widget_t *widget);
 
+/** Implements gg_widget::set_size. */
 void gg_set_requested_size(gg_widget_t *widget, int width, int height);
 
+/** Implements gg_widget::get_requested_size. */
 void gg_widget_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
-void gg_set_size(gg_widget_t *widget, int width, int height);
-
+/** Implements gg_widget::get_focus_pos. */
 void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y);
 
+/** Implements gg_widget::set_focus_pos. */
 int gg_set_focus_pos(gg_widget_t *widget, int x, int y);
 
+/** @brief Returns the unique class ID of the widget class.
+ *
+ *  @return Unique class ID.
+ */
+gg_class_id gg_widget_get_class_id();
+
+/** @brief Sets the allocated size of a widget.
+ *
+ *  @param widget The widget.
+ *  @param width The allocated width in pixels.
+ *  @param height The allocated height in pixels.
+ */
+void gg_set_size(gg_widget_t *widget, int width, int height);
+
+/** @brief Initialises a widget. Must be done before calling any class
+ *         methods. This function is generally called by a widget creation
+ *         function.
+ *
+ *  @param widget The widget.
+ */
 void gg_widget_init(gg_widget_t *widget);
 
 #endif /* GAMEGUI_WIDGET_H */

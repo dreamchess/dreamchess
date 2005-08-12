@@ -22,6 +22,9 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
+/* FIXME */
+#include <SDL/SDL.h>
+
 static int classes = 0;
 static gg_class_id *parent_class = NULL;
 static gg_driver_t *driver;

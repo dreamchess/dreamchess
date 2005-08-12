@@ -32,7 +32,7 @@
 #include "history.h"
 #include "ui.h"
 #include "comm.h"
-#include "datadir.h"
+#include "dir.h"
 #include "dreamchess.h"
 
 #ifdef HAVE_GETOPT_LONG
@@ -140,9 +140,9 @@ void game_undo()
 void game_retract_move()
 {
     /* Make sure a user is on move and we can undo two moves. */
-    if (config->player[history->play->board->turn] != PLAYER_UI)
+    if (config->player[history->last->board->turn] != PLAYER_UI)
         return;
-    if (!history->play->prev || !history->play->prev->prev)
+    if (!history->last->prev || !history->last->prev->prev)
         return;
 
     game_undo();
@@ -153,7 +153,7 @@ void game_retract_move()
 void game_move_now()
 {
     /* Make sure engine is on move. */
-    if (config->player[history->play->board->turn] != PLAYER_ENGINE)
+    if (config->player[history->last->board->turn] != PLAYER_ENGINE)
         return;
 
     comm_send("?\n");
@@ -161,8 +161,25 @@ void game_move_now()
 
 int game_want_move()
 {
-    return config->player[history->play->board->turn] == PLAYER_UI
-           && history->play == history->view;
+    return config->player[history->last->board->turn] == PLAYER_UI
+           && history->last == history->view;
+}
+
+int game_save()
+{
+    int retval;
+
+    if (!ch_userdir())
+        retval = history_save_pgn(history, "dreamchess.pgn");
+    else
+    {
+        printf("Could not enter user directory.\n");
+        retval = 1;
+    }
+
+    ch_datadir();
+
+    return retval;
 }
 
 static int do_move(move_t *move)
@@ -170,14 +187,14 @@ static int do_move(move_t *move)
     char *move_s, *move_f;
     board_t new_board;
 
-    if (!move_is_valid(history->play->board, move))
+    if (!move_is_valid(history->last->board, move))
     {
         printf("Move invalid!\n");
         return 0;
     }
 
-    move_set_attr(history->play->board, move);
-    new_board = *history->play->board;
+    move_set_attr(history->last->board, move);
+    new_board = *history->last->board;
     move_s = move_to_fullalg(&new_board, move);
     move_list_play(&fullalg_list, move_s);
 
@@ -363,15 +380,15 @@ int dreamchess(void *data)
         {
             char *s;
 
-            if (s = comm_poll())
+            if ((s = comm_poll()))
             {
                 printf("Received: %s\n", s);
                 if  (!history->result)
                 {
-                    if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) && config->player[history->play->board->turn] == PLAYER_ENGINE)
+                    if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) && config->player[history->last->board->turn] == PLAYER_ENGINE)
                     {
                         char *move_str = strrchr(s, ' ') + 1;
-                        board_t new_board = *history->play->board;
+                        board_t new_board = *history->last->board;
                         move_t *engine_move = san_to_move(&new_board, move_str);
                         if (!engine_move)
                             engine_move = fullalg_to_move(&new_board, move_str);

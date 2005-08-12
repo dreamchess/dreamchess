@@ -16,10 +16,10 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef DATADIR_H
-#define DATADIR_H
+#ifndef DIR_H
+#define DIR_H
 
-void ch_datadir();
+int ch_datadir();
+int ch_userdir();
 
-#endif /* DATADIR_H */
-
+#endif /* DIR_H */

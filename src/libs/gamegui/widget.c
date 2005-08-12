@@ -16,6 +16,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/** @file
+ *  @brief Widget class implementation.
+ */
+
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
@@ -35,7 +39,8 @@ void gg_set_requested_size(gg_widget_t *widget, int width, int height)
     widget->height_f = height;
 }
 
-void gg_widget_get_requested_size(gg_widget_t *widget, int *width, int *height)
+void gg_widget_get_requested_size(gg_widget_t *widget, int *width,
+                                  int *height)
 {
     if (width)
     {
@@ -62,6 +67,9 @@ void gg_set_size(gg_widget_t *widget, int width, int height)
 
 void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y)
 {
+    /*  Users will generally be focussed on the center of the widget so we
+     *  return the center as focus position.
+     */
     *x = widget->width_a / 2;
     *y = widget->height_a / 2;
 }

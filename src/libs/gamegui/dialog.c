@@ -38,7 +38,7 @@ gg_dialog_t *dialog_closed[DIALOG_MAX];
 /** The amount of dialogs that need to be destroyed. */
 int dialog_closed_nr = 0;
 
-void dialog_cleanup()
+void gg_dialog_cleanup()
 {
     int i;
 
@@ -54,7 +54,7 @@ void dialog_cleanup()
 /** @brief Adds a dialog to the top of the dialog stack.
  *  @param menu The dialog to add.
  */
-void dialog_open(gg_dialog_t *menu)
+void gg_dialog_open(gg_dialog_t *menu)
 {
     if (dialog_nr == DIALOG_MAX)
     {
@@ -67,7 +67,7 @@ void dialog_open(gg_dialog_t *menu)
 }
 
 /** @brief Closes the dialog that's on top of the dialog stack. */
-void dialog_close()
+void gg_dialog_close()
 {
     gg_dialog_t *menu;
 
@@ -93,7 +93,7 @@ void dialog_close()
  *  @return The dialog that's on top of the stack, or NULL if the stack is
  *          empty.
  */
-gg_dialog_t *dialog_current()
+gg_dialog_t *gg_dialog_current()
 {
     if (dialog_nr == 0)
         return NULL;
@@ -103,19 +103,8 @@ gg_dialog_t *dialog_current()
 
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
 {
-    if (dialog->pos.x_align == ALIGN_LEFT)
-        *x = dialog->pos.x;
-    else if (dialog->pos.x_align == ALIGN_RIGHT)
-        *x = dialog->pos.x - dialog->width;
-    else
-        *x = dialog->pos.x - dialog->width / 2;
-
-    if (dialog->pos.y_align == ALIGN_TOP)
-        *y = dialog->pos.y - dialog->height;
-    else if (dialog->pos.y_align == ALIGN_BOTTOM)
-        *y = dialog->pos.y;
-    else
-        *y = dialog->pos.y - dialog->height / 2;
+    *x = dialog->pos.x - dialog->width * dialog->pos.x_align;
+    *y = dialog->pos.y - dialog->height * dialog->pos.y_align;
 }
 
 void draw_border(void *image[9], gg_rect_t area, int size)
@@ -180,7 +169,7 @@ void draw_border(void *image[9], gg_rect_t area, int size)
  */
 void gg_dialog_render(gg_dialog_t *dialog)
 {
-    dialog_style_t *style = &dialog->style;
+    gg_dialog_style_t *style = &dialog->style;
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
 
     int xmin, xmax, ymin, ymax;
@@ -252,24 +241,21 @@ void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
     dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
 }
 
-/** @brief Processes an input event for a specific dialog.
- *
- *  @param event The event to process.
- */
 int gg_dialog_input(gg_widget_t *widget, ui_event_t event)
 {
     gg_dialog_t *dialog = GG_DIALOG(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
     if (!dialog->modal && (event == UI_EVENT_ESCAPE))
-        dialog_close();
+        gg_dialog_close();
 
-    child->input(child, event);
+    return child->input(child, event);
 }
 
-void dialog_input(ui_event_t event)
+void gg_dialog_input_current(ui_event_t event)
 {
-    gg_dialog_t *dialog = dialog_current();
+    gg_dialog_t *dialog = gg_dialog_current();
+    gg_widget_t *child;
 
     if (!dialog)
         return;
@@ -282,7 +268,7 @@ void gg_dialog_set_modal(gg_dialog_t *dialog, int modal)
     dialog->modal = modal;
 }
 
-void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, int x_align, int y_align)
+void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, float y_align)
 {
     dialog->pos.x = x;
     dialog->pos.y = y;
@@ -292,7 +278,7 @@ void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, int x_align, int 
 
 void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
 {
-    dialog_style_t style;
+    gg_dialog_style_t style;
 
     style.textured = 0;
     style.border.plain.border = 5;
@@ -321,7 +307,7 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
     child->set_size(child, dialog->width, dialog->height);
     gg_dialog_set_style(dialog, &style);
 
-    gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, ALIGN_CENTER, ALIGN_CENTER);
+    gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
 }
 
 /** @brief Creates a dialog.
@@ -338,7 +324,7 @@ gg_widget_t *gg_dialog_create(gg_widget_t *child)
     return GG_WIDGET(dialog);
 }
 
-void gg_dialog_set_style(gg_dialog_t *dialog, dialog_style_t *style)
+void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
 {
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
     int size;

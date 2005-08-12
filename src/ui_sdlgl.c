@@ -44,7 +44,7 @@
 #include "dreamchess.h"
 #include "history.h"
 #include "ui.h"
-#include "datadir.h"
+#include "dir.h"
 #include "credits.h"
 #include "ui_sdlgl_3d.h"
 
@@ -592,47 +592,7 @@ static texture_t text_characters[256];
 
 static config_t *config;
 
-static dialog_style_t style_ingame, style_menu;
-
-#if 0
-/** Style used for all dialog boxes except the title menu. */
-static style_t style_ingame =
-    {
-        1, 5, 20, 10,
-        {0.0f, 0.0f, 0.0f, 0.5f},
-        {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.8f, 0.8f, 0.8f, 1.0f}
-    };
-
-/** Position used for all dialog boxes except the title menu. */
-static position_t pos_ingame =
-    {
-        320, 240,
-        ALIGN_CENTER, ALIGN_CENTER
-    };
-
-/** Position used for the virtual keyboard. */
-static position_t pos_vkeyboard =
-    {
-        320, 460,
-        ALIGN_CENTER, ALIGN_TOP
-    };
-
-/** Style used for the title menu. */
-static style_t style_title =
-    {
-        1, 0, 50, 10,
-        {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.7f, 0.7f, 0.7f, 0.85f}
-    };
-#endif
-/** Position used for the title menu. */
-static position_t pos_title =
-    {
-        320, 100,
-        ALIGN_CENTER, ALIGN_CENTER
-    };
+static gg_dialog_style_t style_ingame, style_menu;
 
 /* In-game dialog. */
 
@@ -699,14 +659,14 @@ static gg_dialog_t *dialog_ingame_create()
  */
 static void dialog_quit_ok(gg_widget_t *widget, void *data)
 {
-    dialog_close();
-    dialog_close();
+    gg_dialog_close();
+    gg_dialog_close();
     quit_to_menu = 1;
 }
 
 static void dialog_close_cb(gg_widget_t *widget, void *data)
 {
-    dialog_close();
+    gg_dialog_close();
 }
 
 /** The quit dialog. Asks the user to confirm that he wants to quit the game.
@@ -752,7 +712,7 @@ static gg_dialog_t *dialog_quit_create()
 /** @brief Opens the quit dialog. */
 static void dialog_quit_open(gg_widget_t *widget, void *data)
 {
-    dialog_open(dialog_quit_create());
+    gg_dialog_open(dialog_quit_create());
 }
 
 /** @brief Creates the system dialog.
@@ -837,14 +797,14 @@ static gg_dialog_t *dialog_victory_create(result_t *result)
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_loading=TRUE;
-    dialog_close();
+    gg_dialog_close();
 }
 
 /** @brief Triggers DreamChess exit. */
 static void menu_title_quit(gg_widget_t *widget, void *data)
 {
     title_process_retval = 1;
-    dialog_close();
+    gg_dialog_close();
 }
 
 void dialog_title_players(gg_widget_t *widget, void *data)
@@ -986,15 +946,15 @@ static gg_dialog_t *dialog_title_create()
 
     dialog = gg_dialog_create(vbox);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, ALIGN_CENTER, ALIGN_BOTTOM);
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
     return GG_DIALOG(dialog);
 }
 
 static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
 {
-    if (dialog_current())
-        dialog_input(*(ui_event_t *) data);
+    if (gg_dialog_current())
+        gg_dialog_input_current(*(ui_event_t *) data);
 
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
@@ -1308,7 +1268,7 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 void dialog_promote_cb(gg_widget_t *widget, void *data)
 {
     dialog_promote_piece = *(int *)data;
-    dialog_close();
+    gg_dialog_close();
 }
 
 gg_dialog_t *dialog_promote_create(int colour)
@@ -1440,7 +1400,7 @@ static config_t *do_menu()
     black_in_check=FALSE;
 
     draw_credits(1);
-    dialog_open(dialog_title_create());
+    gg_dialog_open(dialog_title_create());
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
     glEnable(GL_BLEND);
@@ -1457,7 +1417,7 @@ static config_t *do_menu()
 
             if (event.type == SDL_MOUSEMOTION)
             {
-                gg_dialog_t *dialog = dialog_current();
+                gg_dialog_t *dialog = gg_dialog_current();
                 if (dialog)
                     gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
 
@@ -1491,7 +1451,7 @@ static config_t *do_menu()
             if (vkeyboard_enabled)
                 keyboard->input(GG_WIDGET(keyboard), ui_event);
             else
-                dialog_input(ui_event);
+                gg_dialog_input_current(ui_event);
 
             if (title_process_retval == 1)
             {
@@ -1519,7 +1479,7 @@ static config_t *do_menu()
                                          1.5, &col_white, string_type_pos );
             else
             {
-                gg_dialog_t *dialog = dialog_current();
+                gg_dialog_t *dialog = gg_dialog_current();
                 gg_dialog_render(dialog);
             }
 
@@ -2130,7 +2090,7 @@ static void update(board_t *b, move_t *move)
 /** Implements ui_driver::show_result. */
 static void show_result(result_t *res)
 {
-    dialog_open(dialog_victory_create(res));
+    gg_dialog_open(dialog_victory_create(res));
 }
 
 /** @brief Main in-game rendering routine.
@@ -2144,7 +2104,7 @@ static void draw_scene( board_t *b )
     int clock_seconds=0;
     int clock_minutes=0;
 
-    dialog_cleanup();
+    gg_dialog_cleanup();
     update_string_type_length();
     //printf( "Piece is moving from %i to %i..\n\r", piece_moving_source, piece_moving_dest );
 
@@ -2225,9 +2185,9 @@ static void draw_scene( board_t *b )
         text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white,
                                  string_type_pos );
 
-    if (dialog_current())
+    if (gg_dialog_current())
     {
-        gg_dialog_t *dialog = dialog_current();
+        gg_dialog_t *dialog = gg_dialog_current();
         gg_dialog_render(dialog);
     }
 
@@ -2452,7 +2412,7 @@ void generate_text_chars()
 /** Implements ui_driver::show_message. */
 static void show_message (char *msg)
 {
-    dialog_open(dialog_message_create(msg));
+    gg_dialog_open(dialog_message_create(msg));
 }
 
 /** Implements ui_driver::poll. */
@@ -2528,7 +2488,7 @@ static void poll_move()
     if ((needprom  == 0) && (((board.square[source] == WHITE_PAWN) && (dest >= 56)) ||
                              ((board.square[source] == BLACK_PAWN) && (dest <= 7))))
     {
-        dialog_open(dialog_promote_create(COLOUR(board.square[source])));
+        gg_dialog_open(dialog_promote_create(COLOUR(board.square[source])));
         needprom = 1;
         return;
     }
@@ -2595,7 +2555,7 @@ static int GetMove()
 
         if (event.type == SDL_MOUSEMOTION)
         {
-            gg_dialog_t *dialog = dialog_current();
+            gg_dialog_t *dialog = gg_dialog_current();
             if (dialog)
                 gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
 
@@ -2619,8 +2579,8 @@ static int GetMove()
         if (ui_event == UI_EVENT_NONE)
             continue;
 
-        if (dialog_current())
-            dialog_input(ui_event);
+        if (gg_dialog_current())
+            gg_dialog_input_current(ui_event);
         /* In the promote dialog */
         else
             switch (ui_event)
@@ -2642,11 +2602,11 @@ static int GetMove()
                 select_piece(retval);
                 break;
             case UI_EVENT_ESCAPE:
-                dialog_open(dialog_system_create());
+                gg_dialog_open(dialog_system_create());
                 break;
             case 'g':
             case UI_EVENT_EXTRA3:
-                dialog_open(dialog_ingame_create());
+                gg_dialog_open(dialog_ingame_create());
                 break;
             case 'p':
                 game_view_prev();
@@ -2656,6 +2616,9 @@ static int GetMove()
                 break;
             case 'u':
                 game_undo();
+                break;
+            case 's':
+                game_save();
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;

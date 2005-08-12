@@ -55,7 +55,7 @@ int chdir(const char *path)
 #include <windows.h>
 #include "shlwapi.h"
 
-void ch_datadir()
+int ch_datadir()
 {
     char filename[MAX_PATH + 6];
 
@@ -63,16 +63,44 @@ void ch_datadir()
     filename[MAX_PATH] = '\0';
     PathRemoveFileSpec(filename);
     strcat(filename, "/data");
-    chdir(filename);
+    return chdir(filename);
+}
+
+int ch_userdir()
+{
+    /* FIXME */
 }
 
 #else /* !__WIN32__ */
 
+#define USERDIR ".dreamchess"
+
 #include <unistd.h>
 
-void ch_datadir()
+int ch_datadir()
 {
-    chdir(DATADIR);
+    return chdir(DATADIR);
+}
+
+int ch_userdir()
+{
+    char *home = getenv("HOME");
+
+    if (!home)
+        return -1;
+
+    if (chdir(home))
+        return -1;
+
+    if (chdir(USERDIR))
+    {
+        if (mkdir(USERDIR, 0755))
+            return -1;
+
+        return chdir(USERDIR);
+    }
+
+    return 0;
 }
 
 #endif

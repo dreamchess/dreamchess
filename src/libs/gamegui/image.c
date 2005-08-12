@@ -18,6 +18,9 @@
 
 #include <gamegui/image.h>
 
+/* FIXME */
+#include <SDL/SDL.h>
+
 /** Focussed image scale value. */
 #define IMAGE_SCALE -0.3f
 /** Focussed image enlargement speed in enlargements per second. */

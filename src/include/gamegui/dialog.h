@@ -16,31 +16,43 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/** @file
+ *  @brief Dialog class interface.
+ */
+
 #ifndef GAMEGUI_DIALOG_H
 #define GAMEGUI_DIALOG_H
 
 #include <gamegui/system.h>
 #include <gamegui/bin.h>
 
+/** Typecast to dialog. */
 #define GG_DIALOG(W) GG_CHECK_CAST(W, gg_dialog_get_class_id(), gg_dialog_t)
 
-#define GG_DIALOG_DATA \
-    GG_BIN_DATA \
-    int modal; \
-    position_t pos; \
-    dialog_style_t style;
+/** Dialog methods and properties. */
+#define GG_DIALOG_DATA                                                       \
+    /** Inherit from bin class. */                                           \
+    GG_BIN_DATA                                                              \
+                                                                             \
+    /** Modal flag. 1 = modal (dialog cannot be escaped), 0 = not modal. */  \
+    int modal;                                                               \
+                                                                             \
+    /** Position of dialog on the screen. */                                 \
+    gg_dialog_position_t pos;                                                \
+                                                                             \
+    /** Visual dialog style. */                                              \
+    gg_dialog_style_t style;
 
-#define ALIGN_LEFT 0
-#define ALIGN_RIGHT 1
-#define ALIGN_CENTER 2
-#define ALIGN_TOP 3
-#define ALIGN_BOTTOM 4
-
+/* FIXME */
+/** Screen width in pixels. */
 #define SCREEN_WIDTH  640
+/** Screen height in pixels. */
 #define SCREEN_HEIGHT 480
+/** Screen colour depth in bits per pixel. */
 #define SCREEN_BPP     16
 
-typedef struct dialog_border_plain
+/** Plain (non-textured) dialog border style. */
+typedef struct gg_dialog_border_plain
 {
     /** Border size in pixels. */
     int border;
@@ -48,48 +60,67 @@ typedef struct dialog_border_plain
     /** Border colour. */
     gg_colour_t border_col;
 
-    /** Background colour inside the dialog. */
+    /** Background colour. */
     gg_colour_t bg_col;
 }
-dialog_border_plain_t;
+gg_dialog_border_plain_t;
 
-typedef struct dialog_border_textured
+/** Textured dialog border style. */
+typedef struct gg_dialog_border_textured
 {
+    /** Border images.
+     *  0: Top-left corner.
+     *  1: Top edge (to be tiled horizontally).
+     *  2: Top-right corner.
+     *  3: Left edge (to be tiled vertically).
+     *  4: Center (to be tiled horizontally and vertically).
+     *  5: Right edge (to be tiled vertically).
+     *  6: Bottom-left corner.
+     *  7: Bottom edge (to be tiled horizontally).
+     *  8: Bottom-right corner.
+     */
     void *image[9];
 }
-dialog_border_textured_t;
+gg_dialog_border_textured_t;
 
-typedef union dialog_border
+/** Dialog border style. */
+typedef union gg_dialog_border
 {
-    dialog_border_plain_t plain;
-    dialog_border_textured_t textured;
-} dialog_border_t;
+    /** Plain dialog border style. */
+    gg_dialog_border_plain_t plain;
 
-/** Dialog box style. */
-typedef struct dialog_style
+    /** Textured dialog border style. */
+    gg_dialog_border_textured_t textured;
+}
+gg_dialog_border_t;
+
+/** Dialog style. */
+typedef struct gg_dialog_style
 {
+    /** Textured flag. 1 = textured, 0 = plain. */
     char textured;
 
-    dialog_border_t border;
+    /** Dialog border style. */
+    gg_dialog_border_t border;
 
     /** Colour of the quad that will be drawn the size of the whole screen.
      */
     gg_colour_t fade_col;
 
     /** Horizontal padding in pixels. This is the area between the border
-     *  and the widgets.
+     *  and the widget.
      */
     int hor_pad;
 
     /** Vertical padding in pixels. This is the area between the border
-     *  and the widgets.
+     *  and the widget.
      */
     int vert_pad;
 }
-dialog_style_t;
+gg_dialog_style_t;
 
-/** Dialog box position. */
-typedef struct position
+/** Dialog position. */
+typedef struct gg_dialog_position
 {
     /** x-coordinate in pixels. */
     int x;
@@ -97,46 +128,82 @@ typedef struct position
     /** y-coordinate in pixels. */
     int y;
 
-    /** Alignment of dialog in relation to x-coordinate. */
-    int x_align;
+    /** Horizontal alignment relative to x. Ranges from 0 (left aligned) to 1
+     *  (right aligned).
+     */
+    float x_align;
 
-    /** Alignment of dialog in relation to y-coordinate. */
-    int y_align;
+    /** Vertical alignment relative to y. Ranges from 0 (bottom aligned) to 1
+     *  (top aligned).
+     */
+    float y_align;
 }
-position_t;
+gg_dialog_position_t;
 
-/** Dialog state. */
+/** Dialog class. */
 typedef struct gg_dialog
 {
     GG_DIALOG_DATA
 }
 gg_dialog_t;
 
-void dialog_cleanup();
+/** @brief Destroys all closed dialogs on the dialog stack and removes them
+ *         from the stack.
+ */
+void gg_dialog_cleanup();
 
-void dialog_open(gg_dialog_t *menu);
+/** @brief Opens a dialog by placing it on top of the dialog stack.
+ *
+ *  @param dialog The dialog to open.
+ */
+void gg_dialog_open(gg_dialog_t *dialog);
 
-void dialog_close();
+/** @brief Closes the dialog that's on top of the dialog stack (if any). */
+void gg_dialog_close();
 
-gg_dialog_t *dialog_current();
+/** @brief Returns the dialog that's on top of the dialog stack.
+ *
+ *  @return Dialog on top of stack, or NULL if stack is empty.
+ */
+gg_dialog_t *gg_dialog_current();
 
+/** @brief Determines the screen position of a dialog.
+ *
+ *  @param dialog The dialog.
+ *  @param x Returns the x-coordinate (in pixels) of the dialog.
+ *  @param y Returns the y-coordinate (in pixels) of the dialog.
+ */
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y);
 
+/** Implements gg_widget_t::render. */
 void gg_dialog_render(gg_dialog_t *dialog);
 
+/** @brief Notifies a dialog of mouse movement. Used for shifting focus on
+ *         mouse movement.
+ *
+ *  @param x Screen x-coordinate (in pixels) of current mouse position.
+ *  @param y Screen y-coordinate (in pixels) of current mouse position.
+ */
 void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y);
 
-int gg_dialog_input(gg_widget_t *widget, ui_event_t event);
+/** @brief Sends an input event to the currently open dialog (if any).
+ *
+ *  @param event The input event.
+ */
+void gg_dialog_input_current(ui_event_t event);
 
-void dialog_input(ui_event_t event);
-
+/** @brief Sets dialog modal setting.
+ *
+ *  @param dialog The dialog.
+ *  @param modal 1 = modal, 0 = not modal.
+ */
 void gg_dialog_set_modal(gg_dialog_t *dialog, int modal);
 
-void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, int x_align, int y_align);
+void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, float y_align);
 
 void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child);
 
-void gg_dialog_set_style(gg_dialog_t *dialog, dialog_style_t *style);
+void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style);
 
 gg_widget_t *gg_dialog_create(gg_widget_t *child);
 

@@ -49,5 +49,6 @@ void game_retract_move();
 void game_move_now();
 void game_quit();
 void game_get_move_list(char ***list, int *total, int *view);
+int game_save();
 
 #endif /* DREAMCHESS_H */
