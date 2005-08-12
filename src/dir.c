@@ -52,8 +52,12 @@ int chdir(const char *path)
 
 #ifdef __WIN32__
 
+#define USERDIR "DreamChess"
+
 #include <windows.h>
+#include <io.h>
 #include "shlwapi.h"
+#include "shlobj.h"
 
 int ch_datadir()
 {
@@ -68,7 +72,23 @@ int ch_datadir()
 
 int ch_userdir()
 {
-    /* FIXME */
+    char appdir[MAX_PATH];
+
+    if (SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdir))
+        return -1;
+
+    if (chdir(appdir))
+        return -1;
+
+    if (chdir(USERDIR))
+    {
+        if (mkdir(USERDIR))
+            return -1;
+
+        return chdir(USERDIR);
+    }
+
+    return 0;
 }
 
 #else /* !__WIN32__ */
