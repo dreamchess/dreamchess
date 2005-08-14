@@ -11,6 +11,7 @@ AC_CONFIG_HEADER([config.h])
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
+AM_PROG_LEX
 AC_CHECK_PROGS(YACC, 'bison -y', [${am_missing_run} bison -y])
 
 if test "x$cross_compiling" = xyes; then

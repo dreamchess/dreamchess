@@ -146,12 +146,12 @@ int history_save_pgn(history_t *hist, char *filename)
     if (!f)
         return 1;
 
-    fputs("[Event] \"DreamChess Game\"\n", f);
-    fputs("[Site] \"?\"\n", f);
-    fputs("[Date] \"????.??.??\"\n", f);
-    fputs("[Round] \"-\"\n", f);
-    fputs("[White] \"?\"\n", f);
-    fputs("[Black] \"?\"\n", f);
+    fputs("[Event \"DreamChess Game\"]\n", f);
+    fputs("[Site \"?\"]\n", f);
+    fputs("[Date \"????.??.??\"]\n", f);
+    fputs("[Round \"-\"]\n", f);
+    fputs("[White \"?\"]\n", f);
+    fputs("[Black \"?\"]\n", f);
 
     if (!hist->result)
         res = "*";
@@ -162,7 +162,7 @@ int history_save_pgn(history_t *hist, char *filename)
     else
         res = "1/2-1/2";
 
-    fprintf(f, "[Result] \"%s\"\n\n", res);
+    fprintf(f, "[Result \"%s\"]\n\n", res);
 
     width = 0;
     move = 1;
