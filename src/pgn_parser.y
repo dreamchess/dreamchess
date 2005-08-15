@@ -29,6 +29,8 @@
 
 %{
 extern char *yystring;
+
+#include "dreamchess.h"
 %}
 
 %%
@@ -71,7 +73,7 @@ recursive_variation      : '(' element_sequence ')'
 game_termination         : GAMETERM
 ;
 
-san_move                 : SYMBOL {printf("Found move: %s\n", yylval.yycharp);}
+san_move                 : SYMBOL {game_make_move_str(yylval.yycharp, 0);printf("Found move: %s\n", yylval.yycharp);}
 ;
 
 move_number_indication   : INTEGER periods

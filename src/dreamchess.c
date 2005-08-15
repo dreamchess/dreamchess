@@ -41,6 +41,9 @@
 #define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
 #endif
 
+/* FIXME */
+void pgn_parse_file(char *filename);
+
 static ui_driver_t *ui;
 static config_t *config;
 
@@ -103,6 +106,7 @@ static move_list_t san_list, fan_list, fullalg_list;
 
 history_t *history;
 int in_game;
+board_t board;
 
 void game_view_next()
 {
@@ -177,12 +181,10 @@ int game_save()
         retval = 1;
     }
 
-    ch_datadir();
-
     return retval;
 }
 
-static int do_move(move_t *move)
+static int do_move(move_t *move, int ui_update)
 {
     char *move_s, *move_f;
     board_t new_board;
@@ -219,7 +221,8 @@ static int do_move(move_t *move)
 
     history_play(history, move, &new_board);
 
-    ui->update(history->view->board, move);
+    if (ui_update)
+        ui->update(history->view->board, move);
 
     if (new_board.state == MOVE_CHECKMATE)
     {
@@ -236,7 +239,8 @@ static int do_move(move_t *move)
             history->result->reason = strdup("White mates");
         }
 
-        ui->show_result(history->result);
+        if (ui_update)
+            ui->show_result(history->result);
     }
     else if (new_board.state == MOVE_STALEMATE)
     {
@@ -245,21 +249,64 @@ static int do_move(move_t *move)
         history->result->code = RESULT_DRAW;
         history->result->reason = strdup("Stalemate");
 
-        ui->show_result(history->result);
+        if (ui_update)
+            ui->show_result(history->result);
     }
 
     return 1;
 }
 
-void game_make_move(move_t *move)
+void game_make_move(move_t *move, int ui_update)
 {
-    if (do_move(move))
-        comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);
+    if (do_move(move, ui_update)){printf("Sending: %s\n", fullalg_list.move[fullalg_list.entries-1]);
+        comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);}
 }
 
 void game_quit()
 {
     in_game = 0;
+}
+
+void game_load()
+{
+    if (ch_userdir())
+    {
+        printf("Could not enter user directory.\n");
+        return;
+    }
+
+    /* FIXME */
+    history_exit(history);
+    move_list_exit(&san_list);
+    move_list_exit(&fan_list);
+    move_list_exit(&fullalg_list);
+    board_setup(&board);
+    history = history_init(&board);
+    move_list_init(&san_list);
+    move_list_init(&fan_list);
+    move_list_init(&fullalg_list);
+    comm_send("new\n");
+    ui->update(history->view->board, NULL);
+
+    comm_send("force\n");
+    pgn_parse_file("dreamchess.pgn");
+    ui->update(history->view->board, NULL);
+}
+
+void game_make_move_str(char *move_str, int ui_update)
+{
+    board_t new_board = *history->last->board;
+    move_t *engine_move = san_to_move(&new_board, move_str);
+    if (!engine_move)
+        engine_move = fullalg_to_move(&new_board, move_str);
+    if (engine_move)
+    {
+        printf("Move: %s\n", move_str);
+        game_make_move(engine_move, ui_update);
+        free(engine_move);
+    }
+    else
+        fprintf(stderr, "Could not parse move\n");
 }
 
 void game_get_move_list(char ***list, int *total, int *view)
@@ -330,6 +377,7 @@ int dreamchess(void *data)
 
     arguments_t *arg = data;
 #endif
+
     ui = ui_driver[0];
 
     printf("DreamChess\n");
@@ -351,7 +399,6 @@ int dreamchess(void *data)
     ui->init();
     while (1)
     {
-        board_t board;
         if (!(config = ui->config()))
             break;
 
@@ -395,7 +442,7 @@ int dreamchess(void *data)
                         if (engine_move)
                         {
                             printf("Move: %s\n", move_str);
-                            do_move(engine_move);
+                            do_move(engine_move, 1);
                             free(engine_move);
                         }
                         else

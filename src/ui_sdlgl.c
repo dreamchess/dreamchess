@@ -2064,6 +2064,7 @@ static void draw_capture_list(gg_colour_t *col)
 /** Implements ui_driver::update. */
 static void update(board_t *b, move_t *move)
 {
+    /* FIXME */
     while ( piece_moving_done == 0 )
         poll_move();
 
@@ -2506,7 +2507,7 @@ static void poll_move()
 
     source = -1;
     dest = -1;
-    game_make_move(move);
+    game_make_move(move, 1);
     reset_turn_counter();
     return;
 }
@@ -2619,6 +2620,9 @@ static int GetMove()
                 break;
             case 's':
                 game_save();
+                break;
+            case 'l':
+                game_load();
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;

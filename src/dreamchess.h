@@ -44,11 +44,13 @@ void game_view_next();
 void game_view_prev();
 void game_undo();
 int game_want_move();
-void game_make_move(move_t *move);
+void game_make_move(move_t *move, int ui_update);
 void game_retract_move();
 void game_move_now();
 void game_quit();
 void game_get_move_list(char ***list, int *total, int *view);
 int game_save();
+void game_load();
+void game_make_move_str(char *move_str, int ui_update);
 
 #endif /* DREAMCHESS_H */

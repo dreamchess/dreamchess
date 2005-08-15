@@ -33,12 +33,14 @@ void pgn_parse_file(char *filename)
         return;
     }
 
-    YY_FLUSH_BUFFER;
+    YY_NEW_FILE;
 
     if (yyparse())
         printf("Parse error\n");
     else
         printf("File ok!\n");
+
+    fclose(yyin);
 }
 %}
 
