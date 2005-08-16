@@ -1946,7 +1946,7 @@ static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
     char **list;
     int entries, view, i;
     int y;
-    int start;
+    int last_white, last_black;
     float x_white = 30;
     float y_white = 350;
     float x_black = 610;
@@ -1956,13 +1956,19 @@ static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
 
     game_get_move_list(&list, &entries, &view);
 
-    if (!(view % 2))
-        start = (view - 8 < 0 ? 0 : view - 8);
+    if (IS_BLACK(board.turn))
+    {
+        last_white = view;
+        last_black = view - 1;
+    }
     else
-        start = (view - 9 < 0 ? 0 : view - 9);
+    {
+        last_black = view;
+        last_white = view - 1;
+    }
 
     y = y_white;
-    for (i = view -1; i >= start; i -= 2)
+    for (i = last_white; i >= 0 && i >= last_white - 8; i -= 2)
     {
         char s[11];
         if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
@@ -1978,7 +1984,13 @@ static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
     col_normal2=*col_normal;
     col_high2=*col_normal;
     y = y_black;
-    for (i = view; i >= start; i -= 2)
+    if (IS_BLACK(board.turn))
+    {
+        y -= text_height();
+        col_normal2.a-=0.15f;
+        col_high2.a-=0.15f;
+    }
+    for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(board.turn) ? 6 : 8); i -= 2)
     {
         if (i != view)
             text_draw_string_right( x_black-5, y-5, list[i], 1, &col_normal2, 999 );
@@ -2064,10 +2076,6 @@ static void draw_capture_list(gg_colour_t *col)
 /** Implements ui_driver::update. */
 static void update(board_t *b, move_t *move)
 {
-    /* FIXME */
-    while ( piece_moving_done == 0 )
-        poll_move();
-
     board = *b;
 
     if ( move != NULL )
@@ -2086,6 +2094,9 @@ static void update(board_t *b, move_t *move)
         white_in_check=FALSE;
     }
 
+    /* FIXME */
+    while ( piece_moving_done == 0 )
+        poll_move();
 }
 
 /** Implements ui_driver::show_result. */
