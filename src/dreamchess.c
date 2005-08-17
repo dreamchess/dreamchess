@@ -42,10 +42,7 @@
 #endif
 
 /* FIXME */
-void pgn_parse_file(char *filename);
-
-static ui_driver_t *ui;
-static config_t *config;
+int pgn_parse_file(char *filename);
 
 typedef struct move_list
 {
@@ -54,7 +51,13 @@ typedef struct move_list
 }
 move_list_t;
 
-void move_list_play(move_list_t *list, char *move)
+static ui_driver_t *ui;
+static config_t *config;
+static move_list_t san_list, fan_list, fullalg_list;
+static history_t *history;
+static int in_game;
+
+static void move_list_play(move_list_t *list, char *move)
 {
     if (list->entries == list->max_entries)
     {
@@ -65,7 +68,7 @@ void move_list_play(move_list_t *list, char *move)
     list->view = list->entries - 1;
 }
 
-void move_list_undo(move_list_t *list)
+static void move_list_undo(move_list_t *list)
 {
     if (list->entries > 0)
     {
@@ -75,7 +78,7 @@ void move_list_undo(move_list_t *list)
     }
 }
 
-void move_list_init(move_list_t *list)
+static void move_list_init(move_list_t *list)
 {
     list->max_entries = 20;
     list->move = malloc(list->max_entries * sizeof(char *));
@@ -83,30 +86,51 @@ void move_list_init(move_list_t *list)
     list->view = -1;
 }
 
-void move_list_exit(move_list_t *list)
+static void move_list_exit(move_list_t *list)
 {
     while (list->entries > 0)
         move_list_undo(list);
     free(list->move);
 }
 
-void move_list_view_next(move_list_t *list)
+static void move_list_view_next(move_list_t *list)
 {
     if (list->view < list->entries - 1)
         list->view++;
 }
 
-void move_list_view_prev(move_list_t *list)
+static void move_list_view_prev(move_list_t *list)
 {
     if (list->view >= 0)
         list->view--;
 }
 
-static move_list_t san_list, fan_list, fullalg_list;
+static void stop_game()
+{
+    history_exit(history);
+    move_list_exit(&san_list);
+    move_list_exit(&fan_list);
+    move_list_exit(&fullalg_list);
+}
 
-history_t *history;
-int in_game;
-board_t board;
+static void start_game()
+{
+    board_t board;
+
+    board_setup(&board);
+    history = history_init(&board);
+    move_list_init(&san_list);
+    move_list_init(&fan_list);
+    move_list_init(&fullalg_list);
+    comm_send("new\n");
+    ui->update(history->view->board, NULL);
+}
+
+static void restart_game()
+{
+    stop_game();
+    start_game();
+}
 
 void game_view_next()
 {
@@ -267,30 +291,42 @@ void game_quit()
     in_game = 0;
 }
 
-void game_load()
+int game_load()
 {
+    int retval;
+    board_t *board;
+
     if (ch_userdir())
     {
         printf("Could not enter user directory.\n");
-        return;
+        return 1;
     }
 
-    /* FIXME */
-    history_exit(history);
-    move_list_exit(&san_list);
-    move_list_exit(&fan_list);
-    move_list_exit(&fullalg_list);
-    board_setup(&board);
-    history = history_init(&board);
-    move_list_init(&san_list);
-    move_list_init(&fan_list);
-    move_list_init(&fullalg_list);
-    comm_send("new\n");
-    ui->update(history->view->board, NULL);
-
+    restart_game();
     comm_send("force\n");
-    pgn_parse_file("dreamchess.pgn");
-    ui->update(history->view->board, NULL);
+    retval = pgn_parse_file("dreamchess.pgn");
+
+    if (retval)
+    {
+        printf("Parsing PGN file failed.\n");
+        restart_game();
+    }
+
+    board = history->last->board;
+
+    ui->update(board, NULL);
+
+    if (config->player[board->turn] == PLAYER_ENGINE)
+        comm_send("go\n");
+    else if (config->player[OPPONENT(board->turn)] == PLAYER_ENGINE)
+    {
+        if (board->turn == WHITE)
+            comm_send("white\n");
+        else
+            comm_send("black\n");
+    }
+
+    return retval;
 }
 
 void game_make_move_str(char *move_str, int ui_update)
@@ -399,6 +435,8 @@ int dreamchess(void *data)
     ui->init();
     while (1)
     {
+        board_t board;
+
         if (!(config = ui->config()))
             break;
 

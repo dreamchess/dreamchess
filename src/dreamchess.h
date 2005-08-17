@@ -50,7 +50,7 @@ void game_move_now();
 void game_quit();
 void game_get_move_list(char ***list, int *total, int *view);
 int game_save();
-void game_load();
+int game_load();
 void game_make_move_str(char *move_str, int ui_update);
 
 #endif /* DREAMCHESS_H */

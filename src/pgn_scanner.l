@@ -23,24 +23,29 @@
 
 static char *make_string();
 
-void pgn_parse_file(char *filename)
+int pgn_parse_file(char *filename)
 {
+    int retval = 0;
+
     yyin = fopen(filename, "r");
 
     if (!yyin)
     {
         printf("Couldn't open file\n");
-        return;
+        return 1;
     }
 
     YY_NEW_FILE;
 
     if (yyparse())
+    {
+        retval = 1;
         printf("Parse error\n");
-    else
-        printf("File ok!\n");
+    }
 
     fclose(yyin);
+
+    return retval;
 }
 %}
 

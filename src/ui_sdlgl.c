@@ -2456,14 +2456,10 @@ static void poll_move()
         dest = -1;
         needprom = 0;
     }
-    /* else
-        flip_board =  board.turn; */
 
     if (source == -1)
     {
         source = input;
-        if ((source >= 0) && flip_board)
-            source = 63 - source;
         /* Only allow piece of current player to be moved. */
         if ((source >= 0) && ((PIECE(board.square[source]) == NONE) || (COLOUR(board.square[source]) != board.turn)))
             source = -1;
@@ -2475,8 +2471,6 @@ static void poll_move()
         dest = input;
         if (dest >= 0)
         {
-            if (flip_board)
-                dest = 63 - dest;
             /* Destination square must not contain piece of current player. */
             if ((PIECE(board.square[dest]) != NONE) && (COLOUR(board.square[dest]) == board.turn))
             {
@@ -2524,6 +2518,12 @@ static void poll_move()
 }
 
 #define MOVE_SPEED (60 / fps)
+
+static void load_game()
+{
+    if (game_load())
+        show_message("PGN file loading failed.");
+}
 
 /** @brief Main input routine.
  *
@@ -2633,7 +2633,7 @@ static int GetMove()
                 game_save();
                 break;
             case 'l':
-                game_load();
+                load_game();
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;
