@@ -204,8 +204,10 @@ void command_handle(state_t *state, char *command)
     if (!strcmp(command, "xboard"))
     {
         /* xboard mode is default. */
+        return;
     }
-    else if (!strcmp(command, "new"))
+
+    if (!strcmp(command, "new"))
     {
         setup_board(&state->board);
         forget_history();
@@ -214,18 +216,63 @@ void command_handle(state_t *state, char *command)
         state->depth = 1;
         state->mode = MODE_BLACK;
         state->done = 0;
+        return;
     }
-    else if (!strcmp(command, "quit"))
+
+    if (!strcmp(command, "quit"))
     {
         state->mode = MODE_QUIT;
-        state->flags = FLAG_IGNORE_MOVE;
+        return;
     }
-    else if (!strcmp(command, "force"))
+
+    if (!strcmp(command, "force"))
     {
         state->mode = MODE_FORCE;
-        state->flags = FLAG_IGNORE_MOVE;
+        return;
     }
-    else if (!strncmp(command, "sd", 2))
+
+    if (!strcmp(command, "white"))
+    {
+        if (state->board.current_player != SIDE_WHITE)
+        {
+            /* FIXME, we should support this, but right now it would cause
+            ** severe problems with the undo system.
+            */
+            NOT_NOW(command);
+            return;
+        }
+        state->mode = MODE_BLACK;
+        return;
+    }
+
+    if (!strcmp(command, "black"))
+    {
+        if (state->board.current_player != SIDE_BLACK)
+        {
+            /* FIXME, see above. */
+            NOT_NOW(command);
+            return;
+        }
+        state->mode = MODE_WHITE;
+        return;
+    }
+
+    if (!strcmp(command, "playother"))
+    {
+        if (state->mode != MODE_FORCE)
+        {
+            NOT_NOW(command);
+            return;
+        }
+
+        if (state->board.current_player == SIDE_WHITE)
+            state->mode = MODE_BLACK;
+        else
+            state->mode = MODE_WHITE;
+        return;
+    }
+
+    if (!strncmp(command, "sd", 2))
     {
         char *number = strchr(command, ' ');
         char *end;
@@ -239,16 +286,19 @@ void command_handle(state_t *state, char *command)
         }
         else
             BADPARAM(command);
+        return;
     }
-    else if (!strcmp(command, "go"))
+
+    if (!strcmp(command, "go"))
     {
         if (state->board.current_player == SIDE_WHITE)
             state->mode = MODE_WHITE;
         else
             state->mode = MODE_BLACK;
-        state->flags = FLAG_IGNORE_MOVE;
+        return;
     }
-    else if (!strcmp(command, "remove"))
+
+    if (!strcmp(command, "remove"))
     {
         switch (state->mode)
         {
@@ -279,10 +329,16 @@ void command_handle(state_t *state, char *command)
         undo_move(state);
         undo_move(state);
         state->done = 0;
+        return;
     }
-    else if (!strcmp(command, "?"))
+
+    if (!strcmp(command, "?"))
+    {
         NOT_NOW(command);
-    else if (is_coord_move(command))
+        return;
+    }
+
+    if (is_coord_move(command))
     {
         if (!coord_usermove(state, command))
         {
@@ -290,9 +346,10 @@ void command_handle(state_t *state, char *command)
                 state->mode = (state->board.current_player == SIDE_WHITE?
                                MODE_WHITE : MODE_BLACK);
         }
+        return;
     }
-    else
-        UNKNOWN(command);
+
+    UNKNOWN(command);
 }
 
 int command_check_abort(state_t *state, char *command)
@@ -300,9 +357,19 @@ int command_check_abort(state_t *state, char *command)
     if (!strcmp(command, "?"))
         return 1;
     else if (!strcmp(command, "new"))
+    {
         state->flags = FLAG_NEW_GAME | FLAG_IGNORE_MOVE;
-    else
+        return 1;
+    }
+    else if (!strcmp(command, "quit") || !strcmp(command, "force"))
+    {
+        state->flags = FLAG_IGNORE_MOVE;
         command_handle(state, command);
-
-    return state->flags & FLAG_IGNORE_MOVE;
+        return 1;
+    }
+    else
+    {
+        NOT_NOW(command);
+        return 0;
+    }
 }
