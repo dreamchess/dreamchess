@@ -22,9 +22,6 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 
-/* FIXME */
-#include <SDL/SDL.h>
-
 static int classes = 0;
 static gg_class_id *parent_class = NULL;
 static gg_driver_t *driver;
@@ -61,6 +58,11 @@ int gg_check_cast(gg_widget_t *widget, gg_class_id id)
 void gg_system_init(gg_driver_t *d)
 {
     driver = d;
+}
+
+unsigned int gg_system_get_ticks()
+{
+    return driver->get_ticks();
 }
 
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour)
@@ -117,7 +119,7 @@ void gg_system_get_string_size(unsigned char *s, int *width, int *height)
 void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align)
 {
     int i;
-    Uint32 ticks = SDL_GetTicks();
+    unsigned int ticks = gg_system_get_ticks();
 
     if (align != 0.0f)
     {

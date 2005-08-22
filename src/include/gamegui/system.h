@@ -85,6 +85,7 @@ typedef struct gg_driver
     void (* draw_char) (int c, int x, int y, gg_colour_t *colour);
     void (* get_image_size) (void *image, int *width, int *height);
     void (* get_char_size) (int c, int *width, int *height);
+    unsigned int (* get_ticks) ();
 }
 gg_driver_t;
 

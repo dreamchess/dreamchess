@@ -1577,6 +1577,11 @@ void draw_char(int c, int x, int y, gg_colour_t *colour)
     text_draw_char(x, y, 1.0f, c, colour);
 }
 
+unsigned int get_ticks()
+{
+    return SDL_GetTicks();
+}
+
 void get_image_size(void *image, int *width, int *height)
 {
     texture_t *texture = image;
@@ -1604,7 +1609,8 @@ gg_driver_t gg_driver_sdlgl =
         draw_image,
         draw_char,
         get_image_size,
-        get_char_size
+        get_char_size,
+        get_ticks
     };
 
 static void load_border(texture_t border[9], char *filename)

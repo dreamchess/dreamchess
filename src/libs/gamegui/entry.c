@@ -59,7 +59,7 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
 
         gg_system_get_string_size(ENTRY_CURSOR, &cursor_width, NULL);
         gg_system_draw_string(entry->text, x, y, &col_dark_red, 0, 0);
-        if (SDL_GetTicks() % 400 < 200)
+        if (gg_system_get_ticks() % 400 < 200)
             w_system_draw_string(ENTRY_CURSOR, x + len - cursor_width / 2, y,
                 &col_dark_red, 0, 0);
     }

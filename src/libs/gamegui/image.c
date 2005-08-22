@@ -18,9 +18,6 @@
 
 #include <gamegui/image.h>
 
-/* FIXME */
-#include <SDL/SDL.h>
-
 /** Focussed image scale value. */
 #define IMAGE_SCALE -0.3f
 /** Focussed image enlargement speed in enlargements per second. */
@@ -42,7 +39,7 @@ void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
     gg_image_t *image = GG_IMAGE(widget);
     int w = image->width;
     int h = image->height;
-    Uint32 ticks = SDL_GetTicks();
+    unsigned int ticks = gg_system_get_ticks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
     gg_rect_t source, dest;
