@@ -51,6 +51,14 @@ typedef struct coord3
 }
 coord3_t;
 
+typedef struct coord3d
+{
+    GLdouble x;
+    GLdouble y;
+    GLdouble z;
+}
+coord3d_t;
+
 typedef struct texture
 {
     /** OpenGL Texture ID. */
@@ -630,6 +638,44 @@ void draw_selector()
     glVertex3f(-0.5, 0.5, 0);
     glEnd();
 }
+
+#ifdef _arch_dreamcast
+int find_square(int x, int y)
+{
+    return -1;
+}
+#else
+int find_square(int x, int y)
+{
+    coord3d_t obj;
+    coord3_t win;
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+
+    glLoadIdentity();
+    glTranslatef(0, -0.5f, -12.0f );
+    glRotatef(x_rotation, 1, 0, 0);
+    glRotatef(z_rotation, 0, 0, 1);
+
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    win.x = x;
+    win.y = viewport[3] - y;
+    glReadPixels(win.x, win.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &win.z);
+
+    gluUnProject(win.x, win.y, win.z, modelview, projection, viewport, &obj.x,
+                 &obj.y, &obj.z);
+
+    if (obj.x < -4 || obj.x > 4 || obj.y < -4 || obj.y > 4)
+        /* TODO Check z? */
+        return -1;
+
+    return (floor(obj.y) + 4) * 8 + floor(obj.x) + 4;
+}
+#endif
 
 void render_scene_3d(board_t *board)
 {

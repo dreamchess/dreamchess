@@ -87,6 +87,15 @@
 #define AXIS_VIEW_Y 3
 #endif
 
+static struct
+{
+    int x;
+    int y;
+}
+mouse_pos;
+
+static int mouse_square;
+
 static void poll_move();
 
 int piece_moving_done=1;
@@ -1415,6 +1424,10 @@ static config_t *do_menu()
         {
             ui_event_t ui_event;
 
+            if (event.type == SDL_QUIT)
+                /* FIXME */
+                exit(0);
+
             if (event.type == SDL_MOUSEMOTION)
             {
                 gg_dialog_t *dialog = gg_dialog_current();
@@ -2139,6 +2152,7 @@ static void draw_scene( board_t *b )
     glDepthMask(GL_TRUE);
 
     render_scene_3d(b);
+    mouse_square = find_square(mouse_pos.x, mouse_pos.y);
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -2558,11 +2572,13 @@ static int GetMove()
             move_camera(0.6f * MOVE_SPEED, 0.0f);
 
         while (SDL_PollEvent( &event ))
-            ;
+            if (event.type == SDL_QUIT)
+                /* FIXME */
+                exit(0);
     }
 
     if ((roty < -3000) || (roty > 3000))
-       move_camera(-roty / (float) 32768 * 0.6f * MOVE_SPEED, 0.0f);
+        move_camera(-roty / (float) 32768 * 0.6f * MOVE_SPEED, 0.0f);
 
     if ((rotx < -3000) || (rotx > 3000))
         move_camera(0.0f, -rotx / (float) 32768 * 0.6f * MOVE_SPEED);
@@ -2571,11 +2587,28 @@ static int GetMove()
     {
         ui_event_t ui_event;
 
+        if (event.type == SDL_QUIT)
+            /* FIXME */
+            exit(0);
+
         if (event.type == SDL_MOUSEMOTION)
         {
+            mouse_pos.x = event.motion.x;
+            mouse_pos.y = event.motion.y;
+
             gg_dialog_t *dialog = gg_dialog_current();
             if (dialog)
                 gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+
+            continue;
+        }
+
+        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+                event.button.button == SDL_BUTTON_LEFT)
+        {
+            retval = mouse_square;
+            if (retval != -1)
+                select_piece(retval);
 
             continue;
         }
@@ -2648,21 +2681,6 @@ static int GetMove()
                 break;
             }
         break;
-#if 0
-
-    case SDL_MOUSEMOTION:
-        mouse_x_pos=((event.motion.x-10))/(460/8);
-        mouse_y_pos=(470-(event.motion.y))/(460/8);
-        break;
-    case SDL_MOUSEBUTTONDOWN:
-        if ( event.button.button == SDL_BUTTON_LEFT )
-        {
-            retval = (mouse_y_pos*8)+mouse_x_pos;
-            select_piece(retval);
-        }
-        break;
-#endif
-
     }
     return retval;
 }

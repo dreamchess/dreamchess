@@ -120,7 +120,7 @@ the zlib and libpng libraries that can be found in the kos-ports directory
 of KallistiOS. You'll also need the following software package from our
 website:
 
- * dreamcast-ports (http://developer.berlios.de/projects/dreamchess/)
+ * dreamcast-libs (http://developer.berlios.de/projects/dreamchess/)
 
 Follow the instructions in the enclosed README file to set it up.
 

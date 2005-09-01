@@ -109,20 +109,21 @@ if test x"$have_sdl_image" = xyes -a x"$have_jpeg" = xyes; then
 		)
 fi
 
+have_gl="no"
+
 if test "$host_os" = "mingw32"; then
 	AC_CHECK_LIB(opengl32, main,
-		[OPENGL_LIBS="-lopengl32" have_gl="yes"],
-		[have_gl="no"]
+		[OPENGL_LIBS="-lopengl32" have_gl="yes"]
 		)
 elif test x"$CC" = xkos-cc; then
 	AC_CHECK_LIB(gl, glBegin,
-		[OPENGL_LIBS="-lgl" have_gl="yes"],
-		[have_gl="no"]
+		[OPENGL_LIBS="-lgl" have_gl="yes"]
 		)
 else
 	AC_CHECK_LIB(GL, glBegin,
-		[OPENGL_LIBS="-lGL" have_gl="yes"],
-		[have_gl="no"]
+		AC_CHECK_LIB(GLU, gluPerspective,
+			[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"]
+			)
 		)
 fi
 
