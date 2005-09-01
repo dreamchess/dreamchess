@@ -218,11 +218,29 @@ fi
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h string.h getopt.h])
-AC_CHECK_FUNCS(getopt_long)
+AC_CHECK_FUNCS(getopt_long strdup vsnprintf)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_VOLATILE
+
+# Needed for Mini-XML.
+AH_TOP(/* Needed for Mini-XML. */
+[#include <stdio.h>
+#include <stdarg.h>])
+
+AH_BOTTOM(/* Needed for Mini-XML. */
+[#ifndef HAVE_STRDUP
+extern char *mxml_strdup(const char *);
+#define strdup mxml_strdup
+#endif
+
+extern char *mxml_strdupf(const char *, va_list);
+
+#ifndef HAVE_VSNPRINTF
+extern int mxml_vsnprintf(char *, size_t, const char *, va_list);
+#define vsnprintf mxml_vsnprintf
+#endif])
 
 # Checks for library functions.
 
@@ -232,6 +250,7 @@ AC_CONFIG_FILES([Makefile
 		src/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
+		src/libs/mxml/Makefile
 		src/include/Makefile
 		src/dreamer/Makefile])
 AC_OUTPUT

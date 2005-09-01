@@ -12,4 +12,4 @@ dreamchess_SOURCES = ui_sdlgl.c ui_sdl.c board.c history.c ui.c \
 	dir.c comm.c comm_win32.c credits.c ui_sdlgl_3d.c pgn_parser.y \
 	pgn_scanner.l
 dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ libs/libsan.a \
-	libs/gamegui/libgamegui.a
+	libs/gamegui/libgamegui.a libs/mxml/libmxml.a
