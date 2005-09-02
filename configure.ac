@@ -113,7 +113,9 @@ have_gl="no"
 
 if test "$host_os" = "mingw32"; then
 	AC_CHECK_LIB(opengl32, main,
-		[OPENGL_LIBS="-lopengl32" have_gl="yes"]
+		AC_CHECK_LIB(glu32, main,
+			[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
+			)
 		)
 elif test x"$CC" = xkos-cc; then
 	AC_CHECK_LIB(gl, glBegin,
