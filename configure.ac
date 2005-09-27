@@ -192,6 +192,11 @@ else
 	AC_SUBST(DREAMER, "dreamer\$(EXEEXT)")
 	if test "$host_os" = "mingw32"; then
 		AC_SUBST(PIPE_LIB, "libpipe_win32.a")
+		AC_CHECK_TOOL(WINDRES, windres, :)
+		if test x"$WINDRES" != x":"; then
+			AC_SUBST(WINDRES)
+			AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
+		fi
 		DREAMCHESS_LIBS="libs/libpipe_win32.a"
 		DREAMER_LIBS="../libs/libpipe_win32.a"
 		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
