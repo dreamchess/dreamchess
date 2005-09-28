@@ -1,6 +1,7 @@
-DreamChess README
+DreamChess
 Version 0.1.0-SVN
------------------
+
+Copyright (C) 2003-2005  The DreamChess project
 
 For the latest information, please check out our project website at:
 http://developer.berlios.de/projects/dreamchess/
@@ -9,6 +10,8 @@ Index
 -----
 
 1 - About
+1.1 - License Information
+1.2 - Libraries
 2 - System Requirements
 2.1 - User Interface Drivers
 2.1.1 - sdlgl
@@ -38,6 +41,38 @@ be used with other xboard-compatible user interfaces such as xboard and
 Winboard (http://www.tim-mann.org/xboard.html) and recent editions of the
 commercial chess program Chessmaster (http://www.chessmaster.com/).
 
+1.1 - License Information
+-------------------------
+
+DreamChess is licensed under the GNU General Public License (see COPYING).
+
+1.2 - Libraries
+---------------
+
+DreamChess uses the following libraries (note that not all libraries are
+used on all target platforms):
+
+libSDL (http://www.libsdl.org/), licensed under the GNU Lesser General Public
+License (see doc/lesser.txt). Source code will be provided on request (see
+AUTHORS for contact information).
+
+libSDL_image (http://www.libsdl.org/projects/SDL_image/), licensed under the
+GNU Lesser General Public License (see doc/lesser.txt). Source code will be
+provided on request (see AUTHORS for contact information).
+
+libjpeg (http://www.ijg.org/), this software is based in part on the work of
+the Independent JPEG Group.
+
+libpng (http://www.libpng.org/pub/png/libpng.html)
+
+zlib (http://www.zlib.net/)
+
+KallistiOS (http://cadcdev.sourceforge.net/softprj/kos/), licensed under the
+KOS license (see doc/kos.txt).
+
+newlib (http://sourceware.org/newlib/), various licenses
+(see doc/newlib.txt).
+
 
 2 - System Requirements
 -----------------------
@@ -64,20 +99,8 @@ recommended that you use a hardware-accelerated OpenGL library, if available.
 The following libraries are required for this driver:
 
  * SDL (http://www.libsdl.org/)
+ * SDL_image (http://www.libsdl.org/projects/SDL_image/)
  * OpenGL
- * SDL_image (http://www.libsdl.org/projects/SDL_image/)
-
-2.1.2 - sdl
------------
-
-This driver uses SDL and should work well on most systems.
-
-The following libraries are required for this driver:
-
- * SDL (http://www.libsdl.org/)
- * SDL_image (http://www.libsdl.org/projects/SDL_image/)
-
-NOTE: This driver is currently disabled as it's not ready for use yet.
 
 
 3 - Building DreamChess
@@ -152,18 +175,19 @@ sections for additional information concerning those platforms.
 3.3.1 - Microsoft Windows
 -------------------------
 
-Create a new directory (e.g. C:\DreamChess) and copy src/dreamchess.exe and
-src/dreamer/dreamer.exe into it. Next, copy the entire data directory as a
-whole into the new directory. You'll also need the following dll's:
+On Windows DreamChess is installed by running an NSIS installer package. This
+section will describe how to create such an installer. Download and install:
 
- * SDL.dll
- * SDL_image.dll
- * jpeg.dll
- * libpng1.dll
- * zlib.dll
+ * NSIS (http://nsis.sourceforge.net/)
 
-You can find them on http://www.libsdl.org/, contained in the Windows
-runtime library packages for SDL and SDL_image.
+Download the necessary runtime DLLs:
+
+ * SDL (http://www.libsdl.org/)
+ * SDL_image (http://www.libsdl.org/projects/SDL_image/)
+
+Put the DLLs in the pkg/win32 directory. Run MakeNSISW and drag the
+dreamchess.nsi file from the pkg/win32 directory onto the window. You should
+now have an installer package in the pkg/win32 directory.
 
 3.3.2 - Sega Dreamcast
 ----------------------

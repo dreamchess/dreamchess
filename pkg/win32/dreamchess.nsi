@@ -1,6 +1,7 @@
 !define VERSION "0.1.0-SVN"
 
 !include "MUI.nsh"
+!include "Library.nsh"
 
 Name "DreamChess ${VERSION}"
 OutFile "DreamChess-${VERSION}.exe"
@@ -12,9 +13,12 @@ InstallDir "$PROGRAMFILES\DreamChess"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp" 
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp" 
+!define MUI_ABORTWARNING
+!define MUI_UNABORTWARNING
 
 Var MUI_TEMP
 Var STARTMENU_FOLDER
+Var ALREADY_INSTALLED
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
@@ -54,8 +58,19 @@ Section
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
   File /r /x .* ..\..\data
+  File /r /x .* ..\..\doc
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+  IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
+    StrCpy $ALREADY_INSTALLED 1
+  new_installation:
+
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL.dll $SYSDIR\SDL.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_image.dll $SYSDIR\SDL_image.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED jpeg.dll $SYSDIR\jpeg.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng13.dll $SYSDIR\libpng13.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED zlib1.dll $SYSDIR\zlib1.dll $SYSDIR
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -65,10 +80,10 @@ Section
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
-  WriteRegStr HKCU "Software\DreamChess" "Directory" "$INSTDIR"
-
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "DisplayName" "DreamChess"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "DisplayName" "DreamChess ${VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "UninstallString" "$INSTDIR\Uninstall.exe"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "DisplayIcon" "$INSTDIR\DreamChess.exe"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" "NoRepair" "1"
 SectionEnd
@@ -84,6 +99,12 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\Authors.lnk"
 
   Delete "$DESKTOP\DreamChess.lnk"
+
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_image.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\jpeg.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng13.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\zlib1.dll
 
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  
