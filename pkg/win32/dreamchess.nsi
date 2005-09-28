@@ -57,6 +57,7 @@ Section
   File ..\..\src\dreamer\Dreamer.exe
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
+  File /oname=Copying.txt ..\..\COPYING
   File /r /x .* ..\..\data
   File /r /x .* ..\..\doc
 
@@ -77,6 +78,7 @@ Section
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\DreamChess.lnk" "$INSTDIR\DreamChess.exe"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme.lnk" "$INSTDIR\Readme.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Authors.lnk" "$INSTDIR\Authors.txt"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copying.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -97,6 +99,7 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\DreamChess.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Readme.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Authors.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Copying.lnk"
 
   Delete "$DESKTOP\DreamChess.lnk"
 
