@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+Name=DreamChess
+Exec=dreamchess
+Icon=dreamchess.png
+Categories=Application;Game;

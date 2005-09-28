@@ -1,12 +1,14 @@
-SUBDIRS = src man m4
+SUBDIRS = desktop src man m4
 ACLOCAL_AMFLAGS = -I m4
 
 INSTALL_DIRS = \
 	/ \
 	/themes/default/ \
+	/themes/fireice/ \
 	/pieces/classiclow/ \
 	/pieces/figurine/ \
-	/boards/classic/
+	/boards/classic/ \
+	/boards/fireice/
 
 install-data-local:
 	@for dir in $(INSTALL_DIRS); do \

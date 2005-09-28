@@ -252,6 +252,7 @@ extern int mxml_vsnprintf(char *, size_t, const char *, va_list);
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
+		desktop/Makefile
 		man/Makefile
 		m4/Makefile
 		src/Makefile
