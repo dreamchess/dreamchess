@@ -259,7 +259,6 @@ typedef struct texture
 texture_t;
 
 /* Menu stuff */
-static SDL_Surface *icon;
 static texture_t menu_title_tex;
 
 static texture_t backdrop;
@@ -1669,6 +1668,7 @@ static void unload_border(texture_t border[9])
 static void init_gui()
 {
     int video_flags;
+    SDL_Surface *icon;
     const SDL_VideoInfo *video_info;
     int i;
     DIR* themedir;
@@ -1682,6 +1682,19 @@ static void init_gui()
     }
 
     SDL_EnableUNICODE(1);
+
+    ch_datadir();
+    icon = IMG_Load("icon.png");
+
+    if (!icon)
+    {
+        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_WM_SetIcon(icon, NULL);
+    SDL_WM_SetCaption( "DreamChess", NULL );
+    SDL_FreeSurface(icon);
 
     video_info = SDL_GetVideoInfo( );
 
@@ -1718,18 +1731,6 @@ static void init_gui()
 
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
-
-    ch_datadir();
-    icon = IMG_Load("icon.png");
-
-    if (!icon)
-    {
-        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_WM_SetIcon(icon, NULL);
-    SDL_WM_SetCaption( "DreamChess", NULL );
 
     init_gl();
 
@@ -2247,7 +2248,6 @@ static int sdlgl_init()
 static int sdlgl_exit()
 {
     glDeleteTextures(1, &menu_title_tex.id);
-    SDL_FreeSurface(icon);
     SDL_Quit();
     return 0;
 }
