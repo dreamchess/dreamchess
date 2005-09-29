@@ -259,6 +259,7 @@ typedef struct texture
 texture_t;
 
 /* Menu stuff */
+static SDL_Surface *icon;
 static texture_t menu_title_tex;
 
 static texture_t backdrop;
@@ -1718,13 +1719,21 @@ static void init_gui()
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
+    ch_datadir();
+    icon = IMG_Load("icon.png");
+
+    if (!icon)
+    {
+        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_WM_SetIcon(icon, NULL);
     SDL_WM_SetCaption( "DreamChess", NULL );
 
     init_gl();
 
     gg_system_init(&gg_driver_sdlgl);
-
-    ch_datadir();
 
     /* New text stuff. */
     generate_text_chars();
@@ -2238,6 +2247,7 @@ static int sdlgl_init()
 static int sdlgl_exit()
 {
     glDeleteTextures(1, &menu_title_tex.id);
+    SDL_FreeSurface(icon);
     SDL_Quit();
     return 0;
 }
