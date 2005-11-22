@@ -123,8 +123,11 @@ elif test x"$CC" = xkos-cc; then
 		)
 else
 	AC_CHECK_LIB(GL, glBegin,
-		AC_CHECK_LIB(GLU, gluPerspective,
-			[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"]
+		AC_CHECK_LIB(GLU, gluUnProject,
+			[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"],
+			AC_CHECK_LIB(GL, gluUnProject,
+				[OPENGL_LIBS="-lGL" have_gl="yes"]
+				)
 			)
 		)
 fi

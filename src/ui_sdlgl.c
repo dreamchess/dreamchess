@@ -1395,10 +1395,10 @@ static config_t *do_menu()
     float fadehuh;
     gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
+    gg_colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
-    gg_colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     board_xpos=128;
     board_ypos=30;
@@ -2603,10 +2603,10 @@ static int GetMove()
 
         if (event.type == SDL_MOUSEMOTION)
         {
+            gg_dialog_t *dialog = gg_dialog_current();
             mouse_pos.x = event.motion.x;
             mouse_pos.y = event.motion.y;
 
-            gg_dialog_t *dialog = gg_dialog_current();
             if (dialog)
                 gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
 
