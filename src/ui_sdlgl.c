@@ -1693,7 +1693,6 @@ static void init_gui()
     }
 
     SDL_WM_SetIcon(icon, NULL);
-    SDL_WM_SetCaption( "DreamChess", NULL );
     SDL_FreeSurface(icon);
 
     video_info = SDL_GetVideoInfo( );
@@ -1732,6 +1731,7 @@ static void init_gui()
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
+    SDL_WM_SetCaption( "DreamChess", NULL );
     init_gl();
 
     gg_system_init(&gg_driver_sdlgl);
