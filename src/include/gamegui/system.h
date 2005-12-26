@@ -81,7 +81,8 @@ typedef struct gg_driver
 {
     void (* draw_rect) (int x, int y, int width, int height, gg_colour_t *colour);
     void (* draw_filled_rect) (int x, int y, int width, int height, gg_colour_t *colour);
-    void (* draw_image) (void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v);
+    void (* draw_image) (void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
+    void *(* get_char_image) (int c);
     void (* draw_char) (int c, int x, int y, gg_colour_t *colour);
     void (* get_image_size) (void *image, int *width, int *height);
     void (* get_char_size) (int c, int *width, int *height);
@@ -110,22 +111,22 @@ gg_class_id w_register_class(gg_class_id parent);
 
 /* int w_check_cast(w_widget_t *widget, w_class_id id); */
 
-void w_system_init(gg_driver_t *d);
+void gg_system_init(gg_driver_t *d);
 
-void w_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour);
+void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour);
 
-void w_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour);
+void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour);
 
-void w_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v);
+void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
 
-void w_system_draw_char(int c, int x, int y, gg_colour_t *colour);
+void gg_system_draw_char(int c, int x, int y, gg_colour_t *colour);
 
-void w_system_get_image_size(void *image, int *width, int *height);
+void gg_system_get_image_size(void *image, int *width, int *height);
 
-void w_system_get_char_size(int c, int *width, int *height);
+void gg_system_get_char_size(int c, int *width, int *height);
 
-void w_system_get_string_size(unsigned char *s, int *width, int *height);
+void gg_system_get_string_size(unsigned char *s, int *width, int *height);
 
-void w_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
+void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
 
 #endif /* GG_SYSTEM_H */

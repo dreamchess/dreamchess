@@ -238,16 +238,16 @@ typedef struct texture
     /** OpenGL Texture ID. */
     GLuint id;
 
-    /** Lower-left u-coordinate. Ranges from 0.0f to 1.0f. */
+    /** Upper-left u-coordinate. Ranges from 0.0f to 1.0f. */
     float u1;
 
-    /** Lower-left v-coordinate. Ranges from 0.0f to 1.0f. */
+    /** Upper-left v-coordinate. Ranges from 0.0f to 1.0f. */
     float v1;
 
-    /** Upper-right u-coordinate. Ranges from 0.0f to 1.0f. */
+    /** Lower-right u-coordinate. Ranges from 0.0f to 1.0f. */
     float u2;
 
-    /** Upper-right v-coordinate. Ranges from 0.0f to 1.0f. */
+    /** Lower-right v-coordinate. Ranges from 0.0f to 1.0f. */
     float v2;
 
     /** Width of texture in pixels. */
@@ -943,8 +943,8 @@ static gg_dialog_t *dialog_title_create()
     gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    /*  widget = gg_entry_create();
-      gg_container_append(GG_CONTAINER(vbox2), widget);*/
+      widget = gg_entry_create();
+      gg_container_append(GG_CONTAINER(vbox2), widget);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
@@ -1165,12 +1165,8 @@ static void draw_credits(int init)
     }
 }
 
-/** @brief Creates a texture from an SDL surface.
- *
- *  @param surface The SDL surface to transform.
- *  @param alpha 1 = Create texture with alpha channel (taken from surface),
- *               0 = Create texture without alpha channel.
- *  @return Texture created from surface.
+/*  This function loads the image upside-down. Meaning that texture
+ *  coordinate (0,0) corresponds to the top-left corner of the image.
  */
 static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha)
 {
@@ -1544,7 +1540,7 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
         SDL_FreeSurface( texture_image );
 }
 
-void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v)
+void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour)
 {
     texture_t *texture = image;
     float hsize = texture->u2 - texture->u1;
@@ -1580,7 +1576,7 @@ void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int m
 
     draw_texture_uv(texture, dest.x,
                     dest.y, dest.width, dest.height, 1.0f,
-                    &col_white, xsrc,
+                    colour, xsrc,
                     ysrc,
                     xsrc + width, ysrc + height, en_h, en_v);
 }
@@ -1588,6 +1584,11 @@ void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int m
 void draw_char(int c, int x, int y, gg_colour_t *colour)
 {
     text_draw_char(x, y, 1.0f, c, colour);
+}
+
+void *get_char_image(int c)
+{
+    return &text_characters[c];
 }
 
 unsigned int get_ticks()
@@ -1620,6 +1621,7 @@ gg_driver_t gg_driver_sdlgl =
         draw_rect,
         draw_rect_fill,
         draw_image,
+        get_char_image,
         draw_char,
         get_image_size,
         get_char_size,

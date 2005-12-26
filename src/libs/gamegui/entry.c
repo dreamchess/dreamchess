@@ -42,13 +42,13 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
 
     c = entry->text[entry->cursor_pos];
     entry->text[entry->cursor_pos] = '\0';
-    w_system_get_string_size(entry->text, &len, NULL);
+    gg_system_get_string_size(entry->text, &len, NULL);
     entry->text[entry->cursor_pos] = c;
 
     if (focus != GG_FOCUS_NONE)
-        draw_rect(x, y, entry->width_a, entry->height_a, &col_dark_red);
+        gg_system_draw_rect(x, y, entry->width_a, entry->height_a, &col_dark_red);
     else
-        draw_rect(x, y, entry->width_a, entry->height_a, &col_black);
+        gg_system_draw_rect(x, y, entry->width_a, entry->height_a, &col_black);
 
     x += ENTRY_SPACING;
     y += ENTRY_SPACING;
@@ -60,7 +60,7 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
         gg_system_get_string_size(ENTRY_CURSOR, &cursor_width, NULL);
         gg_system_draw_string(entry->text, x, y, &col_dark_red, 0, 0);
         if (gg_system_get_ticks() % 400 < 200)
-            w_system_draw_string(ENTRY_CURSOR, x + len - cursor_width / 2, y,
+            gg_system_draw_string(ENTRY_CURSOR, x + len - cursor_width / 2, y,
                 &col_dark_red, 0, 0);
     }
     else

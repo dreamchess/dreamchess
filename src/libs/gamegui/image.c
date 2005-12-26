@@ -66,7 +66,7 @@ void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
     source.width = image->width;
     source.height = image->width;
 
-    gg_system_draw_image(image->image, source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image->image, source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
 }
 
 void gg_image_init(gg_image_t *image, void *texture)

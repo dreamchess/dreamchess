@@ -21,6 +21,7 @@
 
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
+#include <gamegui/clipping.h>
 
 static int classes = 0;
 static gg_class_id *parent_class = NULL;
@@ -67,17 +68,84 @@ unsigned int gg_system_get_ticks()
 
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
-    driver->draw_rect(x, y, width, height, colour);
+    gg_rect_t dest = {x, y, width, 1};
+    gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
+    dest.y += height - 1;
+    gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
+    dest.y = y + 1;
+    dest.width = 1;
+    dest.height = height - 2;
+    gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
+    dest.x += width - 1;
+    gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
 }
 
 void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
-    driver->draw_filled_rect(x, y, width, height, colour);
+    gg_rect_t *clip = gg_clipping_get();
+
+    if (clip)
+    {
+        gg_rect_t dest = {x, y, width, height};
+        gg_rect_t dest_c = gg_clipping_rect(&dest, clip);
+        driver->draw_filled_rect(dest_c.x, dest_c.y, dest_c.width, dest_c.height,
+                          colour);
+    }
+    else
+        driver->draw_filled_rect(x, y, width, height, colour);
 }
 
-void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v)
+void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour)
 {
-    driver->draw_image(image, source, dest, mode_h, mode_v);
+    gg_rect_t *clip = gg_clipping_get();
+
+    if (clip)
+    {
+        gg_rect_t dest_c;
+        gg_rect_t source_c;
+        int x_offset;
+        int y_offset;
+
+        dest_c = gg_clipping_rect(&dest, clip);
+        x_offset = dest_c.x - dest.x;
+        y_offset = dest.y + dest.height - dest_c.y - dest_c.height;
+
+        switch (mode_h)
+        {
+        case GG_MODE_SCALE:
+            {
+                /* Magnification factor. */
+                float x_mag = dest.width / (float) source.width;
+
+                source_c.x = source.x + x_offset / x_mag;
+                source_c.width = dest_c.width / x_mag;
+            }
+            break;
+        case GG_MODE_TILE:
+            source_c.x = source.x + x_offset % source.width;
+            /* Width is undefined for GG_MODE_TILE. */
+        }
+
+        switch (mode_v)
+        {
+        case GG_MODE_SCALE:
+            {
+                /* Magnification factor. */
+                float y_mag = dest.height / (float) source.height;
+
+                source_c.y = source.y + y_offset / y_mag;
+                source_c.height = dest_c.height / y_mag;
+            }
+            break;
+        case GG_MODE_TILE:
+            source_c.y = source.y + y_offset % source.height;
+            /* Height is undefined for GG_MODE_TILE. */
+        }
+
+        driver->draw_image(image, source_c, dest_c, mode_h, mode_v, colour);
+    }
+    else
+        driver->draw_image(image, source, dest, mode_h, mode_v, colour);
 }
 
 void gg_system_draw_char(int c, int x, int y, gg_colour_t *colour)
@@ -120,6 +188,7 @@ void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, 
 {
     int i;
     unsigned int ticks = gg_system_get_ticks();
+    gg_rect_t rect_d = {x};
 
     if (align != 0.0f)
     {
@@ -127,13 +196,14 @@ void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, 
 
         gg_system_get_string_size(s, &width, NULL);
 
-        x -= width * align;
+        rect_d.x -= width * align;
     }
 
     for (i = 0; i < strlen(s); i++)
     {
-        int width;
         int y_off = 0;
+        void *image = driver->get_char_image(s[i]);
+        gg_rect_t rect_s = {0, 0};
 
         if (bounce)
         {
@@ -145,9 +215,12 @@ void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, 
                 y_off = ((1.0 - phase) * 2) * (GG_BOUNCE_AMP + 1);
         }
 
-        driver->get_char_size(s[i], &width, NULL);
-        driver->draw_char(s[i], x, y + y_off, colour);
-        x += width;
+        gg_system_get_image_size(image, &rect_s.width, &rect_s.height);
+        rect_d.width = rect_s.width;
+        rect_d.height = rect_s.height;
+        rect_d.y = y + y_off;
+        gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, colour);
+        rect_d.x += rect_s.width;
 
         ticks += 1000 / GG_BOUNCE_SPEED / GG_BOUNCE_LEN;
     }

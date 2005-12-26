@@ -18,6 +18,11 @@
 
 #include <gamegui/dialog.h>
 
+static gg_colour_t col_white =
+    {
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
+
 gg_class_id gg_dialog_get_class_id()
 {
     GG_CHILD(gg_bin_get_class_id())
@@ -130,33 +135,33 @@ void draw_border(void *image[9], gg_rect_t area, int size)
     dest.width = size;
     dest.height = size;
 
-    gg_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
     dest.y += area.height - size;
-    gg_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
     dest.x += area.width - size;
-    gg_system_draw_image(image[2], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image[2], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
     dest.y -= area.height - size;
-    gg_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE);
+    gg_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
 
     dest.x = area.x + size;
     dest.y = area.y;
     dest.width = area.width - 2 * size;
     dest.height = size;
-    gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
     dest.y += area.height - size;
-    gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE);
+    gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
     dest.x = area.x;
     dest.y = area.y + size;
     dest.width = size;
     dest.height = area.height - 2 * size;
-    gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE);
+    gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_white);
     dest.x += area.width - size;
-    gg_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE);
+    gg_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_white);
 
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
-    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE);
+    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &col_white);
 }
 
 /** @brief Renders a dialog.
