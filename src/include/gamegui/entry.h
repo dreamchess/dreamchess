@@ -24,7 +24,6 @@
 
 #define ENTRY_SPACING 2
 #define ENTRY_MAX_LEN 255
-#define ENTRY_CURSOR "|"
 
 #define GG_ENTRY(W) GG_CHECK_CAST(W, gg_entry_get_class_id(), gg_entry_t)
 
@@ -33,8 +32,7 @@
     char text[ENTRY_MAX_LEN + 1]; \
     int max_len; \
     int cursor_pos; \
-    int display_pos; \
-    int display_len;
+    int display_pos;
 
 /** Text entry widget state. */
 typedef struct w_entry

@@ -287,6 +287,10 @@ static ui_event_t convert_event(SDL_Event *event)
             return UI_EVENT_UP;
         case SDLK_DOWN:
             return UI_EVENT_DOWN;
+        case SDLK_HOME:
+            return UI_EVENT_HOME;
+        case SDLK_END:
+            return UI_EVENT_END;
         case SDLK_RETURN:
             return UI_EVENT_ACTION;
         default:
@@ -1683,6 +1687,7 @@ static void init_gui()
         exit(1);
     }
 
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
 
     ch_datadir();

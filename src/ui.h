@@ -58,6 +58,7 @@ typedef enum ui_event
     UI_EVENT_BACKSPACE = 0x08,
     UI_EVENT_ESCAPE = 0x1B,
     UI_EVENT_SPACE = 0x20,
+    UI_EVENT_DELETE = 0x7F,
     UI_EVENT_ACTION = 0x100,
     UI_EVENT_EXTRA1,
     UI_EVENT_EXTRA2,
@@ -66,6 +67,8 @@ typedef enum ui_event
     UI_EVENT_RIGHT,
     UI_EVENT_DOWN,
     UI_EVENT_LEFT,
+    UI_EVENT_HOME,
+    UI_EVENT_END
 }
 ui_event_t;
 
