@@ -20,6 +20,8 @@
  *  @brief Widget class implementation.
  */
 
+#include <stdlib.h>
+
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 

@@ -37,7 +37,7 @@ gg_class_id gg_vbox_get_class_id();
 
 void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus);
 
-int gg_vbox_input(gg_widget_t *widget, ui_event_t event);
+int gg_vbox_input(gg_widget_t *widget, gg_event_t event);
 
 void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
 

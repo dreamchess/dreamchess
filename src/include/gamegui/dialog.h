@@ -190,7 +190,7 @@ void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y);
  *
  *  @param event The input event.
  */
-void gg_dialog_input_current(ui_event_t event);
+void gg_dialog_input_current(gg_event_t event);
 
 /** @brief Sets dialog modal setting.
  *

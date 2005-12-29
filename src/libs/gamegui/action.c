@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
+
 #include <gamegui/action.h>
 #include <gamegui/label.h>
 
@@ -37,11 +39,11 @@ void gg_action_render(gg_widget_t *widget, int x, int y, int focus)
 }
 
 /** Implements widget::input for action widgets. */
-int gg_action_input(gg_widget_t *widget, ui_event_t event)
+int gg_action_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_action_t *action = GG_ACTION(widget);
 
-    if (event == UI_EVENT_ACTION)
+    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_ACTION)
     {
         if (action->func)
             action->func(widget, action->func_data);

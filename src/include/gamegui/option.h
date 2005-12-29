@@ -37,7 +37,7 @@ gg_option_t;
 
 void gg_option_render(gg_widget_t *widget, int x, int y, int focus);
 
-int gg_option_input(gg_widget_t *widget, ui_event_t event);
+int gg_option_input(gg_widget_t *widget, gg_event_t event);
 
 void gg_option_set_size(gg_widget_t *widget, int width, int height);
 

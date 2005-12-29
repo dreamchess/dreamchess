@@ -947,8 +947,8 @@ static gg_dialog_t *dialog_title_create()
     gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
-      widget = gg_entry_create();
-      gg_container_append(GG_CONTAINER(vbox2), widget);
+    widget = gg_entry_create();
+    gg_container_append(GG_CONTAINER(vbox2), widget);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
@@ -967,7 +967,12 @@ static gg_dialog_t *dialog_title_create()
 static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
 {
     if (gg_dialog_current())
-        gg_dialog_input_current(*(ui_event_t *) data);
+    {
+        gg_event_t event;
+        event.type = GG_EVENT_KEY;
+        event.data.key = *((int *) data);
+        gg_dialog_input_current(event);
+    }
 
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
 }
@@ -1423,6 +1428,7 @@ static config_t *do_menu()
         while ( SDL_PollEvent( &event ) )
         {
             ui_event_t ui_event;
+            gg_event_t gg_event;
 
             if (event.type == SDL_QUIT)
                 /* FIXME */
@@ -1461,10 +1467,13 @@ static config_t *do_menu()
                 continue;
             }
 
+            gg_event.type = GG_EVENT_KEY;
+            gg_event.data.key = ui_event;
+
             if (vkeyboard_enabled)
-                keyboard->input(GG_WIDGET(keyboard), ui_event);
+                keyboard->input(GG_WIDGET(keyboard), gg_event);
             else
-                gg_dialog_input_current(ui_event);
+                gg_dialog_input_current(gg_event);
 
             if (title_process_retval == 1)
             {
@@ -2648,7 +2657,13 @@ static int GetMove()
             continue;
 
         if (gg_dialog_current())
-            gg_dialog_input_current(ui_event);
+        {
+            gg_event_t gg_event;
+            gg_event.type = GG_EVENT_KEY;
+            gg_event.data.key = ui_event;
+
+            gg_dialog_input_current(gg_event);
+        }
         /* In the promote dialog */
         else
             switch (ui_event)

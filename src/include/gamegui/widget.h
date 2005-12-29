@@ -24,8 +24,48 @@
 #define GAMEGUI_WIDGET_H
 
 #include <gamegui/system.h>
-/* FIXME */
-#include <../ui.h>
+
+enum gg_event_type
+{
+    GG_EVENT_NONE,
+    GG_EVENT_KEY
+};
+
+typedef struct gg_event_mouse
+{
+    int type;
+    int x, y;
+} gg_event_mouse_t;
+
+enum gg_event_key
+{
+    GG_KEY_BACKSPACE = 0x08,
+    GG_KEY_ESCAPE = 0x1B,
+    GG_KEY_SPACE = 0x20,
+    GG_KEY_DELETE = 0x7F,
+    GG_KEY_ACTION = 0x100,
+    GG_KEY_EXTRA1,
+    GG_KEY_EXTRA2,
+    GG_KEY_EXTRA3,
+    GG_KEY_UP,
+    GG_KEY_RIGHT,
+    GG_KEY_DOWN,
+    GG_KEY_LEFT,
+    GG_KEY_HOME,
+    GG_KEY_END
+};
+
+typedef union gg_event_data
+{
+    int key;
+    gg_event_mouse_t mouse;
+} gg_event_data_t;
+
+typedef struct gg_event
+{
+    int type;
+    gg_event_data_t data;
+} gg_event_t;
 
 /** Typecast to widget. */
 #define GG_WIDGET(W) GG_CHECK_CAST(W, gg_widget_get_class_id(), gg_widget_t)
@@ -47,7 +87,7 @@
      *  @param event The event to process.
      *  @return 1 = event was handled. 0 = event was not handled.
      */                                                                      \
-    int (* input) (struct gg_widget *widget, ui_event_t event);              \
+    int (* input) (struct gg_widget *widget, gg_event_t event);              \
                                                                              \
     /** @brief Sets a widget's requested size.
      *

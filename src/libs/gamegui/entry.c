@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
+
 #include <gamegui/entry.h>
 
 #define CURSOR_WIDTH 1
@@ -72,7 +74,7 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
         gg_system_draw_string(entry->text, x - entry->display_pos, y, &col_dark_red, 0, 0);
         if (gg_system_get_ticks() % 400 < 200)
             gg_system_draw_filled_rect(x + len - entry->display_pos, y, CURSOR_WIDTH,
-            entry->height_a - 2 * ENTRY_SPACING, &col_dark_red);
+                                       entry->height_a - 2 * ENTRY_SPACING, &col_dark_red);
     }
     else
         gg_system_draw_string(entry->text, x - entry->display_pos, y, &col_black, 0, 0);
@@ -81,61 +83,65 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
 }
 
 /** Implements widget::input for text entry widgets. */
-int gg_entry_input(gg_widget_t *widget, ui_event_t event)
+int gg_entry_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_entry_t *entry = GG_ENTRY(widget);
     int c = -1;
     int len = strlen(entry->text);
     int width, max_width;
 
-    if (event == UI_EVENT_LEFT)
+    if (event.type == GG_EVENT_KEY)
     {
-        if (entry->cursor_pos > 0)
-            entry->cursor_pos--;
-    }
-    else if (event == UI_EVENT_RIGHT)
-    {
-        if (entry->cursor_pos < len)
-            entry->cursor_pos++;
-    }
-    else if (event == UI_EVENT_HOME)
-        entry->cursor_pos = 0;
-    else if (event == UI_EVENT_END)
-        entry->cursor_pos = len;
-    else if (event == UI_EVENT_BACKSPACE)
-    {
-        if (entry->cursor_pos > 0)
-        {
-            int i;
-            for (i = entry->cursor_pos; i <= len; i++)
-                entry->text[i - 1] = entry->text[i];
-            entry->cursor_pos--;
-        }
-    }
-    else if (event == UI_EVENT_DELETE)
-    {
-        if (entry->cursor_pos < len)
-        {
-            int i;
-            for (i = entry->cursor_pos + 1; i <= len; i++)
-                entry->text[i - 1] = entry->text[i];
-        }
-    }
-    else
-    {
-        if ((event > 0) && (event <= 255))
-        {
-            int i;
 
-            if (len >= entry->max_len)
-                 return 1;
-
-            for (i = len; i >= entry->cursor_pos; i--)
-                entry->text[i + 1] = entry->text[i];
-            entry->text[entry->cursor_pos++] = event;
+        if (event.data.key == GG_KEY_LEFT)
+        {
+            if (entry->cursor_pos > 0)
+                entry->cursor_pos--;
+        }
+        else if (event.data.key == GG_KEY_RIGHT)
+        {
+            if (entry->cursor_pos < len)
+                entry->cursor_pos++;
+        }
+        else if (event.data.key == GG_KEY_HOME)
+            entry->cursor_pos = 0;
+        else if (event.data.key == GG_KEY_END)
+            entry->cursor_pos = len;
+        else if (event.data.key == GG_KEY_BACKSPACE)
+        {
+            if (entry->cursor_pos > 0)
+            {
+                int i;
+                for (i = entry->cursor_pos; i <= len; i++)
+                    entry->text[i - 1] = entry->text[i];
+                entry->cursor_pos--;
+            }
+        }
+        else if (event.data.key == GG_KEY_DELETE)
+        {
+            if (entry->cursor_pos < len)
+            {
+                int i;
+                for (i = entry->cursor_pos + 1; i <= len; i++)
+                    entry->text[i - 1] = entry->text[i];
+            }
         }
         else
-            return 0;
+        {
+            if ((event.data.key > 0) && (event.data.key <= 255))
+            {
+                int i;
+
+                if (len >= entry->max_len)
+                    return 1;
+
+                for (i = len; i >= entry->cursor_pos; i--)
+                    entry->text[i + 1] = entry->text[i];
+                entry->text[entry->cursor_pos++] = event.data.key;
+            }
+            else
+                return 0;
+        }
     }
 
     width = string_width(entry->text, entry->cursor_pos);

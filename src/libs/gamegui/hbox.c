@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
 #include <assert.h>
 
 #include <gamegui/hbox.h>
@@ -49,7 +50,7 @@ void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus)
     }
 }
 
-int gg_hbox_input(gg_widget_t *widget, ui_event_t event)
+int gg_hbox_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_select_t *select = GG_SELECT(widget);
     gg_widget_t *child;
@@ -65,14 +66,14 @@ int gg_hbox_input(gg_widget_t *widget, ui_event_t event)
 
     child->get_focus_pos(child, &x, &y);
 
-    if (event == UI_EVENT_LEFT)
+    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_LEFT)
     {
         retval = gg_select_prev(select, 1, 1);
         child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         x = child->width_a - 1;
     }
 
-    if (event == UI_EVENT_RIGHT)
+    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_RIGHT)
     {
         retval = gg_select_next(select, 1, 1);
         child = gg_container_get_child(GG_CONTAINER(widget), select->sel);

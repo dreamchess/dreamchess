@@ -44,7 +44,7 @@ gg_class_id gg_action_get_class_id();
 
 void gg_action_render(gg_widget_t *widget, int x, int y, int focus);
 
-int gg_action_input(gg_widget_t *widget, ui_event_t event);
+int gg_action_input(gg_widget_t *widget, gg_event_t event);
 
 void gg_action_init(gg_action_t *action, gg_widget_t *widget);
 

@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
+
 #include <gamegui/option.h>
 #include <gamegui/label.h>
 #include <gamegui/align.h>
@@ -88,7 +90,7 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
 }
 
 /** Implements widget::input for option widgets. */
-int gg_option_input(gg_widget_t *widget, ui_event_t event)
+int gg_option_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_option_t *option = GG_OPTION(widget);
     gg_select_t *select = GG_SELECT(widget);
@@ -96,7 +98,7 @@ int gg_option_input(gg_widget_t *widget, ui_event_t event)
     if (option->sel == -1)
         return 0;
 
-    if (event == UI_EVENT_RIGHT)
+    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_RIGHT)
     {
         if (gg_select_next(select, 0, 0))
         {
@@ -106,7 +108,7 @@ int gg_option_input(gg_widget_t *widget, ui_event_t event)
 
         return 1;
     }
-    if (event == UI_EVENT_LEFT)
+    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_LEFT)
     {
         if (gg_select_prev(select, 0, 0))
         {

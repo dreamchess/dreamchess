@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
+
 #include <gamegui/dialog.h>
 
 static gg_colour_t col_white =
@@ -243,21 +245,31 @@ void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
     x -= xmin + dialog->style.hor_pad;
     y -= ymin + dialog->style.vert_pad;
 
+    if (dialog->style.textured)
+    {
+        int size;
+
+        gg_system_get_image_size(dialog->style.border.textured.image[0], &size, NULL);
+        x -= size;
+        y -= size;
+    }
+
     dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
 }
 
-int gg_dialog_input(gg_widget_t *widget, ui_event_t event)
+int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_dialog_t *dialog = GG_DIALOG(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
-    if (!dialog->modal && (event == UI_EVENT_ESCAPE))
+    if (!dialog->modal && event.type == GG_EVENT_KEY &&
+            event.data.key == GG_KEY_ESCAPE)
         gg_dialog_close();
 
     return child->input(child, event);
 }
 
-void gg_dialog_input_current(ui_event_t event)
+void gg_dialog_input_current(gg_event_t event)
 {
     gg_dialog_t *dialog = gg_dialog_current();
     gg_widget_t *child;
