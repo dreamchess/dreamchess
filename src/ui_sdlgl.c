@@ -270,116 +270,162 @@ static texture_t menu_border[9];
 #define UP (1 << 2)
 #define DOWN (1 << 3)
 
-static ui_event_t convert_event(SDL_Event *event)
+static gg_event_t convert_event(SDL_Event *event)
 {
     static unsigned int pressed;
+    gg_event_t gg_event;
 
     switch (event->type)
     {
     case SDL_KEYDOWN:
+        gg_event.type = GG_EVENT_KEY;
         switch (event->key.keysym.sym)
         {
         case SDLK_RIGHT:
-            return UI_EVENT_RIGHT;
+            gg_event.key = GG_KEY_RIGHT;
+            break;
         case SDLK_LEFT:
-            return UI_EVENT_LEFT;
+            gg_event.key = GG_KEY_LEFT;
+            break;
         case SDLK_UP:
-            return UI_EVENT_UP;
+            gg_event.key = GG_KEY_UP;
+            break;
         case SDLK_DOWN:
-            return UI_EVENT_DOWN;
+            gg_event.key = GG_KEY_DOWN;
+            break;
         case SDLK_HOME:
-            return UI_EVENT_HOME;
+            gg_event.key = GG_KEY_HOME;
+            break;
         case SDLK_END:
-            return UI_EVENT_END;
+            gg_event.key = GG_KEY_END;
+            break;
         case SDLK_RETURN:
-            return UI_EVENT_ACTION;
+            gg_event.key = GG_KEY_ACTION;
+            break;
         default:
             if (event->key.keysym.unicode <= 0xff)
-                return event->key.keysym.unicode;
+                gg_event.key = event->key.keysym.unicode;
+            else
+            {
+                gg_event.type = GG_EVENT_NONE;
+                return gg_event;
+            }
         }
         break;
 
     case SDL_JOYHATMOTION:
+        gg_event.type = GG_EVENT_KEY;
         switch (event->jhat.value)
         {
         case SDL_HAT_RIGHT:
-            return UI_EVENT_RIGHT;
+            gg_event.key = GG_KEY_RIGHT;
+            break;
         case SDL_HAT_LEFT:
-            return UI_EVENT_LEFT;
+            gg_event.key = GG_KEY_LEFT;
+            break;
         case SDL_HAT_UP:
-            return UI_EVENT_UP;
+            gg_event.key = GG_KEY_UP;
+            break;
         case SDL_HAT_DOWN:
-            return UI_EVENT_DOWN;
+            gg_event.key = GG_KEY_DOWN;
+            break;
+        default:
+            gg_event.type = GG_EVENT_NONE;
+            return gg_event;
         }
         break;
 
     case SDL_JOYBUTTONDOWN:
+        gg_event.type = GG_EVENT_KEY;
         switch (event->jbutton.button)
         {
         case 0:
-            return UI_EVENT_ACTION;
+            gg_event.key = GG_KEY_ACTION;
+            break;
         case 1:
-            return UI_EVENT_ESCAPE;
+            gg_event.key = GG_KEY_ESCAPE;
+            break;
         case 2:
-            return UI_EVENT_EXTRA3;
+            gg_event.key = GG_KEY_EXTRA3;
+            break;
         case 3:
-            return UI_EVENT_EXTRA2;
+            gg_event.key = GG_KEY_EXTRA2;
+            break;
         case 4:
-            return UI_EVENT_ESCAPE;
+            gg_event.key = GG_KEY_ESCAPE;
+            break;
+        default:
+            gg_event.type = GG_EVENT_NONE;
+            return gg_event;
         }
+        break;
 
 #ifndef AXIS_CURSOR_DISABLED
     case SDL_JOYAXISMOTION:
+        gg_event.type = GG_EVENT_KEY;
         switch (event->jaxis.axis)
         {
         case AXIS_CURSOR_X:
             if (event->jaxis.value >= -15000 && event->jaxis.value <= 15000)
             {
                 pressed &= ~(LEFT | RIGHT);
-                return UI_EVENT_NONE;
+                gg_event.type = GG_EVENT_NONE;
+                return gg_event;
             }
 
             if (!(pressed & LEFT) && (event->jaxis.value < 0))
             {
                 pressed |= LEFT;
-                return UI_EVENT_LEFT;
+                gg_event.key = GG_KEY_LEFT;
             }
-            if (!(pressed & RIGHT) && (event->jaxis.value > 0))
+            else if (!(pressed & RIGHT) && (event->jaxis.value > 0))
             {
                 pressed |= RIGHT;
-                return UI_EVENT_RIGHT;
+                gg_event.key = GG_KEY_RIGHT;
+            }
+            else
+            {
+                gg_event.type = GG_EVENT_NONE;
+                return gg_event;
             }
             break;
         case AXIS_CURSOR_Y:
             if (event->jaxis.value >= -15000 && event->jaxis.value <= 15000)
             {
                 pressed &= ~(UP | DOWN);
-                return UI_EVENT_NONE;
+                gg_event.type = GG_EVENT_NONE;
+                return gg_event;
             }
             if (!(pressed & UP) && (event->jaxis.value < 0))
             {
                 pressed |= UP;
-                return UI_EVENT_UP;
+                gg_event.key = GG_KEY_UP;
             }
-            if (!(pressed & DOWN) && (event->jaxis.value > 0))
+            else if (!(pressed & DOWN) && (event->jaxis.value > 0))
             {
                 pressed |= DOWN;
-                return UI_EVENT_DOWN;
+                gg_event.key = GG_KEY_DOWN;
+            }
+            else
+            {
+                gg_event.type = GG_EVENT_NONE;
+                return gg_event;
             }
         }
 #endif
 
     case SDL_MOUSEBUTTONDOWN:
-        switch (event->button.button)
-        {
-        case SDL_BUTTON_LEFT:
-            return UI_EVENT_ACTION;
-        }
+        gg_event.type = GG_EVENT_MOUSE;
+        gg_event.mouse.type = GG_MOUSE_BUTTON_DOWN;
+        gg_event.mouse.button = event->button.button - 1;
+        gg_event.mouse.x = event->button.x;
+        gg_event.mouse.y = SCREEN_HEIGHT - 1 - event->button.y;
     }
-    if ((event->type == SDL_KEYDOWN) && (event->key.keysym.unicode <= 0xff))
-        return event->key.keysym.unicode;
 
-    return UI_EVENT_NONE;
+/*    if ((event->type == SDL_KEYDOWN) && (event->key.keysym.unicode <= 0xff))
+        gg_event.key = event->key.keysym.unicode;*/
+
+    return gg_event;
 }
 
 #define DC_PI 3.14159265358979323846
@@ -970,7 +1016,7 @@ static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
     {
         gg_event_t event;
         event.type = GG_EVENT_KEY;
-        event.data.key = *((int *) data);
+        event.key = *((int *) data);
         gg_dialog_input_current(event);
     }
 
@@ -1427,7 +1473,6 @@ static config_t *do_menu()
         /* Precess input */
         while ( SDL_PollEvent( &event ) )
         {
-            ui_event_t ui_event;
             gg_event_t gg_event;
 
             if (event.type == SDL_QUIT)
@@ -1443,11 +1488,11 @@ static config_t *do_menu()
                 continue;
             }
 
-            ui_event = convert_event(&event);
+            gg_event = convert_event(&event);
 
             if (wait_menu)
             {
-                if (ui_event != UI_EVENT_NONE)
+                if (gg_event.type != GG_EVENT_NONE)
                 {
                     reset_string_type_length();
                     wait_menu = 0;
@@ -1455,20 +1500,17 @@ static config_t *do_menu()
                 continue;
             }
 
-            if (ui_event == 0x06)
+            if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x06)
             {
                 fps_enabled = 1 - fps_enabled;
                 continue;
             }
 
-            if (ui_event == 0x0b)
+            if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x0b)
             {
                 vkeyboard_enabled = 1 - vkeyboard_enabled;
                 continue;
             }
-
-            gg_event.type = GG_EVENT_KEY;
-            gg_event.data.key = ui_event;
 
             if (vkeyboard_enabled)
                 keyboard->input(GG_WIDGET(keyboard), gg_event);
@@ -2611,7 +2653,7 @@ static int GetMove()
 
     while ( SDL_PollEvent( &event ) )
     {
-        ui_event_t ui_event;
+        gg_event_t gg_event;
 
         if (event.type == SDL_QUIT)
             /* FIXME */
@@ -2651,44 +2693,38 @@ static int GetMove()
             continue;
         }
 
-        ui_event = convert_event(&event);
+        gg_event = convert_event(&event);
 
-        if (ui_event == UI_EVENT_NONE)
+        if (gg_event.type == GG_EVENT_NONE)
             continue;
 
         if (gg_dialog_current())
-        {
-            gg_event_t gg_event;
-            gg_event.type = GG_EVENT_KEY;
-            gg_event.data.key = ui_event;
-
             gg_dialog_input_current(gg_event);
-        }
         /* In the promote dialog */
-        else
-            switch (ui_event)
+        else if (gg_event.type == GG_EVENT_KEY)
+            switch (gg_event.key)
             {
-            case UI_EVENT_LEFT:
+            case GG_KEY_LEFT:
                 move_selector(SELECTOR_LEFT);
                 break;
-            case UI_EVENT_RIGHT:
+            case GG_KEY_RIGHT:
                 move_selector(SELECTOR_RIGHT);
                 break;
-            case UI_EVENT_UP:
+            case GG_KEY_UP:
                 move_selector(SELECTOR_UP);
                 break;
-            case UI_EVENT_DOWN:
+            case GG_KEY_DOWN:
                 move_selector(SELECTOR_DOWN);
                 break;
-            case UI_EVENT_ACTION:
+            case GG_KEY_ACTION:
                 retval = get_selector();
                 select_piece(retval);
                 break;
-            case UI_EVENT_ESCAPE:
+            case GG_KEY_ESCAPE:
                 gg_dialog_open(dialog_system_create());
                 break;
             case 'g':
-            case UI_EVENT_EXTRA3:
+            case GG_KEY_EXTRA3:
                 gg_dialog_open(dialog_ingame_create());
                 break;
             case 'p':

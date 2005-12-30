@@ -93,21 +93,21 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
     if (event.type == GG_EVENT_KEY)
     {
 
-        if (event.data.key == GG_KEY_LEFT)
+        if (event.key == GG_KEY_LEFT)
         {
             if (entry->cursor_pos > 0)
                 entry->cursor_pos--;
         }
-        else if (event.data.key == GG_KEY_RIGHT)
+        else if (event.key == GG_KEY_RIGHT)
         {
             if (entry->cursor_pos < len)
                 entry->cursor_pos++;
         }
-        else if (event.data.key == GG_KEY_HOME)
+        else if (event.key == GG_KEY_HOME)
             entry->cursor_pos = 0;
-        else if (event.data.key == GG_KEY_END)
+        else if (event.key == GG_KEY_END)
             entry->cursor_pos = len;
-        else if (event.data.key == GG_KEY_BACKSPACE)
+        else if (event.key == GG_KEY_BACKSPACE)
         {
             if (entry->cursor_pos > 0)
             {
@@ -117,7 +117,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
                 entry->cursor_pos--;
             }
         }
-        else if (event.data.key == GG_KEY_DELETE)
+        else if (event.key == GG_KEY_DELETE)
         {
             if (entry->cursor_pos < len)
             {
@@ -128,7 +128,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
         }
         else
         {
-            if ((event.data.key > 0) && (event.data.key <= 255))
+            if ((event.key > 0) && (event.key <= 255))
             {
                 int i;
 
@@ -137,11 +137,35 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
 
                 for (i = len; i >= entry->cursor_pos; i--)
                     entry->text[i + 1] = entry->text[i];
-                entry->text[entry->cursor_pos++] = event.data.key;
+                entry->text[entry->cursor_pos++] = event.key;
             }
             else
                 return 0;
         }
+    }
+
+    if (event.type == GG_EVENT_MOUSE
+        && event.mouse.type == GG_MOUSE_BUTTON_DOWN
+        && event.mouse.button == 0)
+    {
+        int total_width = 0;
+        int i;
+
+        for (i = 0; i < strlen(entry->text); i++)
+        {
+            int width;
+
+            gg_system_get_char_size(entry->text[i], &width, NULL);
+            total_width += width;
+            if (total_width > entry->display_pos + event.mouse.x)
+            {
+                if (total_width - width / 2 < entry->display_pos + event.mouse.x)
+                    i++;
+                break;
+            }
+        }
+
+        entry->cursor_pos = i;
     }
 
     width = string_width(entry->text, entry->cursor_pos);

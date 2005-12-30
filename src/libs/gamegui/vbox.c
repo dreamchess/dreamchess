@@ -54,27 +54,49 @@ void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus)
 int gg_vbox_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_select_t *select = GG_SELECT(widget);
+    gg_box_t *box = GG_BOX(widget);
     gg_widget_t *child;
     int retval = 0, x, y;
 
     if (select->sel == -1)
         return 0;
 
+    if (event.type == GG_EVENT_MOUSE)
+    {
+        int nr = gg_container_get_size(GG_CONTAINER(widget));
+
+        event.mouse.y -= box->height_a - box->height;
+        while (--nr > select->sel)
+        {
+            gg_widget_t *child = gg_container_get_child(GG_CONTAINER(widget), nr);
+
+            event.mouse.y -= child->height_a;
+            event.mouse.y -= box->spacing;
+        }
+    }
+
     child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
+
+    if (event.type == GG_EVENT_MOUSE)
+    {
+        if (event.mouse.x < 0 || event.mouse.x >= child->width_a ||
+            event.mouse.y < 0 || event.mouse.y >= child->height_a)
+            return 0;
+    }
 
     if (child->input(child, event))
         return 1;
 
     child->get_focus_pos(child, &x, &y);
 
-    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_UP)
+    if (event.type == GG_EVENT_KEY && event.key == GG_KEY_UP)
     {
         retval = gg_select_prev(select, 1, 1);
         child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
         y = 0;
     }
 
-    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_DOWN)
+    if (event.type == GG_EVENT_KEY && event.key == GG_KEY_DOWN)
     {
         retval = gg_select_next(select, 1, 1);
         child = gg_container_get_child(GG_CONTAINER(widget), select->sel);

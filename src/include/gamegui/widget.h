@@ -25,15 +25,22 @@
 
 #include <gamegui/system.h>
 
-enum gg_event_type
+enum
 {
     GG_EVENT_NONE,
-    GG_EVENT_KEY
+    GG_EVENT_KEY,
+    GG_EVENT_MOUSE
+};
+
+enum
+{
+    GG_MOUSE_BUTTON_DOWN
 };
 
 typedef struct gg_event_mouse
 {
     int type;
+    int button;
     int x, y;
 } gg_event_mouse_t;
 
@@ -64,7 +71,11 @@ typedef union gg_event_data
 typedef struct gg_event
 {
     int type;
-    gg_event_data_t data;
+    union
+    {
+        int key;
+        gg_event_mouse_t mouse;
+    };
 } gg_event_t;
 
 /** Typecast to widget. */

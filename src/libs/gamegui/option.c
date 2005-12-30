@@ -98,7 +98,7 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
     if (option->sel == -1)
         return 0;
 
-    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_RIGHT)
+    if (event.type == GG_EVENT_KEY && event.key == GG_KEY_RIGHT)
     {
         if (gg_select_next(select, 0, 0))
         {
@@ -108,13 +108,34 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
 
         return 1;
     }
-    if (event.type == GG_EVENT_KEY && event.data.key == GG_KEY_LEFT)
+    if (event.type == GG_EVENT_KEY && event.key == GG_KEY_LEFT)
     {
         if (gg_select_prev(select, 0, 0))
         {
             if (option->func)
                 option->func(widget, option->func_data);
         }
+
+        return 1;
+    }
+    if (event.type == GG_EVENT_MOUSE && event.mouse.type == GG_MOUSE_BUTTON_DOWN
+            && event.mouse.button == 0)
+    {
+        int border_l;
+        int border_r;
+        int height;
+
+        gg_system_get_string_size(OPTION_ARROW_LEFT, &border_l, NULL);
+        gg_system_get_string_size(OPTION_ARROW_RIGHT, &border_r, NULL);
+
+        if (event.mouse.x < border_l && gg_select_prev(select, 0, 0))
+            if (option->func)
+                option->func(widget, option->func_data);
+
+        if (event.mouse.x >= widget->width_a - border_l &&
+                gg_select_next(select, 0, 0))
+            if (option->func)
+                option->func(widget, option->func_data);
 
         return 1;
     }

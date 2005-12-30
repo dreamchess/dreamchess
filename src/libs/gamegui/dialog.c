@@ -261,10 +261,28 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_dialog_t *dialog = GG_DIALOG(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
+    int x, y;
 
     if (!dialog->modal && event.type == GG_EVENT_KEY &&
-            event.data.key == GG_KEY_ESCAPE)
+            event.key == GG_KEY_ESCAPE)
         gg_dialog_close();
+
+    gg_dialog_get_screen_pos(dialog, &x, &y);
+
+    if (event.type == GG_EVENT_MOUSE)
+    {
+        event.mouse.x -= x + dialog->style.hor_pad;
+        event.mouse.y -= y + dialog->style.vert_pad;
+
+        if (dialog->style.textured)
+        {
+            int size;
+
+            gg_system_get_image_size(dialog->style.border.textured.image[0], &size, NULL);
+            event.mouse.x -= size;
+            event.mouse.y -= size;
+        }
+    }
 
     return child->input(child, event);
 }
