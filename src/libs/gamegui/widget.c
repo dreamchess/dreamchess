@@ -67,13 +67,16 @@ void gg_set_size(gg_widget_t *widget, int width, int height)
     widget->height_a = height;
 }
 
-void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y)
+gg_rect_t gg_get_focus_pos(gg_widget_t *widget)
 {
-    /*  Users will generally be focussed on the center of the widget so we
-     *  return the center as focus position.
-     */
-    *x = widget->width_a / 2;
-    *y = widget->height_a / 2;
+    gg_rect_t rect;
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = widget->width_a;
+    rect.height = widget->height_a;
+
+    return rect;
 }
 
 int gg_set_focus_pos(gg_widget_t *widget, int x, int y)

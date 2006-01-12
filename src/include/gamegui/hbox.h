@@ -43,7 +43,7 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
 void gg_hbox_set_size(gg_widget_t *widget, int width, int height);
 
-void gg_hbox_get_focus_pos(gg_widget_t *widget, int *x , int *y);
+gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget);
 
 int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y);
 

@@ -55,6 +55,7 @@ int gg_hbox_input(gg_widget_t *widget, gg_event_t event)
     gg_select_t *select = GG_SELECT(widget);
     gg_box_t *box = GG_BOX(widget);
     gg_widget_t *child;
+    gg_rect_t focus;
     int retval = 0, x, y;
 
     if (select->sel == -1)
@@ -85,7 +86,8 @@ int gg_hbox_input(gg_widget_t *widget, gg_event_t event)
     if (child->input(child, event))
         return 1;
 
-    child->get_focus_pos(child, &x, &y);
+    focus = child->get_focus_pos(child);
+    y = focus.y + focus.height / 2;
 
     if (event.type == GG_EVENT_KEY && event.key == GG_KEY_LEFT)
     {
@@ -161,27 +163,30 @@ void gg_hbox_set_size(gg_widget_t *widget, int width, int height)
     gg_set_size(widget, width, height);
 }
 
-void gg_hbox_get_focus_pos(gg_widget_t *widget, int *x , int *y)
+gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget)
 {
     gg_box_t *box = GG_BOX(widget);
     gg_container_t *container = GG_CONTAINER(widget);
     gg_widget_t *child;
+    gg_rect_t focus;
     int nr = 0;
 
     assert(box->sel != -1);
 
     child = gg_container_get_child(container, box->sel);
-    child->get_focus_pos(child, x, y);
+    focus = child->get_focus_pos(child);
 
     while (nr < box->sel)
     {
         gg_widget_t *sibling = gg_container_get_child(container, nr);
 
-        *x += child->width_a;
+        focus.x += child->width_a;
         nr++;
     }
 
-    *x += box->sel * box->spacing;
+    focus.x += box->sel * box->spacing;
+
+    return focus;
 }
 
 int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y)

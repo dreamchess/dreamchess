@@ -125,14 +125,10 @@ typedef struct gg_event
     /** @brief Gets a widget's focus position.
      *
      *  @param widget The widget.
-     *  @param x Returns the x-coordinate (in pixels, relative to widget
-     *           position) of the current focus position. Pointer can be
-     *           NULL to ignore this coordinate.
-     *  @param y Returns the y-coordinate (in pixels, relative to widget
-     *           position) of the current focus position. Pointer can be
-     *           NULL to ignore this coordinate.
+     *  @return Returns the rectangle defining the current focus position,
+     *          relative to the widget's position.
      */                                                                      \
-    void (* get_focus_pos) (struct gg_widget *widget, int *x, int *y);       \
+    gg_rect_t (* get_focus_pos) (struct gg_widget *widget);                  \
                                                                              \
     /** @brief Sets a widget's focus position.
      *
@@ -195,7 +191,7 @@ void gg_set_requested_size(gg_widget_t *widget, int width, int height);
 void gg_widget_get_requested_size(gg_widget_t *widget, int *width, int *height);
 
 /** Implements gg_widget::get_focus_pos. */
-void gg_get_focus_pos(gg_widget_t *widget, int *x, int *y);
+gg_rect_t gg_get_focus_pos(gg_widget_t *widget);
 
 /** Implements gg_widget::set_focus_pos. */
 int gg_set_focus_pos(gg_widget_t *widget, int x, int y);

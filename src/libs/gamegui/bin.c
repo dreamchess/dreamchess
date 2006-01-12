@@ -48,12 +48,23 @@ int gg_bin_set_focus_pos(gg_widget_t *widget, int x, int y)
     return 0;
 }
 
+int gg_bin_input(gg_widget_t *widget, gg_event_t event)
+{
+    gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
+
+    if (child)
+        return child->input(child, event);
+
+    return 0;
+}
+
 void gg_bin_init(gg_bin_t *bin, gg_widget_t *child)
 {
     gg_container_init((gg_container_t *) bin);
 
     bin->set_size = gg_bin_set_size;
     bin->set_focus_pos = gg_bin_set_focus_pos;
+    bin->input = gg_bin_input;
     bin->id = gg_bin_get_class_id();
     gg_container_append(GG_CONTAINER(bin), child);
 }

@@ -16,39 +16,38 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef GAMEGUI_VBOX_H
-#define GAMEGUI_VBOX_H
+/** @file
+ *  @brief Viewport widget.
+ */
+
+#ifndef GAMEGUI_VIEWPORT_H
+#define GAMEGUI_VIEWPORT_H
 
 #include <gamegui/system.h>
-#include <gamegui/box.h>
+#include <gamegui/bin.h>
 
-#define GG_VBOX(W) GG_CHECK_CAST(W, gg_vbox_get_class_id(), gg_vbox_t)
+/** Typecast to viewport widget. */
+#define GG_VIEWPORT(W) GG_CHECK_CAST(W, gg_viewport_get_class_id(), gg_viewport_t)
 
-#define GG_VBOX_DATA \
-    GG_BOX_DATA
+#define GG_VIEWPORT_DATA \
+    GG_BIN_DATA \
+    float xscroll; \
+    float yscroll;
 
-typedef struct gg_vbox
+typedef struct gg_viewport
 {
-    GG_VBOX_DATA
+    GG_VIEWPORT_DATA
 }
-gg_vbox_t;
+gg_viewport_t;
 
-gg_class_id gg_vbox_get_class_id();
+gg_class_id gg_viewport_get_class_id();
 
-void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus);
+void gg_viewport_render(gg_widget_t *widget, int x, int y, int focus);
 
-int gg_vbox_input(gg_widget_t *widget, gg_event_t event);
+void gg_viewport_init(gg_viewport_t *viewport, gg_widget_t *widget, int width, int height);
 
-void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
+void gg_viewport_set_scroll_pos(gg_viewport_t *viewport, float xscroll, float yscroll);
 
-void gg_vbox_set_size(gg_widget_t *widget, int width, int height);
+gg_widget_t *gg_viewport_create(gg_widget_t *widget, int width, int height);
 
-gg_rect_t gg_vbox_get_focus_pos(gg_widget_t *widget);
-
-int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y);
-
-void gg_vbox_init(gg_vbox_t *vbox, int spacing);
-
-gg_widget_t *gg_vbox_create(int spacing);
-
-#endif /* GAMEGUI_VBOX_H */
+#endif /* GAMEGUI_VIEWPORT_H */
