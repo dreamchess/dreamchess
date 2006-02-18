@@ -774,6 +774,12 @@ static void dialog_quit_open(gg_widget_t *widget, void *data)
     gg_dialog_open(dialog_quit_create());
 }
 
+/** @brief Opens the ingame dialog. */
+static void dialog_ingame_open(gg_widget_t *widget, void *data)
+{
+    gg_dialog_open(dialog_ingame_create());
+}
+
 /** @brief Creates the system dialog.
  *
  *  @return The created dialog.
@@ -786,6 +792,10 @@ static gg_dialog_t *dialog_system_create()
 
     widget = gg_action_create_with_label("Return To Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("More Options..", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_ingame_open, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_action_create_with_label("Quit Game", 0.0f, 0.0f);
@@ -993,8 +1003,8 @@ static gg_dialog_t *dialog_title_create()
     gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = gg_entry_create();
-    gg_container_append(GG_CONTAINER(vbox2), widget);
+    //widget = gg_entry_create();
+    //gg_container_append(GG_CONTAINER(vbox2), widget);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
@@ -1949,7 +1959,7 @@ void load_pieces()
  */
 static void load_theme(char* name, char* pieces, char *board)
 {
-    printf( "Loading theme.\n" );
+    //printf( "Loading theme.\n" );
 
     ch_datadir();
     chdir("themes");
@@ -1971,7 +1981,7 @@ static void load_theme(char* name, char* pieces, char *board)
     load_board("board.dcm", "board.png");
 
     ch_datadir();
-    printf( "Loaded theme.\n" );
+    //printf( "Loaded theme.\n" );
 }
 
 /** @brief Sets the OpenGL rendering options. */
@@ -2700,6 +2710,7 @@ static int GetMove()
 
         if (gg_dialog_current())
             gg_dialog_input_current(gg_event);
+
         /* In the promote dialog */
         else if (gg_event.type == GG_EVENT_KEY)
             switch (gg_event.key)
@@ -2725,7 +2736,7 @@ static int GetMove()
                 break;
             case 'g':
             case GG_KEY_EXTRA3:
-                gg_dialog_open(dialog_ingame_create());
+                //gg_dialog_open(dialog_ingame_create());
                 break;
             case 'p':
                 game_view_prev();
@@ -2737,10 +2748,10 @@ static int GetMove()
                 game_undo();
                 break;
             case 's':
-                game_save();
+                //game_save();
                 break;
             case 'l':
-                load_game();
+                //load_game();
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;

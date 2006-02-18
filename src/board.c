@@ -208,7 +208,7 @@ static int square_attacked(board_t *b, int square, int side)
                 move.promotion_piece = NONE;
             if (move_is_semi_valid(&board, &move))
             {
-                printf("Found: %i-%i\n", move.source, move.destination);
+                //printf("Found: %i-%i\n", move.source, move.destination);
                 return 1;
             }
         }
@@ -604,7 +604,7 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
                 fprintf(stderr, "More than one SAN match found\n");
                 return NULL;
             }
-            printf("Found candidate at %i\n", square);
+            //printf("Found candidate at %i\n", square);
         }
     }
 

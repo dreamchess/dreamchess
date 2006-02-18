@@ -201,13 +201,13 @@ static texture_t *load_piece_texture(char *filename)
 
     if (tex)
     {
-        printf("Already loaded %s\n", filename);
+        //printf("Already loaded %s\n", filename);
         return tex;
     }
 
     tex = malloc(sizeof(texture_t));
 
-    printf("Loading %s\n", filename);
+    //printf("Loading %s\n", filename);
     load_texture_png(tex, filename, 1);
     data_col_add(&textures, filename, tex);
     return tex;
@@ -345,11 +345,11 @@ static mesh_t *load_mesh(char *filename)
 
     if (mesh)
     {
-        printf("Already loaded %s\n", filename);
+        //printf("Already loaded %s\n", filename);
         return mesh;
     }
 
-    printf("Loading %s\n", filename);
+    //printf("Loading %s\n", filename);
     mesh = dcm_load(filename);
     data_col_add(&meshes, filename, mesh);
     return mesh;

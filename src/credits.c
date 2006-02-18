@@ -39,7 +39,7 @@ static char* thanks[] = { "Special thanks to",
 
 static char* copyright[] = { "DreamChess",
                              "Version " PACKAGE_VERSION,
-                             "© 2003-2005 The DreamChess project",
+                             "© 2003-2006 The DreamChess project",
                              NULL };
 
 static char **credits[] = { copyright, programming, graphics, thanks, NULL };
