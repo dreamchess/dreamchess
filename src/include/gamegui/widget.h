@@ -71,11 +71,8 @@ typedef union gg_event_data
 typedef struct gg_event
 {
     int type;
-    union
-    {
-        int key;
-        gg_event_mouse_t mouse;
-    };
+    int key;
+    gg_event_mouse_t mouse;
 } gg_event_t;
 
 /** Typecast to widget. */
