@@ -91,7 +91,19 @@ int ch_userdir()
     return 0;
 }
 
-#else /* !__WIN32__ */
+#elif defined _arch_dreamcast
+
+int ch_datadir()
+{
+    return chdir(DATADIR);
+}
+
+int ch_userdir()
+{
+    return chdir("/vmu/a1");
+}
+
+#else /* !__WIN32__ && !_arch_dreamcast */
 
 #define USERDIR ".dreamchess"
 
