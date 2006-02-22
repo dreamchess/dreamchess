@@ -195,8 +195,8 @@ else
 	AC_SUBST(DREAMER, "dreamer\$(EXEEXT)")
 	if test "$host_os" = "mingw32"; then
 		AC_SUBST(PIPE_LIB, "libpipe_win32.a")
-		AC_CHECK_TOOL(WINDRES, windres, :)
-		if test x"$WINDRES" != x":"; then
+		AC_CHECK_TOOL(WINDRES, windres)
+		if test -n "$WINDRES"; then
 			AC_SUBST(WINDRES)
 			AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
 		fi
@@ -205,6 +205,13 @@ else
 		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
 	elif test "$host_os" = "beos"; then
 		AC_SUBST(PIPE_LIB, "libpipe_beos.a")
+		AC_CHECK_TOOL(RC, rc)
+		AC_CHECK_TOOL(XRES, xres)
+		if test -n "$RC" -a -n "$XRES"; then
+			AC_SUBST(RC)
+			AC_SUBST(XRES)
+			beos_rc="yes"
+		fi
 		DREAMCHESS_LIBS="libs/libpipe_beos.a"
 		DREAMER_LIBS="../libs/libpipe_beos.a"
 		AC_DEFINE([COMM_PIPE_UNIX], [1])
@@ -216,6 +223,7 @@ else
 	fi
 fi
 
+AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
 
@@ -287,21 +295,6 @@ cat <<_ACEOF
 
 Supported:        $supported_ui_sdlgl
 Build:            $with_ui_sdlgl
-
-sdl
----
-
-  Requirement  | Found
-------------------------
-"SDL_image.h"  |  $have_sdl_image_h
-_ACEOF
-AC_PRINT_LIB([libSDL         ], [$have_sdl], [$SDL_OLD_LIBS])
-AC_PRINT_LIB([libSDL_image   ], [$have_sdl_image], [$SDL_IMAGE_LIBS])
-
-cat <<_ACEOF
-
-Supported:        $supported_ui_sdl
-Build:            $with_ui_sdl (disabled in this release)
 
 You can now run \`make'.
 

@@ -20,3 +20,13 @@ dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a libs/gamegui/libgamegui.a
 
 win32_rc.$(OBJEXT):
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)
+
+beos.rsrc:
+	@RC@ beos.rdef
+
+if BEOS_RC
+dreamchess$(EXEEXT): $(dreamchess_OBJECTS) $(dreamchess_DEPENDENCIES) beos.rsrc
+	@rm -f dreamchess$(EXEEXT)
+	$(LINK) $(dreamchess_LDFLAGS) $(dreamchess_OBJECTS) $(dreamchess_LDADD) $(LIBS)
+	@XRES@ -o $@ beos.rsrc
+endif
