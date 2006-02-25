@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<themes>
+    <theme>
+        <name>3D Board</name>
+        <style>default</style>
+        <pieces>classiclow</pieces>
+        <board>classic</board>
+    </theme>
+    <theme>
+        <name>Classic</name>
+        <style>default</style>
+        <pieces>figurine</pieces>
+        <board>classic</board>
+    </theme>
+</themes>

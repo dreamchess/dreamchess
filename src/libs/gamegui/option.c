@@ -244,6 +244,11 @@ int gg_option_get_selected(gg_option_t *option)
     return option->sel;
 }
 
+void gg_option_set_selected(gg_option_t *option, int index)
+{
+    option->sel=index;
+}
+
 /** @brief Sets option widget callback.
  *
  *  @param widget The option widget.

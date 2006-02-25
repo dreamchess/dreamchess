@@ -26,6 +26,12 @@ gg_class_id gg_vbox_get_class_id()
     GG_CHILD(gg_box_get_class_id())
 }
 
+void gg_vbox_set_selected(gg_widget_t *widget, int index )
+{
+    gg_select_t *select = GG_SELECT(widget);
+    select->sel=index;
+}
+
 void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus)
 {
     gg_box_t *box = GG_BOX(widget);

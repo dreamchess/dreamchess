@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 INSTALL_DIRS = \
 	/ \
-	/themes/default/ \
+	/styles/default/ \
 	/pieces/classiclow/ \
 	/pieces/figurine/ \
 	/boards/classic/

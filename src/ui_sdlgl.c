@@ -35,6 +35,8 @@
 #include <math.h>
 #include <assert.h>
 
+#include "mxml.h"
+
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_thread.h"
@@ -95,7 +97,8 @@ static struct
 mouse_pos;
 
 static int mouse_square;
-
+static void load_theme(char* style, char* pieces, char *board);
+static void load_theme_xml( char *xmlfile );
 static void poll_move();
 
 int piece_moving_done=1;
@@ -623,9 +626,22 @@ static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
 
+typedef struct theme
+{
+    char name[25];
+    char style[25];
+    char pieces[25];
+    char board[25];
+}theme;
+
+theme themes[25];
+int theme_count;
+int selected_theme;
+
 static char* themelist[25];
-static int num_theme;
-static int cur_theme;
+static char* stylelist[25];
+static int num_style;
+static int cur_style;
 static char** pieces_list;
 static int pieces_list_total;
 static int pieces_list_cur;
@@ -869,6 +885,13 @@ static void menu_title_start(gg_widget_t *widget, void *data)
     gg_dialog_close();
 }
 
+static void menu_title_custom_start(gg_widget_t *widget, void *data)
+{
+    set_loading=TRUE;
+    gg_dialog_close();
+    gg_dialog_close();
+}
+
 /** @brief Triggers DreamChess exit. */
 static void menu_title_quit(gg_widget_t *widget, void *data)
 {
@@ -902,9 +925,33 @@ static void dialog_title_level(gg_widget_t *widget, void *data)
     config->cpu_level = gg_option_get_selected(GG_OPTION(widget)) + 1;
 }
 
+
+static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
+{
+    selected_theme = gg_option_get_selected(GG_OPTION(widget));
+    if ( gg_option_get_selected(GG_OPTION(widget)) != theme_count )
+    {
+       // printf( "Theme changed from Custom!\n" );
+        gg_dialog_close();
+    }
+}
+
+static gg_dialog_t *dialog_title_custom_create();
 static void dialog_title_theme(gg_widget_t *widget, void *data)
 {
-    cur_theme = gg_option_get_selected(GG_OPTION(widget));
+    selected_theme = gg_option_get_selected(GG_OPTION(widget));
+    if ( gg_option_get_selected(GG_OPTION(widget)) == theme_count )
+    {
+       // printf( "Theme changed to Custom!\n" );
+        gg_dialog_open(dialog_title_custom_create());
+        gg_option_set_selected(GG_OPTION(widget),theme_count-1);
+        gg_dialog_cleanup();
+    }
+}
+
+static void dialog_title_style(gg_widget_t *widget, void *data)
+{
+    cur_style = gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_pieces(gg_widget_t *widget, void *data)
@@ -917,7 +964,7 @@ static void dialog_title_board(gg_widget_t *widget, void *data)
     board_list_cur = gg_option_get_selected(GG_OPTION(widget));
 }
 
-static gg_dialog_t *dialog_title_create()
+static gg_dialog_t *dialog_title_custom_create()
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -931,13 +978,13 @@ static gg_dialog_t *dialog_title_create()
     config->player[WHITE] = PLAYER_UI;
     config->player[BLACK] = PLAYER_ENGINE;
     config->cpu_level = 1;
-    cur_theme = 0;
+    cur_style = 0;
     pieces_list_cur = 0;
     board_list_cur = 0;
     flip_board = 0;
 
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_custom_start, NULL);
     vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -954,7 +1001,11 @@ static gg_dialog_t *dialog_title_create()
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Chess Set:");
+    label = gg_label_create("Style:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("Pieces:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
@@ -985,10 +1036,18 @@ static gg_dialog_t *dialog_title_create()
     gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
+    // Themelist list..
     widget = gg_option_create();
-    for (i = 0; i < num_theme; i++)
+    for (i = 0; i < theme_count+1; i++)
         gg_option_append_label(GG_OPTION(widget), themelist[i], 0.5f, 0.0f);
-    gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_custom_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+    gg_option_set_selected(GG_OPTION(widget),theme_count);
+
+    widget = gg_option_create();
+    for (i = 0; i < num_style; i++)
+        gg_option_append_label(GG_OPTION(widget), stylelist[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_style, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
     widget = gg_option_create();
@@ -1016,6 +1075,124 @@ static gg_dialog_t *dialog_title_create()
     dialog = gg_dialog_create(vbox);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
+
+    gg_vbox_set_selected(vbox, 1 );
+    gg_vbox_set_selected(vbox2, 2 );
+
+    return GG_DIALOG(dialog);
+}
+
+static gg_dialog_t *dialog_title_create()
+{
+    gg_widget_t *dialog;
+    gg_widget_t *vbox;
+    gg_widget_t *widget;
+    gg_widget_t *vbox2;
+    gg_widget_t *hbox;
+    gg_widget_t *label;
+    int i;
+
+    config = malloc(sizeof(config_t));
+    config->player[WHITE] = PLAYER_UI;
+    config->player[BLACK] = PLAYER_ENGINE;
+    config->cpu_level = 1;
+    cur_style = 0;
+    pieces_list_cur = 0;
+    board_list_cur = 0;
+    flip_board = 0;
+
+    widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
+    vbox = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    label = gg_label_create("Players:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    vbox2 = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("Difficulty:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("Theme:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+ /*   label = gg_label_create("Style:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("Chess Set:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("Board:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);*/
+
+    /*   label = gg_label_create("Name:");
+       gg_alignable_set_alignment(GG_ALIGNABLE(label), 0.0f, 0.0f);
+       gg_container_append(GG_CONTAINER(vbox2), label);*/
+
+    hbox = gg_hbox_create(20);
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
+
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
+    vbox2 = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "Level 1", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 2", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 3", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    // Themelist list..
+    widget = gg_option_create();
+    for (i = 0; i < theme_count+1; i++)
+        gg_option_append_label(GG_OPTION(widget), themelist[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+  /*  widget = gg_option_create();
+    for (i = 0; i < num_style; i++)
+        gg_option_append_label(GG_OPTION(widget), stylelist[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_style, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    widget = gg_option_create();
+    for (i = 0; i < pieces_list_total; i++)
+        gg_option_append_label(GG_OPTION(widget), pieces_list[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_pieces, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    widget = gg_option_create();
+    for (i = 0; i < board_list_total; i++)
+        gg_option_append_label(GG_OPTION(widget), board_list[i], 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);*/
+
+    //widget = gg_entry_create();
+    //gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
+    gg_container_append(GG_CONTAINER(vbox), hbox);
+
+    widget = gg_action_create_with_label("Quit Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
     return GG_DIALOG(dialog);
 }
@@ -1092,7 +1269,7 @@ static void draw_backdrop();
 
 static void init_gl();
 static void resize_window( int width, int height );
-static void load_theme(char* name, char *pieces, char *board);
+static void load_style(char* name, char *pieces, char *board);
 static int GetMove();
 void load_texture_png( texture_t *texture, char *filename, int alpha );
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
@@ -1540,8 +1717,17 @@ static config_t *do_menu()
 
         if ( can_load == TRUE )
         {
-            load_theme(themelist[cur_theme], pieces_list[pieces_list_cur],
-                       board_list[board_list_cur]);
+            // We using custom?
+            if ( selected_theme==theme_count )
+                load_theme(stylelist[cur_style], pieces_list[pieces_list_cur],
+                    board_list[board_list_cur]);
+            else
+            {
+                //printf( "Loading theme %i\n", selected_theme );
+                load_theme(themes[selected_theme].style, themes[selected_theme].pieces,
+                    themes[selected_theme].board);
+            }
+
             reset_3d();
             return config;
         }
@@ -1738,8 +1924,8 @@ static void init_gui()
     SDL_Surface *icon;
     const SDL_VideoInfo *video_info;
     int i;
-    DIR* themedir;
-    struct dirent* themedir_entry;
+    DIR* styledir;
+    struct dirent* styledir_entry;
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
@@ -1810,37 +1996,48 @@ static void init_gui()
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0);
 
+    /* Load themes xml */
+    load_theme_xml( "themes.xml" );
+
     /* Fill theme list. */
-    if ( (themedir=opendir("themes")) != NULL )
+    if ( theme_count > 0 )
     {
-        num_theme = 0;
-        themedir_entry=readdir(themedir);
-        while ( themedir_entry != NULL )
+        for ( i=0; i<theme_count; i++ )
+            themelist[i]=strdup( themes[i].name );
+    }
+    themelist[theme_count]=strdup( "Custom" );
+
+    /* Fill style list. */
+    if ( (styledir=opendir("styles")) != NULL )
+    {
+        num_style = 0;
+        styledir_entry=readdir(styledir);
+        while ( styledir_entry != NULL )
         {
-            if ( themedir_entry->d_name[0] != '.' )
-                themelist[num_theme++]=strdup( themedir_entry->d_name );
-            themedir_entry=readdir(themedir);
+            if ( styledir_entry->d_name[0] != '.' )
+                stylelist[num_style++]=strdup( styledir_entry->d_name );
+            styledir_entry=readdir(styledir);
         }
     }
 
-    chdir("themes");
+    chdir("styles");
     chdir("default");
     load_border(menu_border, "border.png");
 
     /* Fill pieces list. */
     ch_datadir();
 
-    if ((themedir=opendir("pieces")) != NULL )
+    if ((styledir=opendir("pieces")) != NULL )
     {
         pieces_list_total = 0;
-        while ((themedir_entry = readdir(themedir)) != NULL)
+        while ((styledir_entry = readdir(styledir)) != NULL)
         {
-            if (themedir_entry->d_name[0] != '.')
+            if (styledir_entry->d_name[0] != '.')
             {
                 pieces_list = realloc(pieces_list, (pieces_list_total + 1) *
                                       sizeof(char *));
                 pieces_list[pieces_list_total++] =
-                    strdup(themedir_entry->d_name);
+                    strdup(styledir_entry->d_name);
             }
         }
     }
@@ -1873,17 +2070,17 @@ static void init_gui()
     /* Make key table? */
     PopulateKeyTable();
 
-    if ((themedir=opendir("boards")) != NULL )
+    if ((styledir=opendir("boards")) != NULL )
     {
         board_list_total = 0;
-        while ((themedir_entry = readdir(themedir)) != NULL)
+        while ((styledir_entry = readdir(styledir)) != NULL)
         {
-            if (themedir_entry->d_name[0] != '.')
+            if (styledir_entry->d_name[0] != '.')
             {
                 board_list = realloc(board_list, (board_list_total + 1) *
                                      sizeof(char *));
                 board_list[board_list_total++] =
-                    strdup(themedir_entry->d_name);
+                    strdup(styledir_entry->d_name);
             }
         }
     }
@@ -1953,17 +2150,74 @@ void load_pieces()
     }
 }
 
-/** @brief Loads a theme.
+/** @brief Load the themes XML
+ *
+ */
+static void load_theme_xml( char *xmlfile )
+{
+    FILE *fp;
+    mxml_node_t *tree, *theme;
+    mxml_node_t *data;
+
+    ch_datadir();
+    fp = fopen("themes.xml", "r");
+    tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
+    fclose(fp);
+
+    theme = tree;
+
+    theme_count=0;
+    while (theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND))
+    {
+        mxml_node_t *name = mxmlFindElement(theme, theme, "name", NULL, NULL, MXML_DESCEND);
+        if (name)
+        {
+            data = mxmlWalkNext(name, name, MXML_DESCEND);
+            //if (data && data->type == MXML_OPAQUE)
+            //    printf("Theme: %s\n", data->value.opaque);
+        }
+        sprintf( themes[theme_count].name, "%s", data->value.opaque );
+
+        mxml_node_t *style = mxmlFindElement(theme, theme, "style", NULL, NULL, MXML_DESCEND);
+        if (style)
+        {
+            data = mxmlWalkNext(style, style, MXML_DESCEND);
+            //if (data && data->type == MXML_OPAQUE)
+            //    printf("Style: %s\n", data->value.opaque);
+        }
+        sprintf( themes[theme_count].style, "%s", data->value.opaque );
+
+        mxml_node_t *pieces = mxmlFindElement(theme, theme, "pieces", NULL, NULL, MXML_DESCEND);
+        if (pieces)
+        {
+            data = mxmlWalkNext(pieces, pieces, MXML_DESCEND);
+            //if (data && data->type == MXML_OPAQUE)
+            //    printf("Pieces: %s\n", data->value.opaque);
+        }
+        sprintf( themes[theme_count].pieces, "%s", data->value.opaque );
+
+        mxml_node_t *board = mxmlFindElement(theme, theme, "board", NULL, NULL, MXML_DESCEND);
+        if (board)
+        {
+            data = mxmlWalkNext(board, board, MXML_DESCEND);
+            //if (data && data->type == MXML_OPAQUE)
+            //    printf("Board: %s\n", data->value.opaque);
+        }
+        sprintf( themes[theme_count].board, "%s", data->value.opaque );
+        theme_count++;
+    }
+    //printf( "We loaded %i themes\n", theme_count );
+}
+
+/** @brief Loads a style.
  *
  *  @param name The name of the subdirectory of the theme to load.
  */
-static void load_theme(char* name, char* pieces, char *board)
+static void load_theme(char* style, char* pieces, char *board)
 {
-    //printf( "Loading theme.\n" );
-
     ch_datadir();
-    chdir("themes");
-    chdir(name);
+    chdir("styles");
+    chdir(style);
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
