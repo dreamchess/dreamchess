@@ -278,6 +278,8 @@ static gg_event_t convert_event(SDL_Event *event)
     static unsigned int pressed;
     gg_event_t gg_event;
 
+    gg_event.type=GG_EVENT_NONE;	
+
     switch (event->type)
     {
     case SDL_KEYDOWN:
@@ -307,7 +309,9 @@ static gg_event_t convert_event(SDL_Event *event)
             break;
         default:
             if (event->key.keysym.unicode <= 0xff)
+	    {		
                 gg_event.key = event->key.keysym.unicode;
+	    }
             else
             {
                 gg_event.type = GG_EVENT_NONE;
