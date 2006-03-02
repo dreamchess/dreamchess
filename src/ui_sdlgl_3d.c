@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Define our booleans */
+#define TRUE  1
+#define FALSE 0
+
 #ifdef _arch_dreamcast
 #include <dc/fmath.h>
 #define sin fsin
@@ -366,13 +370,22 @@ inline float arccos(float f)
                                                        + .1383216735 * f) * f) * f);
 }
 
-void model_render(model_t *model, float alpha, coord3_t *light)
+void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
 {
     mesh_t *mesh = model->mesh;
     int g;
     texture_t *texture = model->texture;
+    int ticks = SDL_GetTicks();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
+    float tex_spin_pos;
+
+    if ( tex_spin )
+        tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)get_tex_spin_speed()));
+
+    //printf( "pos: %f\n", tex_spin_pos );
+    //printf( "%f\n", (1000/(float)get_tex_spin_speed()) );
+        //tex_spin_pos=(float)ticks / (float)(1000/(float)get_tex_spin_speed());
 
     for (g = 0; g < mesh->groups; g++)
     {
@@ -392,7 +405,7 @@ void model_render(model_t *model, float alpha, coord3_t *light)
             unsigned int *data = mesh->group[g].data;
             float angle = 1.0f;
 
-            if (light)
+            if (light && use_lighting())
             {
                 angle = arccos(dot_product(mesh->normal[data[i] * 3],
                                            mesh->normal[data[i] * 3 + 1],
@@ -414,7 +427,7 @@ void model_render(model_t *model, float alpha, coord3_t *light)
 
             glColor4f(angle, angle, angle, alpha);
 
-            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2,
+            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
                          mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
 
             glVertex3f(mesh->vertex[data[i] * 3],
@@ -603,11 +616,11 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                 {
                     glPushMatrix();
                     //glRotatef( 10.0f, xrot, yrot, 0.0f );
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
                     glPopMatrix();
                 }
                 else
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l);
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
             }
         }
 }
@@ -619,7 +632,8 @@ static void draw_board(float rot_x, float rot_z)
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
-    model_render(&board, 1.0f, &fixed);
+
+    model_render(&board, 1.0f, &fixed, FALSE);
 }
 
 void draw_selector()

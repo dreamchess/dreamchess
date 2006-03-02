@@ -5,9 +5,16 @@ ACLOCAL_AMFLAGS = -I m4
 INSTALL_DIRS = \
 	/ \
 	/styles/default/ \
+	/styles/sketch/ \
+	/styles/elements/ \
 	/pieces/classiclow/ \
 	/pieces/figurine/ \
-	/boards/classic/
+	/pieces/sketch/ \
+	/pieces/elements/ \
+	/boards/classic/ \
+	/boards/sketch/ \
+	/boards/elements/
+	
 
 dist-hook:
 	rm -rf `find $(distdir)/data -name '.svn'`

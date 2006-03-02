@@ -636,11 +636,32 @@ typedef struct theme
     char style[25];
     char pieces[25];
     char board[25];
+    char white_name[25];
+    char black_name[25];
+    char piece_tex_spin;
+    int piece_tex_spin_speed;
+    char lighting;
 }theme;
 
 theme themes[25];
 int theme_count;
 int selected_theme;
+
+/* xml theme options */
+int use_lighting()
+{
+    return themes[selected_theme].lighting;
+}
+
+int use_tex_spin()
+{
+    return themes[selected_theme].piece_tex_spin;
+}
+
+int get_tex_spin_speed()
+{
+    return themes[selected_theme].piece_tex_spin_speed;
+}
 
 static char* themelist[25];
 static char* stylelist[25];
@@ -992,28 +1013,28 @@ static gg_dialog_t *dialog_title_custom_create()
     vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    label = gg_label_create("Players:");
+    label = gg_label_create("  Players:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Difficulty:");
+    label = gg_label_create("  Difficulty:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Theme:");
+    label = gg_label_create("  Theme:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Style:");
+    label = gg_label_create("  Style:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Pieces:");
+    label = gg_label_create("  Pieces:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Board:");
+    label = gg_label_create("  Board:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
@@ -1111,16 +1132,16 @@ static gg_dialog_t *dialog_title_create()
     vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    label = gg_label_create("Players:");
+    label = gg_label_create("  Players:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Difficulty:");
+    label = gg_label_create("  Difficulty:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("Theme:");
+    label = gg_label_create("  Theme:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
@@ -2173,41 +2194,81 @@ static void load_theme_xml( char *xmlfile )
     theme_count=0;
     while (theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND))
     {
+        /* Set theme to defaults.. incase we have missing bits..*/
+        sprintf( themes[theme_count].name, "Un named" );
+        sprintf( themes[theme_count].style, "default" );
+        sprintf( themes[theme_count].pieces, "classiclow" );
+        sprintf( themes[theme_count].board, "classic" );
+        sprintf( themes[theme_count].white_name, "White" );
+        sprintf( themes[theme_count].black_name, "Black" );
+        themes[theme_count].lighting=TRUE;
+        themes[theme_count].piece_tex_spin=FALSE;
+        themes[theme_count].piece_tex_spin_speed=0;
+
         mxml_node_t *name = mxmlFindElement(theme, theme, "name", NULL, NULL, MXML_DESCEND);
         if (name)
         {
             data = mxmlWalkNext(name, name, MXML_DESCEND);
-            //if (data && data->type == MXML_OPAQUE)
-            //    printf("Theme: %s\n", data->value.opaque);
+            sprintf( themes[theme_count].name, "%s", data->value.opaque );
         }
-        sprintf( themes[theme_count].name, "%s", data->value.opaque );
 
         mxml_node_t *style = mxmlFindElement(theme, theme, "style", NULL, NULL, MXML_DESCEND);
         if (style)
         {
             data = mxmlWalkNext(style, style, MXML_DESCEND);
-            //if (data && data->type == MXML_OPAQUE)
-            //    printf("Style: %s\n", data->value.opaque);
+            sprintf( themes[theme_count].style, "%s", data->value.opaque );
         }
-        sprintf( themes[theme_count].style, "%s", data->value.opaque );
+
 
         mxml_node_t *pieces = mxmlFindElement(theme, theme, "pieces", NULL, NULL, MXML_DESCEND);
         if (pieces)
         {
             data = mxmlWalkNext(pieces, pieces, MXML_DESCEND);
-            //if (data && data->type == MXML_OPAQUE)
-            //    printf("Pieces: %s\n", data->value.opaque);
+            sprintf( themes[theme_count].pieces, "%s", data->value.opaque );
         }
-        sprintf( themes[theme_count].pieces, "%s", data->value.opaque );
 
         mxml_node_t *board = mxmlFindElement(theme, theme, "board", NULL, NULL, MXML_DESCEND);
         if (board)
         {
             data = mxmlWalkNext(board, board, MXML_DESCEND);
-            //if (data && data->type == MXML_OPAQUE)
-            //    printf("Board: %s\n", data->value.opaque);
+            sprintf( themes[theme_count].board, "%s", data->value.opaque );
         }
-        sprintf( themes[theme_count].board, "%s", data->value.opaque );
+
+        mxml_node_t *white_name = mxmlFindElement(theme, theme, "white_name", NULL, NULL, MXML_DESCEND);
+        if (white_name)
+        {
+            data = mxmlWalkNext(white_name, white_name, MXML_DESCEND);
+            sprintf( themes[theme_count].white_name, "%s", data->value.opaque );
+        }
+
+        mxml_node_t *black_name = mxmlFindElement(theme, theme, "black_name", NULL, NULL, MXML_DESCEND);
+        if (black_name)
+        {
+            data = mxmlWalkNext(black_name, black_name, MXML_DESCEND);
+            sprintf( themes[theme_count].black_name, "%s", data->value.opaque );
+        }
+
+        mxml_node_t *board_light = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
+        if (board_light)
+        {
+            data = mxmlWalkNext(board_light, board_light, MXML_DESCEND);
+
+            if ( !strcmp( data->value.opaque, "off" ) )
+                themes[theme_count].lighting=FALSE;
+        }
+
+        mxml_node_t *tex_spin = mxmlFindElement(theme, theme, "tex_spin", NULL, NULL, MXML_DESCEND);
+        if (tex_spin)
+        {
+            data = mxmlWalkNext(tex_spin, tex_spin, MXML_DESCEND);
+
+            themes[theme_count].piece_tex_spin=TRUE;
+            themes[theme_count].piece_tex_spin_speed=atoi(data->value.opaque);
+            //printf( "Speed: %i\n", themes[theme_count].piece_tex_spin_speed );
+            //if ( !strcmp( data->value.opaque, "off" ) )
+            //    themes[theme_count].lighting=FALSE;
+        }
+
         theme_count++;
     }
     //printf( "We loaded %i themes\n", theme_count );
@@ -2511,19 +2572,18 @@ static void draw_scene( board_t *b )
                );
 
     /* Da clocken */
-
-    draw_border(style_ingame.border.textured.image, (gg_rect_t)
+    /*draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     290, 440, 60, 20
                 }
                 , 8
-               );
+               );*/
 
     glPopMatrix();
 
     glPushMatrix();
-    draw_name_dialog( 50, 430, "White", TRUE, 1 );
-    draw_name_dialog( 490, 430, "Black", FALSE, 0 );
+    draw_name_dialog( 50, 430, themes[selected_theme].white_name, TRUE, 1 );
+    draw_name_dialog( 490, 430, themes[selected_theme].black_name, FALSE, 0 );
     draw_border(style_ingame.border.textured.image, (gg_rect_t)
                 {
                     20, 375, 75, 10
@@ -2543,7 +2603,7 @@ static void draw_scene( board_t *b )
     clock_minutes=(((SDL_GetTicks()-turn_counter_start)/1000)/60);
     clock_seconds=((SDL_GetTicks()-turn_counter_start)/1000)-(clock_minutes*60);
     sprintf( temp, "%i:%02i", clock_minutes, clock_seconds );
-    text_draw_string( 303, 440, temp, 1, &col_black, 999 );
+    /*text_draw_string( 303, 440, temp, 1, &col_black, 999 );*/
     glPopMatrix();
 
     if ( white_in_check == TRUE )
