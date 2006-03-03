@@ -1951,6 +1951,7 @@ static void init_gui()
     int i;
     DIR* styledir;
     struct dirent* styledir_entry;
+    char temp[80];
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
@@ -2022,7 +2023,23 @@ static void init_gui()
     load_texture_png( &menu_title_tex, "menu_title.png" , 0);
 
     /* Load themes xml */
-    load_theme_xml( "themes.xml" );
+
+    ch_datadir();
+    if ( (styledir=opendir("themes")) != NULL )
+    {
+        theme_count=0;
+        styledir_entry=readdir(styledir);
+        while ( styledir_entry != NULL )
+        {
+            printf( "Trying to load %s\n", styledir_entry->d_name );
+            if ( styledir_entry->d_name[0] != '.' )
+            {
+                sprintf( temp, "themes/%s", styledir_entry->d_name );
+                load_theme_xml( temp );
+            }
+            styledir_entry=readdir(styledir);
+        }
+    }
 
     /* Fill theme list. */
     if ( theme_count > 0 )
@@ -2184,14 +2201,19 @@ static void load_theme_xml( char *xmlfile )
     mxml_node_t *tree, *theme;
     mxml_node_t *data;
 
-    ch_datadir();
-    fp = fopen("themes.xml", "r");
-    tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
+    printf( "Opening %s\n", xmlfile );
+    fp = fopen(xmlfile, "r");
+    printf( "Opening XML bit\n" );
+    if (fp)
+        tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
+    else
+        printf( "Error opening theme file.\n" );        
+
     fclose(fp);
 
     theme = tree;
 
-    theme_count=0;
+    printf( "While\n" );
     while (theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND))
     {
         /* Set theme to defaults.. incase we have missing bits..*/

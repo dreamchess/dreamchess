@@ -4,6 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 INSTALL_DIRS = \
 	/ \
+	/themes/ \
 	/styles/default/ \
 	/styles/sketch/ \
 	/styles/elements/ \
