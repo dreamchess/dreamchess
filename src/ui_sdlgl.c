@@ -772,6 +772,7 @@ static gg_dialog_t *dialog_ingame_create()
 static void dialog_quit_ok(gg_widget_t *widget, void *data)
 {
     gg_dialog_close();
+    gg_dialog_close();
     quit_to_menu = 1;
 }
 
@@ -922,14 +923,6 @@ static void menu_title_start(gg_widget_t *widget, void *data)
     gg_dialog_close();
 }
 
-static void menu_title_custom_start(gg_widget_t *widget, void *data)
-{
-    set_loading=TRUE;
-
-    gg_dialog_close();
-    gg_dialog_close();
-}
-
 /** @brief Triggers DreamChess exit. */
 static void menu_title_quit(gg_widget_t *widget, void *data)
 {
@@ -1034,7 +1027,7 @@ static gg_dialog_t *dialog_title_custom_create()
     flip_board = 0;
 
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_custom_start, NULL);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
     vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
