@@ -193,12 +193,16 @@ int game_want_move()
            && history->last == history->view;
 }
 
-int game_save()
+int game_save( int slot )
 {
     int retval;
+    char temp[80];
 
     if (!ch_userdir())
-        retval = history_save_pgn(history, "dreamchess.pgn");
+    {
+        sprintf( temp, "save%i.pgn", slot );
+        retval = history_save_pgn(history, temp);
+    }
     else
     {
         printf("Could not enter user directory.\n");
@@ -292,9 +296,10 @@ void game_quit()
     in_game = 0;
 }
 
-int game_load()
+int game_load( int slot )
 {
     int retval;
+    char temp[80];
     board_t *board;
 
     if (ch_userdir())
@@ -303,9 +308,19 @@ int game_load()
         return 1;
     }
 
+    sprintf( temp, "save%i.pgn", slot );
+
+    if ( !fopen( temp, "r" ) ) 
+    {
+        printf( "No save at slot %i\n", slot );
+        return 1;
+    }
+
     restart_game();
     comm_send("force\n");
-    retval = pgn_parse_file("dreamchess.pgn");
+
+    sprintf( temp, "save%i.pgn", slot );
+    retval = pgn_parse_file(temp);
 
     if (retval)
     {

@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <assert.h>
+#include <time.h>
 
 #include "mxml.h"
 
@@ -801,6 +802,136 @@ static void dialog_ingame_open(gg_widget_t *widget, void *data)
     gg_dialog_open(dialog_ingame_create());
 }
 
+static gg_dialog_t *dialog_saveload_create( int saving );
+static void dialog_savegame_open(gg_widget_t *widget, void *data)
+{
+    gg_dialog_open(dialog_saveload_create(TRUE));
+}
+
+static void dialog_loadgame_open(gg_widget_t *widget, void *data)
+{
+    gg_dialog_open(dialog_saveload_create(FALSE));
+}
+
+const char * whitespace_cb(mxml_node_t *node, int where )
+{
+    const char *name;
+    name = node->value.element.name;
+
+    if (!strcmp(name, "save"))
+    {
+        if (where == MXML_WS_AFTER_OPEN)
+            return ("\n");
+    }
+    else if ( !strcmp(name, "desc") )
+    {
+        if (where == MXML_WS_BEFORE_OPEN)
+            return ("   ");
+        else if (where == MXML_WS_AFTER_CLOSE)
+            return ("\n");
+    }
+
+    return (NULL);
+}
+
+void write_save_xml( int slot, char *desc )
+{
+    FILE *fp;
+    char temp[80];
+    mxml_node_t *tree,*node,*node2;
+
+    sprintf( temp, "save%i.xml", slot );
+
+    if (ch_userdir())
+    {
+        printf("Could not enter user directory.\n");
+        return;
+    }
+
+    fp = fopen(temp, "w");
+
+    fprintf( fp, "<?xml version=\"1.0\"?>\n" );
+    tree = mxmlNewElement( MXML_NO_PARENT, "save" );
+    node = mxmlNewElement( MXML_NO_PARENT, "desc" );
+    mxmlAdd( tree, MXML_ADD_AFTER, MXML_ADD_TO_PARENT, node );
+    node2 = mxmlNewOpaque( node, desc );
+
+    mxmlSaveFile(tree, fp, whitespace_cb);
+    fclose(fp);
+}
+
+static void load_opaque(mxml_node_t *top, char *name, char *dest);
+void load_save_xml( int slot, char *desc )
+{
+    FILE *fp;
+    char temp[80];
+    mxml_node_t *tree, *save;
+
+    sprintf( temp, "save%i.xml", slot );
+    /*printf( "Loading %s\n", temp );*/
+
+    if (ch_userdir())
+    {
+        printf("Could not enter user directory.\n");
+        return;
+    }
+
+    fp = fopen(temp, "r");
+    if (fp)
+        tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
+    else
+    {
+        /*printf( "Error opening theme file.\n" );*/
+        sprintf( desc, "Empty." );
+        return;
+    }
+
+    fclose(fp);
+
+    save = tree;
+
+    while ((save = mxmlFindElement(save, tree, "save", NULL, NULL, MXML_DESCEND)))
+    {
+        mxml_node_t *node;
+
+        load_opaque(save, "desc", desc);
+    }
+}
+
+static int load_game( int slot );
+static void dialog_loadgame_load(gg_widget_t *widget, void *data)
+{
+    gg_widget_t *vbox = widget->parent;
+
+    /*printf( "Loading slot %i\n", GG_SELECT(vbox)->sel );*/
+    if ( !load_game( GG_SELECT(vbox)->sel-1 ) )
+    {
+        gg_dialog_close();
+        gg_dialog_close();
+    }
+}
+
+static void dialog_savegame_save(gg_widget_t *widget, void *data)
+{
+    char temp[80];
+    time_t timething;
+    struct tm *current_time;
+
+    gg_widget_t *vbox = widget->parent;
+
+    time( &timething );
+    current_time = localtime( &timething );
+
+    /*printf( "Saving slot %i\n", GG_SELECT(vbox)->sel );*/
+    sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
+        current_time->tm_hour, current_time->tm_min );
+
+    write_save_xml( GG_SELECT(vbox)->sel-1, temp );
+    game_save( GG_SELECT(vbox)->sel-1 );
+    gg_dialog_close();
+    gg_dialog_close();
+}
+
 /** @brief Creates the system dialog.
  *
  *  @return The created dialog.
@@ -815,7 +946,15 @@ static gg_dialog_t *dialog_system_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("More Options..", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("  Save game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_savegame_open, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("  Load game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_open, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("  Move Options..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_ingame_open, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -828,6 +967,42 @@ static gg_dialog_t *dialog_system_create()
     return GG_DIALOG(dialog);
 }
 
+static gg_dialog_t *dialog_saveload_create( int saving )
+{
+    gg_widget_t *dialog;
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_widget_t *widget;
+    int max_saveslots=10;
+    char desc[80];
+    char temp[80];
+    int i=0;
+
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    for ( i=0; i<max_saveslots; i++ )
+    {
+        load_save_xml( i, desc );
+        if ( saving )
+        {
+            sprintf( temp, "  Save slot %i: %s", i, desc );
+            widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
+            gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
+        }
+        else
+        {
+            sprintf( temp, "  Load slot %i: %s", i, desc );
+            widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
+            gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
+        }
+        gg_container_append(GG_CONTAINER(vbox), widget);
+    }
+
+    dialog = gg_dialog_create(vbox);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    return GG_DIALOG(dialog);
+}
 
 /* Victory dialog. */
 
@@ -2176,7 +2351,7 @@ static void load_theme_xml( char *xmlfile )
     if (fp)
         tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
     else
-        printf( "Error opening theme file.\n" );        
+        printf( "Error opening theme file.\n" );
 
     fclose(fp);
 
@@ -2858,10 +3033,14 @@ static void poll_move()
 
 #define MOVE_SPEED (60 / fps)
 
-static void load_game()
+int load_game( int slot )
 {
-    if (game_load())
-        show_message("PGN file loading failed.");
+    int retval=game_load( slot );
+
+    /*if (!retval)
+        show_message("PGN file loading failed.");*/
+
+    return retval;
 }
 
 /** @brief Main input routine.
