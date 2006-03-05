@@ -230,6 +230,7 @@ void gg_vbox_init(gg_vbox_t *vbox, int spacing)
 {
     gg_box_init((gg_box_t *) vbox, spacing);
 
+    vbox->id = gg_vbox_get_class_id();
     vbox->render = gg_vbox_render;
     vbox->input = gg_vbox_input;
     vbox->get_requested_size = gg_vbox_get_requested_size;

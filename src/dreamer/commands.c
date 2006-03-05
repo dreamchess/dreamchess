@@ -24,6 +24,7 @@
 #include "move.h"
 #include "history.h"
 #include "repetition.h"
+#include "transposition.h"
 
 static int is_check(board_t *board)
 {

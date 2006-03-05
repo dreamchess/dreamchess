@@ -219,6 +219,7 @@ void gg_hbox_init(gg_hbox_t *hbox, int spacing)
 {
     gg_box_init((gg_box_t *) hbox, spacing);
 
+    hbox->id = gg_hbox_get_class_id();
     hbox->render = gg_hbox_render;
     hbox->input = gg_hbox_input;
     hbox->get_requested_size = gg_hbox_get_requested_size;
