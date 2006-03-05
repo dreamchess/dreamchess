@@ -3051,12 +3051,28 @@ int load_game( int slot )
  *  @return If the user selected a chess piece a value between 0 (A1) and 63
  *          (H8) is returned. -1 if no chess piece was selected.
  */
+int last_mousex=0;
+int last_mousey=0;
 static int GetMove()
 {
     int retval = -1;
+    int mousex, mousey;
     static Sint16 rotx, roty;
     SDL_Event event;
     Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
+
+    if( mousestate & SDL_BUTTON_MIDDLE )
+    {
+        move_camera( -(mousey-last_mousey)*MOVE_SPEED, -(mousex-last_mousex)*MOVE_SPEED);
+        last_mousex=mousex;
+        last_mousey=mousey;
+    }
+    else
+    {
+        last_mousex=mousex;
+        last_mousey=mousey;
+    }
 
     if (keystate[SDLK_LCTRL])
     {
@@ -3107,6 +3123,14 @@ static int GetMove()
             retval = mouse_square;
             if (retval != -1)
                 select_piece(retval);
+
+            continue;
+        }
+
+        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+                event.button.button == SDL_BUTTON_RIGHT)
+        {
+            gg_dialog_open(dialog_system_create());
 
             continue;
         }
