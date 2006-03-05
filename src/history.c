@@ -172,7 +172,6 @@ int history_save_pgn(history_t *hist, char *filename)
     while (step->next)
     {
         char buf[16];
-        int len;
         char *san;
 
         if (side == WHITE)
@@ -192,4 +191,6 @@ int history_save_pgn(history_t *hist, char *filename)
     write_token(f, &width, res);
     fputs("\n\n", f);
     fclose(f);
+
+    return 0;
 }

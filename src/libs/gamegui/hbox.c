@@ -148,7 +148,6 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
 void gg_hbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_box_t *box = GG_BOX(widget);
     int i;
 
     for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)
@@ -178,8 +177,6 @@ gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget)
 
     while (nr < box->sel)
     {
-        gg_widget_t *sibling = gg_container_get_child(container, nr);
-
         focus.x += child->width_a;
         nr++;
     }

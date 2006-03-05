@@ -20,6 +20,10 @@
  *  @brief Core gamegui system header file.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifndef GG_SYSTEM_H
 #define GG_SYSTEM_H
 
@@ -105,11 +109,13 @@ gg_driver_t;
         class_id = gg_register_class(C); \
     return class_id;
 
-/* w_widget_t *cast_error(char *file, int line, char *type); */
+struct gg_widget;
 
-gg_class_id w_register_class(gg_class_id parent);
+struct gg_widget *gg_cast_error(char *file, int line, char *type);
 
-/* int w_check_cast(w_widget_t *widget, w_class_id id); */
+gg_class_id gg_register_class(gg_class_id parent);
+
+int gg_check_cast(struct gg_widget *widget, gg_class_id id);
 
 void gg_system_init(gg_driver_t *d);
 
@@ -125,8 +131,14 @@ void gg_system_get_image_size(void *image, int *width, int *height);
 
 void gg_system_get_char_size(int c, int *width, int *height);
 
-void gg_system_get_string_size(unsigned char *s, int *width, int *height);
+void gg_system_get_string_size(char *s, int *width, int *height);
 
-void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
+void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
+
+unsigned int gg_system_get_ticks();
+
+gg_colour_t gg_colour(float r, float g, float b, float a);
+
+gg_rect_t gg_rect(int x, int y, int w, int h);
 
 #endif /* GG_SYSTEM_H */

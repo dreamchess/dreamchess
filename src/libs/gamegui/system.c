@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
@@ -68,7 +69,11 @@ unsigned int gg_system_get_ticks()
 
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
-    gg_rect_t dest = {x, y, width, 1};
+    gg_rect_t dest;
+    dest.x = x;
+    dest.y = y;
+    dest.width = width;
+    dest.height = 1;
     gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
     dest.y += height - 1;
     gg_system_draw_filled_rect(dest.x, dest.y, dest.width, dest.height, colour);
@@ -86,8 +91,12 @@ void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t
 
     if (clip)
     {
-        gg_rect_t dest = {x, y, width, height};
-        gg_rect_t dest_c = gg_clipping_rect(&dest, clip);
+        gg_rect_t dest, dest_c;
+        dest.x = x;
+        dest.y = y;
+        dest.width =  width;
+        dest.height = height;
+        dest_c = gg_clipping_rect(&dest, clip);
         driver->draw_filled_rect(dest_c.x, dest_c.y, dest_c.width, dest_c.height,
                           colour);
     }
@@ -163,7 +172,7 @@ void gg_system_get_char_size(int c, int *width, int *height)
     driver->get_char_size(c, width, height);
 }
 
-void gg_system_get_string_size(unsigned char *s, int *width, int *height)
+void gg_system_get_string_size(char *s, int *width, int *height)
 {
     int i;
 
@@ -184,11 +193,12 @@ void gg_system_get_string_size(unsigned char *s, int *width, int *height)
     }
 }
 
-void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align)
+void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align)
 {
     int i;
     unsigned int ticks = gg_system_get_ticks();
-    gg_rect_t rect_d = {x};
+    gg_rect_t rect_d;
+    rect_d.x = x;
 
     if (align != 0.0f)
     {
@@ -199,7 +209,7 @@ void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, 
         rect_d.x -= width * align;
     }
 
-    for (i = 0; i < strlen(s); i++)
+    for (i = 0; i < strlen((char *) s); i++)
     {
         int y_off = 0;
         void *image = driver->get_char_image(s[i]);
@@ -224,4 +234,28 @@ void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, 
 
         ticks += 1000 / GG_BOUNCE_SPEED / GG_BOUNCE_LEN;
     }
+}
+
+gg_colour_t gg_colour(float r, float g, float b, float a)
+{
+    gg_colour_t col;
+
+    col.r = r;
+    col.g = g;
+    col.b = b;
+    col.a = a;
+
+    return col;
+}
+
+gg_rect_t gg_rect(int x, int y, int w, int h)
+{
+    gg_rect_t rect;
+
+    rect.x = x;
+    rect.y = y;
+    rect.width = w;
+    rect.height = h;
+
+    return rect;
 }

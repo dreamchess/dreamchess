@@ -20,24 +20,52 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "state.h"
+#include "dreamer.h"
 #include "board.h"
 #include "move.h"
 #include "search.h"
 #include "hashing.h"
 #include "e_comm.h"
 #include "commands.h"
+#include "repetition.h"
+#include "transposition.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifdef __WIN32__
+
 #include <windows.h>
 #define drm_sleep(M) Sleep(M)
+
 #elif defined _arch_dreamcast
+
 #include <kos/thread.h>
 #define drm_sleep(M) thd_sleep(M)
+
 #elif defined __BEOS__
+
 #define drm_sleep(M) snooze((M) * 1000)
-#else
+
+#elif defined HAVE_USLEEP
+
 #define drm_sleep(M) usleep((M) * 1000)
+
+#else
+
+#include <sys/time.h>
+#include <sys/types.h>
+
+void drm_sleep(unsigned long usec)
+{
+    struct timeval tv;
+
+    tv.tv_sec = 0;
+    tv.tv_usec = usec;
+    select(0, 0, 0, 0, &tv);
+}
+
 #endif
 
 static state_t state;

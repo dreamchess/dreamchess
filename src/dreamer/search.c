@@ -27,6 +27,7 @@
 #include "repetition.h"
 #include "transposition.h"
 #include "hashing.h"
+#include "dreamer.h"
 
 extern int moves_made;
 int abort_search;

@@ -19,8 +19,9 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "state.h"
+#include "dreamer.h"
 
 void command_handle(state_t *state, char *command);
+int command_check_abort(state_t *state, char *command);
 
 #endif /* COMMANDS_H */

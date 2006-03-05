@@ -207,4 +207,8 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style);
 
 gg_widget_t *gg_dialog_create(gg_widget_t *child);
 
+gg_class_id gg_dialog_get_class_id();
+
+void draw_border(void *image[9], gg_rect_t area, int size);
+
 #endif /* GAMEGUI_DIALOG_H */

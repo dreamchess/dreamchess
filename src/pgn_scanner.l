@@ -22,6 +22,7 @@
 #include "pgn_parser.h"
 
 static char *make_string();
+int yyparse();
 
 int pgn_parse_file(char *filename)
 {

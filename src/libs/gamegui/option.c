@@ -123,7 +123,6 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
     {
         int border_l;
         int border_r;
-        int height;
 
         gg_system_get_string_size(OPTION_ARROW_LEFT, &border_l, NULL);
         gg_system_get_string_size(OPTION_ARROW_RIGHT, &border_r, NULL);
@@ -145,7 +144,6 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
 
 void gg_option_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_option_t *option = GG_OPTION(widget);
     gg_container_t *container = GG_CONTAINER(widget);
     int border_l;
     int border_r;

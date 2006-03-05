@@ -215,7 +215,7 @@ static int do_move(move_t *move, int ui_update)
 
     if (!move_is_valid(history->last->board, move))
     {
-        //printf("Move invalid!\n");
+        /* printf("Move invalid!\n"); */
         return 0;
     }
 
@@ -224,11 +224,11 @@ static int do_move(move_t *move, int ui_update)
     move_s = move_to_fullalg(&new_board, move);
     move_list_play(&fullalg_list, move_s);
 
-    //printf("Move: %s\n", move_s);
+    /* printf("Move: %s\n", move_s); */
     free(move_s);
     move_s = move_to_san(&new_board, move);
     move_f = san_to_fan(&new_board, move_s);
-    //printf("SAN: %s\n", move_s);
+    /* printf("SAN: %s\n", move_s); */
     move_list_play(&san_list, move_s);
     free(move_s);
     move_list_play(&fan_list, move_f);
@@ -282,7 +282,8 @@ static int do_move(move_t *move, int ui_update)
 
 void game_make_move(move_t *move, int ui_update)
 {
-    if (do_move(move, ui_update)){//printf("Sending: %s\n", fullalg_list.move[fullalg_list.entries-1]);
+    if (do_move(move, ui_update)){
+        /* printf("Sending: %s\n", fullalg_list.move[fullalg_list.entries-1]); */
         comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);}
 }
 
@@ -337,7 +338,7 @@ void game_make_move_str(char *move_str, int ui_update)
         engine_move = fullalg_to_move(&new_board, move_str);
     if (engine_move)
     {
-        //printf("Move: %s\n", move_str);
+        /* printf("Move: %s\n", move_str); */
         game_make_move(engine_move, ui_update);
         free(engine_move);
     }
@@ -416,7 +417,7 @@ int dreamchess(void *data)
 
     ui = ui_driver[0];
 
-    //printf("DreamChess\n");
+    /* printf("DreamChess\n"); */
 
 #ifndef _arch_dreamcast
 
@@ -467,7 +468,7 @@ int dreamchess(void *data)
 
             if ((s = comm_poll()))
             {
-               //printf("Received: %s\n", s);
+                /* printf("Received: %s\n", s); */
                 if  (!history->result)
                 {
                     if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) && config->player[history->last->board->turn] == PLAYER_ENGINE)
@@ -479,7 +480,7 @@ int dreamchess(void *data)
                             engine_move = fullalg_to_move(&new_board, move_str);
                         if (engine_move)
                         {
-                            //printf("Move: %s\n", move_str);
+                            /* printf("Move: %s\n", move_str); */
                             do_move(engine_move, 1);
                             free(engine_move);
                         }

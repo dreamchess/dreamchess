@@ -7,10 +7,9 @@ AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 BUILT_SOURCES = pgn_parser.h
 AM_YFLAGS = -d
 
-dreamchess_SOURCES = ui_sdlgl.c ui_sdl.c board.c history.c ui.c \
-	comm_unix.c comm_sdlthd.c dreamchess.c main.c main_sdlthd.c \
-	dir.c comm.c comm_win32.c credits.c ui_sdlgl_3d.c pgn_parser.y \
-	pgn_scanner.l
+dreamchess_SOURCES = ui_sdlgl.c board.c history.c ui.c comm_unix.c \
+	comm_sdlthd.c dreamchess.c main.c main_sdlthd.c dir.c comm.c \
+	comm_win32.c credits.c ui_sdlgl_3d.c pgn_parser.y pgn_scanner.l
 
 dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ @WIN32_RC@ libs/libsan.a \
 	libs/gamegui/libgamegui.a libs/mxml/libmxml.a

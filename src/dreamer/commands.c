@@ -19,9 +19,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "state.h"
+#include "dreamer.h"
 #include "e_comm.h"
 #include "move.h"
+#include "history.h"
+#include "repetition.h"
 
 static int is_check(board_t *board)
 {

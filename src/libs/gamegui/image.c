@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
+
 #include <gamegui/image.h>
 
 /** Focussed image scale value. */
@@ -37,8 +39,6 @@ gg_class_id gg_image_get_class_id()
 void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
 {
     gg_image_t *image = GG_IMAGE(widget);
-    int w = image->width;
-    int h = image->height;
     unsigned int ticks = gg_system_get_ticks();
     float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;

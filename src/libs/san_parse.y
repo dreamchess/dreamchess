@@ -25,6 +25,9 @@
 
 #include "san.h"
 
+int yylex(void);
+int yyerror(const char *s);
+
 san_move_t san_move;
 %}
 

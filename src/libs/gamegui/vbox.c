@@ -156,7 +156,6 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
 void gg_vbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_box_t *box = GG_BOX(widget);
     int i;
 
     for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)

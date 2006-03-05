@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <gamegui/dialog.h>
 
@@ -69,7 +70,6 @@ void gg_dialog_open(gg_dialog_t *menu)
         return;
     }
 
-    reset_string_type_length();
     dialog_stack[dialog_nr++] = menu;
 }
 
@@ -290,7 +290,6 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 void gg_dialog_input_current(gg_event_t event)
 {
     gg_dialog_t *dialog = gg_dialog_current();
-    gg_widget_t *child;
 
     if (!dialog)
         return;
@@ -314,21 +313,15 @@ void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, fl
 void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
 {
     gg_dialog_style_t style;
+    gg_colour_t border_col = {0.0f, 0.0f, 0.0f, 1.0f};
+    gg_colour_t bg_col = {0.8f, 0.8f, 0.8f, 1.0f};
+    gg_colour_t fade_col = {0.0f, 0.0f, 0.0f, 0.5f};
 
     style.textured = 0;
     style.border.plain.border = 5;
-    style.border.plain.border_col = (gg_colour_t)
-                                    {
-                                        0.0f, 0.0f, 0.0f, 1.0f
-                                    };
-    style.border.plain.bg_col = (gg_colour_t)
-                                {
-                                    0.8f, 0.8f, 0.8f, 1.0f
-                                };
-    style.fade_col = (gg_colour_t)
-                     {
-                         0.0f, 0.0f, 0.0f, 0.5f
-                     };
+    style.border.plain.border_col = border_col;
+    style.border.plain.bg_col = bg_col;
+    style.fade_col = fade_col;
     style.hor_pad = 20;
     style.vert_pad = 10;
 
@@ -362,7 +355,6 @@ gg_widget_t *gg_dialog_create(gg_widget_t *child)
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
 {
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
-    int size;
 
     dialog->style = *style;
     dialog->width = child->width_a + 2 * dialog->style.hor_pad;

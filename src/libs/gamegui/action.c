@@ -29,7 +29,6 @@ gg_class_id gg_action_get_class_id()
 /** Implements widget::render for action widgets. */
 void gg_action_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    gg_action_t *action = GG_ACTION(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
 
     if (focus != GG_FOCUS_NONE)

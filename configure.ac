@@ -14,6 +14,8 @@ AC_PROG_RANLIB
 AM_PROG_LEX
 AC_CHECK_PROGS(YACC, 'bison -y', [${am_missing_run} bison -y])
 
+AC_C_INLINE
+
 if test "x$cross_compiling" = xyes; then
 	test "${CC_FOR_BUILD+set}" = set || CC_FOR_BUILD="$CC"
 else
@@ -236,7 +238,7 @@ fi
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h string.h getopt.h])
-AC_CHECK_FUNCS(getopt_long strdup vsnprintf)
+AC_CHECK_FUNCS(getopt_long strdup vsnprintf usleep)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -245,7 +247,10 @@ AC_C_VOLATILE
 # Needed for Mini-XML.
 AH_TOP(/* Needed for Mini-XML. */
 [#include <stdio.h>
-#include <stdarg.h>])
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <ctype.h>])
 
 AH_BOTTOM(/* Needed for Mini-XML. */
 [#ifndef HAVE_STRDUP

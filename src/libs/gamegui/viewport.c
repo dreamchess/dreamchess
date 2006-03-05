@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include <gamegui/viewport.h>
+#include <gamegui/clipping.h>
 
 gg_class_id gg_viewport_get_class_id()
 {

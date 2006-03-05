@@ -61,5 +61,8 @@ int my_turn(state_t *state);
 int check_game_state(board_t *board);
 void check_game_end(state_t *state);
 char *coord_move_str(move_t *move);
+void do_move(state_t *state, move_t *move);
+void undo_move(state_t *state);
+int check_abort();
 
 #endif /* STATE_H */

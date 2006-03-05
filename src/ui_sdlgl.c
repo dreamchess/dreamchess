@@ -149,19 +149,9 @@ static gg_colour_t col_black =
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-static gg_colour_t col_grey =
-    {
-        0.5f, 0.5f, 0.5f, 1.0f
-    };
-
 static gg_colour_t col_red =
     {
         1.0f, 0.0f, 0.0f, 1.0f
-    };
-
-static gg_colour_t col_dark_red =
-    {
-        0.7f, 0.0f, 0.0f, 1.0f
     };
 
 static gg_colour_t col_white =
@@ -214,7 +204,7 @@ void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
 */
 ui_event_t keys[94];
 
-int string_type_pos=0;
+int string_type_pos=-1;
 
 int turn_counter_start=0;
 
@@ -461,28 +451,6 @@ void reset_string_type_length()
     string_type_start=ticks;
 }
 
-void update_string_type_length()
-{
-    string_type_pos=999;
-    //Uint32 ticks = SDL_GetTicks();
-    // float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
-    //printf( "In type loop thingy. %i %i\n\r", string_type_cur, string_type_pos );
-
-    // printf( "FART %i\n\r", (ticks-string_type_start) );
-
-    // string_type_pos=((ticks-string_type_start))/(STRING_TYPE_SPEED*1000);
-
-    /*    if ( string_type_cur > STRING_TYPE_SPEED )
-        {
-     
-            string_type_cur=0;
-            if ( string_type_pos < 100 )
-                string_type_pos++;
-        }
-        else
-            string_type_cur++;*/
-}
-
 static void go_3d(int width, int height)
 {
     glViewport( 0, 0, width, height );
@@ -615,10 +583,10 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 }
 #endif
 
-void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
-void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
-void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length );
-static int text_width(unsigned char *text);
+void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
+void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
+void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
+static int text_width(char *text);
 static int text_height();
 static int quit_to_menu;
 static int title_process_retval;
@@ -644,7 +612,7 @@ typedef struct theme
 }theme;
 
 theme themes[25];
-int theme_count=0;;
+int theme_count=0;
 int selected_theme=0;
 int selected_player_layout=0;
 int selected_difficulty=0;
@@ -965,7 +933,7 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
     selected_theme = gg_option_get_selected(GG_OPTION(widget));
     if ( gg_option_get_selected(GG_OPTION(widget)) != theme_count )
     {
-       // printf( "Theme changed from Custom!\n" );
+        /* printf( "Theme changed from Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
         gg_dialog_open(dialog_title_create());
@@ -979,7 +947,7 @@ static void dialog_title_theme(gg_widget_t *widget, void *data)
     selected_theme = gg_option_get_selected(GG_OPTION(widget));
     if ( gg_option_get_selected(GG_OPTION(widget)) == theme_count )
     {
-       // printf( "Theme changed to Custom!\n" );
+        /* printf( "Theme changed to Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
         gg_dialog_open(dialog_title_custom_create());
@@ -1081,7 +1049,7 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
 
-    // Themelist list..
+    /* Themelist list.. */
     widget = gg_option_create();
     for (i = 0; i < theme_count+1; i++)
         gg_option_append_label(GG_OPTION(widget), themelist[i], 0.5f, 0.0f);
@@ -1109,9 +1077,6 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_option_set_callback(GG_OPTION(widget), dialog_title_board, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_custom_board);
-
-    //widget = gg_entry_create();
-    //gg_container_append(GG_CONTAINER(vbox2), widget);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
@@ -1192,7 +1157,7 @@ static gg_dialog_t *dialog_title_create()
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
 
-    // Themelist list..
+    /* Themelist list.. */
     widget = gg_option_create();
     for (i = 0; i < theme_count+1; i++)
         gg_option_append_label(GG_OPTION(widget), themelist[i], 0.5f, 0.0f);
@@ -1293,12 +1258,10 @@ static void draw_backdrop();
 
 static void init_gl();
 static void resize_window( int width, int height );
-static void load_style(char* name, char *pieces, char *board);
 static int GetMove();
 void load_texture_png( texture_t *texture, char *filename, int alpha );
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
 
-static int mouse_x_pos, mouse_y_pos;
 static int can_load=FALSE;
 
 static int white_in_check;
@@ -1653,11 +1616,8 @@ float starscroll_pos=320;
 /** Implements ui_driver::menu */
 static config_t *do_menu()
 {
-    GLuint ticks;
-    float fadehuh;
     gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
-    gg_colour_t stars = { 1.0f, 1.0f, 1.0f, 1.0f };
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
@@ -1741,17 +1701,16 @@ static config_t *do_menu()
 
         /* Draw the menu.. */
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, &col_white );
-        update_string_type_length();
 
         if ( can_load == TRUE )
         {
-            // We using custom?
+            /* We using custom? */
             if ( selected_theme==theme_count )
                 load_theme(stylelist[cur_style], pieces_list[pieces_list_cur],
                     board_list[board_list_cur]);
             else
             {
-                //printf( "Loading theme %i\n", selected_theme );
+                /* printf( "Loading theme %i\n", selected_theme ); */
                 load_theme(themes[selected_theme].style, themes[selected_theme].pieces,
                     themes[selected_theme].board);
             }
@@ -1867,6 +1826,9 @@ void draw_char(int c, int x, int y, gg_colour_t *colour)
 
 void *get_char_image(int c)
 {
+    if (c < 0)
+        c += 256;
+
     return &text_characters[c];
 }
 
@@ -1888,6 +1850,9 @@ void get_image_size(void *image, int *width, int *height)
 
 void get_char_size(int c, int *width, int *height)
 {
+    if (c < 0)
+        c += 256;
+
     if (width)
         *width = text_characters[c].width;
 
@@ -2087,10 +2052,7 @@ static void init_gui()
     }
 
     style_ingame.textured = 1;
-    style_ingame.fade_col = (gg_colour_t)
-                            {
-                                0.0f, 0.0f, 0.0f, 0.5f
-                            };
+    style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
     style_ingame.hor_pad = 20;
     style_ingame.vert_pad = 10;
 
@@ -2098,10 +2060,7 @@ static void init_gui()
         style_ingame.border.textured.image[i] = &border[i];
 
     style_menu.textured = 1;
-    style_menu.fade_col = (gg_colour_t)
-                          {
-                              0.0f, 0.0f, 0.0f, 0.0f
-                          };
+    style_menu.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
     style_menu.hor_pad = 20;
     style_menu.vert_pad = 10;
 
@@ -2194,6 +2153,17 @@ void load_pieces()
     }
 }
 
+static void load_opaque(mxml_node_t *top, char *name, char *dest)
+{
+    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
+    if (node)
+    {
+        node = mxmlWalkNext(node, node, MXML_DESCEND);
+        if (node && node->type == MXML_OPAQUE)
+            strcpy(dest, node->value.opaque);
+    }
+}
+
 /** @brief Load the themes XML
  *
  */
@@ -2201,7 +2171,6 @@ static void load_theme_xml( char *xmlfile )
 {
     FILE *fp;
     mxml_node_t *tree, *theme;
-    mxml_node_t *data;
 
     fp = fopen(xmlfile, "r");
     if (fp)
@@ -2213,8 +2182,10 @@ static void load_theme_xml( char *xmlfile )
 
     theme = tree;
 
-    while (theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND))
+    while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
     {
+        mxml_node_t *node;
+
         /* Set theme to defaults.. incase we have missing bits..*/
         sprintf( themes[theme_count].name, "Un named" );
         sprintf( themes[theme_count].style, "default" );
@@ -2226,73 +2197,39 @@ static void load_theme_xml( char *xmlfile )
         themes[theme_count].piece_tex_spin=FALSE;
         themes[theme_count].piece_tex_spin_speed=0;
 
-        mxml_node_t *name = mxmlFindElement(theme, theme, "name", NULL, NULL, MXML_DESCEND);
-        if (name)
+        load_opaque(theme, "name", themes[theme_count].name);
+        load_opaque(theme, "style", themes[theme_count].style);
+        load_opaque(theme, "pieces", themes[theme_count].pieces);
+        load_opaque(theme, "board", themes[theme_count].board);
+        load_opaque(theme, "white_name", themes[theme_count].white_name);
+        load_opaque(theme, "black_name", themes[theme_count].black_name);
+
+        node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
+        if (node)
         {
-            data = mxmlWalkNext(name, name, MXML_DESCEND);
-            sprintf( themes[theme_count].name, "%s", data->value.opaque );
+            node = mxmlWalkNext(node, node, MXML_DESCEND);
+
+            if (node && node->type == MXML_OPAQUE)
+                if ( !strcmp( node->value.opaque, "off" ) )
+                    themes[theme_count].lighting=FALSE;
         }
 
-        mxml_node_t *style = mxmlFindElement(theme, theme, "style", NULL, NULL, MXML_DESCEND);
-        if (style)
+        node = mxmlFindElement(theme, theme, "tex_spin", NULL, NULL, MXML_DESCEND);
+        if (node)
         {
-            data = mxmlWalkNext(style, style, MXML_DESCEND);
-            sprintf( themes[theme_count].style, "%s", data->value.opaque );
-        }
-
-
-        mxml_node_t *pieces = mxmlFindElement(theme, theme, "pieces", NULL, NULL, MXML_DESCEND);
-        if (pieces)
-        {
-            data = mxmlWalkNext(pieces, pieces, MXML_DESCEND);
-            sprintf( themes[theme_count].pieces, "%s", data->value.opaque );
-        }
-
-        mxml_node_t *board = mxmlFindElement(theme, theme, "board", NULL, NULL, MXML_DESCEND);
-        if (board)
-        {
-            data = mxmlWalkNext(board, board, MXML_DESCEND);
-            sprintf( themes[theme_count].board, "%s", data->value.opaque );
-        }
-
-        mxml_node_t *white_name = mxmlFindElement(theme, theme, "white_name", NULL, NULL, MXML_DESCEND);
-        if (white_name)
-        {
-            data = mxmlWalkNext(white_name, white_name, MXML_DESCEND);
-            sprintf( themes[theme_count].white_name, "%s", data->value.opaque );
-        }
-
-        mxml_node_t *black_name = mxmlFindElement(theme, theme, "black_name", NULL, NULL, MXML_DESCEND);
-        if (black_name)
-        {
-            data = mxmlWalkNext(black_name, black_name, MXML_DESCEND);
-            sprintf( themes[theme_count].black_name, "%s", data->value.opaque );
-        }
-
-        mxml_node_t *board_light = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
-        if (board_light)
-        {
-            data = mxmlWalkNext(board_light, board_light, MXML_DESCEND);
-
-            if ( !strcmp( data->value.opaque, "off" ) )
-                themes[theme_count].lighting=FALSE;
-        }
-
-        mxml_node_t *tex_spin = mxmlFindElement(theme, theme, "tex_spin", NULL, NULL, MXML_DESCEND);
-        if (tex_spin)
-        {
-            data = mxmlWalkNext(tex_spin, tex_spin, MXML_DESCEND);
+            node = mxmlWalkNext(node, node, MXML_DESCEND);
 
             themes[theme_count].piece_tex_spin=TRUE;
-            themes[theme_count].piece_tex_spin_speed=atoi(data->value.opaque);
-            //printf( "Speed: %i\n", themes[theme_count].piece_tex_spin_speed );
-            //if ( !strcmp( data->value.opaque, "off" ) )
-            //    themes[theme_count].lighting=FALSE;
+            themes[theme_count].piece_tex_spin_speed=atoi(node->value.opaque);
+            /* printf( "Speed: %i\n", themes[theme_count].piece_tex_spin_speed );
+            if (node && node->type == MXML_OPAQUE)
+                if ( !strcmp( node->value.opaque, "off" ) )
+                    themes[theme_count].lighting=FALSE; */
         }
 
         theme_count++;
     }
-    //printf( "We loaded %i themes\n", theme_count );
+    /* printf( "We loaded %i themes\n", theme_count ); */
 }
 
 /** @brief Loads a style.
@@ -2321,7 +2258,7 @@ static void load_theme(char* style, char* pieces, char *board)
     load_board("board.dcm", "board.png");
 
     ch_datadir();
-    //printf( "Loaded theme.\n" );
+    /* printf( "Loaded theme.\n" ); */
 }
 
 /** @brief Sets the OpenGL rendering options. */
@@ -2548,14 +2485,11 @@ static void show_result(result_t *res)
  */
 static void draw_scene( board_t *b )
 {
-    float square_size = 48;
     char temp[80];
     int clock_seconds=0;
     int clock_minutes=0;
 
     gg_dialog_cleanup();
-    update_string_type_length();
-    //printf( "Piece is moving from %i to %i..\n\r", piece_moving_source, piece_moving_dest );
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDisable(GL_BLEND);
@@ -2578,45 +2512,20 @@ static void draw_scene( board_t *b )
     glPushMatrix();
 
 
-    draw_border(style_ingame.border.textured.image, (gg_rect_t)
-                {
-                    20, 440, 170, 20
-                }
-                , 8
-               );
+    draw_border(style_ingame.border.textured.image, gg_rect(20, 440, 170, 20), 8);
 
-    draw_border(style_ingame.border.textured.image, (gg_rect_t)
-                {
-                    455, 440, 170, 20
-                }
-                , 8
-               );
+    draw_border(style_ingame.border.textured.image, gg_rect(455, 440, 170, 20), 8);
 
     /* Da clocken */
-    /*draw_border(style_ingame.border.textured.image, (gg_rect_t)
-                {
-                    290, 440, 60, 20
-                }
-                , 8
-               );*/
+    /*draw_border(style_ingame.border.textured.image, gg_rect(290, 440, 60, 20), 8);*/
 
     glPopMatrix();
 
     glPushMatrix();
     draw_name_dialog( 50, 430, themes[selected_theme].white_name, TRUE, 1 );
     draw_name_dialog( 490, 430, themes[selected_theme].black_name, FALSE, 0 );
-    draw_border(style_ingame.border.textured.image, (gg_rect_t)
-                {
-                    20, 375, 75, 10
-                }
-                , 8
-               );
-    draw_border(style_ingame.border.textured.image, (gg_rect_t)
-                {
-                    545, 375, 75, 10
-                }
-                , 8
-               );
+    draw_border(style_ingame.border.textured.image, gg_rect(20, 375, 75, 10), 8);
+    draw_border(style_ingame.border.textured.image, gg_rect(545, 375, 75, 10), 8);
     draw_health_bars();
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);
@@ -2683,6 +2592,10 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
 
     offset=0;
     index=character;
+
+    if (index < 0)
+        index += 256;
+
     draw_texture( &text_characters[index], xpos, ypos, text_characters[index].width*scale,
                   text_characters[index].height*scale, 1.0f, col );
 
@@ -2697,7 +2610,7 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
 {
     int i;
     int xposition=xpos;
@@ -2711,13 +2624,20 @@ void text_draw_string( float xpos, float ypos, unsigned char *text, float scale,
     }
 }
 
-static int text_width_n(unsigned char *text, int n)
+static int text_width_n(char *text, int n)
 {
-    int retval, i;
+    int retval = 0, i;
 
-    retval = 0;
     for (i = 0; i < n; i++)
-        retval += text_characters[(int) text[i]].width;
+    {
+        int index = text[i];
+
+        if (index < 0)
+            index += 256;
+
+        retval += text_characters[index].width;
+    }
+
     return retval;
 }
 
@@ -2726,7 +2646,7 @@ static int text_width_n(unsigned char *text, int n)
  *  @param text String to compute width of.
  *  @return Width of string in pixels.
  */
-static int text_width(unsigned char *text)
+static int text_width(char *text)
 {
     return text_width_n(text, strlen(text));
 }
@@ -2740,24 +2660,6 @@ static int text_height()
     return text_characters['a'].height;
 }
 
-static int text_max_width()
-{
-    static int width = -1;
-    int i;
-
-    if (width >= 0)
-        return width;
-
-    for (i = 0; i < 256; i++)
-    {
-        int cur_width = text_characters[i].width;
-        if (cur_width > width)
-            width = cur_width;
-    }
-
-    return width;
-}
-
 /** @brief Renders a latin1 string with right-alignment.
  *
  *  @param xpos Rightmost x-coordinate to render the string at.
@@ -2766,7 +2668,7 @@ static int text_max_width()
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_right( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
 {
     text_draw_string(xpos - text_width(text), ypos, text, scale, col, length);
 }
@@ -2782,7 +2684,7 @@ void text_draw_string_right( float xpos, float ypos, unsigned char *text, float 
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_bouncy( float xpos, float ypos, unsigned char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
 {
     int i;
     int xposition=xpos;
@@ -2945,7 +2847,7 @@ static void poll_move()
         move->promotion_piece = NONE;
     needprom = 0;
 
-    //start_piece_move( source, dest );
+    /* start_piece_move( source, dest ); */
 
     source = -1;
     dest = -1;
@@ -3075,7 +2977,7 @@ static int GetMove()
                 break;
             case 'g':
             case GG_KEY_EXTRA3:
-                //gg_dialog_open(dialog_ingame_create());
+                /* gg_dialog_open(dialog_ingame_create()); */
                 break;
             case 'p':
                 game_view_prev();
@@ -3087,10 +2989,10 @@ static int GetMove()
                 game_undo();
                 break;
             case 's':
-                //game_save();
+                /* game_save(); */
                 break;
             case 'l':
-                //load_game();
+                /* load_game(); */
                 break;
             case 0x06:
                 fps_enabled = 1 - fps_enabled;

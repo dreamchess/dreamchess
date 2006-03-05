@@ -42,6 +42,7 @@
 #define dot_product in_product
 #endif
 
+#include <SDL.h>
 #include <SDL_opengl.h>
 
 #include "board.h"
@@ -205,13 +206,13 @@ static texture_t *load_piece_texture(char *filename)
 
     if (tex)
     {
-        //printf("Already loaded %s\n", filename);
+        /* printf("Already loaded %s\n", filename); */
         return tex;
     }
 
     tex = malloc(sizeof(texture_t));
 
-    //printf("Loading %s\n", filename);
+    /* printf("Loading %s\n", filename); */
     load_texture_png(tex, filename, 1);
     data_col_add(&textures, filename, tex);
     return tex;
@@ -349,11 +350,11 @@ static mesh_t *load_mesh(char *filename)
 
     if (mesh)
     {
-        //printf("Already loaded %s\n", filename);
+        /* printf("Already loaded %s\n", filename); */
         return mesh;
     }
 
-    //printf("Loading %s\n", filename);
+    /* printf("Loading %s\n", filename); */
     mesh = dcm_load(filename);
     data_col_add(&meshes, filename, mesh);
     return mesh;
@@ -376,16 +377,17 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     int g;
     texture_t *texture = model->texture;
     int ticks = SDL_GetTicks();
+    float tex_spin_pos;
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
-    float tex_spin_pos;
 
     if ( tex_spin )
         tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)get_tex_spin_speed()));
 
-    //printf( "pos: %f\n", tex_spin_pos );
-    //printf( "%f\n", (1000/(float)get_tex_spin_speed()) );
-        //tex_spin_pos=(float)ticks / (float)(1000/(float)get_tex_spin_speed());
+    /* printf( "pos: %f\n", tex_spin_pos );
+    printf( "%f\n", (1000/(float)get_tex_spin_speed()) );
+    tex_spin_pos=(float)ticks / (float)(1000/(float)get_tex_spin_speed()); */
 
     for (g = 0; g < mesh->groups; g++)
     {
@@ -534,9 +536,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
     int i,j,k;
     float moved=0;
     coord3_t light_inv;
-    int vertfacing=-1;
-    int horizfacing=-1;
-    float xrot, yrot;
 
     light_inv.x = -light.x;
     light_inv.y = -light.y;
@@ -615,7 +614,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                         (i*8+j) == piece_moving_dest )
                 {
                     glPushMatrix();
-                    //glRotatef( 10.0f, xrot, yrot, 0.0f );
+                    /* glRotatef( 10.0f, xrot, yrot, 0.0f ); */
                     model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
                     glPopMatrix();
                 }

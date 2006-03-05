@@ -1,4 +1,4 @@
-EXTRA_DIST = board.h eval.h history.h move.h repetition.h state.h \
+noinst_HEADERS = board.h dreamer.h eval.h history.h move.h repetition.h \
 	commands.h hashing.h e_comm.h move_data.h search.h transposition.h
 
 INCLUDES = -I$(top_srcdir)/src/include

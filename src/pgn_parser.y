@@ -28,9 +28,12 @@
 %token GAMETERM
 
 %{
+#include "dreamchess.h"
+
 extern char *yystring;
 
-#include "dreamchess.h"
+int yylex(void);
+int yyerror(const char *s);
 %}
 
 %%
