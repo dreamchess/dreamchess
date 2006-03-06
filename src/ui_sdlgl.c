@@ -621,6 +621,7 @@ int swapping_custom=FALSE;
 int selected_custom_board=0;
 int selected_custom_style=0;
 int selected_custom_pieces=0;
+int selected_gametype=0;
 
 /* xml theme options */
 int use_lighting()
@@ -904,7 +905,7 @@ static void dialog_loadgame_load(gg_widget_t *widget, void *data)
     gg_widget_t *vbox = widget->parent;
 
     /*printf( "Loading slot %i\n", GG_SELECT(vbox)->sel );*/
-    if ( !load_game( GG_SELECT(vbox)->sel-1 ) )
+    if ( !load_game( GG_SELECT(vbox)->sel-2 ) )
     {
         gg_dialog_close();
         gg_dialog_close();
@@ -926,8 +927,8 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
         current_time->tm_hour, current_time->tm_min );
 
-    write_save_xml( GG_SELECT(vbox)->sel-1, temp );
-    game_save( GG_SELECT(vbox)->sel-1 );
+    write_save_xml( GG_SELECT(vbox)->sel-2, temp );
+    game_save( GG_SELECT(vbox)->sel-2 );
     gg_dialog_close();
     gg_dialog_close();
 }
@@ -977,27 +978,32 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     char temp[80];
     int i=0;
 
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    if ( saving )
+        widget = gg_label_create("Save game..");
+    else
+        widget = gg_label_create("Load game..");
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_label_create(" ");
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     for ( i=0; i<max_saveslots; i++ )
     {
         load_save_xml( i, desc );
-        if ( saving )
-        {
-            sprintf( temp, "  Save slot %i: %s", i, desc );
-            widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
-            gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
-        }
-        else
-        {
-            sprintf( temp, "  Load slot %i: %s", i, desc );
-            widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
-            gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
-        }
+
+        sprintf( temp, "  %i: %s", i, desc );
+        widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
+        gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
+
         gg_container_append(GG_CONTAINER(vbox), widget);
     }
+
+    widget = gg_label_create(" ");
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
@@ -1062,8 +1068,10 @@ static gg_dialog_t *dialog_victory_create(result_t *result)
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_loading=TRUE;
-
     gg_dialog_close();
+
+    if ( selected_gametype == 1 )
+        gg_dialog_open(dialog_saveload_create(FALSE));
 }
 
 /** @brief Triggers DreamChess exit. */
@@ -1094,6 +1102,11 @@ void dialog_title_players(gg_widget_t *widget, void *data)
         config->player[BLACK] = PLAYER_UI;
         flip_board = 0;
     }
+}
+
+static void dialog_title_gametype(gg_widget_t *widget, void *data)
+{
+    selected_gametype = gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_level(gg_widget_t *widget, void *data)
@@ -1174,9 +1187,13 @@ static gg_dialog_t *dialog_title_custom_create()
     vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
+    vbox2 = gg_vbox_create(0);
+    label = gg_label_create("  Game type:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
     label = gg_label_create("  Players:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
     label = gg_label_create("  Difficulty:");
@@ -1206,12 +1223,19 @@ static gg_dialog_t *dialog_title_custom_create()
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
 
+    vbox2 = gg_vbox_create(0);
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "New Game", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Saved Game", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_gametype, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+    gg_option_set_selected(GG_OPTION(widget),selected_gametype);
+
     widget = gg_option_create();
     gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
 
@@ -1268,7 +1292,7 @@ static gg_dialog_t *dialog_title_custom_create()
     if ( swapping_custom )
     {
         gg_vbox_set_selected(vbox, 1 );
-        gg_vbox_set_selected(vbox2, 2 );
+        gg_vbox_set_selected(vbox2, 3 );
     }
 
     return GG_DIALOG(dialog);
@@ -1293,14 +1317,18 @@ static gg_dialog_t *dialog_title_create()
     board_list_cur = 0;
     flip_board = 0;
 
+    vbox = gg_vbox_create(0);
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
-    vbox = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox), widget);
+
+    vbox2 = gg_vbox_create(0);
+    label = gg_label_create("  Game type:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
 
     label = gg_label_create("  Players:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
     label = gg_label_create("  Difficulty:");
@@ -1314,12 +1342,19 @@ static gg_dialog_t *dialog_title_create()
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
 
+    vbox2 = gg_vbox_create(0);
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "New Game", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Saved Game", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_gametype, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+    gg_option_set_selected(GG_OPTION(widget),selected_gametype);
+
     widget = gg_option_create();
     gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
 
@@ -1355,7 +1390,7 @@ static gg_dialog_t *dialog_title_create()
     if ( swapping_custom )
     {
         gg_vbox_set_selected(vbox, 1 );
-        gg_vbox_set_selected(vbox2, 2 );
+        gg_vbox_set_selected(vbox2, 3 );
     }
 
     return GG_DIALOG(dialog);
