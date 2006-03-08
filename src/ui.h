@@ -31,7 +31,7 @@ typedef struct ui_driver
     char *name;
     int (* init) (void);
     int (* exit) (void);
-    config_t *( *config) (void);
+    config_t *( *config) (int *pgn_slot);
     void (* update) (board_t *board, move_t *move);
     void (* poll) (void);
     void (* show_message) (char *msg);

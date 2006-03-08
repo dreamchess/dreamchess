@@ -671,7 +671,10 @@ static texture_t black_pieces[7];
 
 static texture_t text_characters[256];
 
-static config_t *config;
+static config_t config;
+static config_t config_save[10];
+static int pgn_slot;
+static int slots;
 
 static gg_dialog_style_t style_ingame, style_menu;
 
@@ -813,7 +816,7 @@ static void dialog_loadgame_open(gg_widget_t *widget, void *data)
     gg_dialog_open(dialog_saveload_create(FALSE));
 }
 
-const char * whitespace_cb(mxml_node_t *node, int where )
+const char *whitespace_cb(mxml_node_t *node, int where)
 {
     const char *name;
     name = node->value.element.name;
@@ -821,17 +824,23 @@ const char * whitespace_cb(mxml_node_t *node, int where )
     if (!strcmp(name, "save"))
     {
         if (where == MXML_WS_AFTER_OPEN)
-            return ("\n");
+            return "\n";
     }
-    else if ( !strcmp(name, "desc") || !strcmp(name, "player_layout") || !strcmp(name, "difficulty") )
+    else
     {
         if (where == MXML_WS_BEFORE_OPEN)
-            return ("   ");
+            return "\t";
         else if (where == MXML_WS_AFTER_CLOSE)
-            return ("\n");
+            return "\n";
     }
 
     return (NULL);
+}
+
+static void save_opaque(mxml_node_t *parent, char *name, char *value)
+{
+    mxml_node_t *node = mxmlNewElement(parent, name);
+    mxmlNewOpaque(node, value);
 }
 
 void write_save_xml( int slot, char *desc )
@@ -853,19 +862,21 @@ void write_save_xml( int slot, char *desc )
     fprintf( fp, "<?xml version=\"1.0\"?>\n" );
     tree = mxmlNewElement( MXML_NO_PARENT, "save" );
 
-    node = mxmlNewElement( MXML_NO_PARENT, "desc" );
-    mxmlAdd( tree, MXML_ADD_AFTER, MXML_ADD_TO_PARENT, node );
-    node2 = mxmlNewOpaque( node, desc );
+    sprintf(temp, "%i", (int) time(NULL));
+    save_opaque(tree, "time", temp);
 
-    node = mxmlNewElement( MXML_NO_PARENT, "player_layout" );
-    mxmlAdd( tree, MXML_ADD_AFTER, MXML_ADD_TO_PARENT, node );
-    sprintf( temp, "%i", selected_player_layout );
-    node2 = mxmlNewOpaque( node, temp );
+    if (config.player[WHITE] == PLAYER_UI)
+        save_opaque(tree, "white", "ui");
+    else
+        save_opaque(tree, "white", "engine");
 
-    node = mxmlNewElement( MXML_NO_PARENT, "difficulty" );
-    mxmlAdd( tree, MXML_ADD_AFTER, MXML_ADD_TO_PARENT, node );
-    sprintf( temp, "%i", selected_difficulty );
-    node2 = mxmlNewOpaque( node, temp );
+    if (config.player[BLACK] == PLAYER_UI)
+        save_opaque(tree, "black", "ui");
+    else
+        save_opaque(tree, "black", "engine");
+
+    sprintf(temp, "%i", config.cpu_level);
+    save_opaque(tree, "level", temp);
 
     mxmlSaveFile(tree, fp, whitespace_cb);
     fclose(fp);
@@ -889,11 +900,15 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
     fp = fopen(temp, "r");
     if (fp)
+    {
         tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
+        slots |= (1 << slot);
+    }
     else
     {
         /*printf( "Error opening theme file.\n" );*/
         sprintf( desc, "Empty." );
+        slots &= ~(1 << slot);
         return;
     }
 
@@ -904,13 +919,30 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
     while ((save = mxmlFindElement(save, tree, "save", NULL, NULL, MXML_DESCEND)))
     {
         mxml_node_t *node;
+        time_t time;
+        struct tm *tm;
 
-        load_opaque(save, "desc", desc);
-        load_opaque(save, "player_layout", temp );
-        *player_layout=atoi(temp);
+        load_opaque(save, "time", temp);
 
-        load_opaque(save, "difficulty", temp);
-        *difficulty=atoi(temp);
+        time = atoi(temp);
+        tm = localtime(&time);
+        sprintf(desc, "Saved on %02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon,
+                tm->tm_hour, tm->tm_min);
+
+        load_opaque(save, "white", temp);
+        if (!strcmp(temp, "ui"))
+            config_save[slot].player[WHITE] = PLAYER_UI;
+        else
+            config_save[slot].player[WHITE] = PLAYER_ENGINE;
+
+        load_opaque(save, "black", temp);
+        if (!strcmp(temp, "ui"))
+            config_save[slot].player[BLACK] = PLAYER_UI;
+        else
+            config_save[slot].player[BLACK] = PLAYER_ENGINE;
+
+        load_opaque(save, "level", temp);
+        config_save[slot].cpu_level = atoi(temp);
     }
 }
 
@@ -918,12 +950,12 @@ static int load_game( int slot );
 static void dialog_loadgame_load(gg_widget_t *widget, void *data)
 {
     gg_widget_t *vbox = widget->parent;
+    int slot = GG_SELECT(vbox)->sel - 2;
 
-    /*printf( "Loading slot %i\n", GG_SELECT(vbox)->sel );*/
-    if ( !load_game( GG_SELECT(vbox)->sel-2 ) )
+    if (slots & (1 << slot))
     {
-        // load was succesful. Close dialogs.
-        gg_dialog_close();
+        pgn_slot = slot;
+        set_loading = TRUE;
         gg_dialog_close();
     }
 }
@@ -1132,18 +1164,18 @@ void dialog_title_players(gg_widget_t *widget, void *data)
     switch (selected_player_layout)
     {
     case GAME_TYPE_HUMAN_VS_CPU:
-        config->player[WHITE] = PLAYER_UI;
-        config->player[BLACK] = PLAYER_ENGINE;
+        config.player[WHITE] = PLAYER_UI;
+        config.player[BLACK] = PLAYER_ENGINE;
         flip_board = 0;
         break;
     case GAME_TYPE_CPU_VS_HUMAN:
-        config->player[WHITE] = PLAYER_ENGINE;
-        config->player[BLACK] = PLAYER_UI;
+        config.player[WHITE] = PLAYER_ENGINE;
+        config.player[BLACK] = PLAYER_UI;
         flip_board = 1;
         break;
     case GAME_TYPE_HUMAN_VS_HUMAN:
-        config->player[WHITE] = PLAYER_UI;
-        config->player[BLACK] = PLAYER_UI;
+        config.player[WHITE] = PLAYER_UI;
+        config.player[BLACK] = PLAYER_UI;
         flip_board = 0;
     }
 }
@@ -1162,8 +1194,8 @@ static void dialog_title_root_load(gg_widget_t *widget, void *data)
 
 static void dialog_title_level(gg_widget_t *widget, void *data)
 {
-    config->cpu_level = gg_option_get_selected(GG_OPTION(widget)) + 1;
-    selected_difficulty=config->cpu_level-1;
+    config.cpu_level = gg_option_get_selected(GG_OPTION(widget)) + 1;
+    selected_difficulty=config.cpu_level-1;
 }
 
 static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
@@ -1223,14 +1255,14 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_widget_t *label;
     int i;
 
-    config = malloc(sizeof(config_t));
-    config->player[WHITE] = PLAYER_UI;
-    config->player[BLACK] = PLAYER_ENGINE;
-    config->cpu_level = selected_difficulty;
+    config.player[WHITE] = PLAYER_UI;
+    config.player[BLACK] = PLAYER_ENGINE;
+    config.cpu_level = selected_difficulty;
     cur_style = selected_custom_style;
     pieces_list_cur = selected_custom_pieces;
     board_list_cur = selected_custom_board;
     flip_board = 0;
+    pgn_slot = -1;
 
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
@@ -1347,14 +1379,14 @@ static gg_dialog_t *dialog_title_create()
     gg_widget_t *label;
     int i;
 
-    config = malloc(sizeof(config_t));
-    config->player[WHITE] = PLAYER_UI;
-    config->player[BLACK] = PLAYER_ENGINE;
-    config->cpu_level = 1;
+    config.player[WHITE] = PLAYER_UI;
+    config.player[BLACK] = PLAYER_ENGINE;
+    config.cpu_level = 1;
     cur_style = 0;
     pieces_list_cur = 0;
     board_list_cur = 0;
     flip_board = 0;
+    pgn_slot = -1;
 
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
@@ -1434,25 +1466,24 @@ static gg_dialog_t *dialog_title_root_create()
     gg_widget_t *label;
     int i;
 
-    config = malloc(sizeof(config_t));
-    config->player[WHITE] = PLAYER_UI;
-    config->player[BLACK] = PLAYER_ENGINE;
-    config->cpu_level = 1;
+    config.player[WHITE] = PLAYER_UI;
+    config.player[BLACK] = PLAYER_ENGINE;
+    config.cpu_level = 1;
     cur_style = 0;
     pieces_list_cur = 0;
     board_list_cur = 0;
     flip_board = 0;
 
     vbox = gg_vbox_create(0);
-    widget = gg_action_create_with_label("Start a new game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("New Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_new, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Load a saved game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Quit Game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -1892,7 +1923,7 @@ static void gl_swap()
 float starscroll_pos=320;
 
 /** Implements ui_driver::menu */
-static config_t *do_menu()
+static config_t *do_menu(int *pgn)
 {
     gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
@@ -1972,10 +2003,7 @@ static config_t *do_menu()
                 gg_dialog_input_current(gg_event);
 
             if (title_process_retval == 1)
-            {
-                free(config);
                 return NULL;
-            }
         }
 
         /* Draw the menu.. */
@@ -1995,7 +2023,10 @@ static config_t *do_menu()
             }
 
             reset_3d();
-            return config;
+            *pgn = pgn_slot;
+            if (pgn_slot >= 0)
+                config = config_save[pgn_slot];
+            return &config;
         }
 
         if ( set_loading == FALSE )

@@ -452,8 +452,9 @@ int dreamchess(void *data)
     while (1)
     {
         board_t board;
+        int pgn_slot;
 
-        if (!(config = ui->config()))
+        if (!(config = ui->config(&pgn_slot)))
             break;
 
         comm_send("new\n");
@@ -475,6 +476,9 @@ int dreamchess(void *data)
         move_list_init(&san_list);
         move_list_init(&fan_list);
         move_list_init(&fullalg_list);
+
+        if (pgn_slot >= 0)
+            game_load(pgn_slot);
 
         ui->update(history->view->board, NULL);
         while (in_game)
