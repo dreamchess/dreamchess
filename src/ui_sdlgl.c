@@ -673,6 +673,9 @@ static texture_t text_characters[256];
 
 static config_t config;
 static config_t config_save[10];
+static char time_save[80][10];
+static int save_valid[10];
+static char save_squares[10][80];
 static int pgn_slot;
 static int slots;
 
@@ -843,10 +846,13 @@ static void save_opaque(mxml_node_t *parent, char *name, char *value)
     mxmlNewOpaque(node, value);
 }
 
+static board_t board;
 void write_save_xml( int slot, char *desc )
 {
+    int i=0;
     FILE *fp;
     char temp[80];
+    char boardtemp[80];
     mxml_node_t *tree,*node,*node2;
 
     sprintf( temp, "save%i.xml", slot );
@@ -877,6 +883,40 @@ void write_save_xml( int slot, char *desc )
 
     sprintf(temp, "%i", config.cpu_level);
     save_opaque(tree, "level", temp);
+
+    for ( i=0; i<(8*8); i++ )
+    {
+        printf ( "Uber: %i\n", PIECE(board.square[i]) );
+        switch ( PIECE(board.square[i]) )
+        {
+            case 0: /* pawn */
+                boardtemp[i]='1';
+                break;
+            case 2: /* Horsey */
+                boardtemp[i]='2';
+                break;
+            case 4: /* bishop */
+                boardtemp[i]='3';
+                break;
+            case 6: /* Rook */
+                boardtemp[i]='4';
+                break;
+            case 8: /* Queen */
+                boardtemp[i]='5';
+                break;
+            case 10: /* King */
+                boardtemp[i]='6';
+                break;
+            case 12: /* Blank */
+                boardtemp[i]='0';
+                break;
+        }
+    }
+    boardtemp[i]='\0';
+
+    save_opaque(tree, "squares", boardtemp);
+
+    /*printf( "%s\n", boardtemp );*/
 
     mxmlSaveFile(tree, fp, whitespace_cb);
     fclose(fp);
@@ -926,7 +966,7 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
         time = atoi(temp);
         tm = localtime(&time);
-        sprintf(desc, "Saved on %02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon,
+        sprintf(time_save[slot], "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon,
                 tm->tm_hour, tm->tm_min);
 
         load_opaque(save, "white", temp);
@@ -943,14 +983,19 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
         load_opaque(save, "level", temp);
         config_save[slot].cpu_level = atoi(temp);
+
+        load_opaque(save, "squares", temp);
+        sprintf( save_squares[slot], "%s", temp );
     }
 }
+
+int saveload_selected=0;
 
 static int load_game( int slot );
 static void dialog_loadgame_load(gg_widget_t *widget, void *data)
 {
     gg_widget_t *vbox = widget->parent;
-    int slot = GG_SELECT(vbox)->sel - 2;
+    int slot = saveload_selected;
 
     if (slots & (1 << slot))
     {
@@ -958,6 +1003,21 @@ static void dialog_loadgame_load(gg_widget_t *widget, void *data)
         set_loading = TRUE;
         gg_dialog_close();
     }
+}
+
+int changing_slot=FALSE;
+int change_saving=FALSE;
+static void dialog_saveload_change(gg_widget_t *widget, void *data)
+{
+    gg_widget_t *vbox = widget->parent;
+    saveload_selected=GG_SELECT(vbox)->sel;
+
+    /*printf( "Selected save: %i\n", saveload_selected );*/
+
+    gg_dialog_close();
+    changing_slot=TRUE;
+    gg_dialog_open(dialog_saveload_create(change_saving));
+    changing_slot=FALSE;
 }
 
 static void dialog_savegame_save(gg_widget_t *widget, void *data)
@@ -975,8 +1035,8 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
         current_time->tm_hour, current_time->tm_min );
 
-    write_save_xml( GG_SELECT(vbox)->sel-2, temp );
-    game_save( GG_SELECT(vbox)->sel-2 );
+    write_save_xml( saveload_selected, temp );
+    game_save( saveload_selected );
     gg_dialog_close();
     gg_dialog_close();
 }
@@ -1016,7 +1076,214 @@ static gg_dialog_t *dialog_system_create()
     return GG_DIALOG(dialog);
 }
 
+char xmlsquaretofont( char c )
+{
+    char retval;
+
+    switch ( c )
+    {
+        case '0': /* blank */
+            retval=32;
+            break;
+        case '1': /* pawn */
+            retval=21;
+            break;
+        case '2': /* Horsey */
+            retval=19;
+            break;
+        case '3': /* bishop */
+            retval=20;
+            break;
+        case '4': /* Rook */
+            retval=18;
+            break;
+        case '5': /* Queen */
+            retval=17;
+            break;
+        case '6': /* King */
+            retval=16;
+            break;
+    }
+
+    /*printf( "retval: %c:%i\n", retval, retval );*/
+    /*printf( "c: %c:%i\n", c, c );*/
+
+    return retval;
+}
+
 static void menu_title_back(gg_widget_t *widget, void *data);
+static gg_dialog_t *dialog_saveload_create( int saving )
+{
+    gg_widget_t *dialog;
+    gg_widget_t *rootvbox = gg_vbox_create(0);
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_widget_t *hbox = gg_hbox_create(0);
+    gg_widget_t *board_box = gg_vbox_create(0);
+    gg_widget_t *hboxtemp, *hboxtemp2;
+    gg_widget_t *widget;
+    int max_saveslots=10;
+    char desc[80];
+    int player_layout=0;
+    int difficulty=0;
+    char temp[80];
+    int i=0,j=0;
+
+    change_saving=saving;
+
+    /* top part */
+    if ( saving )
+    {
+        widget = gg_action_create_with_label("Save Game..                              ", 0.0f, 0.0f);
+        gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
+    }
+    else
+    {
+        widget = gg_action_create_with_label("Load Game..                              ", 0.0f, 0.0f);
+        selected_player_layout=player_layout;
+        selected_difficulty=difficulty;
+        gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
+    }
+    gg_container_append(GG_CONTAINER(rootvbox), widget);
+
+    /* left side */
+    for ( i=0; i<max_saveslots; i++ )
+    {
+        load_save_xml( i, desc, &player_layout, &difficulty );
+
+        sprintf( temp, "%i:  ", i );
+        widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
+
+        gg_action_set_callback(GG_ACTION(widget), dialog_saveload_change, vbox);
+
+        gg_container_append(GG_CONTAINER(vbox), widget);
+    }
+
+    if ( changing_slot )
+        gg_vbox_set_selected(vbox, saveload_selected );
+
+    gg_container_append(GG_CONTAINER(hbox), vbox );
+
+    widget = gg_seperatorv_create();
+    gg_container_append(GG_CONTAINER(hbox), widget );
+
+    /* Right side.. */
+    vbox = gg_vbox_create(0);
+
+    sprintf( temp, "   Save slot %i.", saveload_selected );
+    widget = gg_label_create(temp);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    if ( slots & (1 << saveload_selected) )
+    {
+        sprintf( temp, "   Saved: %s", time_save[saveload_selected] );
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        switch ( config_save[saveload_selected].player[WHITE] )
+        {
+            case PLAYER_ENGINE:
+                sprintf( temp, "   White: CPU" );
+                break;
+            case PLAYER_UI:
+                sprintf( temp, "   White: Human" );
+                break;
+            default:
+                /* Whoops */
+                sprintf( temp, "   White: Oh no.." );
+                break;
+        }
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        switch ( config_save[saveload_selected].player[BLACK] )
+        {
+            case PLAYER_ENGINE:
+                sprintf( temp, "   Black: CPU" );
+                break;
+            case PLAYER_UI:
+                sprintf( temp, "   Black: Human" );
+                break;
+            default:
+                /* Whoops */
+                sprintf( temp, "   Black: Oh no.." );
+                break;
+        }
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        sprintf( temp, "   Difficulty: %i", config_save[saveload_selected].cpu_level );
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        /* create board.. */
+
+        for ( i=0; i<8; i++ )
+        {
+            hboxtemp = gg_hbox_create(0);
+            for ( j=0; j<8; j++ )
+            {
+                if ( j==0 )
+                {
+                    hboxtemp2 = gg_hbox_create(0);
+                    gg_set_requested_size(hboxtemp2, 20, 20);
+                    gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
+                }
+
+                hboxtemp2 = gg_hbox_create(0);
+                gg_set_requested_size(hboxtemp2, 20, 20);
+
+                sprintf( temp, "%c", xmlsquaretofont(save_squares[saveload_selected][j+(i*8)]) );
+                widget = gg_label_create( temp );
+                gg_container_append(GG_CONTAINER(hboxtemp2), widget);
+                gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
+            }
+            gg_container_append(GG_CONTAINER(board_box), hboxtemp);
+        }
+        gg_container_append(GG_CONTAINER(vbox), board_box);
+    }
+    else
+    {
+        sprintf( temp, "   Empty slot" );
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        for ( i=0; i<11; i++ )
+        {
+            widget = gg_label_create(" ");
+            gg_container_append(GG_CONTAINER(vbox), widget);
+        }
+    }
+
+    gg_container_append(GG_CONTAINER(hbox), vbox);
+    gg_container_append(GG_CONTAINER(rootvbox), hbox);
+
+    /* bottom */
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+
+    if ( saving )
+        gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    else
+        gg_action_set_callback(GG_ACTION(widget), menu_title_back, NULL);
+
+    gg_container_append(GG_CONTAINER(rootvbox), widget);
+
+    /* Dialog stuff */
+    dialog = gg_dialog_create(rootvbox);
+
+    if ( saving )
+        gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
+    else
+        gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
+
+    if ( changing_slot )
+        gg_vbox_set_selected(rootvbox, 1 );
+
+
+    return GG_DIALOG(dialog);
+}
+
+
+#ifdef CREEPYMUPPET
 static gg_dialog_t *dialog_saveload_create( int saving )
 {
     gg_widget_t *dialog;
@@ -1079,7 +1346,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
 
     return GG_DIALOG(dialog);
 }
-
+#endif
 /* Victory dialog. */
 
 static gg_dialog_t *dialog_victory_create(result_t *result)
@@ -1954,6 +2221,8 @@ static config_t *do_menu(int *pgn)
     while ( 1 )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        gg_dialog_cleanup();
 
         /* Precess input */
         while ( SDL_PollEvent( &event ) )
