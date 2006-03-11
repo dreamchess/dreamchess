@@ -886,7 +886,7 @@ void write_save_xml( int slot, char *desc )
 
     for ( i=0; i<(8*8); i++ )
     {
-        printf ( "Uber: %i\n", PIECE(board.square[i]) );
+        /*printf ( "Uber: %i\n", PIECE(board.square[i]) );*/
         switch ( PIECE(board.square[i]) )
         {
             case 0: /* pawn */
@@ -1225,7 +1225,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
                 if ( j==0 )
                 {
                     hboxtemp2 = gg_hbox_create(0);
-                    gg_set_requested_size(hboxtemp2, 20, 20);
+                    gg_set_requested_size(hboxtemp2, 35, 20);
                     gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
                 }
 
