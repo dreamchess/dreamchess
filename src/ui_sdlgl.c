@@ -1002,6 +1002,7 @@ static void dialog_loadgame_load(gg_widget_t *widget, void *data)
         pgn_slot = slot;
         set_loading = TRUE;
         gg_dialog_close();
+        gg_dialog_close();
     }
 }
 
@@ -1260,10 +1261,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     /* bottom */
     widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
 
-    if ( saving )
-        gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
-    else
-        gg_action_set_callback(GG_ACTION(widget), menu_title_back, NULL);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
 
     gg_container_append(GG_CONTAINER(rootvbox), widget);
 
@@ -1407,6 +1405,7 @@ static void menu_title_start(gg_widget_t *widget, void *data)
     set_loading=TRUE;
 
     gg_dialog_close();
+    gg_dialog_close();
 }
 
 /** @brief Triggers DreamChess exit. */
@@ -1418,11 +1417,6 @@ static void menu_title_quit(gg_widget_t *widget, void *data)
 
 static gg_dialog_t *dialog_title_root_create();
 static gg_dialog_t *dialog_title_create();
-static void menu_title_back(gg_widget_t *widget, void *data)
-{
-    gg_dialog_close();
-    gg_dialog_open(dialog_title_root_create());
-}
 
 void dialog_title_players(gg_widget_t *widget, void *data)
 {
@@ -1449,13 +1443,11 @@ void dialog_title_players(gg_widget_t *widget, void *data)
 
 static void dialog_title_root_new(gg_widget_t *widget, void *data)
 {
-    gg_dialog_close();
     gg_dialog_open(dialog_title_create());
 }
 
 static void dialog_title_root_load(gg_widget_t *widget, void *data)
 {
-    gg_dialog_close();
     gg_dialog_open(dialog_saveload_create(FALSE));
 }
 
@@ -1619,11 +1611,10 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
     widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_back, NULL);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox);
-    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
@@ -1706,11 +1697,10 @@ static gg_dialog_t *dialog_title_create()
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
     widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_back, NULL);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox);
-    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
