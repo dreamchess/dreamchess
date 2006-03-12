@@ -1122,7 +1122,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     gg_widget_t *board_box = gg_vbox_create(0);
     gg_widget_t *hboxtemp, *hboxtemp2;
     gg_widget_t *widget;
-    int max_saveslots=10;
+    int max_saveslots=15;
     char desc[80];
     int player_layout=0;
     int difficulty=0;
@@ -1146,7 +1146,11 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     }
     gg_container_append(GG_CONTAINER(rootvbox), widget);
 
+    widget = gg_seperatorh_create();
+    gg_container_append(GG_CONTAINER(rootvbox), widget );
+
     /* left side */
+
     for ( i=0; i<max_saveslots; i++ )
     {
         load_save_xml( i, desc, &player_layout, &difficulty );
@@ -1164,13 +1168,13 @@ static gg_dialog_t *dialog_saveload_create( int saving )
 
     gg_container_append(GG_CONTAINER(hbox), vbox );
 
-    widget = gg_seperatorv_create();
-    gg_container_append(GG_CONTAINER(hbox), widget );
+    //widget = gg_seperatorv_create();
+    //gg_container_append(GG_CONTAINER(hbox), widget );
 
     /* Right side.. */
     vbox = gg_vbox_create(0);
 
-    sprintf( temp, "   Save slot %i.", saveload_selected );
+    sprintf( temp, "  Save slot %i.", saveload_selected );
     widget = gg_label_create(temp);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -1236,7 +1240,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
                 sprintf( temp, "%c", xmlsquaretofont(save_squares[saveload_selected][j+(i*8)]) );
                 widget = gg_label_create( temp );
                 gg_container_append(GG_CONTAINER(hboxtemp2), widget);
-                gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
+                gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2 );
             }
             gg_container_append(GG_CONTAINER(board_box), hboxtemp);
         }
@@ -1244,7 +1248,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     }
     else
     {
-        sprintf( temp, "   Empty slot" );
+        sprintf( temp, "  Empty slot" );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -1254,15 +1258,16 @@ static gg_dialog_t *dialog_saveload_create( int saving )
             gg_container_append(GG_CONTAINER(vbox), widget);
         }
     }
-
-    gg_container_append(GG_CONTAINER(hbox), vbox);
+    gg_set_requested_size(vbox, 200, 0);
+    gg_container_append(GG_CONTAINER(hbox), gg_frame_create(vbox));
     gg_container_append(GG_CONTAINER(rootvbox), hbox);
 
     /* bottom */
+    widget = gg_seperatorh_create();
+    gg_container_append(GG_CONTAINER(rootvbox), widget );
+
     widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
-
     gg_container_append(GG_CONTAINER(rootvbox), widget);
 
     /* Dialog stuff */
@@ -1274,8 +1279,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
         gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
     if ( changing_slot )
-        gg_vbox_set_selected(rootvbox, 1 );
-
+        gg_vbox_set_selected(rootvbox, 2 );
 
     return GG_DIALOG(dialog);
 }
