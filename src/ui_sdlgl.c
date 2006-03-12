@@ -673,7 +673,7 @@ static texture_t text_characters[256];
 
 static config_t config;
 static config_t config_save[10];
-static char time_save[80][10];
+static char time_save[10][80];
 static int save_valid[10];
 static char save_squares[10][80];
 static int pgn_slot;
