@@ -1,5 +1,5 @@
 /*  DreamChess
- *  Copyright (C) 2005  The DreamChess project
+ *  Copyright (C) 2006  The DreamChess project
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,26 +16,29 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#ifndef GAMEGUI_FRAME_H
+#define GAMEGUI_FRAME_H
 
 #include <gamegui/system.h>
-#include <gamegui/action.h>
-#include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
-#include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
 #include <gamegui/bin.h>
-#include <gamegui/dialog.h>
-#include <gamegui/image.h>
-#include <gamegui/select.h>
-#include <gamegui/seperatorv.h>
-#include <gamegui/widget.h>
-#include <gamegui/frame.h>
 
-#endif /* GAMEGUI_H */
+#define GG_FRAME(W) GG_CHECK_CAST(W, gg_frame_get_class_id(), gg_frame_t)
+
+#define GG_FRAME_DATA \
+    GG_BIN_DATA
+
+typedef struct gg_frame
+{
+    GG_FRAME_DATA
+}
+gg_frame_t;
+
+gg_class_id gg_frame_get_class_id();
+
+void gg_frame_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_frame_init(gg_frame_t *frame, gg_widget_t *child);
+
+gg_widget_t *gg_frame_create(gg_widget_t *child);
+
+#endif /* GAMEGUI_FRAME_H */
