@@ -996,10 +996,10 @@ int changing_slot=FALSE;
 int change_saving=FALSE;
 static void dialog_saveload_change(gg_widget_t *widget, void *data)
 {
-    gg_widget_t *vbox = widget->parent;
-    saveload_selected=GG_SELECT(vbox)->sel;
+    gg_widget_t *select = GG_WIDGET(data);
+    saveload_selected=GG_OPTION(select)->sel;
 
-    /*printf( "Selected save: %i\n", saveload_selected );*/
+    printf( "Selected save: %i\n", saveload_selected );
 
     gg_dialog_close();
     changing_slot=TRUE;
@@ -1091,7 +1091,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     gg_widget_t *dialog;
     gg_widget_t *rootvbox = gg_vbox_create(0);
     gg_widget_t *vbox = gg_vbox_create(0);
-    gg_widget_t *hbox = gg_hbox_create(0);
+    gg_widget_t *hbox = gg_vbox_create(0);
     gg_widget_t *board_box = gg_vbox_create(0);
     gg_widget_t *hboxtemp;
     gg_widget_t *widget;
@@ -1100,97 +1100,65 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     int player_layout=0;
     int difficulty=0;
     char temp[80];
+    char whiteis[80], blackis[80];
     int i=0,j=0;
+    int padding=0;
 
     change_saving=saving;
 
-    /* top part */
-    if ( saving )
-    {
-        widget = gg_action_create_with_label("Save Game..                              ", 0.0f, 0.0f);
-        gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
-    }
-    else
-    {
-        widget = gg_action_create_with_label("Load Game..                              ", 0.0f, 0.0f);
-        selected_player_layout=player_layout;
-        selected_difficulty=difficulty;
-        gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
-    }
-    gg_container_append(GG_CONTAINER(rootvbox), widget);
+    if ( !changing_slot )
+        saveload_selected=0;
 
-    widget = gg_seperatorh_create();
-    gg_container_append(GG_CONTAINER(rootvbox), widget );
+    /*printf( "Dialog opened with saveselected of %i\n", saveload_selected );*/
 
-    /* left side */
-
+    /* Right side.. */
     for ( i=0; i<max_saveslots; i++ )
     {
         load_save_xml( i, desc, &player_layout, &difficulty );
-
-        sprintf( temp, "%i:  ", i );
-        widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
-
-        gg_action_set_callback(GG_ACTION(widget), dialog_saveload_change, vbox);
-
-        gg_container_append(GG_CONTAINER(vbox), widget);
     }
-
-    if ( changing_slot )
-        gg_vbox_set_selected(vbox, saveload_selected );
-
-    gg_container_append(GG_CONTAINER(hbox), vbox );
-
-    /*widget = gg_seperatorv_create();
-    gg_container_append(GG_CONTAINER(hbox), widget );*/
-
-    /* Right side.. */
-    vbox = gg_vbox_create(0);
-
-    sprintf( temp, "  Save slot %i.", saveload_selected );
-    widget = gg_label_create(temp);
-    gg_container_append(GG_CONTAINER(vbox), widget);
 
     if ( slots & (1 << saveload_selected) )
     {
-        sprintf( temp, "   Saved: %s", time_save[saveload_selected] );
+        sprintf( temp, "Saved: %s", time_save[saveload_selected] );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
         switch ( config_save[saveload_selected].player[WHITE] )
         {
         case PLAYER_ENGINE:
-            sprintf( temp, "   White: CPU" );
+            sprintf( whiteis, "CPU" );
             break;
         case PLAYER_UI:
-            sprintf( temp, "   White: Human" );
+            sprintf( whiteis, "Human" );
             break;
         default:
             /* Whoops */
-            sprintf( temp, "   White: Oh no.." );
+            sprintf( whiteis, "Oh no.." );
             break;
         }
-        widget = gg_label_create(temp);
-        gg_container_append(GG_CONTAINER(vbox), widget);
 
         switch ( config_save[saveload_selected].player[BLACK] )
         {
         case PLAYER_ENGINE:
-            sprintf( temp, "   Black: CPU" );
+            sprintf( blackis, "CPU" );
             break;
         case PLAYER_UI:
-            sprintf( temp, "   Black: Human" );
+            sprintf( blackis, "Human" );
             break;
         default:
             /* Whoops */
-            sprintf( temp, "   Black: Oh no.." );
+            sprintf( blackis, "Oh no.." );
             break;
         }
+        sprintf( temp, "%s vs %s", whiteis, blackis );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        sprintf( temp, "   Difficulty: %i", config_save[saveload_selected].cpu_level );
+        sprintf( temp, "Difficulty: %i", config_save[saveload_selected].cpu_level );
         widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        widget = gg_label_create(" ");
         gg_container_append(GG_CONTAINER(vbox), widget);
 
         /* create board.. */
@@ -1204,7 +1172,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
                 };
             hboxtemp = gg_hbox_create(0);
             hboxtemp2 = gg_hbox_create(0);
-            gg_set_requested_size(hboxtemp2, 35, 20);
+            gg_set_requested_size(hboxtemp2, 20, 20);
             gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
 
             for ( j=0; j<8; j++ )
@@ -1238,7 +1206,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     }
     else
     {
-        sprintf( temp, "  Empty slot" );
+        sprintf( temp, "Empty slot" );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -1250,26 +1218,69 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     }
     gg_set_requested_size(vbox, 200, 0);
     gg_container_append(GG_CONTAINER(hbox), gg_frame_create(vbox));
-    gg_container_append(GG_CONTAINER(rootvbox), hbox);
 
-    /* bottom */
-    widget = gg_seperatorh_create();
-    gg_container_append(GG_CONTAINER(rootvbox), widget );
+    /* left side */
+    vbox = gg_vbox_create(0);
+    /* padding.. */
+    for ( i=0; i<padding; i++ )
+    {
+        widget = gg_label_create(" ");
+        gg_container_append(GG_CONTAINER(vbox), widget);
+    }
+
+    if ( saving )
+    {
+        widget = gg_action_create_with_label("Save Game..", 0.0f, 0.0f);
+        gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
+    }
+    else
+    {
+        widget = gg_action_create_with_label("Load Game..", 0.0f, 0.0f);
+        selected_player_layout=player_layout;
+        selected_difficulty=difficulty;
+        gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
+    }
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_option_create();
+    for ( i=0; i<max_saveslots; i++ )
+    {
+        sprintf( temp, "Save slot: %i", i+1 );
+        gg_option_append_label(GG_OPTION(widget), temp, 0.5f, 0.0f);
+    }
+    gg_option_set_callback(GG_OPTION(widget), dialog_saveload_change, widget);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    if ( changing_slot )
+        gg_option_set_selected(GG_OPTION(widget), saveload_selected);
 
     widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
-    gg_container_append(GG_CONTAINER(rootvbox), widget);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    /*for ( i=0; i<max_saveslots; i++ )
+    {
+        sprintf( temp, "%i:  ", i );
+        widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
+
+        gg_action_set_callback(GG_ACTION(widget), dialog_saveload_change, vbox);
+
+        gg_container_append(GG_CONTAINER(vbox), widget);
+    }*/
+
+    gg_container_append(GG_CONTAINER(hbox), vbox );
+
+    if ( changing_slot )
+        gg_vbox_set_selected(vbox, padding+1 );
 
     /* Dialog stuff */
+    gg_container_append(GG_CONTAINER(rootvbox), hbox);
     dialog = gg_dialog_create(rootvbox);
 
     if ( saving )
         gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     else
         gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
-
-    if ( changing_slot )
-        gg_vbox_set_selected(rootvbox, 2 );
 
     return GG_DIALOG(dialog);
 }
