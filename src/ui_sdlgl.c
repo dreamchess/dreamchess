@@ -262,6 +262,7 @@ static texture_t menu_title_tex;
 static texture_t backdrop;
 static texture_t border[9];
 static texture_t menu_border[9];
+static texture_t mouse_cursor;
 
 #define LEFT (1 << 0)
 #define RIGHT (1 << 1)
@@ -2192,6 +2193,7 @@ static config_t *do_menu(int *pgn)
 {
     gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
+    int mouse_x=0, mouse_y=0;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
@@ -2317,6 +2319,12 @@ static config_t *do_menu(int *pgn)
             text_draw_string( 390, 30, "Loading...", 3, &col_white, string_type_pos );
             can_load = TRUE;
         }
+
+        /* Draw mouse cursor.. */
+        #ifndef _arch_dreamcast
+        SDL_GetMouseState(&mouse_x, &mouse_y);
+        draw_texture( &mouse_cursor, mouse_x, (479-mouse_y-32), 32, 32, 1.0f, &col_white );        
+        #endif /* _arch_dreamcast */
 
         gl_swap();
     }
@@ -2553,6 +2561,8 @@ static void init_gui()
         exit(1);
     }
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
@@ -2609,6 +2619,9 @@ static void init_gui()
     chdir("styles");
     chdir("default");
     load_border(menu_border, "border.png");
+    #ifndef _arch_dreamcast
+    load_texture_png( &mouse_cursor, "mouse_cursor.png", 1 );
+    #endif /* _arch_dreamcast */
 
     /* Fill pieces list. */
     ch_datadir();
@@ -2821,6 +2834,11 @@ static void load_theme(char* style, char* pieces, char *board)
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0 );
+
+    #ifndef _arch_dreamcast
+    load_texture_png( &mouse_cursor, "mouse_cursor.png", 1 );
+    #endif /* _arch_dreamcast */
+
     load_border(border, "border.png");
     load_pieces();
 
@@ -3070,6 +3088,7 @@ static void draw_scene( board_t *b )
     char temp[80];
     int clock_seconds=0;
     int clock_minutes=0;
+    int mouse_x=0, mouse_y=0;
 
     gg_dialog_cleanup();
 
@@ -3130,6 +3149,12 @@ static void draw_scene( board_t *b )
         gg_dialog_t *dialog = gg_dialog_current();
         gg_dialog_render(dialog);
     }
+
+    /* Draw mouse cursor.. */
+    #ifndef _arch_dreamcast
+    SDL_GetMouseState(&mouse_x, &mouse_y);
+    draw_texture( &mouse_cursor, mouse_x, (479-mouse_y-32), 32, 32, 1.0f, &col_white );        
+    #endif /* _arch_dreamcast */
 
     /* Draw it to the screen */
     gl_swap();
