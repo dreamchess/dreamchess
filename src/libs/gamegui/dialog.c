@@ -117,6 +117,7 @@ void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
 void draw_border(void *image[9], gg_rect_t area, int size)
 {
     gg_rect_t source, dest;
+    gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
     int image_size;
 
     gg_system_get_image_size(image[0], &image_size, NULL);
@@ -163,7 +164,7 @@ void draw_border(void *image[9], gg_rect_t area, int size)
 
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
-    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &col_white);
+    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &fade_col);
 }
 
 /** @brief Renders a dialog.
