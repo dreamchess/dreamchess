@@ -92,7 +92,7 @@
 #endif
 
 /* Evil ATI! */
-static float zerodepth=9999.0f;
+static float zerodepth=1.0f;
 
 static struct
 {

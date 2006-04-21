@@ -653,7 +653,7 @@ void draw_selector()
 }
 
 #ifdef _arch_dreamcast
-int find_square(int x, int y)
+int find_square(int x, int y, float fd)
 {
     return -1;
 }
