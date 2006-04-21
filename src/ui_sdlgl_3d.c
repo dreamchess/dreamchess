@@ -665,7 +665,7 @@ int find_square(int x, int y)
     GLint viewport[4];
     GLdouble modelview[16];
     GLdouble projection[16];
-
+    
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(x_rotation, 1, 0, 0);
@@ -677,8 +677,9 @@ int find_square(int x, int y)
 
     win.x = x;
     win.y = viewport[3] - y;
-    glReadPixels(win.x, win.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &win.z);
 
+    glReadPixels(win.x, win.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &win.z);
+    win.z /= get_zerodepth();
     gluUnProject(win.x, win.y, win.z, modelview, projection, viewport, &obj.x,
                  &obj.y, &obj.z);
 

@@ -91,6 +91,14 @@
 #define AXIS_VIEW_Y 3
 #endif
 
+/* Evil ATI! */
+float zerodepth=1.0f;
+
+float get_zerodepth()
+{
+    return zerodepth;
+}
+
 static struct
 {
     int x;
@@ -2216,6 +2224,7 @@ static config_t *do_menu(int *pgn)
     while ( 1 )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
 
         gg_dialog_cleanup();
 
@@ -3066,6 +3075,7 @@ static void draw_scene( board_t *b )
     gg_dialog_cleanup();
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
     glDisable(GL_BLEND);
     glDepthMask(GL_FALSE);
 
