@@ -2308,8 +2308,10 @@ static config_t *do_menu(int *pgn)
 
         if ( set_loading == FALSE )
         {
+            char msg[] = "Press any key or button to start";
             if (wait_menu)
-                text_draw_string_bouncy( 140, 30, "Press any key or button to start",
+                text_draw_string_bouncy( SCREEN_WIDTH / 2 -
+                                         text_width(msg) * 0.75, 30, msg,
                                          1.5, &col_white, string_type_pos );
             else
             {
