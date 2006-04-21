@@ -32,6 +32,6 @@ void select_piece(int square);
 void reset_3d();
 void loadmodels(char *filename);
 void load_board(char *dcm_name, char *texture_name);
-int find_square(int x, int y);
+int find_square(int x, int y, float fd);
 void freemodels();
-float get_zerodepth();
+

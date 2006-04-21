@@ -92,12 +92,7 @@
 #endif
 
 /* Evil ATI! */
-float zerodepth=1.0f;
-
-float get_zerodepth()
-{
-    return zerodepth;
-}
+static float zerodepth=9999.0f;
 
 static struct
 {
@@ -2224,7 +2219,6 @@ static config_t *do_menu(int *pgn)
     while ( 1 )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
 
         gg_dialog_cleanup();
 
@@ -2864,6 +2858,11 @@ static void init_gl()
 
     /* Really Nice Perspective Calculations */
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+    #ifndef _arch_dreamcast
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth); 
+    #endif /* _arch_dreamcast */
 }
 
 /** @brief Resizes the OpenGL window.
@@ -3074,8 +3073,8 @@ static void draw_scene( board_t *b )
 
     gg_dialog_cleanup();
 
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT); 
+
     glDisable(GL_BLEND);
     glDepthMask(GL_FALSE);
 
@@ -3088,13 +3087,12 @@ static void draw_scene( board_t *b )
     glDepthMask(GL_TRUE);
 
     render_scene_3d(b);
-    mouse_square = find_square(mouse_pos.x, mouse_pos.y);
+    mouse_square = find_square(mouse_pos.x, mouse_pos.y, zerodepth);
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
-
 
     draw_border(style_ingame.border.textured.image, gg_rect(20, 440, 170, 20), 8);
 

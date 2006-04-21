@@ -658,7 +658,7 @@ int find_square(int x, int y)
     return -1;
 }
 #else
-int find_square(int x, int y)
+int find_square(int x, int y, float fd)
 {
     coord3d_t obj;
     coord3_t win;
@@ -679,7 +679,7 @@ int find_square(int x, int y)
     win.y = viewport[3] - y;
 
     glReadPixels(win.x, win.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &win.z);
-    win.z /= get_zerodepth();
+    win.z /= fd;
     gluUnProject(win.x, win.y, win.z, modelview, projection, viewport, &obj.x,
                  &obj.y, &obj.z);
 
