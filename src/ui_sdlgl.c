@@ -628,6 +628,8 @@ int swapping_custom=FALSE;
 int selected_custom_board=0;
 int selected_custom_style=0;
 int selected_custom_pieces=0;
+char white_name[80];
+char black_name[80];
 
 /* xml theme options */
 int use_lighting()
@@ -2282,13 +2284,19 @@ static config_t *do_menu(int *pgn)
         {
             /* We using custom? */
             if ( selected_theme==theme_count )
+            {
+                sprintf(white_name,"White"); 
+                sprintf(black_name,"Black");
                 load_theme(stylelist[cur_style], pieces_list[pieces_list_cur],
                            board_list[board_list_cur]);
+            }
             else
             {
                 /* printf( "Loading theme %i\n", selected_theme ); */
                 load_theme(themes[selected_theme].style, themes[selected_theme].pieces,
                            themes[selected_theme].board);
+                sprintf(white_name,"%s",themes[selected_theme].white_name); 
+                sprintf(black_name,"%s",themes[selected_theme].black_name);
             }
 
             reset_3d();
@@ -3123,8 +3131,8 @@ static void draw_scene( board_t *b )
     glPopMatrix();
 
     glPushMatrix();
-    draw_name_dialog( 50, 430, themes[selected_theme].white_name, TRUE, 1 );
-    draw_name_dialog( 490, 430, themes[selected_theme].black_name, FALSE, 0 );
+    draw_name_dialog( 50, 430, white_name, TRUE, 1 );
+    draw_name_dialog( 490, 430, black_name, FALSE, 0 );
     draw_border(style_ingame.border.textured.image, gg_rect(20, 375, 75, 10), 8);
     draw_border(style_ingame.border.textured.image, gg_rect(545, 375, 75, 10), 8);
     draw_health_bars();
