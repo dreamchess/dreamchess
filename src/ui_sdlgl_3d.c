@@ -377,7 +377,7 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     int g;
     texture_t *texture = model->texture;
     int ticks = SDL_GetTicks();
-    float tex_spin_pos;
+    float tex_spin_pos=0.0f;
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
