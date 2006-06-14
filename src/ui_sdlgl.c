@@ -209,8 +209,6 @@ void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
 */
 ui_event_t keys[94];
 
-int string_type_pos=-1;
-
 int turn_counter_start=0;
 
 void reset_turn_counter()
@@ -447,17 +445,6 @@ void set_perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zF
     glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
-int string_type_cur=0;
-int string_type_start=0;
-
-void reset_string_type_length()
-{
-    Uint32 ticks = SDL_GetTicks();
-    string_type_pos=0;
-    string_type_cur=0;
-    string_type_start=ticks;
-}
-
 static void go_3d(int width, int height)
 {
     glViewport( 0, 0, width, height );
@@ -590,9 +577,9 @@ static void draw_texture_uv( texture_t *texture, float xpos,
 }
 #endif
 
-void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
-void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
-void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length );
+void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
+void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
+void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 static int text_width(char *text);
 static int text_height();
 static int quit_to_menu;
@@ -1915,13 +1902,13 @@ static void draw_credits(int init)
             state = 1;
         }
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap, string_type_pos);
+        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
         break;
 
     case 1:
         col_cap.a = 1.0f;
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap, string_type_pos);
+        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
         diff = now - start;
 
@@ -1943,7 +1930,7 @@ static void draw_credits(int init)
             return;
         }
 
-        text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item, string_type_pos);
+        text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
 
         break;
 
@@ -1965,7 +1952,7 @@ static void draw_credits(int init)
                 return;
             }
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap, string_type_pos);
+        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
         break;
     }
@@ -2070,10 +2057,9 @@ static void draw_name_dialog( float xpos, float ypos, char* name, int left, int 
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos, ypos+10, name, 1, &col_black, 999 );
+        text_draw_string( xpos, ypos+10, name, 1, &col_black);
     else
-        text_draw_string( xpos+width-(strlen(name)*8), ypos+10, name, 1, &col_black,
-                          999 );
+        text_draw_string( xpos+width-(strlen(name)*8), ypos+10, name, 1, &col_black);
 }
 
 void dialog_promote_cb(gg_widget_t *widget, void *data)
@@ -2166,7 +2152,7 @@ static void gl_swap()
         char fps_s[16];
 
         snprintf(fps_s, 16, "FPS: %.2f", fps);
-        text_draw_string(10, 10, fps_s, 1, &col_red, 999 );
+        text_draw_string(10, 10, fps_s, 1, &col_red);
     }
 
     SDL_GL_SwapBuffers();
@@ -2249,10 +2235,7 @@ static config_t *do_menu(int *pgn)
             if (wait_menu)
             {
                 if (gg_event.type != GG_EVENT_NONE)
-                {
-                    reset_string_type_length();
                     wait_menu = 0;
-                }
                 continue;
             }
 
@@ -2312,7 +2295,7 @@ static config_t *do_menu(int *pgn)
             if (wait_menu)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
                                          text_width(msg) * 0.75, 30, msg,
-                                         1.5, &col_white, string_type_pos );
+                                         1.5, &col_white);
             else
             {
                 gg_dialog_t *dialog = gg_dialog_current();
@@ -2326,7 +2309,7 @@ static config_t *do_menu(int *pgn)
         }
         else
         {
-            text_draw_string( 390, 30, "Loading...", 3, &col_white, string_type_pos );
+            text_draw_string( 390, 30, "Loading...", 3, &col_white);
             can_load = TRUE;
         }
 
@@ -2960,9 +2943,9 @@ static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
         if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
             exit(1);
         if (i != view)
-            text_draw_string( x_white+5, y-5, s, 1, &col_normal2, 999 );
+            text_draw_string( x_white+5, y-5, s, 1, &col_normal2);
         else
-            text_draw_string( x_white+5, y-5, s, 1, &col_high2, 999 );
+            text_draw_string( x_white+5, y-5, s, 1, &col_high2);
         y -= text_height();
         col_normal2.a-=0.15f;
         col_high2.a-=0.15f;
@@ -2979,9 +2962,9 @@ static void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
     for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(board.turn) ? 6 : 8); i -= 2)
     {
         if (i != view)
-            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_normal2, 999 );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_normal2);
         else
-            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_high2, 999 );
+            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_high2);
         y -= text_height();
         col_normal2.a-=0.15f;
         col_high2.a-=0.15f;
@@ -3042,7 +3025,7 @@ static void draw_capture_list(gg_colour_t *col)
         {
             if (snprintf(s, 4, "%i", board.captured[i]) >= 4)
                 exit(1);
-            text_draw_string( x_white, y_white, s, 1, col, 999);
+            text_draw_string( x_white, y_white, s, 1, col);
             draw_texture( &black_pieces[i/2], x_white-24, y_white, 24,
                           24, 1.0f, &col_white );
         }
@@ -3051,7 +3034,7 @@ static void draw_capture_list(gg_colour_t *col)
         {
             if (snprintf(s, 4, "%i", board.captured[i - 1]) >= 4)
                 exit(1);
-            text_draw_string_right( x_black, y_black, s, 1, col, 999);
+            text_draw_string_right( x_black, y_black, s, 1, col);
             draw_texture( &white_pieces[(i-1)/2], x_black, y_black, 24,
                           24, 1.0f, &col_white );
         }
@@ -3146,15 +3129,13 @@ static void draw_scene( board_t *b )
     clock_minutes=(((SDL_GetTicks()-turn_counter_start)/1000)/60);
     clock_seconds=((SDL_GetTicks()-turn_counter_start)/1000)-(clock_minutes*60);
     sprintf( temp, "%i:%02i", clock_minutes, clock_seconds );
-    /*text_draw_string( 303, 440, temp, 1, &col_black, 999 );*/
+    /*text_draw_string( 303, 440, temp, 1, &col_black);*/
     glPopMatrix();
 
     if ( white_in_check == TRUE )
-        text_draw_string_bouncy( 180, 420, "White is in check!", 2, &col_white,
-                                 string_type_pos );
+        text_draw_string_bouncy( 180, 420, "White is in check!", 2, &col_white);
     else if ( black_in_check == TRUE )
-        text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white,
-                                 string_type_pos );
+        text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white);
 
     if (gg_dialog_current())
     {
@@ -3229,18 +3210,13 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
 {
     int i;
     int xposition=xpos;
 
-    if ( length > strlen(text) )
-        length=strlen(text);
-
-    for ( i=0; i<length; i++ )
-    {
+    for (i = 0; i < strlen(text); i++)
         xposition+=text_draw_char( xposition, ypos, scale, text[i], col );
-    }
 }
 
 static int text_width_n(char *text, int n)
@@ -3287,9 +3263,9 @@ static int text_height()
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
 {
-    text_draw_string(xpos - text_width(text), ypos, text, scale, col, length);
+    text_draw_string(xpos - text_width(text), ypos, text, scale, col);
 }
 
 /** @brief Renders a bouncy latin1 string.
@@ -3303,17 +3279,14 @@ void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col, int length )
+void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
 {
     int i;
     int xposition=xpos;
     int yposition=ypos;
     Uint32 ticks = SDL_GetTicks();
 
-    if ( length > strlen(text) )
-        length=strlen(text);
-
-    for ( i=0; i<length; i++ )
+    for (i = 0; i < strlen(text); i++)
     {
         float temp_off;
         float phase = ((ticks % (1000 / BOUNCE_SPEED)) / (float) (1000 / BOUNCE_SPEED));
