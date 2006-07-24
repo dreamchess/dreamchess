@@ -637,19 +637,29 @@ static void draw_board(float rot_x, float rot_z)
 
 void draw_selector()
 {
+    float r,g,b,a;
+    float width;
+    float height;
+
+    r=1.0f; g=1.0f; b=0.0f; a=0.25f; //a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1;
+    width=0.5;
+    height=0.1;
+
     glLoadIdentity();
     glTranslatef(0, -0.5, -12.0);
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
-    glColor4f(1, 1, 0, 0.2);
+    glColor4f(r, g, b, a);
 
     glBegin(GL_QUADS);
-    glVertex3f(-0.5, -0.5, 0);
-    glVertex3f(0.5, -0.5, 0);
-    glVertex3f(0.5, 0.5, 0);
-    glVertex3f(-0.5, 0.5, 0);
+    glVertex3f(-width, width, height);
+    glVertex3f(width, width, height);
+    glVertex3f(width, -width, height);
+    glVertex3f(-width, -width, height);
     glEnd();
+
+
 }
 
 #ifdef _arch_dreamcast
@@ -695,9 +705,9 @@ void render_scene_3d(board_t *board)
 {
     glEnable(GL_CULL_FACE);
     draw_board(x_rotation, z_rotation);
-    draw_selector();
     draw_pieces(board, x_rotation, z_rotation);
     glDisable(GL_CULL_FACE);
+    draw_selector();
 }
 
 static void update_light()
@@ -784,6 +794,9 @@ int get_selector()
 void select_piece(int square)
 {
     selected = square;
+
+    if ( square>0 )
+        selector = square;
 }
 
 void reset_3d()

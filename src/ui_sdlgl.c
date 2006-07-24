@@ -169,6 +169,11 @@ static gg_colour_t col_yellow =
         1.0f, 1.0f, 0.0f, 1.0f
     };
 
+static gg_colour_t col_trans =
+{
+    1.0f, 1.0f, 1.0f, 0.0f
+};
+
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
@@ -764,17 +769,17 @@ static gg_dialog_t *dialog_quit_create()
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);
 
-    gg_widget_t *widget = gg_label_create("You don't really want to quit do ya?");
+    gg_widget_t *widget = gg_label_create("Quit to main menu?");
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_label_create("");
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Yeah.. I suck..", 0.5f, 0.0f);
+    widget = gg_action_create_with_label("Yes", 0.5f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_quit_ok, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Of course not!", 0.5f, 0.0f);
+    widget = gg_action_create_with_label("No", 0.5f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -992,7 +997,7 @@ static void dialog_saveload_change(gg_widget_t *widget, void *data)
     gg_widget_t *select = GG_WIDGET(data);
     saveload_selected=GG_OPTION(select)->sel;
 
-    printf( "Selected save: %i\n", saveload_selected );
+    /*    printf( "Selected save: %i\n", saveload_selected );*/
 
     gg_dialog_close();
     changing_slot=TRUE;
@@ -2045,21 +2050,30 @@ static texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int al
 static void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
 {
     float width, height;
+    int namew, nameh;
+
+    gg_system_get_string_size(name, &namew, &nameh );
 
     width=100;
     height=30;
 
     /* draw avatar */
     if ( white == 1 )
+    {
+        draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45+2, ypos-50-2, 100, 100, 1.0f, &col_black);
         draw_texture( &white_pieces[GUI_PIECE_AVATAR], xpos-45, ypos-50, 100, 100, 1.0f, &col_white);
+    }
     else
+    {
+        draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45+2, ypos-50-2, 100, 100, 1.0f, &col_black);
         draw_texture( &black_pieces[GUI_PIECE_AVATAR], xpos+45, ypos-50, 100, 100, 1.0f, &col_white);
+    }
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos, ypos+10, name, 1, &col_black);
+        text_draw_string( xpos-20, ypos+10, name, 1, &col_white);
     else
-        text_draw_string( xpos+width-(strlen(name)*8), ypos+10, name, 1, &col_black);
+        text_draw_string( xpos+20+width-(namew), ypos+10, name, 1, &col_white);
 }
 
 void dialog_promote_cb(gg_widget_t *widget, void *data)
@@ -2295,7 +2309,8 @@ static config_t *do_menu(int *pgn)
             if (wait_menu)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
                                          text_width(msg) * 0.75, 30, msg,
-                                         1.5, &col_white);
+                                         1.5f, &col_white);
+            
             else
             {
                 gg_dialog_t *dialog = gg_dialog_current();
@@ -3133,9 +3148,9 @@ static void draw_scene( board_t *b )
     glPopMatrix();
 
     if ( white_in_check == TRUE )
-        text_draw_string_bouncy( 180, 420, "White is in check!", 2, &col_white);
+        text_draw_string_bouncy( 180, 420, "White is in check!", 1.5, &col_white);
     else if ( black_in_check == TRUE )
-        text_draw_string_bouncy( 180, 420, "Black is in check!", 2, &col_white);
+        text_draw_string_bouncy( 180, 420, "Black is in check!", 1.5, &col_white);
 
     if (gg_dialog_current())
     {
@@ -3216,7 +3231,10 @@ void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colou
     int xposition=xpos;
 
     for (i = 0; i < strlen(text); i++)
+    {
+        text_draw_char( xposition+2, ypos-2, scale, text[i], &col_black );
         xposition+=text_draw_char( xposition, ypos, scale, text[i], col );
+    }
 }
 
 static int text_width_n(char *text, int n)
@@ -3297,6 +3315,7 @@ void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, g
             temp_off = ((1.0 - phase) * 2) * (BOUNCE_AMP + 1);
 
         yposition=ypos+temp_off;
+        text_draw_char( xposition+2, yposition-2, scale, text[i], &col_black );
         xposition+=text_draw_char( xposition, yposition, scale, text[i], col );
 
         ticks += 1000 / BOUNCE_SPEED / BOUNCE_LEN;

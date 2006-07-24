@@ -26,6 +26,11 @@ static gg_colour_t col_white =
         1.0f, 1.0f, 1.0f, 1.0f
     };
 
+static gg_colour_t col_black =
+    {
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
 gg_class_id gg_dialog_get_class_id()
 {
     GG_CHILD(gg_bin_get_class_id())
@@ -114,7 +119,7 @@ void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
     *y = dialog->pos.y - dialog->height * dialog->pos.y_align;
 }
 
-void draw_border(void *image[9], gg_rect_t area, int size)
+void draw_border_shadow(void *image[9], gg_rect_t area, int size)
 {
     gg_rect_t source, dest;
     gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
@@ -138,6 +143,68 @@ void draw_border(void *image[9], gg_rect_t area, int size)
     dest.width = size;
     dest.height = size;
 
+    /* Draw four corners.. */
+    gg_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+    dest.y += area.height - size;
+    gg_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+    dest.x += area.width - size;
+    gg_system_draw_image(image[2], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+    dest.y -= area.height - size;
+    gg_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+
+    /* Draw bottom */
+    dest.x = area.x + size;
+    dest.y = area.y;
+    dest.width = area.width - (2 * size)+1;
+    dest.height = size;
+    gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_black);
+    
+    /* Draw top*/ 
+    dest.y += area.height - size;
+    gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_black);
+
+    /* Draw left */
+    dest.x = area.x;
+    dest.y = area.y + size-1;
+    dest.width = size;
+    dest.height = area.height - (2 * size)+1;
+    gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_black);
+
+    /* Draw right */
+    dest.x += area.width - size;
+    gg_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_black);
+}
+
+void draw_border(void *image[9], gg_rect_t area, int size)
+{
+    gg_rect_t source, dest, shad;
+    gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
+    int image_size;
+    
+    shad=area;
+    shad.x+=2;
+    shad.y-=2;
+    draw_border_shadow(image, shad, size);
+
+    gg_system_get_image_size(image[0], &image_size, NULL);
+
+    area.x -= size;
+    area.y -= size;
+
+    area.width += 2 * size;
+    area.height += 2 * size;
+
+    source.x = 0;
+    source.y = 0;
+    source.width = image_size;
+    source.height = image_size;
+
+    dest.x = area.x;
+    dest.y = area.y;
+    dest.width = size;
+    dest.height = size;
+
+    /* Draw four corners.. */
     gg_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
     dest.y += area.height - size;
     gg_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
@@ -146,26 +213,36 @@ void draw_border(void *image[9], gg_rect_t area, int size)
     dest.y -= area.height - size;
     gg_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_white);
 
+    /* Draw bottom */
     dest.x = area.x + size;
     dest.y = area.y;
-    dest.width = area.width - 2 * size;
+    dest.width = area.width - (2 * size)+1;
     dest.height = size;
     gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
+    
+    /* Draw top*/ 
     dest.y += area.height - size;
     gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
+    /* Draw left */
     dest.x = area.x;
-    dest.y = area.y + size;
+    dest.y = area.y + size-1;
     dest.width = size;
-    dest.height = area.height - 2 * size;
+    dest.height = area.height - (2 * size)+1;
     gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_white);
+
+    /* Draw right */
     dest.x += area.width - size;
     gg_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_white);
 
+    /* Draw middle */
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
+    dest.y=dest.y+1;
     gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &fade_col);
 }
+
+
 
 /** @brief Renders a dialog.
  *

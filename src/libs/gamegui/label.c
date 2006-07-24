@@ -26,9 +26,19 @@ static gg_colour_t col_dark_red =
         0.7f, 0.0f, 0.0f, 1.0f
     };
 
+static gg_colour_t col_light_blue =
+{
+    0.0f, 1.0f, 1.0f, 1.0f
+};
+
 static gg_colour_t col_black =
     {
         0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+static gg_colour_t col_white =
+    {
+        1.0f, 1.0f, 1.0f, 1.0f
     };
 
 static gg_colour_t col_trans =
@@ -53,9 +63,15 @@ void gg_label_render(gg_widget_t *widget, int x, int y, int focus)
     y += (1.0f - label->yalign) * (label->height_a - label->height);
 
     if (focus != GG_FOCUS_NONE)
-        gg_system_draw_string(label->label, x, y, &col_dark_red, label->bouncy, 0);
+    {
+        gg_system_draw_string(label->label, x+2, y-2, &col_black, label->bouncy, 0);
+        gg_system_draw_string(label->label, x, y, &col_light_blue, label->bouncy, 0);
+    }
     else
+    {
+        gg_system_draw_string(label->label, x+2, y-2, &col_black, 0, 0);
         gg_system_draw_string(label->label, x, y, &label->colour, 0, 0);
+    }
 }
 
 void gg_label_set_bouncy(gg_label_t *label, int bouncy)
@@ -95,7 +111,7 @@ void gg_label_init(gg_label_t *label, char *text)
     label->id = gg_label_get_class_id();
     label->label = strdup(text);
     label->bouncy = 0;
-    label->colour = col_black;
+    label->colour = col_white;
     label->bgcolour = col_trans;
     gg_system_get_string_size(text, &label->width, &label->height);
     label->height += GG_BOUNCE_AMP;
