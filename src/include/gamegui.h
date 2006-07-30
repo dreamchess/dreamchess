@@ -38,5 +38,6 @@
 #include <gamegui/seperatorv.h>
 #include <gamegui/widget.h>
 #include <gamegui/frame.h>
+#include <gamegui/viewport.h>
 
 #endif /* GAMEGUI_H */

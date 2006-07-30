@@ -1,5 +1,5 @@
 /*  DreamChess
- *  Copyright (C) 2005  The DreamChess project
+ *  Copyright (C) 2005-2006  The DreamChess project
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -46,7 +46,17 @@ void gg_viewport_render(gg_widget_t *widget, int x, int y, int focus);
 
 void gg_viewport_init(gg_viewport_t *viewport, gg_widget_t *widget, int width, int height);
 
-void gg_viewport_set_scroll_pos(gg_viewport_t *viewport, float xscroll, float yscroll);
+void gg_viewport_set_scroll_xpos(gg_viewport_t *viewport, float scroll);
+
+void gg_viewport_set_scroll_ypos(gg_viewport_t *viewport, float scroll);
+
+void gg_viewport_set_size(gg_widget_t *widget, int width, int height);
+
+gg_rect_t gg_viewport_get_focus_pos(gg_widget_t *widget);
+
+int gg_viewport_set_focus_pos(gg_widget_t *widget, int x, int y);
+
+int gg_viewport_input(gg_widget_t *widget, gg_event_t event);
 
 gg_widget_t *gg_viewport_create(gg_widget_t *widget, int width, int height);
 
