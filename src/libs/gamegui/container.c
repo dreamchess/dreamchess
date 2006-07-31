@@ -87,6 +87,9 @@ void gg_container_append(gg_container_t *container, gg_widget_t *widget)
 {
     list_append_item(container->widget_list, widget);
     widget->parent = GG_WIDGET(container);
+
+    if (widget->enabled && widget->input)
+        container->enabled = 1;
 }
 
 int gg_container_get_size(gg_container_t *container)

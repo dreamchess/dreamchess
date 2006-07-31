@@ -121,7 +121,6 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
     widget->width = (size - 1) * box->spacing;
     widget->height = 0;
-    widget->enabled = 0;
 
     for (i = 0; i < size; i++)
     {
@@ -135,12 +134,8 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
         widget->width += child_width;
 
-        if (child->enabled && child->input)
-        {
-            if (box->sel == -1)
-                box->sel = i;
-            widget->enabled = 1;
-        }
+        if (child->enabled && child->input && (box->sel == -1))
+            box->sel = i;
     }
 
     gg_widget_get_requested_size(widget, width, height);

@@ -129,7 +129,6 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
     widget->width = 0;
     widget->height = (size - 1) * box->spacing;
-    widget->enabled = 0;
 
     for (i = 0; i < size; i++)
     {
@@ -143,12 +142,8 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
         widget->height += child_height;
 
-        if (child->enabled && child->input)
-        {
-            if (box->sel == -1)
-                box->sel = i;
-            widget->enabled = 1;
-        }
+        if (child->enabled && child->input && (box->sel == -1))
+            box->sel = i;
     }
 
     gg_widget_get_requested_size(widget, width, height);
