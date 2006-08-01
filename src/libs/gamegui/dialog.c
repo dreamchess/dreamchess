@@ -310,6 +310,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
 
 void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
 {
+    gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
     int xmin, xmax, ymin, ymax;
 
     gg_dialog_get_screen_pos(dialog, &xmin, &ymin);
@@ -332,7 +333,8 @@ void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
         y -= size;
     }
 
-    dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
+    if (x >= 0 && x < child->width_a && y >= 0 && y < child->height_a)
+        dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
 }
 
 int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
@@ -368,6 +370,10 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
             event.mouse.x -= size;
             event.mouse.y -= size;
         }
+
+        if (event.mouse.x < 0 || event.mouse.x >= child->width_a ||
+            event.mouse.y < 0 || event.mouse.y >= child->height_a)
+            return 0;
     }
 
     return child->input(child, event);

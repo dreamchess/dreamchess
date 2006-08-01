@@ -195,7 +195,7 @@ int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y)
         gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_x += child->width_a;
-        if (cur_x >= x)
+        if (cur_x > x)
         {
             if (!child->input || !child->enabled ||
                     (!child->set_focus_pos(child, x - cur_x + child->width_a, y)))

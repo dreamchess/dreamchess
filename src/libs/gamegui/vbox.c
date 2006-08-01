@@ -206,7 +206,7 @@ int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y)
         gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_y += child->height_a;
-        if (cur_y >= y)
+        if (cur_y > y)
         {
             if (!child->input || !child->enabled || !
                 child->set_focus_pos(child, x, child->height_a - (cur_y - y)))
