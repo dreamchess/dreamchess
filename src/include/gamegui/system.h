@@ -85,6 +85,8 @@ typedef struct gg_driver
 {
     void (* draw_rect) (int x, int y, int width, int height, gg_colour_t *colour);
     void (* draw_filled_rect) (int x, int y, int width, int height, gg_colour_t *colour);
+    void (* draw_gradient_rect) (int x, int y, int width, int height, gg_colour_t *top_left,
+                                 gg_colour_t *top_right, gg_colour_t *bottom_left, gg_colour_t *bottom_right);
     void (* draw_image) (void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
     void *(* get_char_image) (int c);
     void (* draw_char) (int c, int x, int y, gg_colour_t *colour);
@@ -122,6 +124,10 @@ void gg_system_init(gg_driver_t *d);
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour);
 
 void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour);
+
+void gg_system_draw_gradient_rect(int x, int y, int width, int height,
+                                  gg_colour_t *top_left, gg_colour_t *top_right,
+                                  gg_colour_t *bottom_left, gg_colour_t *bottom_right);
 
 void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
 

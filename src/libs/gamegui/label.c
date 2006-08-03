@@ -63,15 +63,9 @@ void gg_label_render(gg_widget_t *widget, int x, int y, int focus)
     y += (1.0f - label->yalign) * (label->height_a - label->height);
 
     if (focus != GG_FOCUS_NONE)
-    {
-        gg_system_draw_string(label->label, x+2, y-2, &col_black, label->bouncy, 0);
         gg_system_draw_string(label->label, x, y, &col_light_blue, label->bouncy, 0);
-    }
     else
-    {
-        gg_system_draw_string(label->label, x+2, y-2, &col_black, 0, 0);
         gg_system_draw_string(label->label, x, y, &label->colour, 0, 0);
-    }
 }
 
 void gg_label_set_bouncy(gg_label_t *label, int bouncy)

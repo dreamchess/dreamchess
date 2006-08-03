@@ -34,7 +34,9 @@ enum
 
 enum
 {
-    GG_MOUSE_BUTTON_DOWN
+    GG_MOUSE_BUTTON_DOWN,
+    GG_MOUSE_BUTTON_UP,
+    GG_MOUSE_MOVE
 };
 
 typedef struct gg_event_mouse
@@ -61,12 +63,6 @@ enum gg_event_key
     GG_KEY_HOME,
     GG_KEY_END
 };
-
-typedef union gg_event_data
-{
-    int key;
-    gg_event_mouse_t mouse;
-} gg_event_data_t;
 
 typedef struct gg_event
 {

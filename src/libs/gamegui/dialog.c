@@ -21,6 +21,12 @@
 
 #include <gamegui/dialog.h>
 
+/** Titlebar size factor relative to text height */
+#define GG_DIALOG_TITLE_FACT 1.25
+
+/** Titlebar seperator height in pixels */
+#define GG_DIALOG_TITLE_SEP_HEIGHT 1
+
 static gg_colour_t col_white =
     {
         1.0f, 1.0f, 1.0f, 1.0f
@@ -29,6 +35,26 @@ static gg_colour_t col_white =
 static gg_colour_t col_black =
     {
         0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+static gg_colour_t col_blue =
+    {
+        0.0f, 0.5f, 1.0f, 1.0f
+    };
+
+static gg_colour_t col_blue2 =
+    {
+        0.0f, 0.0f, 0.5f, 1.0f
+    };
+
+static gg_colour_t col_grey =
+    {
+        0.5f, 0.5f, 0.5f, 1.0f
+    };
+
+static gg_colour_t col_grey2 =
+    {
+        0.25f, 0.25f, 0.25f, 1.0f
     };
 
 gg_class_id gg_dialog_get_class_id()
@@ -119,85 +145,56 @@ void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
     *y = dialog->pos.y - dialog->height * dialog->pos.y_align;
 }
 
-void draw_border_shadow(void *image[9], gg_rect_t area, int size)
+void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size)
 {
     gg_rect_t source, dest;
     gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
     int image_size;
+    int titlebar_height = 0;
 
     gg_system_get_image_size(image[0], &image_size, NULL);
-
-    area.x -= size;
-    area.y -= size;
-
-    area.width += 2 * size;
-    area.height += 2 * size;
 
     source.x = 0;
     source.y = 0;
     source.width = image_size;
     source.height = image_size;
 
-    dest.x = area.x;
-    dest.y = area.y;
-    dest.width = size;
-    dest.height = size;
+    if (title)
+    {
+        int text_height;
+        gg_system_get_string_size(title, NULL, &text_height);
+        titlebar_height = text_height * GG_DIALOG_TITLE_FACT;
+        titlebar_height += GG_DIALOG_TITLE_SEP_HEIGHT;
 
-    /* Draw four corners.. */
-    gg_system_draw_image(image[6], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-    dest.y += area.height - size;
-    gg_system_draw_image(image[0], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-    dest.x += area.width - size;
-    gg_system_draw_image(image[2], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-    dest.y -= area.height - size;
-    gg_system_draw_image(image[8], source, dest, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+        dest.x = area.x;
+        dest.y = area.y + area.height - titlebar_height;
+        dest.width = area.width;
+        dest.height = GG_DIALOG_TITLE_SEP_HEIGHT;
 
-    /* Draw bottom */
-    dest.x = area.x + size;
-    dest.y = area.y;
-    dest.width = area.width - (2 * size)+1;
-    dest.height = size;
-    gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_black);
-    
-    /* Draw top*/ 
-    dest.y += area.height - size;
-    gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_black);
+        gg_system_draw_filled_rect(dest.x, dest.y, dest.width,
+                                   GG_DIALOG_TITLE_SEP_HEIGHT, &col_black);
 
-    /* Draw left */
-    dest.x = area.x;
-    dest.y = area.y + size-1;
-    dest.width = size;
-    dest.height = area.height - (2 * size)+1;
-    gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_black);
+        dest.y += GG_DIALOG_TITLE_SEP_HEIGHT;
+        dest.height = titlebar_height - GG_DIALOG_TITLE_SEP_HEIGHT;
 
-    /* Draw right */
-    dest.x += area.width - size;
-    gg_system_draw_image(image[5], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_black);
-}
+        if (active )
+            gg_system_draw_gradient_rect(dest.x, dest.y, dest.width, dest.height,
+                &col_blue2, &col_blue, &col_blue2, &col_blue);
+        else
+            gg_system_draw_gradient_rect(dest.x, dest.y, dest.width, dest.height,
+                &col_grey2, &col_grey, &col_grey2, &col_grey);
 
-void draw_border(void *image[9], gg_rect_t area, int size)
-{
-    gg_rect_t source, dest, shad;
-    gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
-    int image_size;
-    
-    shad=area;
-    shad.x+=2;
-    shad.y-=2;
-    draw_border_shadow(image, shad, size);
-
-    gg_system_get_image_size(image[0], &image_size, NULL);
+        gg_clipping_adjust(&dest);
+        dest.y += text_height * (GG_DIALOG_TITLE_FACT - 1) / 2;
+        gg_system_draw_string(title, dest.x + dest.width / 2, dest.y, &col_white, 0, 0.5);
+        gg_clipping_undo();
+    }
 
     area.x -= size;
     area.y -= size;
 
     area.width += 2 * size;
     area.height += 2 * size;
-
-    source.x = 0;
-    source.y = 0;
-    source.width = image_size;
-    source.height = image_size;
 
     dest.x = area.x;
     dest.y = area.y;
@@ -219,8 +216,8 @@ void draw_border(void *image[9], gg_rect_t area, int size)
     dest.width = area.width - (2 * size)+1;
     dest.height = size;
     gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
-    
-    /* Draw top*/ 
+
+    /* Draw top */ 
     dest.y += area.height - size;
     gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
@@ -238,7 +235,7 @@ void draw_border(void *image[9], gg_rect_t area, int size)
     /* Draw middle */
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
-    dest.y=dest.y+1;
+    dest.height -= titlebar_height;
     gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &fade_col);
 }
 
@@ -284,7 +281,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
         area.width = xmax - xmin;
         area.height = ymax - ymin;
 
-        draw_border(style->border.textured.image, area, size);
+        draw_border(style->border.textured.image, dialog->title, gg_dialog_current() == dialog, area, size);
     }
     else
     {
@@ -402,7 +399,7 @@ void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, fl
     dialog->pos.y_align = y_align;
 }
 
-void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
+void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title)
 {
     gg_dialog_style_t style;
     gg_colour_t border_col = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -420,8 +417,15 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
     gg_bin_init((gg_bin_t *) dialog, child);
 
     dialog->input = gg_dialog_input;
+    dialog->destroy = gg_dialog_destroy;
     dialog->id = gg_dialog_get_class_id();
     dialog->modal = 0;
+
+    if (title) {
+        dialog->title = malloc(strlen(title) + 1);
+        strcpy(dialog->title, title);
+    } else
+        dialog->title = NULL;
 
     child->get_requested_size(child, &dialog->width, &dialog->height);
     child->set_size(child, dialog->width, dialog->height);
@@ -432,16 +436,27 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child)
 
 /** @brief Creates a dialog.
  *
- *  @param widget The widget the dialog contains.
+ *  @param child The widget the dialog contains.
+ *  @param title The title bar text, or NULL for no title bar.
  *  @return The created dialog.
  */
-gg_widget_t *gg_dialog_create(gg_widget_t *child)
+gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title)
 {
     gg_dialog_t *dialog = malloc(sizeof(gg_dialog_t));
 
-    gg_dialog_init(dialog, child);
+    gg_dialog_init(dialog, child, title);
 
     return GG_WIDGET(dialog);
+}
+
+void gg_dialog_destroy(gg_widget_t *widget)
+{
+    gg_dialog_t *dialog = GG_DIALOG(widget);
+
+    if (dialog->title)
+        free(dialog->title);
+
+    gg_widget_destroy(widget);
 }
 
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
@@ -459,6 +474,14 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
         gg_system_get_image_size(style->border.textured.image[0], &size, NULL);
         dialog->width += 2 * size;
         dialog->height += 2 * size;
+
+        if (dialog->title)
+        {
+            int text_height;
+            gg_system_get_string_size(dialog->title, NULL, &text_height);
+            dialog->height += text_height * GG_DIALOG_TITLE_FACT;
+            dialog->height += GG_DIALOG_TITLE_SEP_HEIGHT;
+        }
     }
     else
     {

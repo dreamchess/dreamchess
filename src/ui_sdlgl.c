@@ -186,29 +186,49 @@ void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 }
 
 #ifdef _arch_dreamcast
-void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
+void draw_rect_fill_gradient(int x, int y, int w, int h,
+                             gg_colour_t *top_left,
+                             gg_colour_t *top_right,
+                             gg_colour_t *bottom_left,
+                             gg_colour_t *bottom_right)
 {
-    glColor4f(col->r, col->g, col->b, col->a);
     y = SCREEN_HEIGHT - y;
     glBegin(GL_NT_QUADS);
+    glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
     glVertex3f(x, y, dc_z);
+    glColor4f(top_right->r, top_right->g, top_right->b, top_right->a);
     glVertex3f(x + w, y, dc_z);
+    glColor4f(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a);
     glVertex3f(x + w, y - h, dc_z);
+    glColor4f(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a);
     glVertex3f(x, y - h, dc_z);
     glEnd();
 }
 #else
-void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
+void draw_rect_fill_gradient(int x, int y, int w, int h,
+                             gg_colour_t *top_left,
+                             gg_colour_t *top_right,
+                             gg_colour_t *bottom_left,
+                             gg_colour_t *bottom_right)
 {
-    glColor4f(col->r, col->g, col->b, col->a);
     glBegin(GL_QUADS);
+    glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
     glVertex3f(x, y, 1.0f);
+    glColor4f(top_right->r, top_right->g, top_right->b, top_right->a);
     glVertex3f(x + w, y, 1.0f);
+    glColor4f(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a);
     glVertex3f(x + w, y + h, 1.0f);
+    glColor4f(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a);
     glVertex3f(x, y + h, 1.0f);
     glEnd();
 }
 #endif
+
+void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
+{
+    draw_rect_fill_gradient(x, y, w, h, col, col, col, col);
+}
+
 /*
    Key table?
 */
@@ -733,7 +753,7 @@ static gg_dialog_t *dialog_ingame_create()
     gg_action_set_callback(GG_ACTION(widget), view_next, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -783,7 +803,7 @@ static gg_dialog_t *dialog_quit_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -1056,7 +1076,7 @@ static gg_dialog_t *dialog_system_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_quit_open, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -1273,7 +1293,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
 
     /* Dialog stuff */
     gg_container_append(GG_CONTAINER(rootvbox), hbox);
-    dialog = gg_dialog_create(rootvbox);
+    dialog = gg_dialog_create(rootvbox, NULL);
 
     if ( saving )
         gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
@@ -1338,7 +1358,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
 
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
 
     if ( saving )
         gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
@@ -1390,7 +1410,7 @@ static gg_dialog_t *dialog_victory_create(result_t *result)
     gg_container_append(GG_CONTAINER(hbox), image_l);
     gg_container_append(GG_CONTAINER(hbox), vbox);
     gg_container_append(GG_CONTAINER(hbox), image_r);
-    dialog = gg_dialog_create(hbox);
+    dialog = gg_dialog_create(hbox, NULL);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
@@ -1617,7 +1637,7 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
@@ -1703,7 +1723,7 @@ static gg_dialog_t *dialog_title_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
@@ -1747,7 +1767,7 @@ static gg_dialog_t *dialog_title_root_create()
     gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
@@ -1815,7 +1835,7 @@ static gg_dialog_t *dialog_vkeyboard_create()
         gg_container_append(GG_CONTAINER(vbox2), hbox);
     }
 
-    dialog = gg_dialog_create(vbox2);
+    dialog = gg_dialog_create(vbox2, NULL);
     return GG_DIALOG(dialog);
 }
 
@@ -2128,7 +2148,7 @@ gg_dialog_t *dialog_promote_create(int colour)
     gg_container_append(GG_CONTAINER(hbox), action);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     return GG_DIALOG(dialog);
 }
@@ -2146,7 +2166,7 @@ gg_dialog_t *dialog_message_create(char *message)
     widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
-    dialog = gg_dialog_create(vbox);
+    dialog = gg_dialog_create(vbox, NULL);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
 
     return GG_DIALOG(dialog);
@@ -2457,6 +2477,7 @@ gg_driver_t gg_driver_sdlgl =
     {
         draw_rect,
         draw_rect_fill,
+        draw_rect_fill_gradient,
         draw_image,
         get_char_image,
         draw_char,
@@ -3123,20 +3144,20 @@ static void draw_scene( board_t *b )
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
 
-    draw_border(style_ingame.border.textured.image, gg_rect(20, 440, 170, 20), 8);
+    draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(20, 440, 170, 20), 8);
 
-    draw_border(style_ingame.border.textured.image, gg_rect(455, 440, 170, 20), 8);
+    draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(455, 440, 170, 20), 8);
 
     /* Da clocken */
-    /*draw_border(style_ingame.border.textured.image, gg_rect(290, 440, 60, 20), 8);*/
+    /*draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(290, 440, 60, 20), 8);*/
 
     glPopMatrix();
 
     glPushMatrix();
     draw_name_dialog( 50, 430, white_name, TRUE, 1 );
     draw_name_dialog( 490, 430, black_name, FALSE, 0 );
-    draw_border(style_ingame.border.textured.image, gg_rect(20, 375, 75, 10), 8);
-    draw_border(style_ingame.border.textured.image, gg_rect(545, 375, 75, 10), 8);
+    draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(20, 375, 75, 10), 8);
+    draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(545, 375, 75, 10), 8);
     draw_health_bars();
     draw_move_list(&col_white, &col_yellow);
     draw_capture_list(&col_white);

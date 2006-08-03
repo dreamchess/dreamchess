@@ -104,6 +104,28 @@ void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t
         driver->draw_filled_rect(x, y, width, height, colour);
 }
 
+void gg_system_draw_gradient_rect(int x, int y, int width, int height,
+                                  gg_colour_t *top_left, gg_colour_t *top_right,
+                                  gg_colour_t *bottom_left, gg_colour_t *bottom_right)
+{
+    gg_rect_t *clip = gg_clipping_get();
+
+    if (clip)
+    {
+        gg_rect_t dest, dest_c;
+        dest.x = x;
+        dest.y = y;
+        dest.width =  width;
+        dest.height = height;
+        dest_c = gg_clipping_rect(&dest, clip);
+        driver->draw_gradient_rect(dest_c.x, dest_c.y, dest_c.width, dest_c.height,
+                          top_left, top_right, bottom_left, bottom_right);
+    }
+    else
+        driver->draw_gradient_rect(x, y, width, height, top_left, top_right,
+                                   bottom_left, bottom_right);
+}
+
 void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour)
 {
     gg_rect_t *clip = gg_clipping_get();
@@ -214,6 +236,7 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         int y_off = 0;
         void *image = driver->get_char_image(s[i]);
         gg_rect_t rect_s = {0, 0};
+        gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
 
         if (bounce)
         {
@@ -229,7 +252,16 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         rect_d.width = rect_s.width;
         rect_d.height = rect_s.height;
         rect_d.y = y + y_off;
+
+        /* FIXME */
+        rect_d.x += 2;
+        rect_d.y -= 2;
+        gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
+        rect_d.x -= 2;
+        rect_d.y += 2;
+
         gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, colour);
+
         rect_d.x += rect_s.width;
 
         ticks += 1000 / GG_BOUNCE_SPEED / GG_BOUNCE_LEN;
