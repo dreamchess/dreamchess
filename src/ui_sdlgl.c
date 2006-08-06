@@ -125,13 +125,26 @@ float dc_z;
 
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );
 
-#define FADE_SPEED 1.0f
+#define FADE_SPEED  0.5f
+#define FADE_OUT    0
+#define FADE_IN     1
 float fade_start;
-void draw_fade( float amount )
+
+int draw_fade( int inout )
 {
-    gg_colour_t col={0.0f, 0.0f, 0.0f, amount };
+    float amount=(gg_system_get_ticks()-fade_start)/(FADE_SPEED*1000);
+
+    gg_colour_t col={0.0f, 0.0f, 0.0f, 1.0f-amount };
+
+    if ( inout == FADE_OUT )
+        col.a=amount;
 
     gg_system_draw_filled_rect(0, 0, 640, 480, &col );
+
+    if ( amount > 1.0f )
+        return FALSE;
+
+    return TRUE;
 }
 
 void start_piece_move( int source, int dest )
@@ -616,7 +629,9 @@ void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg
 void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 static int text_width(char *text);
 static int text_height();
-static int quit_to_menu;
+static int quit_to_menu=FALSE;
+static int switch_to_menu=FALSE;
+static int fading_out=FALSE;
 static int title_process_retval;
 static int set_loading=FALSE;
 
@@ -2160,6 +2175,8 @@ static config_t *do_menu(int *pgn)
     gg_dialog_t *keyboard = dialog_vkeyboard_create();
     SDL_Event event;
     int mouse_x=0, mouse_y=0;
+    float fade_amount=0.0f;
+    int switch_to_game=FALSE;
     game_difficulty=1;
     game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
@@ -2243,7 +2260,19 @@ static config_t *do_menu(int *pgn)
         /* Draw the menu.. */
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, &col_white );
 
-        if ( can_load == TRUE )
+        if ( switch_to_game == TRUE )
+        {
+            fading_out=FALSE;
+            fade_start=gg_system_get_ticks();
+            return &config;
+        }
+        else if ( fading_out == TRUE )
+        {
+            /* Draw fade... */
+            if ( !draw_fade( FADE_OUT ) )
+                switch_to_game=TRUE;
+        }
+        else if ( can_load == TRUE )
         {
             /* We using custom? */
             if ( selected_theme==theme_count )
@@ -2268,7 +2297,7 @@ static config_t *do_menu(int *pgn)
                 config = config_save[pgn_slot];
 
             fade_start=gg_system_get_ticks();
-            return &config;
+            fading_out=TRUE;
         }
 
         if ( set_loading == FALSE )
@@ -2293,7 +2322,8 @@ static config_t *do_menu(int *pgn)
         }
 
         /* Draw fade... */
-        draw_fade( 1.0f-(gg_system_get_ticks()-fade_start)/(FADE_SPEED*1000) );
+        if ( !fading_out )
+            draw_fade( FADE_IN );
 
         /* Draw mouse cursor.. */
         #ifndef _arch_dreamcast
@@ -3067,6 +3097,7 @@ static void draw_scene( board_t *b )
     int clock_seconds=0;
     int clock_minutes=0;
     int mouse_x=0, mouse_y=0;
+    float fade_amount=0.0f;
 
     gg_dialog_cleanup();
 
@@ -3122,8 +3153,13 @@ static void draw_scene( board_t *b )
 
     gg_dialog_render_all();
 
-    /* Draw fade... */
-    draw_fade( 1.0f-(gg_system_get_ticks()-fade_start)/(FADE_SPEED*1000) );
+    if ( fading_out )
+    {
+        if ( !draw_fade( FADE_OUT ) )
+            switch_to_menu=TRUE;
+    }
+    else
+        draw_fade( FADE_IN );
 
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast
@@ -3354,15 +3390,23 @@ static void poll_move()
 
     draw_scene(&board);
 
-    if (quit_to_menu)
+    if (switch_to_menu == TRUE)
     {
         quit_to_menu = 0;
+        switch_to_menu=FALSE;
+        fading_out=FALSE;
         needprom = 0;
         source = -1;
         dest = -1;
         unload_theme();
         game_quit();
         return;
+    }
+    else if (quit_to_menu)
+    {
+        fading_out=TRUE;
+        fade_start=gg_system_get_ticks();
+        quit_to_menu=FALSE;
     }
 
     input = GetMove();
