@@ -25,6 +25,8 @@
 
 #include <gamegui/system.h>
 
+struct gg_dialog;
+
 enum
 {
     GG_EVENT_NONE,
@@ -210,5 +212,7 @@ void gg_set_size(gg_widget_t *widget, int width, int height);
  *  @param widget The widget.
  */
 void gg_widget_init(gg_widget_t *widget);
+
+struct gg_dialog *gg_widget_find_dialog(gg_widget_t *widget);
 
 #endif /* GAMEGUI_WIDGET_H */

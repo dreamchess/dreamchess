@@ -24,6 +24,7 @@
 
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
+#include <gamegui/dialog.h>
 
 gg_class_id gg_widget_get_class_id()
 {
@@ -82,6 +83,17 @@ gg_rect_t gg_get_focus_pos(gg_widget_t *widget)
 int gg_set_focus_pos(gg_widget_t *widget, int x, int y)
 {
     return 1;
+}
+
+gg_dialog_t *gg_widget_find_dialog(gg_widget_t *widget)
+{
+    if (widget->parent == NULL)
+        return NULL;
+
+    while (widget->parent != NULL)
+        widget = widget->parent;
+
+    return widget;
 }
 
 void gg_widget_init(gg_widget_t *widget)

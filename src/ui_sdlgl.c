@@ -732,7 +732,7 @@ static void view_next(gg_widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static gg_dialog_t *dialog_ingame_create()
+static gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);
@@ -753,7 +753,7 @@ static gg_dialog_t *dialog_ingame_create()
     gg_action_set_callback(GG_ACTION(widget), view_next, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -784,7 +784,7 @@ static void dialog_close_cb(gg_widget_t *widget, void *data)
  *
  *  @return The created dialog.
  */
-static gg_dialog_t *dialog_quit_create()
+static gg_dialog_t *dialog_quit_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);
@@ -803,7 +803,7 @@ static gg_dialog_t *dialog_quit_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -820,24 +820,24 @@ static gg_dialog_t *dialog_quit_create()
 /** @brief Opens the quit dialog. */
 static void dialog_quit_open(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_quit_create());
+    gg_dialog_open(dialog_quit_create(gg_widget_find_dialog(widget)));
 }
 
 /** @brief Opens the ingame dialog. */
 static void dialog_ingame_open(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_ingame_create());
+    gg_dialog_open(dialog_ingame_create(gg_widget_find_dialog(widget)));
 }
 
-static gg_dialog_t *dialog_saveload_create( int saving );
+static gg_dialog_t *dialog_saveload_create(gg_dialog_t *dialog, int saving);
 static void dialog_savegame_open(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_saveload_create(TRUE));
+    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), TRUE));
 }
 
 static void dialog_loadgame_open(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_saveload_create(FALSE));
+    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), FALSE));
 }
 
 const char *whitespace_cb(mxml_node_t *node, int where)
@@ -1021,7 +1021,7 @@ static void dialog_saveload_change(gg_widget_t *widget, void *data)
 
     gg_dialog_close();
     changing_slot=TRUE;
-    gg_dialog_open(dialog_saveload_create(change_saving));
+    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget)->parent_dialog, change_saving));
     changing_slot=FALSE;
 }
 
@@ -1076,7 +1076,7 @@ static gg_dialog_t *dialog_system_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_quit_open, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
 }
@@ -1104,7 +1104,7 @@ char xmlsquaretofont( int square )
 }
 
 static void menu_title_back(gg_widget_t *widget, void *data);
-static gg_dialog_t *dialog_saveload_create( int saving )
+static gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
 {
     gg_widget_t *dialog;
     gg_widget_t *rootvbox = gg_vbox_create(0);
@@ -1293,7 +1293,7 @@ static gg_dialog_t *dialog_saveload_create( int saving )
 
     /* Dialog stuff */
     gg_container_append(GG_CONTAINER(rootvbox), hbox);
-    dialog = gg_dialog_create(rootvbox, NULL);
+    dialog = gg_dialog_create(rootvbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
 
     if ( saving )
         gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
@@ -1303,71 +1303,6 @@ static gg_dialog_t *dialog_saveload_create( int saving )
     return GG_DIALOG(dialog);
 }
 
-
-#ifdef CREEPYMUPPET
-static gg_dialog_t *dialog_saveload_create( int saving )
-{
-    gg_widget_t *dialog;
-    gg_widget_t *vbox = gg_vbox_create(0);
-    gg_widget_t *widget;
-    int max_saveslots=10;
-    char desc[80];
-    int player_layout=0;
-    int difficulty=0;
-    char temp[80];
-    int i=0;
-
-    if ( saving )
-        widget = gg_label_create("Save game..");
-    else
-        widget = gg_label_create("Load game..");
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    widget = gg_label_create(" ");
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    for ( i=0; i<max_saveslots; i++ )
-    {
-        load_save_xml( i, desc, &player_layout, &difficulty );
-
-        sprintf( temp, "  %i: %s", i, desc );
-        widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
-
-        if ( saving )
-            gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
-        else
-        {
-            /* loading.. which means no board up yet.. */
-            selected_player_layout=player_layout;
-            selected_difficulty=difficulty;
-            gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
-        }
-
-        gg_container_append(GG_CONTAINER(vbox), widget);
-    }
-
-    widget = gg_label_create(" ");
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-
-    if ( saving )
-        gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
-    else
-        gg_action_set_callback(GG_ACTION(widget), menu_title_back, NULL);
-
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    dialog = gg_dialog_create(vbox, NULL);
-
-    if ( saving )
-        gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
-    else
-        gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
-
-    return GG_DIALOG(dialog);
-}
-#endif
 /* Victory dialog. */
 
 static gg_dialog_t *dialog_victory_create(result_t *result)
@@ -1410,7 +1345,7 @@ static gg_dialog_t *dialog_victory_create(result_t *result)
     gg_container_append(GG_CONTAINER(hbox), image_l);
     gg_container_append(GG_CONTAINER(hbox), vbox);
     gg_container_append(GG_CONTAINER(hbox), image_r);
-    dialog = gg_dialog_create(hbox, NULL);
+    dialog = gg_dialog_create(hbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_ingame);
     return GG_DIALOG(dialog);
@@ -1439,7 +1374,7 @@ static void menu_title_quit(gg_widget_t *widget, void *data)
 }
 
 static gg_dialog_t *dialog_title_root_create();
-static gg_dialog_t *dialog_title_create();
+static gg_dialog_t *dialog_title_create(gg_dialog_t *parent);
 
 void dialog_title_players(gg_widget_t *widget, void *data)
 {
@@ -1466,12 +1401,12 @@ void dialog_title_players(gg_widget_t *widget, void *data)
 
 static void dialog_title_root_new(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_title_create());
+    gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)));
 }
 
 static void dialog_title_root_load(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_saveload_create(FALSE));
+    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), FALSE));
 }
 
 static void dialog_title_level(gg_widget_t *widget, void *data)
@@ -1488,12 +1423,12 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
         /* printf( "Theme changed from Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
-        gg_dialog_open(dialog_title_create());
+        gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)->parent_dialog));
         swapping_custom=FALSE;
     }
 }
 
-static gg_dialog_t *dialog_title_custom_create();
+static gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent);
 static void dialog_title_theme(gg_widget_t *widget, void *data)
 {
     selected_theme = gg_option_get_selected(GG_OPTION(widget));
@@ -1502,7 +1437,7 @@ static void dialog_title_theme(gg_widget_t *widget, void *data)
         /* printf( "Theme changed to Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
-        gg_dialog_open(dialog_title_custom_create());
+        gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)->parent_dialog));
         swapping_custom=FALSE;
         gg_option_set_selected(GG_OPTION(widget),theme_count-1);
         gg_dialog_cleanup();
@@ -1527,7 +1462,7 @@ static void dialog_title_board(gg_widget_t *widget, void *data)
     selected_custom_board=board_list_cur;
 }
 
-static gg_dialog_t *dialog_title_custom_create()
+static gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -1637,7 +1572,7 @@ static gg_dialog_t *dialog_title_custom_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
@@ -1650,7 +1585,7 @@ static gg_dialog_t *dialog_title_custom_create()
     return GG_DIALOG(dialog);
 }
 
-static gg_dialog_t *dialog_title_create()
+static gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -1723,7 +1658,7 @@ static gg_dialog_t *dialog_title_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
 
@@ -1767,7 +1702,7 @@ static gg_dialog_t *dialog_title_root_create()
     gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_menu);
@@ -1835,7 +1770,7 @@ static gg_dialog_t *dialog_vkeyboard_create()
         gg_container_append(GG_CONTAINER(vbox2), hbox);
     }
 
-    dialog = gg_dialog_create(vbox2, NULL);
+    dialog = gg_dialog_create(vbox2, NULL, NULL, 0);
     return GG_DIALOG(dialog);
 }
 
@@ -2148,7 +2083,7 @@ gg_dialog_t *dialog_promote_create(int colour)
     gg_container_append(GG_CONTAINER(hbox), action);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     return GG_DIALOG(dialog);
 }
@@ -2166,7 +2101,7 @@ gg_dialog_t *dialog_message_create(char *message)
     widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
-    dialog = gg_dialog_create(vbox, NULL);
+    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
 
     return GG_DIALOG(dialog);
@@ -2330,12 +2265,8 @@ static config_t *do_menu(int *pgn)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
                                          text_width(msg) * 0.75, 30, msg,
                                          1.5f, &col_white);
-            
             else
-            {
-                gg_dialog_t *dialog = gg_dialog_current();
-                gg_dialog_render(dialog);
-            }
+                gg_dialog_render_all();
 
             if (vkeyboard_enabled)
                 gg_dialog_render(keyboard);
@@ -3173,11 +3104,7 @@ static void draw_scene( board_t *b )
     else if ( black_in_check == TRUE )
         text_draw_string_bouncy( 180, 420, "Black is in check!", 1.5, &col_white);
 
-    if (gg_dialog_current())
-    {
-        gg_dialog_t *dialog = gg_dialog_current();
-        gg_dialog_render(dialog);
-    }
+    gg_dialog_render_all();
 
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast

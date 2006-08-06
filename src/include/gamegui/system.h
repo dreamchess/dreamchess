@@ -102,8 +102,7 @@ gg_driver_t;
 /** Prints a typecasting error message and aborts the program. */
 #define GG_CAST_ERROR(C) ((C *) gg_cast_error(__FILE__, __LINE__, #C))
 
-#define GG_CHECK_CAST(W, I, C) ((gg_check_cast((gg_widget_t *) W, I)) ? (C *) W \
-    : GG_CAST_ERROR(C))
+#define GG_CHECK_CAST(W, I, C) ((C *) gg_check_cast((gg_widget_t *) W, I, __FILE__, __LINE__, #C))
 
 #define GG_CHILD(C) \
     static gg_class_id class_id = GG_CLASS_ID_NONE;\
@@ -113,11 +112,9 @@ gg_driver_t;
 
 struct gg_widget;
 
-struct gg_widget *gg_cast_error(char *file, int line, char *type);
-
 gg_class_id gg_register_class(gg_class_id parent);
 
-int gg_check_cast(struct gg_widget *widget, gg_class_id id);
+struct gg_widget *gg_check_cast(struct gg_widget *widget, gg_class_id id, char *file, int line, char *type);
 
 void gg_system_init(gg_driver_t *d);
 

@@ -62,68 +62,44 @@ gg_class_id gg_dialog_get_class_id()
     GG_CHILD(gg_bin_get_class_id())
 }
 
-/** The maximum amount of open dialogs that the dialog system can handle. */
-#define DIALOG_MAX 10
-
-/** The dialog stack. */
-gg_dialog_t *dialog_stack[DIALOG_MAX];
-
-/** The amount of dialogs that are currently open. */
-int dialog_nr = 0;
-
-/** To-be-destroyed dialogs. */
-gg_dialog_t *dialog_closed[DIALOG_MAX];
-
-/** The amount of dialogs that need to be destroyed. */
-int dialog_closed_nr = 0;
+static TAILQ_HEAD(dialogs_head, gg_dialog) dialogs = TAILQ_HEAD_INITIALIZER(dialogs);
+static TAILQ_HEAD(closed_dialogs_head, gg_dialog) closed_dialogs = TAILQ_HEAD_INITIALIZER(closed_dialogs);
 
 void gg_dialog_cleanup()
 {
-    int i;
-
-    for (i = 0; i < dialog_closed_nr; i++)
+    while (!TAILQ_EMPTY(&closed_dialogs))
     {
-        gg_dialog_t *dialog = dialog_closed[i];
+        gg_dialog_t *dialog = TAILQ_FIRST(&closed_dialogs);
+        TAILQ_REMOVE(&closed_dialogs, dialog, entries);
         dialog->destroy(GG_WIDGET(dialog));
     }
-
-    dialog_closed_nr = 0;
 }
 
 /** @brief Adds a dialog to the top of the dialog stack.
- *  @param menu The dialog to add.
+ *  @param dialog The dialog to add.
  */
-void gg_dialog_open(gg_dialog_t *menu)
+void gg_dialog_open(gg_dialog_t *dialog)
 {
-    if (dialog_nr == DIALOG_MAX)
-    {
-        printf("Too many open dialogs.\n");
-        return;
-    }
+    TAILQ_INSERT_HEAD(&dialogs, dialog, entries);
 
-    dialog_stack[dialog_nr++] = menu;
+    if ((dialog->flags & GG_DIALOG_AUTOHIDE_PARENT) && dialog->parent_dialog)
+        dialog->parent_dialog->flags |= GG_DIALOG_HIDDEN;
+}
+
+static void gg_dialog_cls(gg_dialog_t *dialog)
+{
+    if ((dialog->flags & GG_DIALOG_AUTOHIDE_PARENT) && dialog->parent_dialog)
+        dialog->parent_dialog->flags &= ~GG_DIALOG_HIDDEN;
+
+    TAILQ_REMOVE(&dialogs, dialog, entries);
+    TAILQ_INSERT_HEAD(&closed_dialogs, dialog, entries);
 }
 
 /** @brief Closes the dialog that's on top of the dialog stack. */
 void gg_dialog_close()
 {
-    gg_dialog_t *menu;
-
-    if (dialog_nr == 0)
-    {
-        printf("No open dialogs.\n");
-        return;
-    }
-
-    menu = dialog_stack[dialog_nr-- - 1];
-
-    if (dialog_closed_nr == DIALOG_MAX)
-    {
-        printf("Too many to-be-destroyed dialogs.\n");
-        return;
-    }
-
-    dialog_closed[dialog_closed_nr++] = menu;
+    if (!TAILQ_EMPTY(&dialogs))
+        gg_dialog_cls(TAILQ_FIRST(&dialogs));
 }
 
 /** @brief Returns the dialog that's on top of the stack.
@@ -133,10 +109,7 @@ void gg_dialog_close()
  */
 gg_dialog_t *gg_dialog_current()
 {
-    if (dialog_nr == 0)
-        return NULL;
-
-    return dialog_stack[dialog_nr - 1];
+    return TAILQ_FIRST(&dialogs);
 }
 
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
@@ -239,8 +212,6 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &fade_col);
 }
 
-
-
 /** @brief Renders a dialog.
  *
  *  Renders a dialog in a specific style and at a specific position.
@@ -255,6 +226,9 @@ void gg_dialog_render(gg_dialog_t *dialog)
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
 
     int xmin, xmax, ymin, ymax;
+
+    if (dialog->flags & GG_DIALOG_HIDDEN)
+        return;
 
     gg_dialog_get_screen_pos(dialog, &xmin, &ymin);
 
@@ -341,6 +315,8 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
     int x, y;
 
     /*printf( "Mouseb: %i\n", event.mouse.button );*/
+    if (dialog->flags & GG_DIALOG_HIDDEN)
+        return 0;
 
     if (!dialog->modal && event.type == GG_EVENT_KEY && event.key == GG_KEY_ESCAPE )
         gg_dialog_close();
@@ -391,6 +367,16 @@ void gg_dialog_set_modal(gg_dialog_t *dialog, int modal)
     dialog->modal = modal;
 }
 
+void gg_dialog_show(gg_dialog_t *dialog)
+{
+    dialog->flags &= ~GG_DIALOG_HIDDEN;
+}
+
+void gg_dialog_hide(gg_dialog_t *dialog)
+{
+    dialog->flags |= GG_DIALOG_HIDDEN;
+}
+
 void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, float y_align)
 {
     dialog->pos.x = x;
@@ -399,7 +385,8 @@ void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, fl
     dialog->pos.y_align = y_align;
 }
 
-void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title)
+void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
+                    gg_dialog_t *parent, int flags)
 {
     gg_dialog_style_t style;
     gg_colour_t border_col = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -419,6 +406,8 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title)
     dialog->input = gg_dialog_input;
     dialog->destroy = gg_dialog_destroy;
     dialog->id = gg_dialog_get_class_id();
+    dialog->flags = flags;
+    dialog->parent_dialog = parent;
     dialog->modal = 0;
 
     if (title) {
@@ -440,11 +429,12 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title)
  *  @param title The title bar text, or NULL for no title bar.
  *  @return The created dialog.
  */
-gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title)
+gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title,
+                              gg_dialog_t *parent, int flags)
 {
     gg_dialog_t *dialog = malloc(sizeof(gg_dialog_t));
 
-    gg_dialog_init(dialog, child, title);
+    gg_dialog_init(dialog, child, title, parent, flags);
 
     return GG_WIDGET(dialog);
 }
@@ -488,4 +478,13 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
         dialog->width += 2 * dialog->style.border.plain.border;
         dialog->height += 2 * dialog->style.border.plain.border;
     }
+}
+
+void gg_dialog_render_all()
+{
+    gg_dialog_t *dialog;
+
+    TAILQ_FOREACH_REVERSE(dialog, &dialogs, dialogs_head, entries)
+        if (!(dialog->flags & GG_DIALOG_HIDDEN))
+            gg_dialog_render(dialog);
 }

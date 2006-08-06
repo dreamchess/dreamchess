@@ -25,6 +25,7 @@
 
 #include <gamegui/system.h>
 #include <gamegui/bin.h>
+#include <gamegui/queue.h>
 
 /** Typecast to dialog. */
 #define GG_DIALOG(W) GG_CHECK_CAST(W, gg_dialog_get_class_id(), gg_dialog_t)
@@ -33,6 +34,15 @@
 #define GG_DIALOG_DATA                                                       \
     /** Inherit from bin class. */                                           \
     GG_BIN_DATA                                                              \
+                                                                             \
+    /** Dialog list entry */                                                 \
+    TAILQ_ENTRY(gg_dialog) entries;                                          \
+                                                                             \
+    /** Parent dialog */                                                     \
+    struct gg_dialog *parent_dialog;                                         \
+                                                                             \
+    /** Flags */                                                             \
+    int flags;                                                               \
                                                                              \
     /** Modal flag. 1 = modal (dialog cannot be escaped), 0 = not modal. */  \
     int modal;                                                               \
@@ -45,6 +55,10 @@
                                                                              \
     /** Title bar text, or NULL for no title bar. */                         \
     char *title;
+
+#define GG_DIALOG_MODAL (1 << 0)
+#define GG_DIALOG_HIDDEN (1 << 1)
+#define GG_DIALOG_AUTOHIDE_PARENT (1 << 2)
 
 /* FIXME */
 /** Screen width in pixels. */
@@ -202,18 +216,26 @@ void gg_dialog_input_current(gg_event_t event);
  */
 void gg_dialog_set_modal(gg_dialog_t *dialog, int modal);
 
+void gg_dialog_show(gg_dialog_t *dialog);
+
+void gg_dialog_hide(gg_dialog_t *dialog);
+
 void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, float y_align);
 
-void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title);
+void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
+                    gg_dialog_t *parent, int flags);
 
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style);
 
-gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title);
+gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title,
+                              gg_dialog_t *parent, int flags);
 
 void gg_dialog_destroy(gg_widget_t *widget);
 
 gg_class_id gg_dialog_get_class_id();
 
 void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size);
+
+void gg_dialog_render_all();
 
 #endif /* GAMEGUI_DIALOG_H */

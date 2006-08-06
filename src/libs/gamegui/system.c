@@ -28,13 +28,6 @@ static int classes = 0;
 static gg_class_id *parent_class = NULL;
 static gg_driver_t *driver;
 
-gg_widget_t *gg_cast_error(char *file, int line, char *type)
-{
-    fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
-    exit(1);
-    return NULL;
-}
-
 gg_class_id gg_register_class(gg_class_id parent)
 {
     parent_class = realloc(parent_class, (classes + 1) * sizeof(gg_class_id));
@@ -44,17 +37,29 @@ gg_class_id gg_register_class(gg_class_id parent)
     return classes++;
 }
 
-int gg_check_cast(gg_widget_t *widget, gg_class_id id)
+gg_widget_t *gg_check_cast(gg_widget_t *widget, gg_class_id id, char *file, int line, char *type)
 {
-    gg_class_id parent = parent_class[widget->id];
+    if (!widget)
+    {
+        fprintf(stderr, "Fatal error (%s:L%d): Widget is NULL.\n", file, line);
+        exit(1);
+    }
 
-    if (widget->id == id)
-        return 1;
+    if (widget->id != id)
+    {
+        gg_class_id parent = parent_class[widget->id];
 
-    while ((parent != GG_CLASS_ID_NONE) && (parent != id))
-        parent = parent_class[parent];
+        while ((parent != GG_CLASS_ID_NONE) && (parent != id))
+            parent = parent_class[parent];
 
-    return parent != GG_CLASS_ID_NONE;
+        if (parent == GG_CLASS_ID_NONE)
+        {
+            fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
+            exit(1);
+        }
+    }
+
+    return widget;
 }
 
 void gg_system_init(gg_driver_t *d)
