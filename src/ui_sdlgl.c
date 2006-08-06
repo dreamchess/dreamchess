@@ -125,6 +125,15 @@ float dc_z;
 
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );
 
+#define FADE_SPEED 1.0f
+float fade_start;
+void draw_fade( float amount )
+{
+    gg_colour_t col={0.0f, 0.0f, 0.0f, amount };
+
+    gg_system_draw_filled_rect(0, 0, 640, 480, &col );
+}
+
 void start_piece_move( int source, int dest )
 {
     piece_moving_start=SDL_GetTicks();
@@ -2175,6 +2184,8 @@ static config_t *do_menu(int *pgn)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    fade_start=gg_system_get_ticks();
+
     while ( 1 )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -2255,6 +2266,8 @@ static config_t *do_menu(int *pgn)
             *pgn = pgn_slot;
             if (pgn_slot >= 0)
                 config = config_save[pgn_slot];
+
+            fade_start=gg_system_get_ticks();
             return &config;
         }
 
@@ -2278,6 +2291,9 @@ static config_t *do_menu(int *pgn)
             text_draw_string( 390, 30, "Loading...", 3, &col_white);
             can_load = TRUE;
         }
+
+        /* Draw fade... */
+        draw_fade( 1.0f-(gg_system_get_ticks()-fade_start)/(FADE_SPEED*1000) );
 
         /* Draw mouse cursor.. */
         #ifndef _arch_dreamcast
@@ -3105,6 +3121,9 @@ static void draw_scene( board_t *b )
         text_draw_string_bouncy( 180, 420, "Black is in check!", 1.5, &col_white);
 
     gg_dialog_render_all();
+
+    /* Draw fade... */
+    draw_fade( 1.0f-(gg_system_get_ticks()-fade_start)/(FADE_SPEED*1000) );
 
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast
