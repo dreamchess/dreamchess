@@ -205,7 +205,9 @@ static config_t *do_menu(int *pgn)
 
             if (wait_menu)
             {
-                if (gg_event.type != GG_EVENT_NONE)
+                if (gg_event.type == GG_EVENT_KEY
+                    || (gg_event.type == GG_EVENT_MOUSE
+                    && gg_event.mouse.type == GG_MOUSE_BUTTON_DOWN))
                     wait_menu = 0;
                 continue;
             }
@@ -278,6 +280,9 @@ static config_t *do_menu(int *pgn)
         if ( set_loading == FALSE )
         {
             char msg[] = "Press any key or button to start";
+
+            draw_credits(0);
+
             if (wait_menu)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
                                          text_width(msg) * 0.75, 30, msg,
@@ -287,8 +292,6 @@ static config_t *do_menu(int *pgn)
 
             if (get_vkeyboard_enabled())
                 gg_dialog_render(keyboard);
-
-            draw_credits(0);
         }
         else
         {
