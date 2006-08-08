@@ -276,6 +276,7 @@ AC_CONFIG_FILES([Makefile
 		src/libs/gamegui/Makefile
 		src/libs/mxml/Makefile
 		src/include/Makefile
+		src/ui_sdlgl/Makefile
 		src/include/gamegui/Makefile
 		src/dreamer/Makefile])
 AC_OUTPUT

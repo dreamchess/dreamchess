@@ -197,8 +197,47 @@ static model_t board;
 static int is_2d;
 
 static int selector, selected;
-
 static float x_rotation, z_rotation;
+
+int piece_moving_done=1;
+int piece_moving_start;
+int piece_moving_dest;
+int piece_moving_source;
+int piece_moving_x_done;
+int piece_moving_y_done;
+float piece_moving_source_xpos;
+float piece_moving_source_ypos;
+float piece_moving_dest_xpos;
+float piece_moving_dest_ypos;
+float piece_moving_xpos;
+float piece_moving_ypos;
+
+int get_piece_moving_done()
+{
+    return piece_moving_done;
+}
+
+void start_piece_move( int source, int dest )
+{
+    piece_moving_start=SDL_GetTicks();
+
+    piece_moving_done=0;
+
+    piece_moving_dest=dest;
+    piece_moving_source=source;
+
+    piece_moving_source_xpos=(float)(source%8);
+    piece_moving_source_ypos=(float)(source/8);
+
+    piece_moving_dest_xpos=(float)(dest%8);
+    piece_moving_dest_ypos=(float)(dest/8);
+
+    piece_moving_xpos=piece_moving_source_xpos;
+    piece_moving_ypos=piece_moving_source_ypos;
+
+    piece_moving_x_done=0;
+    piece_moving_y_done=0;
+}
 
 static texture_t *load_piece_texture(char *filename)
 {

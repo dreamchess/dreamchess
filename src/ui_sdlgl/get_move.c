@@ -1,0 +1,168 @@
+
+#include "ui_sdlgl.h"
+
+/** @brief Main input routine.
+ *
+ *  Handles keyboard commands. When the user selects a chess piece
+ *  selected_piece is updated.
+ *
+ *  @return If the user selected a chess piece a value between 0 (A1) and 63
+ *          (H8) is returned. -1 if no chess piece was selected.
+ */
+int last_mousex=0;
+int last_mousey=0;
+
+int get_move()
+{
+    int retval = -1;
+    int mousex, mousey;
+    static Sint16 rotx, roty;
+    SDL_Event event;
+    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
+
+    if( mousestate & SDL_BUTTON_MIDDLE )
+    {
+        move_camera( -(mousey-last_mousey)*MOVE_SPEED, -(mousex-last_mousex)*MOVE_SPEED);
+        last_mousex=mousex;
+        last_mousey=mousey;
+    }
+    else
+    {
+        last_mousex=mousex;
+        last_mousey=mousey;
+    }
+
+    if (keystate[SDLK_LCTRL])
+    {
+        if (keystate[SDLK_DOWN])
+            move_camera(-0.6f * MOVE_SPEED, 0.0f);
+        if (keystate[SDLK_LEFT])
+            move_camera(0.0f, -0.6f * MOVE_SPEED);
+        if (keystate[SDLK_RIGHT])
+            move_camera(0.0f, 0.6f * MOVE_SPEED);
+        if (keystate[SDLK_UP])
+            move_camera(0.6f * MOVE_SPEED, 0.0f);
+
+        while (SDL_PollEvent( &event ))
+            if (event.type == SDL_QUIT)
+                /* FIXME */
+                exit(0);
+    }
+
+    if ((roty < -3000) || (roty > 3000))
+        move_camera(-roty / (float) 32768 * 0.6f * MOVE_SPEED, 0.0f);
+
+    if ((rotx < -3000) || (rotx > 3000))
+        move_camera(0.0f, -rotx / (float) 32768 * 0.6f * MOVE_SPEED);
+
+    while ( SDL_PollEvent( &event ) )
+    {
+        gg_event_t gg_event;
+
+        if (event.type == SDL_QUIT)
+            /* FIXME */
+            exit(0);
+
+        if (event.type == SDL_MOUSEMOTION)
+        {
+            gg_dialog_t *dialog = gg_dialog_current();
+            set_mouse_pos( event.motion.x, event.motion.y );
+
+            if (dialog)
+                gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
+
+            continue;
+        }
+
+        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+                event.button.button == SDL_BUTTON_LEFT)
+        {
+            retval = get_mouse_square();
+            if (retval != -1)
+                select_piece(retval);
+
+            continue;
+        }
+
+        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+                event.button.button == SDL_BUTTON_RIGHT)
+        {
+            gg_dialog_open(dialog_system_create());
+
+            continue;
+        }
+
+        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_X))
+        {
+            rotx = event.jaxis.value;
+            continue;
+        }
+
+        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_Y))
+        {
+            roty = event.jaxis.value;
+            continue;
+        }
+
+        gg_event = convert_event(&event);
+
+        if (gg_event.type == GG_EVENT_NONE)
+            continue;
+
+        if (gg_dialog_current())
+            gg_dialog_input_current(gg_event);
+
+        /* In the promote dialog */
+        else if (gg_event.type == GG_EVENT_KEY)
+            switch (gg_event.key)
+            {
+            case GG_KEY_LEFT:
+                move_selector(SELECTOR_LEFT);
+                break;
+            case GG_KEY_RIGHT:
+                move_selector(SELECTOR_RIGHT);
+                break;
+            case GG_KEY_UP:
+                move_selector(SELECTOR_UP);
+                break;
+            case GG_KEY_DOWN:
+                move_selector(SELECTOR_DOWN);
+                break;
+            case GG_KEY_ACTION:
+                retval = get_selector();
+                select_piece(retval);
+                break;
+            case GG_KEY_ESCAPE:
+                gg_dialog_open(dialog_system_create());
+                break;
+            case 'g':
+            case GG_KEY_EXTRA3:
+                /* gg_dialog_open(dialog_ingame_create()); */
+                break;
+            case 'p':
+                game_view_prev();
+                break;
+            case 'n':
+                game_view_next();
+                break;
+            case 'u':
+                game_undo();
+                break;
+            case 's':
+                fen_encode(get_board());
+                /* game_save(); */
+                break;
+            case 'l':
+                /* load_game(); */
+                break;
+            case 0x06:
+                toggle_show_fps();
+                break;
+            default:
+                break;
+            }
+        break;
+    }
+    return retval;
+}
