@@ -68,22 +68,8 @@
 /** Screen colour depth in bits per pixel. */
 #define SCREEN_BPP     16
 
-/** Plain (non-textured) dialog border style. */
-typedef struct gg_dialog_border_plain
-{
-    /** Border size in pixels. */
-    int border;
-
-    /** Border colour. */
-    gg_colour_t border_col;
-
-    /** Background colour. */
-    gg_colour_t bg_col;
-}
-gg_dialog_border_plain_t;
-
 /** Textured dialog border style. */
-typedef struct gg_dialog_border_textured
+typedef struct gg_dialog_border
 {
     /** Border images.
      *  0: Top-left corner.
@@ -97,17 +83,6 @@ typedef struct gg_dialog_border_textured
      *  8: Bottom-right corner.
      */
     void *image[9];
-}
-gg_dialog_border_textured_t;
-
-/** Dialog border style. */
-typedef union gg_dialog_border
-{
-    /** Plain dialog border style. */
-    gg_dialog_border_plain_t plain;
-
-    /** Textured dialog border style. */
-    gg_dialog_border_textured_t textured;
 }
 gg_dialog_border_t;
 

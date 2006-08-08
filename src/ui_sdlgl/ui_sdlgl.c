@@ -201,15 +201,6 @@ static config_t *do_menu(int *pgn)
                 /* FIXME */
                 exit(0);
 
-            if (event.type == SDL_MOUSEMOTION)
-            {
-                gg_dialog_t *dialog = gg_dialog_current();
-                if (dialog)
-                    gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
-
-                continue;
-            }
-
             gg_event = convert_event(&event);
 
             if (wait_menu)
@@ -466,13 +457,12 @@ static void init_gui()
         }
     }
 
-    style_ingame.textured = 1;
     style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
     style_ingame.hor_pad = 20;
     style_ingame.vert_pad = 10;
 
     for (i = 0; i < 9; i++)
-        style_ingame.border.textured.image[i] = &get_border()[i];
+        style_ingame.border.image[i] = &get_border()[i];
 
     style_menu.textured = 1;
     style_menu.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
@@ -480,7 +470,7 @@ static void init_gui()
     style_menu.vert_pad = 10;
 
     for (i = 0; i < 9; i++)
-        style_menu.border.textured.image[i] = &get_menu_border()[i];
+        style_menu.border.image[i] = &get_menu_border()[i];
 
     /* Fill board list. */
     ch_datadir();

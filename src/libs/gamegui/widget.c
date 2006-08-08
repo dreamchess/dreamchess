@@ -93,7 +93,7 @@ gg_dialog_t *gg_widget_find_dialog(gg_widget_t *widget)
     while (widget->parent != NULL)
         widget = widget->parent;
 
-    return widget;
+    return GG_DIALOG(widget);
 }
 
 void gg_widget_init(gg_widget_t *widget)

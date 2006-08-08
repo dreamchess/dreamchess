@@ -14,8 +14,8 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c dreamchess
 dreamchess_LDADD = @SDL_LIBS@ @DREAMCHESS_LIBS@ @WIN32_RC@ libs/libsan.a \
 	ui_sdlgl/libui_sdlgl.a libs/gamegui/libgamegui.a libs/mxml/libmxml.a
 
-dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a libs/gamegui/libgamegui.a
-	libs/mxml/libmxml.a ui_sdlgl/libui_sdlgl.a
+dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
+	libs/gamegui/libgamegui.a libs/mxml/libmxml.a
 
 win32_rc.$(OBJEXT):
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

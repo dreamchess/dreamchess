@@ -1,5 +1,5 @@
 /*  DreamChess
- *  Copyright (C) 2005  The DreamChess project
+ *  Copyright (C) 2005-2006  The DreamChess project
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -224,6 +224,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
 {
     gg_dialog_style_t *style = &dialog->style;
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
+    int size;
 
     int xmin, xmax, ymin, ymax;
 
@@ -238,38 +239,21 @@ void gg_dialog_render(gg_dialog_t *dialog)
     /* Draw the 'fade' */
     gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
 
-    if (style->textured)
-    {
-        int size;
-        gg_rect_t area;
+    gg_rect_t area;
 
-        gg_system_get_image_size(style->border.textured.image[0], &size, NULL);
+    gg_system_get_image_size(style->border.image[0], &size, NULL);
 
-        xmin += size;
-        xmax -= size;
-        ymin += size;
-        ymax -= size;
+    xmin += size;
+    xmax -= size;
+    ymin += size;
+    ymax -= size;
 
-        area.x = xmin;
-        area.y = ymin;
-        area.width = xmax - xmin;
-        area.height = ymax - ymin;
+    area.x = xmin;
+    area.y = ymin;
+    area.width = xmax - xmin;
+    area.height = ymax - ymin;
 
-        draw_border(style->border.textured.image, dialog->title, gg_dialog_current() == dialog, area, size);
-    }
-    else
-    {
-        /* Draw the border. */
-        gg_system_draw_filled_rect(xmin, ymin, xmax - xmin, ymax - ymin, &style->border.plain.border_col);
-
-        xmin += style->border.plain.border;
-        xmax -= style->border.plain.border;
-        ymin += style->border.plain.border;
-        ymax -= style->border.plain.border;
-
-        /* Draw the backdrop. */
-        gg_system_draw_filled_rect(xmin, ymin, xmax - xmin, ymax - ymin, &style->border.plain.bg_col);
-    }
+    draw_border(style->border.image, dialog->title, gg_dialog_current() == dialog, area, size);
 
     xmin += style->hor_pad;
     xmax -= style->hor_pad;
@@ -279,10 +263,11 @@ void gg_dialog_render(gg_dialog_t *dialog)
     child->render(child, xmin, ymin, 1);
 }
 
-void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
+static int mouse_movement(gg_dialog_t *dialog, int x, int y)
 {
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
     int xmin, xmax, ymin, ymax;
+    int size;
 
     gg_dialog_get_screen_pos(dialog, &xmin, &ymin);
 
@@ -295,17 +280,14 @@ void gg_dialog_mouse_movement(gg_dialog_t *dialog, int x, int y)
     x -= xmin + dialog->style.hor_pad;
     y -= ymin + dialog->style.vert_pad;
 
-    if (dialog->style.textured)
-    {
-        int size;
-
-        gg_system_get_image_size(dialog->style.border.textured.image[0], &size, NULL);
-        x -= size;
-        y -= size;
-    }
+    gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
+    x -= size;
+    y -= size;
 
     if (x >= 0 && x < child->width_a && y >= 0 && y < child->height_a)
         dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
+
+    return 1;
 }
 
 int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
@@ -332,17 +314,18 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 
     if (event.type == GG_EVENT_MOUSE)
     {
+        int size;
+
+        if (event.mouse.type == GG_MOUSE_MOVE)
+            if (mouse_movement(dialog, event.mouse.x, event.mouse.y))
+                return 1;
+
         event.mouse.x -= x + dialog->style.hor_pad;
         event.mouse.y -= y + dialog->style.vert_pad;
 
-        if (dialog->style.textured)
-        {
-            int size;
-
-            gg_system_get_image_size(dialog->style.border.textured.image[0], &size, NULL);
-            event.mouse.x -= size;
-            event.mouse.y -= size;
-        }
+        gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
+        event.mouse.x -= size;
+        event.mouse.y -= size;
 
         if (event.mouse.x < 0 || event.mouse.x >= child->width_a ||
             event.mouse.y < 0 || event.mouse.y >= child->height_a)
@@ -393,10 +376,6 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
     gg_colour_t bg_col = {0.8f, 0.8f, 0.8f, 1.0f};
     gg_colour_t fade_col = {0.0f, 0.0f, 0.0f, 0.5f};
 
-    style.textured = 0;
-    style.border.plain.border = 5;
-    style.border.plain.border_col = border_col;
-    style.border.plain.bg_col = bg_col;
     style.fade_col = fade_col;
     style.hor_pad = 20;
     style.vert_pad = 10;
@@ -410,7 +389,8 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
     dialog->parent_dialog = parent;
     dialog->modal = 0;
 
-    if (title) {
+    if (title)
+    {
         dialog->title = malloc(strlen(title) + 1);
         strcpy(dialog->title, title);
     } else
@@ -451,32 +431,23 @@ void gg_dialog_destroy(gg_widget_t *widget)
 
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
 {
+    int size;
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
 
     dialog->style = *style;
     dialog->width = child->width_a + 2 * dialog->style.hor_pad;
     dialog->height = child->height_a + 2 * dialog->style.vert_pad;
 
-    if (style->textured)
-    {
-        int size;
+    gg_system_get_image_size(style->border.image[0], &size, NULL);
+    dialog->width += 2 * size;
+    dialog->height += 2 * size;
 
-        gg_system_get_image_size(style->border.textured.image[0], &size, NULL);
-        dialog->width += 2 * size;
-        dialog->height += 2 * size;
-
-        if (dialog->title)
-        {
-            int text_height;
-            gg_system_get_string_size(dialog->title, NULL, &text_height);
-            dialog->height += text_height * GG_DIALOG_TITLE_FACT;
-            dialog->height += GG_DIALOG_TITLE_SEP_HEIGHT;
-        }
-    }
-    else
+    if (dialog->title)
     {
-        dialog->width += 2 * dialog->style.border.plain.border;
-        dialog->height += 2 * dialog->style.border.plain.border;
+        int text_height;
+        gg_system_get_string_size(dialog->title, NULL, &text_height);
+        dialog->height += text_height * GG_DIALOG_TITLE_FACT;
+        dialog->height += GG_DIALOG_TITLE_SEP_HEIGHT;
     }
 }
 

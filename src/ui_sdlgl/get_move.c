@@ -65,15 +65,7 @@ int get_move()
             exit(0);
 
         if (event.type == SDL_MOUSEMOTION)
-        {
-            gg_dialog_t *dialog = gg_dialog_current();
             set_mouse_pos( event.motion.x, event.motion.y );
-
-            if (dialog)
-                gg_dialog_mouse_movement(dialog, event.motion.x, 479 - event.motion.y);
-
-            continue;
-        }
 
         if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
                 event.button.button == SDL_BUTTON_LEFT)

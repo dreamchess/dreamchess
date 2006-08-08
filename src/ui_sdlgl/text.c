@@ -20,12 +20,17 @@ texture_t *get_text_character( int index )
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col )
 {
     int index, offset;
+    gg_colour_t black = *get_col(COL_BLACK);
 
+    black.a = col->a;
     offset=0;
     index=character;
 
     if (index < 0)
         index += 256;
+
+    draw_texture( &text_characters[index], xpos+2, ypos-2, text_characters[index].width*scale,
+                  text_characters[index].height*scale, 1.0f, &black );
 
     draw_texture( &text_characters[index], xpos, ypos, text_characters[index].width*scale,
                   text_characters[index].height*scale, 1.0f, col );
@@ -47,10 +52,7 @@ void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colou
     int xposition=xpos;
 
     for (i = 0; i < strlen(text); i++)
-    {
-        text_draw_char( xposition+2, ypos-2, scale, text[i], get_col(COL_BLACK) );
         xposition+=text_draw_char( xposition, ypos, scale, text[i], col );
-    }
 }
 
 static int text_width_n(char *text, int n)
@@ -131,7 +133,6 @@ void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, g
             temp_off = ((1.0 - phase) * 2) * (BOUNCE_AMP + 1);
 
         yposition=ypos+temp_off;
-        text_draw_char( xposition+2, yposition-2, scale, text[i], get_col(COL_BLACK) );
         xposition+=text_draw_char( xposition, yposition, scale, text[i], col );
 
         ticks += 1000 / BOUNCE_SPEED / BOUNCE_LEN;
