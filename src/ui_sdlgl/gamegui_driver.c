@@ -151,8 +151,10 @@ gg_event_t convert_event(SDL_Event *event)
 #endif
 
     case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP:
         gg_event.type = GG_EVENT_MOUSE;
-        gg_event.mouse.type = GG_MOUSE_BUTTON_DOWN;
+        gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN
+                               ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
         gg_event.mouse.button = event->button.button - 1;
         gg_event.mouse.x = event->button.x;
         gg_event.mouse.y = SCREEN_HEIGHT - 1 - event->button.y;

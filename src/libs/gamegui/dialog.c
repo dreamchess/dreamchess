@@ -107,9 +107,15 @@ void gg_dialog_close()
  *  @return The dialog that's on top of the stack, or NULL if the stack is
  *          empty.
  */
-gg_dialog_t *gg_dialog_current()
+gg_dialog_t *gg_dialog_get_active()
 {
     return TAILQ_FIRST(&dialogs);
+}
+
+void gg_dialog_set_active(gg_dialog_t *dialog)
+{
+    TAILQ_REMOVE(&dialogs, dialog, entries);
+    TAILQ_INSERT_HEAD(&dialogs, dialog, entries);
 }
 
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
@@ -225,7 +231,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
     gg_dialog_style_t *style = &dialog->style;
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
     int size;
-
+    int active;
     int xmin, xmax, ymin, ymax;
 
     if (dialog->flags & GG_DIALOG_HIDDEN)
@@ -253,41 +259,15 @@ void gg_dialog_render(gg_dialog_t *dialog)
     area.width = xmax - xmin;
     area.height = ymax - ymin;
 
-    draw_border(style->border.image, dialog->title, gg_dialog_current() == dialog, area, size);
+    active = gg_dialog_get_active() == dialog;
+    draw_border(style->border.image, dialog->title, active, area, size);
 
     xmin += style->hor_pad;
     xmax -= style->hor_pad;
     ymin += style->vert_pad;
     ymax -= style->vert_pad;
 
-    child->render(child, xmin, ymin, 1);
-}
-
-static int mouse_movement(gg_dialog_t *dialog, int x, int y)
-{
-    gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
-    int xmin, xmax, ymin, ymax;
-    int size;
-
-    gg_dialog_get_screen_pos(dialog, &xmin, &ymin);
-
-    xmax = xmin + dialog->width;
-    ymax = ymin + dialog->height;
-
-    if ((x < xmin) || (x >= xmax) || (y < ymin) || (y >= ymax))
-        return;
-
-    x -= xmin + dialog->style.hor_pad;
-    y -= ymin + dialog->style.vert_pad;
-
-    gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
-    x -= size;
-    y -= size;
-
-    if (x >= 0 && x < child->width_a && y >= 0 && y < child->height_a)
-        dialog->set_focus_pos(GG_WIDGET(dialog), x, y);
-
-    return 1;
+    child->render(child, xmin, ymin, active);
 }
 
 int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
@@ -316,20 +296,80 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
     {
         int size;
 
-        if (event.mouse.type == GG_MOUSE_MOVE)
-            if (mouse_movement(dialog, event.mouse.x, event.mouse.y))
-                return 1;
-
-        event.mouse.x -= x + dialog->style.hor_pad;
-        event.mouse.y -= y + dialog->style.vert_pad;
+        event.mouse.x -= x;
+        event.mouse.y -= y;
 
         gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
-        event.mouse.x -= size;
-        event.mouse.y -= size;
 
-        if (event.mouse.x < 0 || event.mouse.x >= child->width_a ||
-            event.mouse.y < 0 || event.mouse.y >= child->height_a)
-            return 0;
+        if (event.mouse.button == 0
+            && event.mouse.type == GG_MOUSE_BUTTON_DOWN)
+        {
+            if (dialog->title)
+            {
+                int text_height;
+                int titlebar_height;
+                gg_system_get_string_size(dialog->title, NULL, &text_height);
+                titlebar_height = text_height * GG_DIALOG_TITLE_FACT;
+
+                dialog->dialog_state |= GG_DIALOG_LEFT_BUTTON;
+
+                /* Mouse click outside of dialog */
+                if (event.mouse.y >= dialog->height || event.mouse.y < 0
+                    || event.mouse.x >= dialog->width || event.mouse.x < 0)
+                    return 0;
+
+                gg_dialog_set_active(dialog);
+
+                /* Title bar click */
+                if (event.mouse.y >= dialog->height - size - titlebar_height
+                    && event.mouse.y < dialog->height - size
+                    && event.mouse.x >= size
+                    && event.mouse.x < dialog->width - size)
+                {
+                    dialog->dialog_state |= GG_DIALOG_MOVING;
+                    dialog->movement_org_x = event.mouse.x;
+                    dialog->movement_org_y = event.mouse.y;
+                    return 1;
+                }
+            }
+        }
+        else if (event.mouse.button == 0
+            && event.mouse.type == GG_MOUSE_BUTTON_UP)
+        {
+            if (dialog->title)
+            {
+                dialog->dialog_state &= ~GG_DIALOG_LEFT_BUTTON;
+                if (dialog->dialog_state & GG_DIALOG_MOVING)
+                {
+                    dialog->dialog_state &= ~GG_DIALOG_MOVING;
+                    return 1;
+                }
+            }
+        }
+
+        if ((event.mouse.type == GG_MOUSE_MOVE)
+            && (dialog->dialog_state & GG_DIALOG_MOVING))
+        {
+            int xoff = dialog->width * dialog->pos.x_align;
+            int yoff = dialog->height * dialog->pos.y_align;
+
+            gg_dialog_set_position(dialog, x + event.mouse.x - dialog->movement_org_x + xoff,
+                                   y + event.mouse.y - dialog->movement_org_y + yoff,
+                                   dialog->pos.x_align, dialog->pos.y_align);
+        }
+
+        event.mouse.x -= size + dialog->style.hor_pad;
+        event.mouse.y -= size + dialog->style.vert_pad;
+
+        if (!(event.mouse.type == GG_MOUSE_MOVE
+            && dialog->dialog_state & GG_DIALOG_LEFT_BUTTON))
+        {
+            gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
+
+            if (event.mouse.x >= 0 && event.mouse.x < child->width_a
+                && event.mouse.y >= 0 && event.mouse.y < child->height_a)
+                dialog->set_focus_pos(GG_WIDGET(dialog), event.mouse.x, event.mouse.y);
+        }
     }
 
     return child->input(child, event);
@@ -337,12 +377,12 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 
 void gg_dialog_input_current(gg_event_t event)
 {
-    gg_dialog_t *dialog = gg_dialog_current();
+    gg_dialog_t *dialog;
 
-    if (!dialog)
-        return;
-
-    gg_dialog_input(GG_WIDGET(dialog), event);
+    TAILQ_FOREACH(dialog, &dialogs, entries)
+        if (!(dialog->flags & GG_DIALOG_HIDDEN)
+            && gg_dialog_input(GG_WIDGET(dialog), event))
+            break;
 }
 
 void gg_dialog_set_modal(gg_dialog_t *dialog, int modal)
@@ -386,6 +426,7 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
     dialog->destroy = gg_dialog_destroy;
     dialog->id = gg_dialog_get_class_id();
     dialog->flags = flags;
+    dialog->dialog_state = 0;
     dialog->parent_dialog = parent;
     dialog->modal = 0;
 

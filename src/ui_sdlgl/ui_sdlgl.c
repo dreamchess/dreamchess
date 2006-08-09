@@ -293,7 +293,7 @@ static config_t *do_menu(int *pgn)
             if (get_vkeyboard_enabled())
                 gg_dialog_render(keyboard);
         }
-        else
+        else if (!fading_out)
         {
             text_draw_string( 390, 30, "Loading...", 3, get_col(COL_WHITE));
             can_load = TRUE;

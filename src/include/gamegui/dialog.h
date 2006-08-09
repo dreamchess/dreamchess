@@ -44,6 +44,15 @@
     /** Flags */                                                             \
     int flags;                                                               \
                                                                              \
+    /** Dialog state */                                                      \
+    int dialog_state;                                                        \
+                                                                             \
+    /** Dialog movement original x-coordinate */                             \
+    int movement_org_x;                                                      \
+                                                                             \
+    /** Dialog movement original x-coordinate */                             \
+    int movement_org_y;                                                      \
+                                                                             \
     /** Modal flag. 1 = modal (dialog cannot be escaped), 0 = not modal. */  \
     int modal;                                                               \
                                                                              \
@@ -56,9 +65,14 @@
     /** Title bar text, or NULL for no title bar. */                         \
     char *title;
 
+/** Dialog flags */
 #define GG_DIALOG_MODAL (1 << 0)
 #define GG_DIALOG_HIDDEN (1 << 1)
 #define GG_DIALOG_AUTOHIDE_PARENT (1 << 2)
+
+/** Dialog state */
+#define GG_DIALOG_MOVING (1 << 0)
+#define GG_DIALOG_LEFT_BUTTON (1 << 1)
 
 /* FIXME */
 /** Screen width in pixels. */
@@ -157,7 +171,7 @@ void gg_dialog_close();
  *
  *  @return Dialog on top of stack, or NULL if stack is empty.
  */
-gg_dialog_t *gg_dialog_current();
+gg_dialog_t *gg_dialog_get_active();
 
 /** @brief Determines the screen position of a dialog.
  *
@@ -212,5 +226,7 @@ gg_class_id gg_dialog_get_class_id();
 void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size);
 
 void gg_dialog_render_all();
+
+void gg_dialog_set_active(gg_dialog_t *dialog);
 
 #endif /* GAMEGUI_DIALOG_H */

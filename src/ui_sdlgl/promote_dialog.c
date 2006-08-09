@@ -55,5 +55,6 @@ gg_dialog_t *dialog_promote_create(int colour)
 
     dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_ingame_style());
     return GG_DIALOG(dialog);
 }

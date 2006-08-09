@@ -67,7 +67,7 @@ int get_move()
         if (event.type == SDL_MOUSEMOTION)
             set_mouse_pos( event.motion.x, event.motion.y );
 
-        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+        if (!gg_dialog_get_active() && event.type == SDL_MOUSEBUTTONDOWN &&
                 event.button.button == SDL_BUTTON_LEFT)
         {
             retval = get_mouse_square();
@@ -77,7 +77,7 @@ int get_move()
             continue;
         }
 
-        if (!gg_dialog_current() && event.type == SDL_MOUSEBUTTONDOWN &&
+        if (!gg_dialog_get_active() && event.type == SDL_MOUSEBUTTONDOWN &&
                 event.button.button == SDL_BUTTON_RIGHT)
         {
             gg_dialog_open(dialog_system_create());
@@ -102,7 +102,7 @@ int get_move()
         if (gg_event.type == GG_EVENT_NONE)
             continue;
 
-        if (gg_dialog_current())
+        if (gg_dialog_get_active())
             gg_dialog_input_current(gg_event);
 
         /* In the promote dialog */
@@ -154,7 +154,6 @@ int get_move()
             default:
                 break;
             }
-        break;
     }
     return retval;
 }

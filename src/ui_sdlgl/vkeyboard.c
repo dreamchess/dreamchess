@@ -26,7 +26,7 @@ int get_vkeyboard_enabled()
 
 static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
 {
-    if (gg_dialog_current())
+    if (gg_dialog_get_active())
     {
         gg_event_t event;
         event.type = GG_EVENT_KEY;
@@ -85,5 +85,6 @@ gg_dialog_t *dialog_vkeyboard_create()
     }
 
     dialog = gg_dialog_create(vbox2, NULL, NULL, 0);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
     return GG_DIALOG(dialog);
 }
