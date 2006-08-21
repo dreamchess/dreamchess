@@ -1,15 +1,18 @@
 Andrew Ball
-- Character sprites
+- Opposing Elements theme
+- Default avatars
 
 Kris McAulay  <mrsiggler@accesswave.ca>
 - Graphical user interface
+- Misc graphics
 
 Walter van Niftrik  <w.f.b.w.v.niftrik@stud.tue.nl>
 - Chess engine
 - xboard protocol implementation
+- 3D Models
 
 Rogier van Schaijk  <rogiervanschaijk@roninonline.net>
-- Intro screen graphics
+- Title screen graphics
 
 We made use of the Chess Merida font by Armando Hernandez Marroquin to
 generate the figurine chess set images both in the default theme and our

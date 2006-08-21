@@ -79,9 +79,10 @@ newlib (http://sourceware.org/newlib/), various licenses
 
 The following platforms are currently officially supported:
 
- * UNIX (Linux, Sun Solaris etc)
+ * UNIX (Linux, FreeBSD, Solaris etc)
  * Microsoft Windows (95 and above)
  * Sega Dreamcast
+ * BeOS
 
 2.1 - User Interface Drivers
 ----------------------------
