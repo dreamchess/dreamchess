@@ -9,12 +9,14 @@ INSTALL_DIRS = \
 	/styles/sketch/ \
 	/styles/elements/ \
 	/pieces/classiclow/ \
+	/pieces/classicbw/ \
 	/pieces/figurine/ \
 	/pieces/sketch/ \
 	/pieces/elements/ \
 	/boards/classic/ \
 	/boards/sketch/ \
-	/boards/elements/
+	/boards/elements/ \
+	/boards/classic-old/
 	
 
 dist-hook:
