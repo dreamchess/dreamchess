@@ -30,12 +30,10 @@
  * $FreeBSD: /repoman/r/ncvs/src/sys/sys/queue.h,v 1.66 2006/05/26 18:17:53 emaste Exp $
  */
 
-/* 2006-08-04 Modified by Walter van Niftrik */
+/* 2006-08-22 Modified by Walter van Niftrik */
 
 #ifndef GAMEGUI_QUEUE_H
 #define GAMEGUI_QUEUE_H
-
-#include <sys/cdefs.h>
 
 /*
  * This file defines four types of data structures: singly-linked lists,
@@ -102,6 +100,72 @@
  * _REMOVE			+	+	+	+
  *
  */
+
+/* We #undef all of these to avoid name clashes in system headers */
+#undef LIST_EMPTY
+#undef LIST_ENTRY
+#undef LIST_FIRST
+#undef LIST_FOREACH
+#undef LIST_HEAD
+#undef LIST_HEAD_INITIALIZER
+#undef LIST_INIT
+#undef LIST_INSERT_AFTER
+#undef LIST_INSERT_BEFORE
+#undef LIST_INSERT_HEAD
+#undef LIST_NEXT
+#undef LIST_REMOVE
+#undef QMD_TRACE_ELEM
+#undef QMD_TRACE_HEAD
+#undef QUEUE_MACRO_DEBUG
+#undef SLIST_EMPTY
+#undef SLIST_ENTRY
+#undef SLIST_FIRST
+#undef SLIST_FOREACH
+#undef SLIST_FOREACH_PREVPTR
+#undef SLIST_HEAD
+#undef SLIST_HEAD_INITIALIZER
+#undef SLIST_INIT
+#undef SLIST_INSERT_AFTER
+#undef SLIST_INSERT_HEAD
+#undef SLIST_NEXT
+#undef SLIST_REMOVE
+#undef SLIST_REMOVE_HEAD
+#undef STAILQ_CONCAT
+#undef STAILQ_EMPTY
+#undef STAILQ_ENTRY
+#undef STAILQ_FIRST
+#undef STAILQ_FOREACH
+#undef STAILQ_HEAD
+#undef STAILQ_HEAD_INITIALIZER
+#undef STAILQ_INIT
+#undef STAILQ_INSERT_AFTER
+#undef STAILQ_INSERT_HEAD
+#undef STAILQ_INSERT_TAIL
+#undef STAILQ_LAST
+#undef STAILQ_NEXT
+#undef STAILQ_REMOVE
+#undef STAILQ_REMOVE_HEAD
+#undef STAILQ_REMOVE_HEAD_UNTIL
+#undef TAILQ_CONCAT
+#undef TAILQ_EMPTY
+#undef TAILQ_ENTRY
+#undef TAILQ_FIRST
+#undef TAILQ_FOREACH
+#undef TAILQ_FOREACH_REVERSE
+#undef TAILQ_HEAD
+#undef TAILQ_HEAD_INITIALIZER
+#undef TAILQ_INIT
+#undef TAILQ_INSERT_AFTER
+#undef TAILQ_INSERT_BEFORE
+#undef TAILQ_INSERT_HEAD
+#undef TAILQ_INSERT_TAIL
+#undef TAILQ_LAST
+#undef TAILQ_NEXT
+#undef TAILQ_PREV
+#undef TAILQ_REMOVE
+#undef TRACEBUF
+#undef TRASHIT
+
 #ifdef QUEUE_MACRO_DEBUG
 /* Store the last 2 places the queue element or head was altered */
 struct qm_trace {
@@ -328,30 +392,9 @@ struct {								\
  * List functions.
  */
 
-#if (defined(_KERNEL) && defined(INVARIANTS))
-#define	QMD_LIST_CHECK_HEAD(head, field) do {				\
-	if (LIST_FIRST((head)) != NULL &&				\
-	    LIST_FIRST((head))->field.le_prev !=			\
-	     &LIST_FIRST((head)))					\
-		panic("Bad list head %p first->prev != head", (head));	\
-} while (0)
-
-#define	QMD_LIST_CHECK_NEXT(elm, field) do {				\
-	if (LIST_NEXT((elm), field) != NULL &&				\
-	    LIST_NEXT((elm), field)->field.le_prev !=			\
-	     &((elm)->field.le_next))					\
-	     	panic("Bad link elm %p next->prev != elm", (elm));	\
-} while (0)
-
-#define	QMD_LIST_CHECK_PREV(elm, field) do {				\
-	if (*(elm)->field.le_prev != (elm))				\
-		panic("Bad link elm %p prev->next != elm", (elm));	\
-} while (0)
-#else
 #define	QMD_LIST_CHECK_HEAD(head, field)
 #define	QMD_LIST_CHECK_NEXT(elm, field)
 #define	QMD_LIST_CHECK_PREV(elm, field)
-#endif /* (_KERNEL && INVARIANTS) */
 
 #define	LIST_EMPTY(head)	((head)->lh_first == NULL)
 
@@ -432,36 +475,10 @@ struct {								\
 /*
  * Tail queue functions.
  */
-#if (defined(_KERNEL) && defined(INVARIANTS))
-#define	QMD_TAILQ_CHECK_HEAD(head, field) do {				\
-	if (!TAILQ_EMPTY(head) &&					\
-	    TAILQ_FIRST((head))->field.tqe_prev !=			\
-	     &TAILQ_FIRST((head)))					\
-		panic("Bad tailq head %p first->prev != head", (head));	\
-} while (0)
-
-#define	QMD_TAILQ_CHECK_TAIL(head, field) do {				\
-	if (*(head)->tqh_last != NULL)					\
-	    	panic("Bad tailq NEXT(%p->tqh_last) != NULL", (head)); 	\
-} while (0)
-
-#define	QMD_TAILQ_CHECK_NEXT(elm, field) do {				\
-	if (TAILQ_NEXT((elm), field) != NULL &&				\
-	    TAILQ_NEXT((elm), field)->field.tqe_prev !=			\
-	     &((elm)->field.tqe_next))					\
-		panic("Bad link elm %p next->prev != elm", (elm));	\
-} while (0)
-
-#define	QMD_TAILQ_CHECK_PREV(elm, field) do {				\
-	if (*(elm)->field.tqe_prev != (elm))				\
-		panic("Bad link elm %p prev->next != elm", (elm));	\
-} while (0)
-#else
 #define	QMD_TAILQ_CHECK_HEAD(head, field)
 #define	QMD_TAILQ_CHECK_TAIL(head, headname)
 #define	QMD_TAILQ_CHECK_NEXT(elm, field)
 #define	QMD_TAILQ_CHECK_PREV(elm, field)
-#endif /* (_KERNEL && INVARIANTS) */
 
 #define	TAILQ_CONCAT(head1, head2, field) do {				\
 	if (!TAILQ_EMPTY(head2)) {					\
@@ -575,51 +592,5 @@ struct {								\
 	TRASHIT((elm)->field.tqe_prev);					\
 	QMD_TRACE_ELEM(&(elm)->field);					\
 } while (0)
-
-
-#ifdef _KERNEL
-
-/*
- * XXX insque() and remque() are an old way of handling certain queues.
- * They bogusly assumes that all queue heads look alike.
- */
-
-struct quehead {
-	struct quehead *qh_link;
-	struct quehead *qh_rlink;
-};
-
-#ifdef __CC_SUPPORTS___INLINE
-
-static __inline void
-insque(void *a, void *b)
-{
-	struct quehead *element = (struct quehead *)a,
-		 *head = (struct quehead *)b;
-
-	element->qh_link = head->qh_link;
-	element->qh_rlink = head;
-	head->qh_link = element;
-	element->qh_link->qh_rlink = element;
-}
-
-static __inline void
-remque(void *a)
-{
-	struct quehead *element = (struct quehead *)a;
-
-	element->qh_link->qh_rlink = element->qh_rlink;
-	element->qh_rlink->qh_link = element->qh_link;
-	element->qh_rlink = 0;
-}
-
-#else /* !__CC_SUPPORTS___INLINE */
-
-void	insque(void *a, void *b);
-void	remque(void *a);
-
-#endif /* __CC_SUPPORTS___INLINE */
-
-#endif /* _KERNEL */
 
 #endif /* !GAMEGUI_QUEUE_H */
