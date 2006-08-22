@@ -127,7 +127,6 @@ void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
 void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size)
 {
     gg_rect_t source, dest;
-    gg_colour_t fade_col={1.0f,1.0f,1.0f,0.5f};
     int image_size;
     int titlebar_height = 0;
 
@@ -192,7 +191,7 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     /* Draw bottom */
     dest.x = area.x + size;
     dest.y = area.y;
-    dest.width = area.width - (2 * size)+1;
+    dest.width = area.width - (2 * size);
     dest.height = size;
     gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
@@ -202,9 +201,9 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
 
     /* Draw left */
     dest.x = area.x;
-    dest.y = area.y + size-1;
+    dest.y = area.y + size;
     dest.width = size;
-    dest.height = area.height - (2 * size)+1;
+    dest.height = area.height - (2 * size);
     gg_system_draw_image(image[3], source, dest, GG_MODE_SCALE, GG_MODE_TILE, &col_white);
 
     /* Draw right */
@@ -215,7 +214,7 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     dest.x = area.x + size;
     dest.width = area.width - 2 * size;
     dest.height -= titlebar_height;
-    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &fade_col);
+    gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &col_white);
 }
 
 /** @brief Renders a dialog.

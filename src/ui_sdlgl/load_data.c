@@ -18,6 +18,11 @@ void load_border(texture_t border[9], char *filename)
             rect.w = surface->w / 3;
             rect.h = surface->h / 3;
             border[i] = SDL_GL_LoadTexture(surface, &rect, 1);
+
+            /* Nearest? */
+            glBindTexture(GL_TEXTURE_2D, border[i].id);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         }
         /* Free up any memory we may have used */
         SDL_FreeSurface(surface);
