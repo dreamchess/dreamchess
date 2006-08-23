@@ -23,11 +23,14 @@ void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
         draw_texture( get_black_piece(GUI_PIECE_AVATAR), xpos+45, ypos-50, 100, 100, 1.0f, get_col(COL_WHITE));
     }
 
+  /*  printf( "!text: %f\n", xpos-10 );
+    printf( "text: %f\n", xpos+10+width-(namew) );*/
+
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos-20, ypos+10, name, 1, get_col(COL_WHITE));
+        text_draw_string( xpos-10, ypos-10, name, 1, get_col(COL_WHITE));
     else
-        text_draw_string( xpos+20+width-(namew), ypos+10, name, 1, get_col(COL_WHITE));
+        text_draw_string( xpos+10+width-(namew), ypos-10, name, 1, get_col(COL_WHITE));
 }
 
 /** @brief Renders the in-game backdrop. */
@@ -113,6 +116,8 @@ void draw_health_bars()
     float black_health_percent;
     int black_health;
     int white_health;
+    int leftx, rightx, bary, barw;
+    gg_colour_t left_col, right_col;
 
     /* This function really stinks, and will be fixed ;) .... eventually */
     /* Full health = 39 */
@@ -130,15 +135,69 @@ void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    draw_rect_fill( 20, 375, 75, 10, get_col(COL_YELLOW) );
-    draw_rect_fill( 640-20-75, 375, 75, 10, get_col(COL_YELLOW) );
+    bary=440; barw=192;
+    leftx=100; rightx=639-100-barw;
 
-    draw_rect_fill( 20, 375, 75*white_health_percent, 10, get_col(COL_RED) );
-    draw_rect_fill( 640-20-(75*black_health_percent), 375, 75*black_health_percent,
-                    10, get_col(COL_RED) );
+    /* Set bar colours.. */
+    left_col.b=0.0f; left_col.a=1.0f;
+    right_col=left_col;
 
-    draw_rect( 20, 375, 75, 10, get_col(COL_BLACK) );
-    draw_rect( 640-75-20, 375, 75, 10, get_col(COL_BLACK) );
+    /* Draw white.. */
+    if ( white_health_percent > 0.80 )
+    {
+        right_col.r=0.0f;
+        right_col.g=1.0f;
+    }
+    else if ( white_health_percent > 0.60 )
+    {
+        right_col.r=1.0f;
+        right_col.g=1.0f;
+    }
+    else if ( white_health_percent < 0.40 )
+    {
+        right_col.r=1.0f;
+        right_col.g=0.5f;
+    }
+    else if ( white_health_percent < 0.20 )
+    {
+        right_col.r=1.0f;
+        right_col.g=0.0f;
+    }
+
+
+    left_col.r=right_col.r-0.4f;
+    left_col.g=right_col.g-0.4f;
+
+    draw_rect_fill_gradient( leftx, bary, barw*white_health_percent, 20,
+        &left_col, &right_col, &left_col, &right_col);
+
+    /* Draw black.. */
+    if ( black_health_percent > 0.80 )
+    {
+        right_col.r=0.0f;
+        right_col.g=1.0f;
+    }
+    else if ( black_health_percent > 0.60 )
+    {
+        right_col.r=1.0f;
+        right_col.g=1.0f;
+    }
+    else if ( black_health_percent < 0.40 )
+    {
+        right_col.r=1.0f;
+        right_col.g=0.5f;
+    }
+    else if ( black_health_percent < 0.20 )
+    {
+        right_col.r=1.0f;
+        right_col.g=0.0f;
+    }
+
+    left_col.r=right_col.r-0.4f;
+    left_col.g=right_col.g-0.4f;
+
+    draw_rect_fill_gradient( 639-100-(int)(barw*black_health_percent), bary, 
+        barw*black_health_percent, 20, &right_col, &left_col, &right_col, &left_col);
 }
 
 /** @brief Renders the list of captured pieces for both sides.

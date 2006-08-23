@@ -29,7 +29,7 @@ static gg_colour_t col_dark_red =
 
 static gg_colour_t col_light_blue =
 {
-    0.0f, 1.0f, 1.0f, 1.0f
+    0.55f, 0.75f, 0.95f, 1.0f
 };
 
 static gg_colour_t col_black =
@@ -45,6 +45,16 @@ static gg_colour_t col_white =
 static gg_colour_t col_grey =
     {
         0.5f, 0.5f, 0.5f, 1.0f
+    };
+
+static gg_colour_t col_texthighlight =
+    {
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
+
+static gg_colour_t col_text =
+    {
+        0.55f, 0.75f, 0.95f, 1.0f
     };
 
 gg_class_id gg_option_get_class_id()
@@ -75,9 +85,9 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
     if (option->sel > 0)
     {
         if (focus != GG_FOCUS_NONE)
-            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_light_blue, 1, 0);
+            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_texthighlight, 1, 0);
         else
-            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_white, 0, 0);
+            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_text, 0, 0);
     }
     else
         gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_grey, 0, 0);
@@ -91,9 +101,9 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
     if (option->sel < gg_container_get_size(GG_CONTAINER(widget)) - 1)
     {
         if (focus != GG_FOCUS_NONE)
-            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_light_blue, 1, 0);
+            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_texthighlight, 1, 0);
         else
-            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_white, 0, 0);
+            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_text, 0, 0);
     }
     else
         gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_grey, 0, 0);

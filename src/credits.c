@@ -30,11 +30,14 @@ static char* programming[] = { "Programming by",
 static char* graphics[] = { "Graphics by",
                             "Drew 'Hawke' Ball",
                             "Rogier van Schaijk",
+                            "Kris McAulay",
+                            "Brandon May (melancholy)",
                             NULL };
 
 static char* thanks[] = { "Special thanks to",
                           "François-Dominic Laramée",
                           "Armando Hernández Marroquín",
+                          "Brandon May (melancholy)",
                           NULL };
 
 static char* copyright[] = { "DreamChess",

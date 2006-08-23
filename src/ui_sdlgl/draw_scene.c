@@ -59,9 +59,9 @@ void draw_scene( board_t *b )
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
 
-    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 440, 170, 20), 8);
+    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 440, 170, 20), 8);*/
 
-    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(455, 440, 170, 20), 8);
+    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(455, 440, 170, 20), 8);*/
 
     /* Da clocken */
     /*draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(290, 440, 60, 20), 8);*/
@@ -71,8 +71,8 @@ void draw_scene( board_t *b )
     glPushMatrix();
     draw_name_dialog( 50, 430, get_white_name(), TRUE, 1 );
     draw_name_dialog( 490, 430, get_black_name(), FALSE, 0 );
-    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 375, 75, 10), 8);
-    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(545, 375, 75, 10), 8);
+    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 375, 75, 10), 8);
+    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(545, 375, 75, 10), 8);*/
     draw_health_bars();
     draw_move_list(get_col(COL_WHITE), get_col(COL_YELLOW));
     draw_capture_list(get_col(COL_WHITE));
