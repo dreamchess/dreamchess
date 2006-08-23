@@ -145,28 +145,32 @@ void draw_health_bars()
     /* Draw white.. */
     if ( white_health_percent > 0.80 )
     {
-        right_col.r=0.0f;
-        right_col.g=1.0f;
+        right_col.r=0.55f;
+        right_col.g=0.75f;
+        right_col.b=0.95f;
     }
     else if ( white_health_percent > 0.60 )
     {
         right_col.r=1.0f;
         right_col.g=1.0f;
+        right_col.b=0.0f;
     }
-    else if ( white_health_percent < 0.40 )
+    else if ( white_health_percent > 0.40 )
     {
         right_col.r=1.0f;
         right_col.g=0.5f;
+        right_col.b=0.0f;
     }
-    else if ( white_health_percent < 0.20 )
+    else if ( white_health_percent > 0.20 )
     {
         right_col.r=1.0f;
         right_col.g=0.0f;
+        right_col.b=0.0f;
     }
-
 
     left_col.r=right_col.r-0.4f;
     left_col.g=right_col.g-0.4f;
+    left_col.b=right_col.b-0.4f;
 
     draw_rect_fill_gradient( leftx, bary, barw*white_health_percent, 20,
         &left_col, &right_col, &left_col, &right_col);
@@ -174,27 +178,32 @@ void draw_health_bars()
     /* Draw black.. */
     if ( black_health_percent > 0.80 )
     {
-        right_col.r=0.0f;
-        right_col.g=1.0f;
+        right_col.r=0.55f;
+        right_col.g=0.75f;
+        right_col.b=0.95f;
     }
     else if ( black_health_percent > 0.60 )
     {
         right_col.r=1.0f;
         right_col.g=1.0f;
+        right_col.b=0.0f;
     }
-    else if ( black_health_percent < 0.40 )
+    else if ( black_health_percent > 0.40 )
     {
         right_col.r=1.0f;
         right_col.g=0.5f;
+        right_col.b=0.0f;
     }
-    else if ( black_health_percent < 0.20 )
+    else if ( black_health_percent > 0.20 )
     {
         right_col.r=1.0f;
         right_col.g=0.0f;
+        right_col.b=0.0f;
     }
 
     left_col.r=right_col.r-0.4f;
     left_col.g=right_col.g-0.4f;
+    left_col.b=right_col.b-0.4f;
 
     draw_rect_fill_gradient( 639-100-(int)(barw*black_health_percent), bary, 
         barw*black_health_percent, 20, &right_col, &left_col, &right_col, &left_col);
