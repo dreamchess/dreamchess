@@ -28,9 +28,9 @@ void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
-        text_draw_string( xpos-10, ypos-10, name, 1, get_col(COL_WHITE));
+        text_draw_string( xpos-10, ypos-12, name, 1, get_col(COL_WHITE));
     else
-        text_draw_string( xpos+10+width-(namew), ypos-10, name, 1, get_col(COL_WHITE));
+        text_draw_string( xpos+10+width-(namew), ypos-12, name, 1, get_col(COL_WHITE));
 }
 
 /** @brief Renders the in-game backdrop. */
@@ -116,7 +116,7 @@ void draw_health_bars()
     float black_health_percent;
     int black_health;
     int white_health;
-    int leftx, rightx, bary, barw;
+    int leftx, rightx, bary, barw, barh;
     gg_colour_t left_col, right_col;
 
     /* This function really stinks, and will be fixed ;) .... eventually */
@@ -135,7 +135,7 @@ void draw_health_bars()
     black_health_percent=(float)black_health/39;
 
     /* Draw da bar? */
-    bary=440; barw=192;
+    bary=440; barw=192; barh=15;
     leftx=100; rightx=639-100-barw;
 
     /* Set bar colours.. */
@@ -145,9 +145,9 @@ void draw_health_bars()
     /* Draw white.. */
     if ( white_health_percent > 0.80 )
     {
-        right_col.r=0.55f;
-        right_col.g=0.75f;
-        right_col.b=0.95f;
+        right_col.r=0.19f;
+        right_col.g=0.20f;
+        right_col.b=0.46f;
     }
     else if ( white_health_percent > 0.60 )
     {
@@ -172,15 +172,16 @@ void draw_health_bars()
     left_col.g=right_col.g-0.4f;
     left_col.b=right_col.b-0.4f;
 
-    draw_rect_fill_gradient( leftx, bary, barw*white_health_percent, 20,
+    draw_rect_fill( leftx-2, bary-2, barw*white_health_percent+4, barh+4, get_col(COL_WHITE));
+    draw_rect_fill_gradient( leftx, bary, barw*white_health_percent, barh,
         &left_col, &right_col, &left_col, &right_col);
 
     /* Draw black.. */
     if ( black_health_percent > 0.80 )
     {
-        right_col.r=0.55f;
-        right_col.g=0.75f;
-        right_col.b=0.95f;
+        right_col.r=0.19f;
+        right_col.g=0.20f;
+        right_col.b=0.46f;
     }
     else if ( black_health_percent > 0.60 )
     {
@@ -205,8 +206,10 @@ void draw_health_bars()
     left_col.g=right_col.g-0.4f;
     left_col.b=right_col.b-0.4f;
 
+    draw_rect_fill( 639-100-2-(int)(barw*black_health_percent), bary-2, barw*black_health_percent+4, 
+        barh+4, get_col(COL_WHITE));
     draw_rect_fill_gradient( 639-100-(int)(barw*black_health_percent), bary, 
-        barw*black_health_percent, 20, &right_col, &left_col, &right_col, &left_col);
+        barw*black_health_percent, barh, &right_col, &left_col, &right_col, &left_col);
 }
 
 /** @brief Renders the list of captured pieces for both sides.
