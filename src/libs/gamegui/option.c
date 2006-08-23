@@ -54,7 +54,7 @@ static gg_colour_t col_texthighlight =
 
 static gg_colour_t col_text =
     {
-        0.55f, 0.75f, 0.95f, 1.0f
+        0.25f, 0.45f, 0.75f, 1.0f
     };
 
 gg_class_id gg_option_get_class_id()
