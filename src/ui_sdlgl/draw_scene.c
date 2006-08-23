@@ -83,10 +83,10 @@ void draw_scene( board_t *b )
     /*text_draw_string( 303, 440, temp, 1, &col_black);*/
     glPopMatrix();
 
-    if ( get_white_in_check() == TRUE )
-        text_draw_string_bouncy( 180, 420, "White is in check!", 1.5, get_col(COL_WHITE));
+    /*if ( get_white_in_check() == TRUE )
+        text_draw_string_bouncy( 180, 420, "White is in check!", 1, get_col(COL_WHITE));
     else if ( get_black_in_check() == TRUE )
-        text_draw_string_bouncy( 180, 420, "Black is in check!", 1.5, get_col(COL_WHITE));
+        text_draw_string_bouncy( 180, 420, "Black is in check!", 1, get_col(COL_WHITE));*/
 
     gg_dialog_render_all();
 

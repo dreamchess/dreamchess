@@ -235,6 +235,7 @@ static config_t *do_menu(int *pgn)
 
         /* Draw the menu.. */
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE) );
+        text_draw_string( 500, 20, "Version " PACKAGE_VERSION, 1, get_col(COL_WHITE));
 
         if ( switch_to_game == TRUE )
         {
@@ -285,7 +286,7 @@ static config_t *do_menu(int *pgn)
 
             if (wait_menu)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
-                                         text_width(msg) * 0.75, 30, msg,
+                                         text_width(msg) * 0.75, 40, msg,
                                          1.5f, get_col(COL_WHITE));
             else
                 gg_dialog_render_all();

@@ -28,9 +28,24 @@ void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
 
     /* Draw the text stuff */
     if (!left) /* UGLY */
+    {
         text_draw_string( xpos-10, ypos-12, name, 1, get_col(COL_WHITE));
+
+        if ( get_black_in_check() == TRUE )
+            text_draw_string_bouncy( xpos-10-80, ypos-12, "Check!", 1, get_col(COL_RED));
+    }
     else
+    {
         text_draw_string( xpos+10+width-(namew), ypos-12, name, 1, get_col(COL_WHITE));
+
+        if ( get_white_in_check() == TRUE )
+            text_draw_string_bouncy( xpos+10+width+5, ypos-12, "Check!", 1, get_col(COL_RED));
+    }
+
+
+   /* else if ( get_black_in_check() == TRUE )
+        text_draw_string_bouncy( xpos+10+width-(namew), ypos-12, "Check!", 1, get_col(COL_RED));*/
+
 }
 
 /** @brief Renders the in-game backdrop. */
