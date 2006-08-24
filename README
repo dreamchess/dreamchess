@@ -1,7 +1,7 @@
 DreamChess
-Version 0.1.0-SVN
+Version 0.1.0
 
-Copyright (C) 2003-2005  The DreamChess project
+Copyright (C) 2003-2006  The DreamChess project
 
 For the latest information, please check out our project website at:
 http://developer.berlios.de/projects/dreamchess/
@@ -159,7 +159,7 @@ the following commands to configure and compile DreamChess:
 
 NOTE: The Dreamcast port is configured with the --enable-linked-engine option
 which creates a single executable that includes the Dreamer engine. It is
-therefor not possible to choose another engine at runtime.
+therefore not possible to choose another engine at runtime.
 
 3.3 - Installing DreamChess
 ---------------------------
@@ -222,7 +222,7 @@ source code is kept as it gets updated between releases. If you want
 to try out recent improvements and can't wait for the next release, you can
 check out a copy of the source code and compile it. Note that the source code
 you obtain in this way has not gone through the regular testing phase that
-happens before each release. It is therefor not unlikely that it contains
+happens before each release. It is therefore not unlikely that it contains
 serious bugs.
 
 In order to check out source code from the Subversion repository and build
