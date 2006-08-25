@@ -49,12 +49,12 @@ static gg_colour_t col_grey =
 
 static gg_colour_t col_texthighlight =
     {
-        1.0f, 1.0f, 1.0f, 1.0f
+        0.25f, 0.45f, 0.75f, 1.0f
     };
 
 static gg_colour_t col_text =
     {
-        0.25f, 0.45f, 0.75f, 1.0f
+        1.0f, 1.0f, 1.0f, 1.0f
     };
 
 gg_class_id gg_option_get_class_id()

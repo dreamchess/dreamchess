@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
 <themes>
     <theme>
-        <name>3D Board</name>
+        <name>Classic Wooden</name>
         <style>default</style>
         <pieces>classiclow</pieces>
         <board>classic</board>
     </theme>
     <theme>
-        <name>Classic</name>
+        <name>Classic Black &amp; White</name>
+        <style>default</style>
+        <pieces>classicbw</pieces>
+        <board>classic</board>
+    </theme>
+    <theme>
+        <name>Classic Flat</name>
         <style>default</style>
         <pieces>figurine</pieces>
         <board>classic</board>
