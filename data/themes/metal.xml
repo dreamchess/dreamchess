@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<themes>
+    <theme>
+        <name>Metal</name>
+        <style>metal</style>
+        <pieces>metal</pieces>
+        <board>metal</board>
+        <lighting>on</lighting>
+    </theme>
+</themes>
