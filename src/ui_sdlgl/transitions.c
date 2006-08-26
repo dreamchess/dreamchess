@@ -40,15 +40,8 @@ int draw_sonic_fade( int inout )
     gg_colour_t col_black={0.0f, 0.0f, 0.0f, 1.0f };
     gg_colour_t col_white={1.0f, 1.0f, 1.0f, 1.0f };
 
-    if ( amount <= 1.0f )
+    if ( amount < 1.0f )
     {
-        /*if ( amount < 0.4f )
-            amount=(amount)/0.4f;
-        else if ( amount < 0.7f )
-            amount=1.0f;
-        else if ( amount >= 0.7f ) REVERSE!
-            amount=1.0-((amount-0.7f)/0.3f);*/
-
         if ( inout == FADE_IN )
             amount=1.0f-amount;
 
@@ -82,11 +75,14 @@ int draw_sonic_fade( int inout )
         text_draw_string( (640*amount*2)-1000, 480-(480/3)-50, "Zone", 3.0f, &col_white);
         text_draw_string( (640*amount*2)-860, 480-(480/3)-60, "1", 4.0f, &col_yellow);
     }
+    /*printf( "Drawing sonic fade.. :%i,%f\n", inout, amount );*/
 
-    if ( amount > 1.0f )
+    if ( amount >= 1.0f )
     {
         return FALSE;
     }
+
+    return TRUE;
 }
 
 /*int draw_sonic_fade( int inout )
