@@ -231,7 +231,7 @@ static config_t *do_menu(int *pgn)
 
             if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x0b)
             {
-                toggle_vkeyboard_enabled();
+                /* toggle_vkeyboard_enabled(); */
                 continue;
             }
 
@@ -246,10 +246,13 @@ static config_t *do_menu(int *pgn)
 
         /* Draw the menu.. */
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE) );
-        text_draw_string( 500, 20, "Version " PACKAGE_VERSION, 1, get_col(COL_WHITE));
+        text_draw_string_right( 620, 20, "v" PACKAGE_VERSION, 0.75f, get_col(COL_WHITE));
 
         if ( get_show_egg() )
             text_draw_string( 560, 440, "Egg!", 1, get_col(COL_WHITE));
+
+        if (!wait_menu)
+            gg_dialog_render_all();
 
         if ( switch_to_game == TRUE )
         {
@@ -261,7 +264,10 @@ static config_t *do_menu(int *pgn)
         {
             /* Draw fade... */
             if ( !draw_fade( FADE_OUT ) )
+            {
                 switch_to_game=TRUE;
+                gg_dialog_close();
+            }
         }
         else if ( can_load == TRUE )
         {
@@ -302,15 +308,17 @@ static config_t *do_menu(int *pgn)
                 text_draw_string_bouncy( SCREEN_WIDTH / 2 -
                                          text_width(msg) * 0.75, 40, msg,
                                          1.5f, get_col(COL_WHITE));
-            else
-                gg_dialog_render_all();
 
             if (get_vkeyboard_enabled())
                 gg_dialog_render(keyboard);
         }
         else if (!fading_out)
         {
-            text_draw_string( 390, 30, "Loading...", 3, get_col(COL_WHITE));
+            gg_widget_t *widget = gg_label_create("Loading, please wait...");
+            gg_widget_t *dialog = gg_dialog_create(widget, NULL, NULL, 0);
+            gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+            gg_dialog_open(GG_DIALOG(dialog));
+            gg_dialog_render_all(); /* Hack */
             can_load = TRUE;
         }
 

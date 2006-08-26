@@ -101,7 +101,7 @@ int text_height()
  */
 void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
 {
-    text_draw_string(xpos - text_width(text), ypos, text, scale, col);
+    text_draw_string(xpos - text_width(text) * scale, ypos, text, scale, col);
 }
 
 /** @brief Renders a bouncy latin1 string.
