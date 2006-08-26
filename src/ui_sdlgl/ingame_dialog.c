@@ -25,6 +25,11 @@ static void view_next(gg_widget_t *widget, void *data)
     game_view_next();
 }
 
+static void dialog_close_cb(gg_widget_t *widget, void *data)
+{
+    gg_dialog_close();
+}
+
 /** @brief Creates the in-game dialog.
  *
  *  @return The created dialog.
@@ -34,20 +39,24 @@ gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent)
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);
 
-    gg_widget_t *widget = gg_action_create_with_label("Retract Move", 0.0f, 0.0f);
+    gg_widget_t *widget = gg_action_create_with_label("  Retract Move", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), retract_move, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Move Now", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("  Move Now", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), move_now, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("View Previous Move", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("  View Previous Move", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), view_prev, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("View Next Move", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("  View Next Move", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), view_next, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);

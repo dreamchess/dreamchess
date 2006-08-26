@@ -48,7 +48,7 @@ static gg_colour_t col_trans =
 
 static gg_colour_t col_texthighlight =
     {
-        0.25f, 0.45f, 0.75f, 1.0f
+        0.55f, 0.65f, 0.95f, 1.0f
     };
 
 static gg_colour_t col_text =

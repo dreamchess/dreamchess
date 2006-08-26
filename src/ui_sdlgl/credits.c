@@ -19,7 +19,7 @@ void draw_credits(int init)
     Uint32 now;
     int x = 620;
     int y = 270;
-    gg_colour_t col_cap = {0.25f, 0.45f, 0.75f, 0.0f};
+    gg_colour_t col_cap = {0.55f, 0.65f, 0.95f, 0.0f};
     gg_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};
 
     now = SDL_GetTicks();
