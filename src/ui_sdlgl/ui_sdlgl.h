@@ -279,6 +279,7 @@ void draw_rect(int x, int y, int w, int h, gg_colour_t *col);
 void draw_rect_fill_gradient(int x, int y, int w, int h, gg_colour_t *top_left, gg_colour_t *top_right,
     gg_colour_t *bottom_left, gg_colour_t *bottom_right);
 void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col);
+void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col);
 
 /* text.c */
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );

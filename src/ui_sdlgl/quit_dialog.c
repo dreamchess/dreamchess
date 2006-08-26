@@ -29,7 +29,7 @@ gg_dialog_t *dialog_quit_create(gg_dialog_t *parent)
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);
 
-    gg_widget_t *widget = gg_label_create("Quit to main menu?");
+    gg_widget_t *widget = gg_label_create("Quit to Title?");
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_label_create("");

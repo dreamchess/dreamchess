@@ -160,9 +160,9 @@ void draw_health_bars()
     /* Draw white.. */
     if ( white_health_percent > 0.80 )
     {
-        right_col.r=0.19f;
-        right_col.g=0.20f;
-        right_col.b=0.46f;
+        right_col.r=0.59f;
+        right_col.g=0.60f;
+        right_col.b=0.86f;
     }
     else if ( white_health_percent > 0.60 )
     {
@@ -194,9 +194,9 @@ void draw_health_bars()
     /* Draw black.. */
     if ( black_health_percent > 0.80 )
     {
-        right_col.r=0.19f;
-        right_col.g=0.20f;
-        right_col.b=0.46f;
+        right_col.r=0.59f;
+        right_col.g=0.60f;
+        right_col.b=0.86f;
     }
     else if ( black_health_percent > 0.60 )
     {

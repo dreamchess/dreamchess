@@ -27,6 +27,17 @@ static int pieces_list_total;
 static char** pieces_list;
 static char** board_list;
 static int board_list_total;
+static int show_egg;
+
+void set_show_egg( int set )
+{
+    show_egg=set;
+}
+
+int get_show_egg()
+{
+    return show_egg;
+}
 
 int get_pieces_list_total()
 {
@@ -181,7 +192,7 @@ static config_t *do_menu(int *pgn)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     set_fade_start(gg_system_get_ticks());
-
+    set_show_egg(FALSE);
     while ( 1 )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -198,6 +209,10 @@ static config_t *do_menu(int *pgn)
                 exit(0);
 
             gg_event = convert_event(&event);
+
+            /* Used for the easter egg .. */
+            if (!wait_menu && gg_event.type == GG_EVENT_KEY && gg_event.key == 'e')
+                set_show_egg(TRUE);
 
             if (wait_menu)
             {
@@ -232,6 +247,9 @@ static config_t *do_menu(int *pgn)
         /* Draw the menu.. */
         draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE) );
         text_draw_string( 500, 20, "Version " PACKAGE_VERSION, 1, get_col(COL_WHITE));
+
+        if ( get_show_egg() )
+            text_draw_string( 560, 440, "Egg!", 1, get_col(COL_WHITE));
 
         if ( switch_to_game == TRUE )
         {

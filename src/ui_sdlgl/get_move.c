@@ -56,6 +56,8 @@ int get_move()
     if ((rotx < -3000) || (rotx > 3000))
         move_camera(0.0f, -rotx / (float) 32768 * 0.6f * MOVE_SPEED);
 
+
+
     while ( SDL_PollEvent( &event ) )
     {
         gg_event_t gg_event;

@@ -96,7 +96,12 @@ void draw_scene( board_t *b )
             set_switch_to_menu(TRUE);
     }
     else
-        draw_fade( FADE_IN );
+    {
+        if ( get_show_egg() ) 
+            draw_sonic_fade( FADE_IN );
+        else
+            draw_fade( FADE_IN );
+    }
 
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast
