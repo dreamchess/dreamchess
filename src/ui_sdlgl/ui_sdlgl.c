@@ -173,12 +173,8 @@ static config_t *do_menu(int *pgn)
     black_in_check=FALSE;
 
     draw_credits(1);
-    gg_dialog_open(dialog_title_root_create());
-    /* If created, and theme set to custom.. open custom.. */
-    /* if ( selected_theme == theme_count )
-         gg_dialog_open(dialog_title_custom_create());
-     else
-         gg_dialog_open(dialog_title_create());*/
+
+    open_title_root_dialog();
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
     glEnable(GL_BLEND);

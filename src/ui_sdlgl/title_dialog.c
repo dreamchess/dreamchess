@@ -59,8 +59,6 @@ int get_cur_style()
     return cur_style;
 }
 
-static gg_dialog_t *dialog_title_create(gg_dialog_t *parent);
-
 /** @brief Triggers gameplay start based on currently selected options. */
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
@@ -102,7 +100,11 @@ void dialog_title_players(gg_widget_t *widget, void *data)
 
 static void dialog_title_root_new(gg_widget_t *widget, void *data)
 {
-    gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)));
+    /* If created, and theme set to custom.. open custom.. */
+    if ( get_selected_theme() == get_theme_count() )
+         gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
+    else
+        gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)));
 }
 
 static void dialog_title_root_load(gg_widget_t *widget, void *data)
@@ -129,7 +131,6 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
     }
 }
 
-static gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent);
 static void dialog_title_theme(gg_widget_t *widget, void *data)
 {
     set_selected_theme( gg_option_get_selected(GG_OPTION(widget)) );
@@ -163,7 +164,7 @@ static void dialog_title_board(gg_widget_t *widget, void *data)
     selected_custom_board=board_list_cur;
 }
 
-static gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
+gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -286,7 +287,7 @@ static gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     return GG_DIALOG(dialog);
 }
 
-static gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
+gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -405,4 +406,15 @@ gg_dialog_t *dialog_title_root_create()
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
     return GG_DIALOG(dialog);
+}
+
+void open_title_root_dialog()
+{
+    gg_dialog_t *title=dialog_title_root_create();
+
+    gg_dialog_open(title);
+
+    /* If created, and theme set to custom.. open custom.. */
+    if ( get_selected_theme() == get_theme_count() )
+         gg_dialog_open(dialog_title_custom_create(title));
 }
