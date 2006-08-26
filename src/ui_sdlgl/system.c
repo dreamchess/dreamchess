@@ -2,16 +2,17 @@
 #include "ui_sdlgl.h"
 
 #ifdef _arch_dreamcast
-float dc_z;
+static float dc_z;
 
 float get_dc_z()
 {
+    dc_z += 0.00001f;
     return dc_z;
 }
 
-void set_dc_z( float z )
+void reset_dc_z()
 {
-    dc_z=z;
+    dc_z = 1.0f;
 }
 #endif
 
@@ -184,6 +185,6 @@ void gl_swap()
     }
 
 #ifdef _arch_dreamcast
-    dc_z = 1.0f;
+    reset_dc_z();
 #endif
 }

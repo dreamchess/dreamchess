@@ -99,7 +99,6 @@ void draw_texture( texture_t *texture, float xpos,
                           float ypos, float width, float height, float zpos,
                           gg_colour_t *col )
 {
-    set_dc_z(get_dc_z()+0.00001f);
     zpos = get_dc_z();
     glEnable( GL_TEXTURE_2D );
 
@@ -152,7 +151,6 @@ void draw_texture_uv( texture_t *texture, float xpos,
                              gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h,
                              GLenum mode_v)
 {
-    set_dc_z(get_dc_z()+0.00001f);
     zpos = get_dc_z();
 
     glEnable( GL_TEXTURE_2D );

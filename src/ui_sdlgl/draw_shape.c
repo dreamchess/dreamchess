@@ -19,16 +19,17 @@ void draw_rect_fill_gradient(int x, int y, int w, int h,
                              gg_colour_t *bottom_left,
                              gg_colour_t *bottom_right)
 {
+    float zpos = get_dc_z();
     y = SCREEN_HEIGHT - y;
     glBegin(GL_NT_QUADS);
     glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
-    glVertex3f(x, y, get_dc_z());
+    glVertex3f(x, y, zpos);
     glColor4f(top_right->r, top_right->g, top_right->b, top_right->a);
-    glVertex3f(x + w, y, get_dc_z());
+    glVertex3f(x + w, y, zpos);
     glColor4f(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a);
-    glVertex3f(x + w, y - h, get_dc_z());
+    glVertex3f(x + w, y - h, zpos);
     glColor4f(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a);
-    glVertex3f(x, y - h, get_dc_z());
+    glVertex3f(x, y - h, zpos);
     glEnd();
 }
 #else

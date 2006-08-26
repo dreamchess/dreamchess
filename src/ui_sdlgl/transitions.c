@@ -17,9 +17,13 @@ int draw_fade( int inout )
     if ( inout == FADE_OUT )
         col.a=amount;
 
-    gg_system_draw_filled_rect(0, 0, 640, 480, &col );
+    if (col.a > 1.0f)
+        col.a = 1.0f;
 
-    if ( amount > 1.0f )
+    if (col.a >= 0.0f)
+        gg_system_draw_filled_rect(0, 0, 640, 480, &col );
+
+    if ( amount >= 1.0f )
         return FALSE;
 
     return TRUE;
