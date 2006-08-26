@@ -16,7 +16,7 @@ dreamchess_LDADD = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
 	@SDL_LIBS@
 
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
-	libs/gamegui/libgamegui.a libs/mxml/libmxml.a
+	libs/gamegui/libgamegui.a libs/mxml/libmxml.a @DREAMCHESS_LIBS@
 
 win32_rc.$(OBJEXT):
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

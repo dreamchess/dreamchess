@@ -114,6 +114,8 @@ fi
 have_gl="no"
 
 if test "$host_os" = "mingw32"; then
+	AC_CHECK_LIB(shlwapi, SHGetFolderPath, [],
+		[AC_MSG_ERROR([Cannot find shlwapi library.])])
 	AC_CHECK_LIB(opengl32, main,
 		AC_CHECK_LIB(glu32, main,
 			[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
@@ -225,15 +227,17 @@ else
 	fi
 fi
 
+if test x"$CC" = xkos-cc; then
+	DREAMCHESS_LIBS="${DREAMCHESS_LIBS} libs/minizip/libminizip.a"
+	MINIZIP_LIB="libminizip.a"
+	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
+fi
+
 AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
-
-if test "$host_os" = "mingw32"; then
-    DREAMCHESS_LIBS="-lshlwapi $DREAMCHESS_LIBS"
-else
-    AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
-fi
+AC_SUBST(MINIZIP_LIB)
+AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -275,9 +279,11 @@ AC_CONFIG_FILES([Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
 		src/libs/mxml/Makefile
+		src/libs/minizip/Makefile
 		src/include/Makefile
-		src/ui_sdlgl/Makefile
 		src/include/gamegui/Makefile
+		src/include/minizip/Makefile
+		src/ui_sdlgl/Makefile
 		src/dreamer/Makefile])
 AC_OUTPUT
 
