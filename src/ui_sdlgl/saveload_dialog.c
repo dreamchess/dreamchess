@@ -178,6 +178,10 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
                 {
                     1.0f, 1.0f, 1.0f, 1.0f
                 };
+            gg_colour_t col_grey =
+                {
+                    0.3f, 0.3f, 0.3f, 1.0f
+                };
             hboxtemp = gg_hbox_create(0);
             hboxtemp2 = gg_hbox_create(0);
             gg_set_requested_size(hboxtemp2, 20, 20);
