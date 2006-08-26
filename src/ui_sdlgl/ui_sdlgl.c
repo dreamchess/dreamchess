@@ -263,7 +263,12 @@ static config_t *do_menu(int *pgn)
         else if ( fading_out == TRUE )
         {
             /* Draw fade... */
-            if ( !draw_fade( FADE_OUT ) )
+            if ( get_show_egg() && !draw_sonic_fade( FADE_OUT ) )
+            {
+                switch_to_game=TRUE;
+                gg_dialog_close();
+            }
+            else if ( !get_show_egg() && !draw_fade( FADE_OUT ) )
             {
                 switch_to_game=TRUE;
                 gg_dialog_close();
