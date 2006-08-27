@@ -157,6 +157,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
             sprintf( blackis, "Oh no.." );
             break;
         }
+
         sprintf( temp, "%s vs %s", whiteis, blackis );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
