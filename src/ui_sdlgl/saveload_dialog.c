@@ -103,7 +103,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_widget_t *board_box = gg_vbox_create(0);
     gg_widget_t *hboxtemp;
     gg_widget_t *widget;
-    int max_saveslots=15;
     char desc[80];
     int player_layout=0;
     int difficulty=0;
@@ -120,7 +119,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     /*printf( "Dialog opened with saveselected of %i\n", saveload_selected );*/
 
     /* Right side.. */
-    for ( i=0; i<max_saveslots; i++ )
+    for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
         load_save_xml( i, desc, &player_layout, &difficulty );
     }
@@ -255,7 +254,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_option_create();
-    for ( i=0; i<max_saveslots; i++ )
+    for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
         sprintf( temp, "Save slot: %i", i+1 );
         gg_option_append_label(GG_OPTION(widget), temp, 0.5f, 0.0f);
@@ -270,7 +269,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    /*for ( i=0; i<max_saveslots; i++ )
+    /*for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
         sprintf( temp, "%i:  ", i );
         widget = gg_action_create_with_label(temp, 0.0f, 0.0f);

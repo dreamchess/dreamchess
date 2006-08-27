@@ -2,9 +2,9 @@
 #include "ui_sdlgl.h"
 
 static int slots;
-static char time_save[10][80];
-static config_t config_save[10];
-static board_t saved_board[10];
+static char time_save[SAVEGAME_SLOTS][80];
+static config_t config_save[SAVEGAME_SLOTS];
+static board_t saved_board[SAVEGAME_SLOTS];
 
 board_t *get_saved_board( int index )
 {

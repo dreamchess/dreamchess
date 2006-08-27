@@ -251,9 +251,6 @@ static config_t *do_menu(int *pgn)
         if ( get_show_egg() )
             text_draw_string( 560, 440, "Egg!", 1, get_col(COL_WHITE));
 
-        if (!wait_menu)
-            gg_dialog_render_all();
-
         if ( switch_to_game == TRUE )
         {
             set_fading_out(FALSE);
@@ -263,16 +260,9 @@ static config_t *do_menu(int *pgn)
         else if ( fading_out == TRUE )
         {
             /* Draw fade... */
-            if ( get_show_egg() && !draw_sonic_fade( FADE_OUT ) )
-            {
+            if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
+                (!get_show_egg() && !draw_fade( FADE_OUT )))
                 switch_to_game=TRUE;
-                gg_dialog_close();
-            }
-            else if ( !get_show_egg() && !draw_fade( FADE_OUT ) )
-            {
-                switch_to_game=TRUE;
-                gg_dialog_close();
-            }
         }
         else if ( can_load == TRUE )
         {
@@ -301,6 +291,7 @@ static config_t *do_menu(int *pgn)
 
             set_fade_start(gg_system_get_ticks());
             set_fading_out(TRUE);
+            gg_dialog_close();
         }
 
         if ( set_loading == FALSE )
@@ -323,9 +314,11 @@ static config_t *do_menu(int *pgn)
             gg_widget_t *dialog = gg_dialog_create(widget, NULL, NULL, 0);
             gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
             gg_dialog_open(GG_DIALOG(dialog));
-            gg_dialog_render_all(); /* Hack */
             can_load = TRUE;
         }
+
+        if (!wait_menu)
+            gg_dialog_render_all();
 
         /* Draw fade... */
         if ( !fading_out )

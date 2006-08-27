@@ -299,4 +299,6 @@ int text_height();
 
 gg_colour_t *get_col( int colour );
 
+#define SAVEGAME_SLOTS 15
+
 #endif /* __UI_SDLGL_H */
