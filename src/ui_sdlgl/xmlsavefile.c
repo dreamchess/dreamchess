@@ -68,7 +68,6 @@ static void save_opaque(mxml_node_t *parent, char *name, char *value)
     mxmlNewOpaque(node, value);
 }
 
-static board_t board;
 void write_save_xml( int slot, char *desc )
 {
     FILE *fp;
@@ -105,7 +104,7 @@ void write_save_xml( int slot, char *desc )
     sprintf(temp, "%i", get_config()->cpu_level);
     save_opaque(tree, "level", temp);
 
-    fen = fen_encode(&board);
+    fen = fen_encode(get_board());
     if (!fen)
     {
         fprintf(stderr, "Error encoding FEN\n");
