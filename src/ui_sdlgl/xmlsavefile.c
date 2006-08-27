@@ -163,7 +163,7 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
         time = atoi(temp);
         tm = localtime(&time);
-        sprintf(time_save[slot], "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon,
+        sprintf(time_save[slot], "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon+1,
                 tm->tm_hour, tm->tm_min);
 
         load_opaque(save, "white", temp);
