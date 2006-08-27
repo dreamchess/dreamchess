@@ -20,8 +20,8 @@ static SDL_Joystick *joy;
 static float board_xpos, board_ypos;
 static int game_difficulty;
 static int game_type;
-static char* themelist[25];
-static char* stylelist[25];
+static char** themelist;
+static char** stylelist;
 static int num_style;
 static int pieces_list_total;
 static char** pieces_list;
@@ -167,7 +167,7 @@ void reset_turn_counter()
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
-    gg_dialog_t *keyboard = dialog_vkeyboard_create();
+    gg_dialog_t *keyboard /* = dialog_vkeyboard_create()*/;
     SDL_Event event;
     int mouse_x=0, mouse_y=0;
     int switch_to_game=FALSE;
@@ -424,18 +424,19 @@ static void init_gui()
     {
         set_theme_count(0);
         styledir_entry=readdir(styledir);
-        while ( styledir_entry != NULL )
+        while ((styledir_entry = readdir(styledir)) != NULL)
         {
             if ( styledir_entry->d_name[0] != '.' )
             {
                 sprintf( temp, "themes/%s", styledir_entry->d_name );
                 load_theme_xml( temp );
             }
-            styledir_entry=readdir(styledir);
         }
+        closedir(styledir);
     }
 
     /* Fill theme list. */
+    themelist = malloc(sizeof(char *) * (get_theme_count() + 1));
     if ( get_theme_count() > 0 )
     {
         for ( i=0; i<get_theme_count(); i++ )
@@ -447,13 +448,16 @@ static void init_gui()
     if ( (styledir=opendir("styles")) != NULL )
     {
         num_style = 0;
-        styledir_entry=readdir(styledir);
-        while ( styledir_entry != NULL )
+        while ((styledir_entry = readdir(styledir)) != NULL)
         {
             if ( styledir_entry->d_name[0] != '.' )
+            {
+                stylelist = realloc(stylelist, (num_style + 1) *
+                                      sizeof(char *));
                 stylelist[num_style++]=strdup( styledir_entry->d_name );
-            styledir_entry=readdir(styledir);
+            }
         }
+        closedir(styledir);
     }
 
     chdir("styles");
@@ -479,6 +483,7 @@ static void init_gui()
                     strdup(styledir_entry->d_name);
             }
         }
+        closedir(styledir);
     }
 
     style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
@@ -515,6 +520,7 @@ static void init_gui()
                     strdup(styledir_entry->d_name);
             }
         }
+        closedir(styledir);
     }
     update_fps_time();
 }
@@ -561,7 +567,42 @@ static int sdlgl_init()
 /** Implements ui_driver::exit. */
 static int sdlgl_exit()
 {
+    int i;
+    gg_system_exit();
     glDeleteTextures(1, &menu_title_tex.id);
+
+    if (joy)
+        SDL_JoystickClose(joy);
+
+    if (themelist)
+    {
+        for (i = 0; i < get_theme_count() + 1; i++)
+            free(themelist[i]);
+        free(themelist);
+    }
+
+    if (stylelist)
+    {
+        for (i = 0; i < num_style; i++)
+            free(stylelist[i]);
+        free(stylelist);
+    }
+
+    if (pieces_list)
+    {
+        for (i = 0; i < pieces_list_total; i++)
+            free(pieces_list[i]);
+
+        free(pieces_list);
+    }
+
+    if (board_list)
+    {
+        for (i = 0; i < board_list_total; i++)
+            free(board_list[i]);
+        free(board_list);
+    }
+
     SDL_Quit();
     return 0;
 }

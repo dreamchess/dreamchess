@@ -189,4 +189,6 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
             free(board);
         }
     }
+
+    mxmlDelete(tree);
 }

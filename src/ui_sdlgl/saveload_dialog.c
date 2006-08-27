@@ -119,10 +119,11 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     /*printf( "Dialog opened with saveselected of %i\n", saveload_selected );*/
 
     /* Right side.. */
-    for ( i=0; i<SAVEGAME_SLOTS; i++ )
-    {
-        load_save_xml( i, desc, &player_layout, &difficulty );
-    }
+    if (!changing_slot)
+        for ( i=0; i<SAVEGAME_SLOTS; i++ )
+        {
+            load_save_xml( i, desc, &player_layout, &difficulty );
+        }
 
     if ( get_slots() & (1 << saveload_selected) )
     {

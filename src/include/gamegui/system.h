@@ -118,6 +118,8 @@ struct gg_widget *gg_check_cast(struct gg_widget *widget, gg_class_id id, char *
 
 void gg_system_init(gg_driver_t *d);
 
+void gg_system_exit();
+
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour);
 
 void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour);

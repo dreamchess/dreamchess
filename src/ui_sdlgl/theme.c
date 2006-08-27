@@ -187,6 +187,8 @@ void load_theme_xml( char *xmlfile )
 
         theme_count++;
     }
+
+    mxmlDelete(tree);
     /* printf( "We loaded %i themes\n", theme_count ); */
 }
 

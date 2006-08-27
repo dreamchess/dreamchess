@@ -67,6 +67,14 @@ void gg_system_init(gg_driver_t *d)
     driver = d;
 }
 
+void gg_system_exit()
+{
+    gg_dialog_cleanup();
+
+    if (parent_class)
+        free(parent_class);
+}
+
 unsigned int gg_system_get_ticks()
 {
     return driver->get_ticks();

@@ -51,6 +51,8 @@ static void *list_get_item(list_t *list, int index)
 
 static void list_destroy(list_t *list)
 {
+    if (list->item)
+        free(list->item);
     free(list);
 }
 

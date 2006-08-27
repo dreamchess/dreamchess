@@ -296,8 +296,8 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 
         gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
 
-        if (event.mouse.button == 0
-            && event.mouse.type == GG_MOUSE_BUTTON_DOWN)
+        if (event.mouse.type == GG_MOUSE_BUTTON_DOWN
+            && event.mouse.button == 0)
         {
             if (dialog->title)
             {
@@ -328,8 +328,8 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
                 }
             }
         }
-        else if (event.mouse.button == 0
-            && event.mouse.type == GG_MOUSE_BUTTON_UP)
+        else if (event.mouse.type == GG_MOUSE_BUTTON_UP
+            && event.mouse.button == 0)
         {
             if (dialog->title)
             {
@@ -409,15 +409,6 @@ void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, fl
 void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
                     gg_dialog_t *parent, int flags)
 {
-    gg_dialog_style_t style;
-    gg_colour_t border_col = {0.0f, 0.0f, 0.0f, 1.0f};
-    gg_colour_t bg_col = {0.8f, 0.8f, 0.8f, 1.0f};
-    gg_colour_t fade_col = {0.0f, 0.0f, 0.0f, 0.5f};
-
-    style.fade_col = fade_col;
-    style.hor_pad = 20;
-    style.vert_pad = 10;
-
     gg_bin_init((gg_bin_t *) dialog, child);
 
     dialog->input = gg_dialog_input;
@@ -437,7 +428,6 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
 
     child->get_requested_size(child, &dialog->width, &dialog->height);
     child->set_size(child, dialog->width, dialog->height);
-    gg_dialog_set_style(dialog, &style);
 
     gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
 }
@@ -465,7 +455,7 @@ void gg_dialog_destroy(gg_widget_t *widget)
     if (dialog->title)
         free(dialog->title);
 
-    gg_widget_destroy(widget);
+    gg_container_destroy(widget);
 }
 
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
