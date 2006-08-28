@@ -1,25 +1,18 @@
 
 #include "ui_sdlgl.h"
 
-static void poll_move();
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
 static texture_t menu_title_tex;
 static int white_in_check;
 static int black_in_check;
 static board_t board;
-static int can_load=FALSE;
 static int pgn_slot;
-static SDL_Surface *surface;
 static int quit_to_menu=FALSE;
 static int title_process_retval;
 static int set_loading=FALSE;
 static int dialog_promote_piece;
-static int wait_menu = 1;
 static SDL_Joystick *joy;
-static float board_xpos, board_ypos;
-static int game_difficulty;
-static int game_type;
 static char** themelist;
 static char** stylelist;
 static int num_style;
@@ -29,9 +22,23 @@ static char** board_list;
 static int board_list_total;
 static int show_egg;
 
-void set_show_egg( int set )
+static int menu_state;
+enum {
+    MENU_STATE_FADE_IN,
+    MENU_STATE_PRESS_KEY,
+    MENU_STATE_IN_MENU,
+    MENU_STATE_LOAD,
+    MENU_STATE_FADE_OUT,
+    MENU_STATE_RETURN
+};
+
+static void poll_move();
+
+void set_show_egg( int set
+                     )
 {
-    show_egg=set;
+    show_egg=set
+             ;
 }
 
 int get_show_egg()
@@ -164,123 +171,139 @@ void reset_turn_counter()
     turn_counter_start=SDL_GetTicks();
 }
 
+static int poll_event(gg_event_t *event)
+{
+    gg_event_t gg_event;
+    SDL_Event sdl_event;
+
+    while (SDL_PollEvent(&sdl_event))
+    {
+
+        if (sdl_event.type == SDL_QUIT)
+            /* FIXME */
+            exit(0);
+
+        gg_event = convert_event(&sdl_event);
+
+        if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x06)
+        {
+            toggle_show_fps();
+            continue;
+        }
+
+        *event = gg_event;
+        return 1;
+    }
+
+    return 0;
+}
+
+static void draw_press_key_message()
+{
+    char *msg = "Press any key or button to start";
+
+    text_draw_string_bouncy(SCREEN_WIDTH / 2 - text_width(msg) * 0.75, 40,
+                            msg, 1.5f, get_col(COL_WHITE));
+}
+
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
-    gg_dialog_t *keyboard /* = dialog_vkeyboard_create()*/;
-    SDL_Event event;
-    int mouse_x=0, mouse_y=0;
-    int switch_to_game=FALSE;
-    game_difficulty=1;
-    game_type=GAME_TYPE_HUMAN_VS_CPU;
     title_process_retval=2;
-
-    board_xpos=128;
-    board_ypos=30;
-    can_load=FALSE;
-    set_loading=FALSE;
-
-    white_in_check=FALSE;
-    black_in_check=FALSE;
-
-    draw_credits(1);
-
-    open_title_root_dialog();
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    set_loading=FALSE;
+    draw_credits(1);
+    open_title_root_dialog();
+
     set_fade_start(gg_system_get_ticks());
     set_show_egg(FALSE);
+
     while ( 1 )
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        int mouse_x, mouse_y;
+        gg_event_t event;
 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gg_dialog_cleanup();
 
-        /* Precess input */
-        while ( SDL_PollEvent( &event ) )
+        /* Draw the menu.. */
+        draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
+        text_draw_string_right(620, 20, "v" PACKAGE_VERSION, 0.75f, get_col(COL_WHITE));
+
+        if (get_show_egg())
+            text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));
+
+        switch(menu_state)
         {
-            gg_event_t gg_event;
+        case MENU_STATE_FADE_IN:
+            draw_press_key_message();
 
-            if (event.type == SDL_QUIT)
-                /* FIXME */
-                exit(0);
-
-            gg_event = convert_event(&event);
-
-            /* Used for the easter egg .. */
-            if (!wait_menu && gg_event.type == GG_EVENT_KEY && gg_event.key == 'e')
-                set_show_egg(TRUE);
-
-            if (wait_menu)
+            if (!draw_fade(FADE_IN))
             {
-                if (gg_event.type == GG_EVENT_KEY
-                    || (gg_event.type == GG_EVENT_MOUSE
-                    && gg_event.mouse.type == GG_MOUSE_BUTTON_DOWN))
-                    wait_menu = 0;
-                continue;
+                menu_state = MENU_STATE_PRESS_KEY;
+                draw_credits(1);
             }
+            break;
 
-            if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x06)
+        case MENU_STATE_PRESS_KEY:
+            draw_press_key_message();
+            draw_credits(0);
+
+            while (poll_event(&event))
             {
-                toggle_show_fps();
-                continue;
+                if (event.type == GG_EVENT_KEY
+                        || (event.type == GG_EVENT_MOUSE
+                            && event.mouse.type == GG_MOUSE_BUTTON_DOWN))
+                    menu_state = MENU_STATE_IN_MENU;
             }
+            break;
 
-            if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x0b)
+        case MENU_STATE_IN_MENU:
+            while (poll_event(&event))
             {
-                /* toggle_vkeyboard_enabled(); */
-                continue;
+                if (event.type == GG_EVENT_KEY && event.key == 'e')
+                    set_show_egg(TRUE);
+                else
+                    gg_dialog_input_current(event);
             }
-
-            if (get_vkeyboard_enabled())
-                keyboard->input(GG_WIDGET(keyboard), gg_event);
-            else
-                gg_dialog_input_current(gg_event);
 
             if (title_process_retval == 1)
                 return NULL;
-        }
 
-        /* Draw the menu.. */
-        draw_texture( &menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE) );
-        text_draw_string_right( 620, 20, "v" PACKAGE_VERSION, 0.75f, get_col(COL_WHITE));
+            if (set_loading)
+            {
+                gg_widget_t *widget = gg_label_create("Loading, please wait...");
+                widget = gg_dialog_create(widget, NULL, NULL, 0);
+                gg_dialog_set_style(GG_DIALOG(widget), get_menu_style());
+                gg_dialog_open(GG_DIALOG(widget));
+                menu_state = MENU_STATE_LOAD;
+            }
+            else
+                draw_credits(0);
 
-        if ( get_show_egg() )
-            text_draw_string( 560, 440, "Egg!", 1, get_col(COL_WHITE));
+            gg_dialog_render_all();
+            break;
 
-        if ( switch_to_game == TRUE )
-        {
-            set_fading_out(FALSE);
-            set_fade_start(gg_system_get_ticks());
-            return &config;
-        }
-        else if ( fading_out == TRUE )
-        {
-            /* Draw fade... */
-            if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
-                (!get_show_egg() && !draw_fade( FADE_OUT )))
-                switch_to_game=TRUE;
-        }
-        else if ( can_load == TRUE )
-        {
+        case MENU_STATE_LOAD:
             /* We using custom? */
             if ( get_selected_theme()==get_theme_count() )
             {
-                sprintf(get_white_name(),"White"); 
+                sprintf(get_white_name(),"White");
                 sprintf(get_black_name(),"Black");
                 load_theme(get_stylelist(get_cur_style()),
-                    get_pieces_list(get_pieces_list_cur()),
-                    get_board_list(get_board_list_cur()));
+                           get_pieces_list(get_pieces_list_cur()),
+                           get_board_list(get_board_list_cur()));
             }
             else
             {
                 /* printf( "Loading theme %i\n", selected_theme ); */
                 load_theme(get_theme(get_selected_theme())->style, get_theme(get_selected_theme())->pieces,
                            get_theme(get_selected_theme())->board);
-                sprintf(get_white_name(),"%s",get_theme(get_selected_theme())->white_name); 
+                sprintf(get_white_name(),"%s",get_theme(get_selected_theme())->white_name);
                 sprintf(get_black_name(),"%s",get_theme(get_selected_theme())->black_name);
             }
 
@@ -290,46 +313,37 @@ static config_t *do_menu(int *pgn)
                 config = *get_config_save(pgn_slot);
 
             set_fade_start(gg_system_get_ticks());
-            set_fading_out(TRUE);
             gg_dialog_close();
-        }
 
-        if ( set_loading == FALSE )
-        {
-            char msg[] = "Press any key or button to start";
+            menu_state = MENU_STATE_FADE_OUT;
+            break;
 
-            draw_credits(0);
+        case MENU_STATE_FADE_OUT:
+            if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
+                    (!get_show_egg() && !draw_fade( FADE_OUT )))
+            {
+                set_fade_start(gg_system_get_ticks());
+                menu_state = MENU_STATE_RETURN;
+                return &config;
+            }
+            break;
 
-            if (wait_menu)
-                text_draw_string_bouncy( SCREEN_WIDTH / 2 -
-                                         text_width(msg) * 0.75, 40, msg,
-                                         1.5f, get_col(COL_WHITE));
-
-            if (get_vkeyboard_enabled())
-                gg_dialog_render(keyboard);
-        }
-        else if (!fading_out)
-        {
-            gg_widget_t *widget = gg_label_create("Loading, please wait...");
-            gg_widget_t *dialog = gg_dialog_create(widget, NULL, NULL, 0);
-            gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
-            gg_dialog_open(GG_DIALOG(dialog));
-            can_load = TRUE;
-        }
-
-        if (!wait_menu)
+        case MENU_STATE_RETURN:
             gg_dialog_render_all();
 
-        /* Draw fade... */
-        if ( !fading_out )
-            draw_fade( FADE_IN );
+            if (!draw_fade(FADE_IN))
+                menu_state = MENU_STATE_IN_MENU;
+            break;
+
+        }
 
         /* Draw mouse cursor.. */
-        #ifndef _arch_dreamcast
+#ifndef _arch_dreamcast
+
         SDL_GetMouseState(&mouse_x, &mouse_y);
-        draw_texture( get_mouse_cursor(), mouse_x, (479-mouse_y-32), 32, 32, 1.0f, 
-            get_col(COL_WHITE) );
-        #endif /* _arch_dreamcast */
+        draw_texture( get_mouse_cursor(), mouse_x, (479-mouse_y-32), 32, 32, 1.0f,
+                      get_col(COL_WHITE) );
+#endif /* _arch_dreamcast */
 
         gl_swap();
     }
@@ -339,7 +353,7 @@ static config_t *do_menu(int *pgn)
 static void init_gui()
 {
     int video_flags;
-    SDL_Surface *icon;
+    SDL_Surface *icon, *surface;
     const SDL_VideoInfo *video_info;
     int i;
     DIR* styledir;
@@ -453,7 +467,7 @@ static void init_gui()
             if ( styledir_entry->d_name[0] != '.' )
             {
                 stylelist = realloc(stylelist, (num_style + 1) *
-                                      sizeof(char *));
+                                    sizeof(char *));
                 stylelist[num_style++]=strdup( styledir_entry->d_name );
             }
         }
@@ -463,9 +477,10 @@ static void init_gui()
     chdir("styles");
     chdir("default");
     load_border(get_menu_border(), "border.png");
-    #ifndef _arch_dreamcast
+#ifndef _arch_dreamcast
+
     load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1 );
-    #endif /* _arch_dreamcast */
+#endif /* _arch_dreamcast */
 
     /* Fill pieces list. */
     ch_datadir();

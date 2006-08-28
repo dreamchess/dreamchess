@@ -102,6 +102,12 @@ void gg_dialog_close()
         gg_dialog_cls(TAILQ_FIRST(&dialogs));
 }
 
+void gg_dialog_close_all()
+{
+    while (!TAILQ_EMPTY(&dialogs))
+        gg_dialog_cls(TAILQ_FIRST(&dialogs));
+}
+
 /** @brief Returns the dialog that's on top of the stack.
  *
  *  @return The dialog that's on top of the stack, or NULL if the stack is

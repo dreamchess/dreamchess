@@ -167,6 +167,8 @@ void gg_dialog_open(gg_dialog_t *dialog);
 /** @brief Closes the dialog that's on top of the dialog stack (if any). */
 void gg_dialog_close();
 
+void gg_dialog_close_all();
+
 /** @brief Returns the dialog that's on top of the dialog stack.
  *
  *  @return Dialog on top of stack, or NULL if stack is empty.

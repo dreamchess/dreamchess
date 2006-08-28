@@ -69,6 +69,7 @@ void gg_system_init(gg_driver_t *d)
 
 void gg_system_exit()
 {
+    gg_dialog_close_all();
     gg_dialog_cleanup();
 
     if (parent_class)
