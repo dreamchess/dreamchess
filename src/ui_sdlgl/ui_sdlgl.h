@@ -144,8 +144,10 @@ gg_dialog_t *dialog_victory_create(result_t *result);
 void set_selected_player_layout( int set );
 void set_selected_difficulty( int set );
 gg_dialog_t *dialog_title_root_create();
-gg_dialog_t *dialog_title_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
+/*gg_dialog_t *dialog_title_create(gg_dialog_t *parent);*/
 gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent);
 int get_cur_style();
 int get_pieces_list_cur();
 int get_board_list_cur();

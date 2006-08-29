@@ -100,16 +100,21 @@ void dialog_title_players(gg_widget_t *widget, void *data)
 
 static void dialog_title_root_new(gg_widget_t *widget, void *data)
 {
-    /* If created, and theme set to custom.. open custom.. */
-    if ( get_selected_theme() == get_theme_count() )
-         gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
-    else
-        gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)));
+    gg_dialog_open(dialog_title_newgame_create(gg_widget_find_dialog(widget)));
 }
 
 static void dialog_title_root_load(gg_widget_t *widget, void *data)
 {
     gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), FALSE));
+}
+
+static void dialog_title_root_select_theme(gg_widget_t *widget, void *data)
+{
+    /* If created, and theme set to custom.. open custom.. */
+    if ( get_selected_theme() == get_theme_count() )
+         gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
+    else
+        gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)));
 }
 
 static void dialog_title_level(gg_widget_t *widget, void *data)
@@ -126,7 +131,7 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
         /* printf( "Theme changed from Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
-        gg_dialog_open(dialog_title_create(gg_widget_find_dialog(widget)->parent_dialog));
+        gg_dialog_open(dialog_title_newgame_create(gg_widget_find_dialog(widget)->parent_dialog));
         swapping_custom=FALSE;
     }
 }
@@ -183,19 +188,19 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     flip_board = 0;
     set_pgn_slot(-1);
 
-    widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
     vbox = gg_vbox_create(0);
+    vbox2 = gg_vbox_create(0);
+    /*widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     label = gg_label_create("  Players:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
     label = gg_label_create("  Difficulty:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
+    gg_container_append(GG_CONTAINER(vbox2), label);*/
 
     label = gg_label_create("  Theme:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
@@ -219,13 +224,13 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
 
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
+    vbox2 = gg_vbox_create(0);
 
-    widget = gg_option_create();
+   /* widget = gg_option_create();
     gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
-    vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
 
@@ -236,7 +241,7 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
+    gg_option_set_selected(GG_OPTION(widget),selected_difficulty);*/
 
     /* Themelist list.. */
     widget = gg_option_create();
@@ -287,7 +292,65 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     return GG_DIALOG(dialog);
 }
 
-gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
+gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
+{
+    gg_widget_t *dialog;
+    gg_widget_t *vbox;
+    gg_widget_t *widget;
+    gg_widget_t *vbox2;
+    gg_widget_t *hbox;
+    gg_widget_t *label;
+    int i;
+
+    get_config()->player[WHITE] = PLAYER_UI;
+    get_config()->player[BLACK] = PLAYER_ENGINE;
+    get_config()->cpu_level = 1;
+    cur_style = 0;
+    pieces_list_cur = 0;
+    board_list_cur = 0;
+    flip_board = 0;
+    set_pgn_slot(-1);
+
+    vbox = gg_vbox_create(0);
+    vbox2 = gg_vbox_create(0);
+
+    label = gg_label_create("  Theme:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    hbox = gg_hbox_create(20);
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
+    vbox2 = gg_vbox_create(0);
+
+    /* Themelist list.. */
+    widget = gg_option_create();
+    for (i = 0; i < get_theme_count()+1; i++)
+        gg_option_append_label(GG_OPTION(widget), get_themelist(i), 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+    gg_option_set_selected(GG_OPTION(widget),get_selected_theme());
+
+    gg_container_append(GG_CONTAINER(hbox), vbox2);
+    gg_container_append(GG_CONTAINER(vbox), hbox);
+
+    widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+
+    if ( swapping_custom )
+    {
+        gg_vbox_set_selected(vbox, 1 );
+        gg_vbox_set_selected(vbox2, 2 );
+    }
+
+    return GG_DIALOG(dialog);
+}
+
+gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -320,9 +383,9 @@ gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("  Theme:");
+   /* label = gg_label_create("  Theme:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
+    gg_container_append(GG_CONTAINER(vbox2), label);*/
 
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
@@ -346,12 +409,12 @@ gg_dialog_t *dialog_title_create(gg_dialog_t *parent)
     gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
 
     /* Themelist list.. */
-    widget = gg_option_create();
+   /* widget = gg_option_create();
     for (i = 0; i < get_theme_count()+1; i++)
         gg_option_append_label(GG_OPTION(widget), get_themelist(i), 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),get_selected_theme());
+    gg_option_set_selected(GG_OPTION(widget),get_selected_theme());*/
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
@@ -396,6 +459,10 @@ gg_dialog_t *dialog_title_root_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
+    widget = gg_action_create_with_label("Select Theme", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_title_root_select_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
     widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
@@ -413,8 +480,4 @@ void open_title_root_dialog()
     gg_dialog_t *title=dialog_title_root_create();
 
     gg_dialog_open(title);
-
-    /* If created, and theme set to custom.. open custom.. */
-    if ( get_selected_theme() == get_theme_count() )
-         gg_dialog_open(dialog_title_custom_create(title));
 }
