@@ -240,6 +240,7 @@ static config_t *do_menu(int *pgn)
         switch(menu_state)
         {
         case MENU_STATE_FADE_IN:
+            while (poll_event(&event));
             draw_press_key_message();
 
             if (!draw_fade(FADE_IN))
@@ -319,6 +320,7 @@ static config_t *do_menu(int *pgn)
             break;
 
         case MENU_STATE_FADE_OUT:
+            while (poll_event(&event));
             if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
                     (!get_show_egg() && !draw_fade( FADE_OUT )))
             {
@@ -329,6 +331,7 @@ static config_t *do_menu(int *pgn)
             break;
 
         case MENU_STATE_RETURN:
+            while (poll_event(&event));
             gg_dialog_render_all();
 
             if (!draw_fade(FADE_IN))
@@ -633,7 +636,7 @@ static void poll_move()
 {
     static int source = -1, dest = -1, needprom = 0;
     /* board_t *board = history->play->board; */
-    move_t *move;
+    move_t move;
     int input;
 
     draw_scene(&board);
@@ -708,22 +711,20 @@ static void poll_move()
         return;
     }
 
-    move = (move_t *) malloc(sizeof(move_t));
-    move->source = source;
-    move->destination = dest;
+    move.source = source;
+    move.destination = dest;
     if (needprom == 2)
-        move->promotion_piece = dialog_promote_piece;
+        move.promotion_piece = dialog_promote_piece;
     else
-        move->promotion_piece = NONE;
+        move.promotion_piece = NONE;
     needprom = 0;
 
     /* start_piece_move( source, dest ); */
 
     source = -1;
     dest = -1;
-    game_make_move(move, 1);
+    game_make_move(&move, 1);
     reset_turn_counter();
-    return;
 }
 
 /** SDL + OpenGL driver. */

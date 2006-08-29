@@ -150,6 +150,8 @@ static void data_col_free(data_col_t *data_col, void (* free_data) (void *))
         free(data_col->item[i].name);
         free_data(data_col->item[i].data);
     }
+
+    free(data_col->item);
 }
 
 static void *data_col_find(data_col_t *data_col, char *name)
@@ -521,6 +523,8 @@ void loadmodels(char *filename)
         is_2d = 1;
     else
         is_2d = 0;
+
+    fclose(f);
 }
 
 void load_board(char *dcm_name, char *texture_name)
@@ -532,11 +536,16 @@ void load_board(char *dcm_name, char *texture_name)
 void free_mesh(void *data)
 {
     mesh_t *mesh = data;
+    int i;
 
     free(mesh->vertex);
     free(mesh->normal);
     free(mesh->tex_coord);
 
+    for (i = 0; i < mesh->groups; i++)
+        free(mesh->group[i].data);
+
+    free(mesh->group);
     free(mesh);
 }
 

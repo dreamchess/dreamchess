@@ -545,6 +545,8 @@ int dreamchess(void *data)
                         }
                     }
                 }
+
+                free(s);
             }
             ui->poll();
         }

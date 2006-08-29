@@ -33,8 +33,6 @@
 #define GAME_TYPE_CPU_VS_HUMAN      1
 #define GAME_TYPE_HUMAN_VS_HUMAN    2
 
-#define MOVE_SPEED                  (60 / get_fps())
-
 #define LEFT (1 << 0)
 #define RIGHT (1 << 1)
 #define UP (1 << 2)
@@ -53,7 +51,7 @@
 #define SCREEN_BPP     16
 
 /** Desired frames per second. */
-#define FPS 9999
+#define FPS 60
 
 /* Speed that text types, characters per second. */
 #define STRING_TYPE_SPEED 20

@@ -621,66 +621,66 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
 
 char *move_to_san(board_t *board, move_t *move)
 {
-    san_move_t *san_move = (san_move_t *) malloc(sizeof(san_move_t));
+    san_move_t san_move;
 
     switch (move->state)
     {
     case MOVE_CHECK:
-        san_move->state = SAN_STATE_CHECK;
+        san_move.state = SAN_STATE_CHECK;
         break;
     case MOVE_CHECKMATE:
-        san_move->state = SAN_STATE_CHECKMATE;
+        san_move.state = SAN_STATE_CHECKMATE;
         break;
     default:
-        san_move->state = SAN_STATE_NORMAL;
+        san_move.state = SAN_STATE_NORMAL;
     }
 
     switch (move->type)
     {
     case QUEENSIDE_CASTLE:
-        san_move->type = SAN_QUEENSIDE_CASTLE;
-        return san_string(san_move);
+        san_move.type = SAN_QUEENSIDE_CASTLE;
+        return san_string(&san_move);
     case KINGSIDE_CASTLE:
-        san_move->type = SAN_KINGSIDE_CASTLE;
-        return san_string(san_move);
+        san_move.type = SAN_KINGSIDE_CASTLE;
+        return san_string(&san_move);
     case CAPTURE:
-        san_move->type = SAN_CAPTURE;
+        san_move.type = SAN_CAPTURE;
         break;
     default:
-        san_move->type = SAN_NORMAL;
+        san_move.type = SAN_NORMAL;
     }
 
-    san_move->piece = san_piece(board->square[move->source]);
-    san_move->source_file = SAN_NOT_SPECIFIED;
-    san_move->source_rank = SAN_NOT_SPECIFIED;
-    san_move->destination = move->destination;
+    san_move.piece = san_piece(board->square[move->source]);
+    san_move.source_file = SAN_NOT_SPECIFIED;
+    san_move.source_rank = SAN_NOT_SPECIFIED;
+    san_move.destination = move->destination;
     if (move->promotion_piece != NONE)
-        san_move->promotion_piece = san_piece(move->promotion_piece);
+        san_move.promotion_piece = san_piece(move->promotion_piece);
     else
-        san_move->promotion_piece = NONE;
+        san_move.promotion_piece = NONE;
 
-    if (san_move->piece == SAN_PAWN)
+    if (san_move.piece == SAN_PAWN)
     {
         if (move->source % 8 != move->destination % 8)
-            san_move->source_file = move->source % 8;
+            san_move.source_file = move->source % 8;
     }
     else
     {
         move_t *u_move;
-        u_move = find_unique_move(board, san_move);
+        u_move = find_unique_move(board, &san_move);
         if (!u_move)
         {
-            san_move->source_file = move->source % 8;
-            u_move = find_unique_move(board, san_move);
+            san_move.source_file = move->source % 8;
+            u_move = find_unique_move(board, &san_move);
             if (!u_move)
             {
-                san_move->source_file = SAN_NOT_SPECIFIED;
-                san_move->source_rank = move->source / 8;
-                u_move = find_unique_move(board, san_move);
+                san_move.source_file = SAN_NOT_SPECIFIED;
+                san_move.source_rank = move->source / 8;
+                u_move = find_unique_move(board, &san_move);
                 if (!u_move)
                 {
-                    san_move->source_file = move->source % 8;
-                    u_move = find_unique_move(board, san_move);
+                    san_move.source_file = move->source % 8;
+                    u_move = find_unique_move(board, &san_move);
                     if (!u_move)
                     {
                         fprintf(stderr, "Couldn't convert move to SAN.\n");
@@ -697,7 +697,7 @@ char *move_to_san(board_t *board, move_t *move)
             free(u_move);
     }
 
-    return san_string(san_move);
+    return san_string(&san_move);
 }
 
 move_t* san_to_move(board_t *board, char *move_s)

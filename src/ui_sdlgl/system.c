@@ -39,7 +39,7 @@ void toggle_show_fps()
     fps_enabled = 1 - fps_enabled;
 }
 
-struct
+static struct
 {
     int x;
     int y;

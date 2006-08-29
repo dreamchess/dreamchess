@@ -71,11 +71,20 @@ void history_exit(history_t *hist)
 
     while (step)
     {
+        step_t *s;
         if (step->move)
             free(step->move);
         if (step->board)
             free(step->board);
+        s = step;
         step = step->prev;
+        free(s);
+    }
+
+    if (hist->result)
+    {
+        free(hist->result->reason);
+        free(hist->result);
     }
 
     free(hist);

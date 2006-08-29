@@ -1,5 +1,7 @@
-
 #include "ui_sdlgl.h"
+
+#define KEYBOARD_CAM_SPEED (60 / get_fps())
+#define MOUSE_CAM_SPEED 1
 
 /** @brief Main input routine.
  *
@@ -23,7 +25,7 @@ int get_move()
 
     if( mousestate & SDL_BUTTON_MIDDLE )
     {
-        move_camera( -(mousey-last_mousey)*MOVE_SPEED, -(mousex-last_mousex)*MOVE_SPEED);
+        move_camera( -(mousey-last_mousey)*MOUSE_CAM_SPEED, -(mousex-last_mousex)*MOUSE_CAM_SPEED);
         last_mousex=mousex;
         last_mousey=mousey;
     }
@@ -36,13 +38,13 @@ int get_move()
     if (keystate[SDLK_LCTRL])
     {
         if (keystate[SDLK_DOWN])
-            move_camera(-0.6f * MOVE_SPEED, 0.0f);
+            move_camera(-KEYBOARD_CAM_SPEED, 0.0f);
         if (keystate[SDLK_LEFT])
-            move_camera(0.0f, -0.6f * MOVE_SPEED);
+            move_camera(0.0f, -KEYBOARD_CAM_SPEED);
         if (keystate[SDLK_RIGHT])
-            move_camera(0.0f, 0.6f * MOVE_SPEED);
+            move_camera(0.0f, KEYBOARD_CAM_SPEED);
         if (keystate[SDLK_UP])
-            move_camera(0.6f * MOVE_SPEED, 0.0f);
+            move_camera(KEYBOARD_CAM_SPEED, 0.0f);
 
         while (SDL_PollEvent( &event ))
             if (event.type == SDL_QUIT)
@@ -51,12 +53,10 @@ int get_move()
     }
 
     if ((roty < -3000) || (roty > 3000))
-        move_camera(-roty / (float) 32768 * 0.6f * MOVE_SPEED, 0.0f);
+        move_camera(-roty / (float) 32768 * KEYBOARD_CAM_SPEED, 0.0f);
 
     if ((rotx < -3000) || (rotx > 3000))
-        move_camera(0.0f, -rotx / (float) 32768 * 0.6f * MOVE_SPEED);
-
-
+        move_camera(0.0f, -rotx / (float) 32768 * KEYBOARD_CAM_SPEED);
 
     while ( SDL_PollEvent( &event ) )
     {
