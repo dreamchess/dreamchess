@@ -1,5 +1,6 @@
 
 #include "ui_sdlgl.h"
+#include "svn_version.h"
 
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
@@ -232,7 +233,7 @@ static config_t *do_menu(int *pgn)
 
         /* Draw the menu.. */
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
-        text_draw_string_right(620, 20, "v" PACKAGE_VERSION, 0.75f, get_col(COL_WHITE));
+        text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (r" SVN_VERSION ")", 0.75f, get_col(COL_WHITE));
 
         if (get_show_egg())
             text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));
