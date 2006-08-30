@@ -131,7 +131,7 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
         /* printf( "Theme changed from Custom!\n" ); */
         gg_dialog_close();
         swapping_custom=TRUE;
-        gg_dialog_open(dialog_title_newgame_create(gg_widget_find_dialog(widget)->parent_dialog));
+        gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)->parent_dialog));
         swapping_custom=FALSE;
     }
 }
@@ -283,11 +283,11 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
-    if ( swapping_custom )
+    /*if ( swapping_custom )
     {
-        gg_vbox_set_selected(vbox, 1 );
-        gg_vbox_set_selected(vbox2, 2 );
-    }
+        gg_vbox_set_selected(vbox, 0 );
+        gg_vbox_set_selected(vbox2, 0 );
+    }*/
 
     return GG_DIALOG(dialog);
 }
@@ -341,11 +341,11 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
-    if ( swapping_custom )
+    /*if ( swapping_custom )
     {
         gg_vbox_set_selected(vbox, 1 );
         gg_vbox_set_selected(vbox2, 2 );
-    }
+    }*/
 
     return GG_DIALOG(dialog);
 }
@@ -469,7 +469,7 @@ gg_dialog_t *dialog_title_root_create()
 
     dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 23, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
     return GG_DIALOG(dialog);
