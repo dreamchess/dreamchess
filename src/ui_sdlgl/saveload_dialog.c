@@ -90,6 +90,7 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
 
     write_save_xml( saveload_selected, temp );
     game_save( saveload_selected );
+    dc_store_savegames();
     gg_dialog_close();
     gg_dialog_close();
 }
@@ -119,10 +120,13 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
 
     /* Right side.. */
     if (!changing_slot)
+    {
+#ifdef _arch_dreamcast
+        dc_restore_savegames();
+#endif
         for ( i=0; i<SAVEGAME_SLOTS; i++ )
-        {
             load_save_xml( i, desc, &player_layout, &difficulty );
-        }
+    }
 
     if ( get_slots() & (1 << saveload_selected) )
     {

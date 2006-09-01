@@ -100,7 +100,7 @@ int ch_datadir()
 
 int ch_userdir()
 {
-    return chdir("/vmu/a1");
+    return chdir("/ram");
 }
 
 #else /* !__WIN32__ && !_arch_dreamcast */

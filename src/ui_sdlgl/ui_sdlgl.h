@@ -298,6 +298,12 @@ int text_height();
 #define COL_RED     2
 #define COL_YELLOW  3
 
+/* saveload_dc.c */
+#ifdef _arch_dreamcast
+int dc_store_savegames();
+int dc_restore_savegames();
+#endif
+
 gg_colour_t *get_col( int colour );
 
 #define SAVEGAME_SLOTS 15
