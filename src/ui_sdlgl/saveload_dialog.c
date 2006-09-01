@@ -90,7 +90,9 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
 
     write_save_xml( saveload_selected, temp );
     game_save( saveload_selected );
+#ifdef _arch_dreamcast
     dc_store_savegames();
+#endif
     gg_dialog_close();
     gg_dialog_close();
 }
