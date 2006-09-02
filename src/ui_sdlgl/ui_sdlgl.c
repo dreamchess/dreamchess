@@ -386,6 +386,10 @@ static void init_gui()
     SDL_WM_SetIcon(icon, NULL);
     SDL_FreeSurface(icon);
 
+#ifdef _arch_dreamcast
+    dc_draw_vmu_icon();
+#endif
+
     video_info = SDL_GetVideoInfo( );
 
     if ( !video_info )

@@ -302,6 +302,7 @@ int text_height();
 #ifdef _arch_dreamcast
 int dc_store_savegames();
 int dc_restore_savegames();
+void dc_draw_vmu_icon();
 #endif
 
 gg_colour_t *get_col( int colour );
