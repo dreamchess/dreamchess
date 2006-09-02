@@ -172,7 +172,7 @@ static int zip_savegames()
     fs_chdir("/ram");
     dir = fs_open(".", O_RDONLY | O_DIR);
 
-    if (!dir)
+    if (dir == -1)
     {
         printf("Failed to read /ram directory\n");
         return -1;
@@ -187,7 +187,7 @@ static int zip_savegames()
         if (!strcmp(dirent->name, ZIPNAME))
             continue;
 
-        if (!(file = fs_open(dirent->name, O_RDONLY)))
+        if ((file = fs_open(dirent->name, O_RDONLY)) == -1)
         {
             printf("Failed to open %s\n", dirent->name);
             return -1;
@@ -223,7 +223,7 @@ static int package_savegames(char *vmupath)
     int pkg_size;
     char *outfname;
 
-    if (!(inf = fs_open("/ram/" ZIPNAME, O_RDONLY)))
+    if ((inf = fs_open("/ram/" ZIPNAME, O_RDONLY)) == -1)
     {
         printf("Failed to open /ram/" ZIPNAME "\n");
         return -1;
@@ -260,7 +260,7 @@ static int package_savegames(char *vmupath)
     strcpy(outfname, vmupath);
     strcat(outfname, "/" FILENAME);
 
-    if (!(outf = fs_open(outfname, O_WRONLY | O_TRUNC)))
+    if ((outf = fs_open(outfname, O_WRONLY | O_TRUNC)) == -1)
     {
         printf("Failed to create file on VMU\n");
         fs_close(inf);
@@ -309,7 +309,7 @@ static int unzip_savegames()
         if (unzGetCurrentFileInfo(zip, NULL, filename, MAX_NAME_LEN, NULL, 0, NULL, 0) != ZIP_OK)
             return -1;
 
-        if (!(f = fs_open(filename, O_WRONLY)))
+        if ((f = fs_open(filename, O_WRONLY)) == -1)
         {
             printf("Failed to create %s\n", filename);
             return -1;
@@ -357,7 +357,7 @@ static int unpackage_savegames(char *vmupath)
     strcpy(infname, vmupath);
     strcat(infname, "/" FILENAME);
 
-    if (!(inf = fs_open(infname, O_RDONLY)))
+    if ((inf = fs_open(infname, O_RDONLY)) == -1)
     {
         printf("Failed to open file on VMU\n");
         free(infname);
@@ -380,7 +380,7 @@ static int unpackage_savegames(char *vmupath)
         return -1;
     }
 
-    if (!(outf = fs_open("/ram/" ZIPNAME, O_WRONLY | O_TRUNC)))
+    if ((outf = fs_open("/ram/" ZIPNAME, O_WRONLY | O_TRUNC)) == -1)
     {
         printf("Failed to create zip file\n");
         fs_close(inf);
@@ -408,7 +408,7 @@ static char *find_first_vmu()
 
     dir = fs_open("/vmu", O_RDONLY | O_DIR);
 
-    if (!dir)
+    if (dir == -1)
     {
         printf("Failed to read /vmu directory\n");
         return NULL;
@@ -436,7 +436,7 @@ static void clear_ramdisk()
     fs_chdir("/ram");
     dir = fs_open(".", O_RDONLY | O_DIR);
 
-    if (!dir)
+    if (dir == -1)
     {
         printf("Failed to read /ram directory\n");
         return;
