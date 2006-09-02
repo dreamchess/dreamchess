@@ -325,6 +325,9 @@ static config_t *do_menu(int *pgn)
             if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
                     (!get_show_egg() && !draw_fade( FADE_OUT )))
             {
+                #ifdef _arch_dreamcast
+                dc_draw_vmu_icon();
+                #endif
                 set_fade_start(gg_system_get_ticks());
                 menu_state = MENU_STATE_RETURN;
                 return &config;
