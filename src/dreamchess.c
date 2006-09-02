@@ -301,18 +301,11 @@ int game_load( int slot )
     int retval;
     char temp[80];
     board_t *board;
+    FILE *f;
 
     if (ch_userdir())
     {
         printf("Could not enter user directory.\n");
-        return 1;
-    }
-
-    sprintf( temp, "save%i.pgn", slot );
-
-    if ( !fopen( temp, "r" ) ) 
-    {
-        printf( "No save at slot %i\n", slot );
         return 1;
     }
 
