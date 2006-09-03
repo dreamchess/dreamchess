@@ -844,7 +844,7 @@ void select_piece(int square)
 {
     selected = square;
 
-    if ( square>0 )
+    if ( square>=0 )
         selector = square;
 }
 
