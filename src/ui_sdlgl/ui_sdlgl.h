@@ -131,6 +131,8 @@ typedef struct texture
 }
 texture_t;
 
+int get_show_egg();
+
 /* dialogs */
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
 gg_dialog_t *dialog_system_create();

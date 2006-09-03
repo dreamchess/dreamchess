@@ -35,11 +35,9 @@ enum {
 
 static void poll_move();
 
-void set_show_egg( int set
-                     )
+void set_show_egg( int set )
 {
-    show_egg=set
-             ;
+    show_egg=set;
 }
 
 int get_show_egg()
