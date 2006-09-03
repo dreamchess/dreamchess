@@ -133,21 +133,59 @@ void draw_health_bars()
     int white_health;
     int leftx, rightx, bary, barw, barh;
     gg_colour_t left_col, right_col;
+    int white_max=0, black_max=0;
+    int i;
 
     /* This function really stinks, and will be fixed ;) .... eventually */
     /* Full health = 39 */
     /* pawn  1, knight 3, bishop 3, rook 5, queen 9 */
 
-    /* Get da new healths? */
-    white_health = 39 -((get_board()->captured[WHITE_PAWN])+
+    for ( i=0; i<64; i++ )
+    {
+        switch ( get_board()->square[i] )
+        {
+            case WHITE_PAWN:
+                white_max+=1; break;
+            case WHITE_BISHOP:
+                white_max+=3; break;
+            case WHITE_KNIGHT:
+                white_max+=3; break;
+            case WHITE_ROOK:
+                white_max+=5; break;
+            case WHITE_QUEEN:
+                white_max+=9; break;
+
+            case BLACK_PAWN:
+                black_max+=1; break;
+            case BLACK_BISHOP:
+                black_max+=3; break;
+            case BLACK_KNIGHT:
+                black_max+=3; break;
+            case BLACK_ROOK:
+                black_max+=5; break;
+            case BLACK_QUEEN:
+                black_max+=9; break;
+        }
+    }
+
+    white_health = ((get_board()->captured[WHITE_PAWN])+
                         (get_board()->captured[WHITE_ROOK]*5)+(get_board()->captured[WHITE_BISHOP]*3)+
                         (get_board()->captured[WHITE_KNIGHT]*3)+(get_board()->captured[WHITE_QUEEN]*9));
-    black_health = 39 -((get_board()->captured[BLACK_PAWN])+
+    black_health = ((get_board()->captured[BLACK_PAWN])+
                         (get_board()->captured[BLACK_ROOK]*5)+(get_board()->captured[BLACK_BISHOP]*3)+
                         (get_board()->captured[BLACK_KNIGHT]*3)+(get_board()->captured[BLACK_QUEEN]*9));
 
-    white_health_percent=(float)white_health/39;
-    black_health_percent=(float)black_health/39;
+    white_max+=white_health;
+    black_max+=black_health;
+
+    white_health = white_max - white_health;
+    black_health = black_max - black_health;
+
+    /*printf( "White health is %i\n", white_max );
+    printf( "Black health is %i\n", black_max );*/
+
+    white_health_percent=(float)white_health/white_max;
+    black_health_percent=(float)black_health/black_max;
 
     /* Draw da bar? */
     bary=440; barw=192; barh=15;
@@ -247,7 +285,7 @@ void draw_capture_list(gg_colour_t *col)
             if (snprintf(s, 4, "%i", get_board()->captured[i]) >= 4)
                 exit(1);
             text_draw_string( x_white, y_white, s, 1, col);
-            draw_texture( get_black_pieces(i/2), x_white-24, y_white, 24,
+            draw_texture( get_black_piece(i/2), x_white-24, y_white, 24,
                           24, 1.0f, get_col(COL_WHITE) );
         }
         y_white -= get_text_character('a')->height;
