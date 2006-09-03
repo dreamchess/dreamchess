@@ -96,18 +96,12 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     if (!game_save( saveload_selected ))
     {
         write_save_xml( saveload_selected, temp );
-#ifndef _arch_dreamcast
-        save_good=TRUE;
     }
     else
         save_good=FALSE;
-#else
-    }
-#endif
-
 
 #ifdef _arch_dreamcast
-    if (!dc_store_savegames())
+    if (dc_store_savegames())
         save_good=FALSE;
 #endif
 
