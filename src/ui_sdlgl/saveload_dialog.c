@@ -80,6 +80,7 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     char temp[80];
     time_t timething;
     struct tm *current_time;
+    int save_good=TRUE;
 
     /* Close the dialogs.. */
     gg_dialog_close();
@@ -95,7 +96,9 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     if (!game_save( saveload_selected ))
     {
         write_save_xml( saveload_selected, temp );
-        show_message_dialog( "Save successful" );
+#ifndef _arch_dreamcast
+        save_good=TRUE;
+#endif
     }
     else
         show_message_dialog( "Save failed.." );
@@ -103,7 +106,12 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
 #ifdef _arch_dreamcast
     if (!dc_store_savegames())
         show_message_dialog( "Unable to sync ramdisk to VMU. No VMU available?" );
+    else
+        save_good=TRUE;
 #endif
+
+    if ( save_good )
+        show_message_dialog( "Save successful" );
 }
 
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
