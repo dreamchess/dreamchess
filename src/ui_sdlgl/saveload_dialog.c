@@ -81,6 +81,10 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     time_t timething;
     struct tm *current_time;
 
+    /* Close the dialogs.. */
+    gg_dialog_close();
+    gg_dialog_close();
+
     time( &timething );
     current_time = localtime( &timething );
 
@@ -88,13 +92,18 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
              current_time->tm_hour, current_time->tm_min );
 
-    write_save_xml( saveload_selected, temp );
-    game_save( saveload_selected );
+    if (!game_save( saveload_selected ))
+    {
+        write_save_xml( saveload_selected, temp );
+        show_message_dialog( "Save successful" );
+    }
+    else
+        show_message_dialog( "Save failed.." );
+
 #ifdef _arch_dreamcast
-    dc_store_savegames();
+    if (!dc_store_savegames())
+        show_message_dialog( "Unable to sync ramdisk to VMU. No VMU available?" );
 #endif
-    gg_dialog_close();
-    gg_dialog_close();
 }
 
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)

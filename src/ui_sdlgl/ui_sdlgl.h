@@ -141,6 +141,7 @@ gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_message_create(char *message);
 gg_dialog_t *dialog_promote_create(int colour);
 gg_dialog_t *dialog_victory_create(result_t *result);
+void show_message_dialog( char *message );
 
 /* title_dialog.c */
 void set_selected_player_layout( int set );

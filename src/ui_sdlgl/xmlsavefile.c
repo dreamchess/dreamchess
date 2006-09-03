@@ -85,6 +85,9 @@ void write_save_xml( int slot, char *desc )
 
     fp = fopen(temp, "w");
 
+    if (!fp)
+        return;
+
     fprintf( fp, "<?xml version=\"1.0\"?>\n" );
     tree = mxmlNewElement( MXML_NO_PARENT, "save" );
 
