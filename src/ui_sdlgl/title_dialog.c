@@ -223,6 +223,7 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
        gg_container_append(GG_CONTAINER(vbox2), label);*/
 
     hbox = gg_hbox_create(20);
+    gg_set_requested_size(vbox2, 100, 0);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     vbox2 = gg_vbox_create(0);
 
@@ -272,6 +273,7 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_custom_board);
 
+    gg_set_requested_size(vbox2, 250, 0);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
@@ -319,6 +321,7 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), label);
 
     hbox = gg_hbox_create(20);
+    gg_set_requested_size(vbox2, 100, 0);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     vbox2 = gg_vbox_create(0);
 
@@ -330,6 +333,7 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),get_selected_theme());
 
+    gg_set_requested_size(vbox2, 250, 0);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
