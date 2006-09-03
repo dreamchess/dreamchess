@@ -404,6 +404,10 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_option_append_label(GG_OPTION(widget), "Level 2", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "Level 3", 0.5f, 0.0f);
     gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 5", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 6", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 7", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Level 8", 0.5f, 0.0f);
     gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
@@ -431,6 +435,26 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     {
         gg_vbox_set_selected(vbox, 1 );
         gg_vbox_set_selected(vbox2, 2 );
+    }
+
+    /* re-apply configs to match dialog.. */
+    get_config()->cpu_level = selected_difficulty+1;
+    switch (selected_player_layout)
+    {
+    case GAME_TYPE_HUMAN_VS_CPU:
+        get_config()->player[WHITE] = PLAYER_UI;
+        get_config()->player[BLACK] = PLAYER_ENGINE;
+        flip_board = 0;
+        break;
+    case GAME_TYPE_CPU_VS_HUMAN:
+        get_config()->player[WHITE] = PLAYER_ENGINE;
+        get_config()->player[BLACK] = PLAYER_UI;
+        flip_board = 1;
+        break;
+    case GAME_TYPE_HUMAN_VS_HUMAN:
+        get_config()->player[WHITE] = PLAYER_UI;
+        get_config()->player[BLACK] = PLAYER_UI;
+        flip_board = 0;
     }
 
     return GG_DIALOG(dialog);

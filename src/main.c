@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include "dreamchess.h"
+#include "svn_version.h"
 
 int main(int argc, char **argv)
 {
@@ -32,6 +33,8 @@ int main(int argc, char **argv)
 
     arg.argc = argc;
     arg.argv = argv;
+
+    printf( "Dreamchess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
 
     return dreamchess(&arg);
 }
