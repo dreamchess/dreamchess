@@ -41,6 +41,8 @@ void gg_bin_set_size(gg_widget_t *widget, int width, int height);
 
 int gg_bin_set_focus_pos(gg_widget_t *widget, int x, int y);
 
+int gg_bin_input(gg_widget_t *widget, gg_event_t event);
+
 void gg_bin_init(gg_bin_t *bin, gg_widget_t *child);
 
 #endif /* GAMEGUI_BIN_H */

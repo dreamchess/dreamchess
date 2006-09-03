@@ -67,6 +67,10 @@ void gg_system_init(gg_driver_t *d)
     driver = d;
 }
 
+/* FIXME */
+void gg_dialog_close_all();
+void gg_dialog_cleanup();
+
 void gg_system_exit()
 {
     gg_dialog_close_all();

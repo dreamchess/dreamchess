@@ -20,6 +20,7 @@
 #include <stdio.h>
 
 #include <gamegui/dialog.h>
+#include <gamegui/clipping.h>
 
 /** Titlebar size factor relative to text height */
 #define GG_DIALOG_TITLE_FACT 1.25

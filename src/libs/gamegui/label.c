@@ -21,26 +21,6 @@
 
 #include <gamegui/label.h>
 
-static gg_colour_t col_dark_red =
-    {
-        0.7f, 0.0f, 0.0f, 1.0f
-    };
-
-static gg_colour_t col_blue =
-{
-    0.55f, 0.75f, 0.95f, 1.0f
-};
-
-static gg_colour_t col_black =
-    {
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-static gg_colour_t col_white =
-    {
-        1.0f, 1.0f, 1.0f, 1.0f
-    };
-
 static gg_colour_t col_trans =
     {
         0.0f, 0.0f, 0.0f, 0.0f

@@ -136,9 +136,7 @@ int gg_viewport_input(gg_widget_t *widget, gg_event_t event)
     gg_viewport_t *viewport = GG_VIEWPORT(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
     int xmin = viewport->xscroll * (child->width_a - widget->width_a);
-    int xmax = xmin + viewport->width_a;
     int ymin = viewport->yscroll * (child->height_a - widget->height_a);
-    int ymax = ymin + viewport->height_a;
 
     if (event.type == GG_EVENT_MOUSE)
     {

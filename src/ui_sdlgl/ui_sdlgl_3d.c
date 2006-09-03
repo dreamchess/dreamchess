@@ -690,7 +690,7 @@ void draw_selector()
     float width;
     float height;
 
-    r=1.0f; g=1.0f; b=0.0f; a=0.25f; //a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1;
+    r=1.0f; g=1.0f; b=0.0f; a=0.25f; /* a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1; */
     width=0.5;
     height=0.1;
 
