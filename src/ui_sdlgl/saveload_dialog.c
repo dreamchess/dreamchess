@@ -98,20 +98,23 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
         write_save_xml( saveload_selected, temp );
 #ifndef _arch_dreamcast
         save_good=TRUE;
-#endif
     }
     else
-        show_message_dialog( "Save failed.." );
+        save_good=FALSE;
+#else
+    }
+#endif
+
 
 #ifdef _arch_dreamcast
     if (!dc_store_savegames())
-        show_message_dialog( "Unable to sync ramdisk to VMU. No VMU available?" );
-    else
-        save_good=TRUE;
+        save_good=FALSE;
 #endif
 
     if ( save_good )
         show_message_dialog( "Save successful" );
+    else
+        show_message_dialog( "Save failed.." );
 }
 
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
@@ -203,10 +206,10 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
                 {
                     1.0f, 1.0f, 1.0f, 1.0f
                 };
-            gg_colour_t col_grey =
+            /*gg_colour_t col_grey =
                 {
                     0.3f, 0.3f, 0.3f, 1.0f
-                };
+                };*/
             hboxtemp = gg_hbox_create(0);
             hboxtemp2 = gg_hbox_create(0);
             gg_set_requested_size(hboxtemp2, 20, 20);

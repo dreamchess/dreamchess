@@ -358,7 +358,6 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_widget_t *vbox2;
     gg_widget_t *hbox;
     gg_widget_t *label;
-    int i;
 
     get_config()->player[WHITE] = PLAYER_UI;
     get_config()->player[BLACK] = PLAYER_ENGINE;

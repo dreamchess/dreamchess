@@ -301,7 +301,6 @@ int game_load( int slot )
     int retval;
     char temp[80];
     board_t *board;
-    FILE *f;
 
     if (ch_userdir())
     {

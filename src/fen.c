@@ -37,7 +37,7 @@ char *fen_encode(board_t *board)
 		for (file = 0; file < 8; file++)
 		{
 			int piece = board->square[rank*8+file];
-			int c;
+			int c=0;
 
 			if (piece == NONE)
 			{
@@ -106,7 +106,7 @@ board_t *fen_decode(char *fen)
 	{
 		int j;
 		char c = fen[i];
-		char piece;
+		char piece=0;
 
 		if ((c >= '1') && (c <= '9'))
 		{
