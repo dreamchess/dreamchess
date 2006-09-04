@@ -215,6 +215,7 @@ static void draw_press_key_message()
 static config_t *do_menu(int *pgn)
 {
     Uint8 *keystate;
+    SDL_Joystick *joy1=SDL_JoystickOpen(0);
     title_process_retval=2;
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -274,13 +275,13 @@ static config_t *do_menu(int *pgn)
         case MENU_STATE_IN_MENU:
 
             keystate = SDL_GetKeyState(NULL);
-            if ( keystate[SDLK_UP] )
+            printf( "joy_y: %i\n", SDL_JoystickGetAxis(joy1, 1) );
+
+            if ( keystate[SDLK_UP] || SDL_JoystickGetAxis(joy1, 1) < 0 )
                 egg_req1=TRUE;
 
             while (poll_event(&event))
                 gg_dialog_input_current(event);
-
-
 
             if (title_process_retval == 1)
                 return NULL;
