@@ -229,6 +229,8 @@ static config_t *do_menu(int *pgn)
     set_fade_start(gg_system_get_ticks());
     set_show_egg(FALSE);
 
+    dc_draw_vmu_icon();
+
     while ( 1 )
     {
         int mouse_x, mouse_y;

@@ -1,6 +1,23 @@
 
 #include "ui_sdlgl.h"
 
+#ifdef _arch_dreamcast
+/* FIXME */
+void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
+{
+    float zpos = get_dc_z();
+    y1 = SCREEN_HEIGHT - y1;
+    y2 = SCREEN_HEIGHT - y2;
+    y3 = SCREEN_HEIGHT - y3;
+    glColor4f(col->r, col->g, col->b, col->a);
+    glBegin(GL_NT_QUADS);
+    glVertex3f(x1, y1, zpos);
+    glVertex3f(x1, y1, zpos);
+    glVertex3f(x2, y2, zpos);
+    glVertex3f(x3, y3, zpos);
+    glEnd();
+}
+#else
 void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
@@ -10,6 +27,7 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
     glVertex3f(x3, y3, 1.0f);
     glEnd();
 }
+#endif
 
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 {
