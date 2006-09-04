@@ -265,8 +265,12 @@ static config_t *do_menu(int *pgn)
         case MENU_STATE_IN_MENU:
             while (poll_event(&event))
             {
-                if (event.type == GG_EVENT_KEY && event.key == 'e')
+                if ((event.type == GG_EVENT_KEY && event.key == 'e') ||
+                    ((event.type == SDL_JOYAXISMOTION) && 
+                     (event.jaxis.axis == AXIS_VIEW_Y)) && event.jaxis.value < 0)
+                {
                     set_show_egg(TRUE);
+                }
                 else
                     gg_dialog_input_current(event);
             }
