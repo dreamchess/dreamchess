@@ -22,6 +22,7 @@ static char** pieces_list;
 static char** board_list;
 static int board_list_total;
 static int show_egg;
+static int egg_req1=FALSE;
 
 static int menu_state;
 enum {
@@ -34,6 +35,11 @@ enum {
 };
 
 static void poll_move();
+
+int get_egg_req()
+{
+    return egg_req1;
+}
 
 void set_show_egg( int set )
 {
@@ -208,6 +214,7 @@ static void draw_press_key_message()
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
+    Uint8 *keystate;
     title_process_retval=2;
 
     resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -226,6 +233,8 @@ static config_t *do_menu(int *pgn)
         int mouse_x, mouse_y;
         gg_event_t event;
 
+        egg_req1=FALSE;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gg_dialog_cleanup();
 
@@ -233,8 +242,8 @@ static config_t *do_menu(int *pgn)
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
         text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (r" SVN_VERSION ")", 0.75f, get_col(COL_WHITE));
 
-        if (get_show_egg())
-            text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));
+        /*if (get_show_egg())
+            text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/
 
         switch(menu_state)
         {
@@ -263,17 +272,15 @@ static config_t *do_menu(int *pgn)
             break;
 
         case MENU_STATE_IN_MENU:
+
+            keystate = SDL_GetKeyState(NULL);
+            if ( keystate[SDLK_UP] )
+                egg_req1=TRUE;
+
             while (poll_event(&event))
-            {
-                if ((event.type == GG_EVENT_KEY && event.key == 'e') ||
-                    ((event.type == SDL_JOYAXISMOTION) && 
-                     (event.jaxis.axis == AXIS_VIEW_Y)) && event.jaxis.value < 0)
-                {
-                    set_show_egg(TRUE);
-                }
-                else
-                    gg_dialog_input_current(event);
-            }
+                gg_dialog_input_current(event);
+
+
 
             if (title_process_retval == 1)
                 return NULL;

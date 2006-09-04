@@ -63,6 +63,9 @@ int get_cur_style()
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_set_loading(TRUE);
+    
+    if ( get_egg_req() )
+        set_show_egg(TRUE);
 
     gg_dialog_close();
     gg_dialog_close();
