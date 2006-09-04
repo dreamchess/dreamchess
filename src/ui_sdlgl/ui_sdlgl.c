@@ -275,10 +275,15 @@ static config_t *do_menu(int *pgn)
         case MENU_STATE_IN_MENU:
 
             keystate = SDL_GetKeyState(NULL);
-            printf( "joy_y: %i\n", SDL_JoystickGetAxis(joy1, 1) );
+            /*printf( "joy_y: %i\n", SDL_JoystickGetAxis(joy1, 1) );*/
 
-            if ( keystate[SDLK_UP] || SDL_JoystickGetAxis(joy1, 1) < 0 )
+            if ( keystate[SDLK_UP] )
                 egg_req1=TRUE;
+
+#ifdef _arch_dreamcast
+            if ( SDL_JoystickGetAxis(joy1, 1) < 0 )
+                egg_req1=TRUE;
+#endif
 
             while (poll_event(&event))
                 gg_dialog_input_current(event);
@@ -441,7 +446,7 @@ static void init_gui()
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
-    SDL_WM_SetCaption( "DreamChess", NULL );
+    SDL_WM_SetCaption( "Dreamchess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")", NULL );
     init_gl();
 
     gg_system_init(get_gg_driver_sdlgl());
