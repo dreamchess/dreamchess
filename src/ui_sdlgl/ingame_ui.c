@@ -271,32 +271,32 @@ void draw_health_bars()
  */
 void draw_capture_list(gg_colour_t *col)
 {
-    float x_white = 70;
+    float x_white = 60;
     float y_white = 180;
-    float x_black = 570;
+    float x_black = 580;
     float y_black = 180;
     int i;
 
     for (i = 9; i > 0; i -= 2)
     {
         char s[4];
-        if (get_board()->captured[i] != 0)
-        {
+        /*if (get_board()->captured[i] != 0)
+        {*/
             if (snprintf(s, 4, "%i", get_board()->captured[i]) >= 4)
                 exit(1);
             text_draw_string( x_white, y_white, s, 1, col);
             draw_texture( get_black_piece(i/2), x_white-24, y_white, 24,
                           24, 1.0f, get_col(COL_WHITE) );
-        }
-        y_white -= get_text_character('a')->height;
-        if (get_board()->captured[i - 1] != 0)
-        {
+       /* }*/
+        y_white -= 28; /*get_text_character('a')->height;*/
+        /*if (get_board()->captured[i - 1] != 0)
+        {*/
             if (snprintf(s, 4, "%i", get_board()->captured[i - 1]) >= 4)
                 exit(1);
             text_draw_string_right( x_black, y_black, s, 1, col);
             draw_texture( get_white_piece((i-1)/2), x_black, y_black, 24,
                           24, 1.0f, get_col(COL_WHITE) );
-        }
-        y_black -= get_text_character('a')->height;
+       /* }*/
+        y_black -= 28; /*get_text_character('a')->height;*/
     }
 }
