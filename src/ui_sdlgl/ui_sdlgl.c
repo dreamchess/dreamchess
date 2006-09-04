@@ -229,7 +229,9 @@ static config_t *do_menu(int *pgn)
     set_fade_start(gg_system_get_ticks());
     set_show_egg(FALSE);
 
+#ifdef _arch_dreamcast
     dc_draw_vmu_icon();
+#endif
 
     while ( 1 )
     {
@@ -448,7 +450,7 @@ static void init_gui()
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
-    SDL_WM_SetCaption( "Dreamchess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")", NULL );
+    SDL_WM_SetCaption( "Dreamchess", NULL );
     init_gl();
 
     gg_system_init(get_gg_driver_sdlgl());
