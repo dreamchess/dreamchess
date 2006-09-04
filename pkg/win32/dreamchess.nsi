@@ -63,7 +63,7 @@ Section
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
+  IfFileExists "$INSTDIR\DreamChess.exe" 0 new_installation
     StrCpy $ALREADY_INSTALLED 1
   new_installation:
 

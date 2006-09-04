@@ -114,7 +114,7 @@ fi
 have_gl="no"
 
 if test "$host_os" = "mingw32"; then
-	AC_CHECK_LIB(shlwapi, SHGetFolderPath, [],
+	AC_CHECK_LIB(shlwapi, main, [],
 		[AC_MSG_ERROR([Cannot find shlwapi library.])])
 	AC_CHECK_LIB(opengl32, main,
 		AC_CHECK_LIB(glu32, main,
@@ -237,7 +237,10 @@ AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
 AC_SUBST(MINIZIP_LIB)
-AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
+
+if test "$host_os" != "mingw32"; then
+	AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
+fi
 
 # Checks for header files.
 AC_HEADER_STDC
