@@ -277,7 +277,7 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -337,7 +337,7 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -426,7 +426,7 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    widget = gg_action_create_with_label("Back", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -478,15 +478,15 @@ gg_dialog_t *dialog_title_root_create()
     flip_board = 0;
 
     vbox = gg_vbox_create(0);
-    widget = gg_action_create_with_label("New Game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("New Game..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_new, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Load Game..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Select Theme", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Select Theme..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_select_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 

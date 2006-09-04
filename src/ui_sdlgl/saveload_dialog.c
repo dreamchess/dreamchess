@@ -108,7 +108,7 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     if ( save_good )
         show_message_dialog( "Save successful" );
     else
-        show_message_dialog( "Save failed.." );
+        show_message_dialog( "Save failed" );
 }
 
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
@@ -264,12 +264,12 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
 
     if ( saving )
     {
-        widget = gg_action_create_with_label("Save Game..", 0.0f, 0.0f);
+        widget = gg_action_create_with_label("Save Game", 0.0f, 0.0f);
         gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
     }
     else
     {
-        widget = gg_action_create_with_label("Load Game..", 0.0f, 0.0f);
+        widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
         set_selected_player_layout(player_layout);
         set_selected_difficulty(difficulty);
         gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);

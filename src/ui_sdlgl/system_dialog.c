@@ -50,7 +50,7 @@ gg_dialog_t *dialog_system_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("  Save game", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("  Save game..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_savegame_open, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
