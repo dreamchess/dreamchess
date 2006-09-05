@@ -33,7 +33,7 @@
 #define MAX_NAME_LEN 13
 #define BUF_SIZE 1024
 
-static char palette[16] =
+static char palette[32] =
     {
         0x00, 0x00, /*  0 */
         0x21, 0xf3, /*  1 */
