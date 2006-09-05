@@ -255,6 +255,7 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         void *image = driver->get_char_image(s[i]);
         gg_rect_t rect_s = {0, 0};
         gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
+        gg_colour_t col_blackshad = {0.3f, 0.3f, 0.3f, 1.0f};
 
         if (bounce)
         {
@@ -274,7 +275,6 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         /* FIXME */
         rect_d.x += 2;
         rect_d.y -= 2;
-        gg_colour_t col_blackshad = {0.3f, 0.3f, 0.3f, 1.0f};
         if ( colour->r != 0.0f && colour->g != 0.0f && colour->b != 0.0f  )
             gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
         else

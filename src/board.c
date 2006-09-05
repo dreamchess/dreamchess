@@ -601,7 +601,7 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
             found++;
             if (found > 1)
             {
-                fprintf(stderr, "More than one SAN match found\n");
+                /* fprintf(stderr, "More than one SAN match found\n"); */
                 return NULL;
             }
             /* printf("Found candidate at %i\n", square); */

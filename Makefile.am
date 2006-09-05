@@ -2,7 +2,7 @@ SUBDIRS = desktop src man m4
 EXTRA_DIST = data
 ACLOCAL_AMFLAGS = -I m4
 
-INSTALL_DIRS = `find $(srcdir)/data -name '.svn' -prune -o -wholename '$(srcdir)/data' -o -type d -printf '/%P\n'`
+INSTALL_DIRS = `find $(srcdir)/data -name '.svn' -prune -o -name 'data' -o -type d -printf '/%P\n'`
 
 dist-hook:
 	rm -rf `find $(distdir)/data -name '.svn'`

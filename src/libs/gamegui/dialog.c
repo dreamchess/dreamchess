@@ -238,6 +238,8 @@ void gg_dialog_render(gg_dialog_t *dialog)
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
     int size;
     int active;
+    gg_rect_t area;
+
     int xmin, xmax, ymin, ymax;
 
     if (dialog->flags & GG_DIALOG_HIDDEN)
@@ -250,8 +252,6 @@ void gg_dialog_render(gg_dialog_t *dialog)
 
     /* Draw the 'fade' */
     gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
-
-    gg_rect_t area;
 
     gg_system_get_image_size(style->border.image[0], &size, NULL);
 
