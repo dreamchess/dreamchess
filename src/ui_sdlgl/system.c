@@ -132,7 +132,7 @@ void init_gl()
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth); 
     if ( zerodepth != 1.0f )
-        printf( "Depth should be 1.0f, but we get %f. You must have evil ATI.\n", zerodepth );
+        printf( "Depth should be 1.0f, but we get %f.\n", zerodepth );
     #endif /* _arch_dreamcast */
 }
 
