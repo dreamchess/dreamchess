@@ -467,7 +467,7 @@ static void init_gui()
     if ( (styledir=opendir("themes")) != NULL )
     {
         set_theme_count(0);
-        styledir_entry=readdir(styledir);
+        /*styledir_entry=readdir(styledir);*/
         while ((styledir_entry = readdir(styledir)) != NULL)
         {
             if ( styledir_entry->d_name[0] != '.' )
