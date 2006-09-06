@@ -369,9 +369,9 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     get_config()->player[WHITE] = PLAYER_UI;
     get_config()->player[BLACK] = PLAYER_ENGINE;
     get_config()->cpu_level = 1;
-    cur_style = 0;
+   /* cur_style = 0;
     pieces_list_cur = 0;
-    board_list_cur = 0;
+    board_list_cur = 0;*/
     flip_board = 0;
     set_pgn_slot(-1);
 
