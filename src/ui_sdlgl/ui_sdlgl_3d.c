@@ -248,7 +248,7 @@ static texture_t *load_piece_texture(char *filename)
 
     if (tex)
     {
-        DBG_WARN("already loaded %s", filename);
+        DBG_LOG("already loaded %s", filename);
         return tex;
     }
 
@@ -392,7 +392,7 @@ static mesh_t *load_mesh(char *filename)
 
     if (mesh)
     {
-        DBG_WARN("already loaded %s", filename);
+        DBG_LOG("already loaded %s", filename);
         return mesh;
     }
 
