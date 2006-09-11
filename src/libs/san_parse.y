@@ -121,7 +121,7 @@ san_move_t *san_parse(char *s)
 
     if (!yyparse())
     {
-        san_move_t *retval = (san_move_t *) malloc(sizeof(san_move_t));
+        san_move_t *retval = malloc(sizeof(san_move_t));
         *retval = san_move;
         return retval;
     }
@@ -129,9 +129,30 @@ san_move_t *san_parse(char *s)
     return NULL;
 }
 
+static void add_piece(char *s, int piece)
+{
+    switch(piece)
+    {
+    case SAN_QUEEN:
+        *s = 'Q';
+        break;
+    case SAN_ROOK:
+        *s = 'R';
+        break;
+    case SAN_BISHOP:
+        *s = 'B';
+        break;
+    case SAN_KNIGHT:
+        *s = 'N';
+        break;
+    case SAN_KING:
+        *s = 'K';
+    }
+}
+
 char *san_string(san_move_t *move)
 {
-    char *s = (char *) malloc(8);
+    char *s = malloc(8);
     int i = 0;
 
     switch (move->type)
@@ -139,23 +160,8 @@ char *san_string(san_move_t *move)
     case SAN_NORMAL:
     case SAN_CAPTURE:
         {
-            switch(move->piece)
-            {
-            case SAN_QUEEN:
-                s[i++] = 'Q';
-                break;
-            case SAN_ROOK:
-                s[i++] = 'R';
-                break;
-            case SAN_BISHOP:
-                s[i++] = 'B';
-                break;
-            case SAN_KNIGHT:
-                s[i++] = 'N';
-                break;
-            case SAN_KING:
-                s[i++] = 'K';
-            }
+            if ((move->piece != SAN_NOT_SPECIFIED) && (move->piece != SAN_PAWN))
+                add_piece(s + i++, move->piece);
 
             if (move->source_file != SAN_NOT_SPECIFIED)
                 s[i++] = move->source_file + 'a';
@@ -168,6 +174,12 @@ char *san_string(san_move_t *move)
 
             s[i++] = move->destination % 8 + 'a';
             s[i++] = move->destination / 8 + '1';
+
+            if (move->promotion_piece != SAN_NOT_SPECIFIED)
+            {
+                s[i++] = '=';
+                add_piece(s + i++, move->promotion_piece);
+            }
         }
         break;
     case SAN_QUEENSIDE_CASTLE:
