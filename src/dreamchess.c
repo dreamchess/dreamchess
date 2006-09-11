@@ -27,6 +27,7 @@
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #endif /* HAVE_GETOPT_H */
+#include <errno.h>
 
 #include "board.h"
 #include "history.h"
@@ -34,6 +35,8 @@
 #include "comm.h"
 #include "dir.h"
 #include "dreamchess.h"
+#include "debug.h"
+#include "svn_version.h"
 
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
@@ -205,7 +208,7 @@ int game_save( int slot )
     }
     else
     {
-        printf("Could not enter user directory.\n");
+        DBG_ERROR("failed to enter user directory");
         retval = 1;
     }
 
@@ -214,29 +217,33 @@ int game_save( int slot )
 
 static int do_move(move_t *move, int ui_update)
 {
-    char *move_s, *move_f;
+    char *move_s, *move_f, *move_san;
     board_t new_board;
-
-    if (!move_is_valid(history->last->board, move))
-    {
-        /* printf("Move invalid!\n"); */
-        return 0;
-    }
 
     move_set_attr(history->last->board, move);
     new_board = *history->last->board;
     move_s = move_to_fullalg(&new_board, move);
+
+    if (!move_is_valid(history->last->board, move))
+    {
+        DBG_WARN("move %s is illegal", move_s);
+        free(move_s);
+        return 0;
+    }
+
     move_list_play(&fullalg_list, move_s);
 
-    /* printf("Move: %s\n", move_s); */
-    free(move_s);
-    move_s = move_to_san(&new_board, move);
-    move_f = san_to_fan(&new_board, move_s);
-    /* printf("SAN: %s\n", move_s); */
-    move_list_play(&san_list, move_s);
-    free(move_s);
+    move_san = move_to_san(&new_board, move);
+    move_f = san_to_fan(&new_board, move_san);
+
+    DBG_LOG("processing move %s (%s)", move_s, move_san);
+
+    move_list_play(&san_list, move_san);
     move_list_play(&fan_list, move_f);
+
+    free(move_san);
     free(move_f);
+    free(move_s);
 
     make_move(&new_board, move);
 
@@ -287,8 +294,14 @@ static int do_move(move_t *move, int ui_update)
 void game_make_move(move_t *move, int ui_update)
 {
     if (do_move(move, ui_update)){
-        /* printf("Sending: %s\n", fullalg_list.move[fullalg_list.entries-1]); */
-        comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);}
+        comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);
+    }
+    else
+    {
+        char *move_str = move_to_fullalg(history->last->board, move);
+        DBG_WARN("ignoring illegal move %s", move_str);
+        free(move_str);
+    }
 }
 
 void game_quit()
@@ -304,7 +317,7 @@ int game_load( int slot )
 
     if (ch_userdir())
     {
-        printf("Could not enter user directory.\n");
+        DBG_ERROR("failed to enter user directory");
         return 1;
     }
 
@@ -316,7 +329,7 @@ int game_load( int slot )
 
     if (retval)
     {
-        printf("Parsing PGN file failed.\n");
+        DBG_ERROR("failed to parse PGN file '%s'", temp);
         restart_game();
     }
 
@@ -340,17 +353,21 @@ int game_load( int slot )
 void game_make_move_str(char *move_str, int ui_update)
 {
     board_t new_board = *history->last->board;
-    move_t *engine_move = san_to_move(&new_board, move_str);
+    move_t *engine_move;
+
+    DBG_LOG("parsing move string '%s'", move_str);
+
+    engine_move = san_to_move(&new_board, move_str);
+
     if (!engine_move)
         engine_move = fullalg_to_move(&new_board, move_str);
     if (engine_move)
     {
-        /* printf("Move: %s\n", move_str); */
         game_make_move(engine_move, ui_update);
         free(engine_move);
     }
     else
-        fprintf(stderr, "Could not parse move\n");
+        DBG_ERROR("failed to parse move string '%s'", move_str);
 }
 
 void game_get_move_list(char ***list, int *total, int *view)
@@ -376,13 +393,14 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
             {"list-drivers", no_argument, NULL, 'l'},
             {"ui", required_argument, NULL, 'u'},
             {"first-engine", required_argument, NULL, 'f'},
+            {"verbose", required_argument, NULL, 'v'},
             {0, 0, 0, 0}
         };
 
-    while ((c = getopt_long(argc, argv, "f:hlu:", options, &optindex)) > -1)
+    while ((c = getopt_long(argc, argv, "f:hlu:v:", options, &optindex)) > -1)
 #else
 
-    while ((c = getopt(argc, argv, "f:hlu:")) > -1)
+    while ((c = getopt(argc, argv, "f:hlu:v:")) > -1)
 #endif /* HAVE_GETOPT_LONG */
 
         switch (c)
@@ -394,7 +412,8 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
                    OPTION_TEXT("--help\t", "-h\t", "Show help.")
                    OPTION_TEXT("--list-drivers", "-l\t", "List all available drivers.")
                    OPTION_TEXT("--ui <drv>\t", "-u<drv>\t", "Use user interface driver <drv>.")
-                   OPTION_TEXT("--first-engine <eng>", "-f<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to `dreamer'.")
+                   OPTION_TEXT("--first-engine <eng>", "-f<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to 'dreamer'.")
+                   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.\n\t\t\t\t\t  Verbosity levels:\n\t\t\t\t\t  0 - Silent\n\t\t\t\t\t  1 - Errors only\n\t\t\t\t\t  2 - Errors and warnings only\n\t\t\t\t\t  3 - All\n\t\t\t\t\t  Defaults to 1")
                   );
             exit(0);
         case 'l':
@@ -404,12 +423,29 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
         case 'u':
             if (!(*ui_driver = ui_find_driver(optarg)))
             {
-                printf("Error: could not find user interface driver '%s'.\n", optarg);
+                DBG_ERROR("could not find user interface driver '%s'", optarg);
                 exit(1);
             }
             break;
         case 'f':
             *engine = optarg;
+            break;
+        case 'v':
+            {
+                int level;
+                char *endptr;
+
+                errno = 0;
+                level = strtol(optarg, &endptr, 10);
+
+                if (errno || (optarg == endptr) || (level < 0) || (level > 3))
+                {
+                    DBG_ERROR("illegal verbosity level specified");
+                    exit(1);
+                }
+
+                dbg_set_level(level);
+            }
         }
 }
 #endif
@@ -424,7 +460,7 @@ int dreamchess(void *data)
 
     ui = ui_driver[0];
 
-    /* printf("DreamChess\n"); */
+    printf( "Dreamchess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
 
 #ifndef _arch_dreamcast
 
@@ -433,7 +469,7 @@ int dreamchess(void *data)
 
     if (!ui)
     {
-        printf("Error: could not find a user interface driver.\n");
+        DBG_ERROR("failed to find a user interface driver");
         exit(1);
     }
 
@@ -479,24 +515,27 @@ int dreamchess(void *data)
 
             if ((s = comm_poll()))
             {
-                /* printf("Received: %s\n", s); */
+                DBG_LOG("message from engine: '%s'", s);
                 if  (!history->result)
                 {
                     if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) && config->player[history->last->board->turn] == PLAYER_ENGINE)
                     {
                         char *move_str = strrchr(s, ' ') + 1;
                         board_t new_board = *history->last->board;
-                        move_t *engine_move = san_to_move(&new_board, move_str);
+                        move_t *engine_move;
+
+                        DBG_LOG("parsing move string '%s'", move_str);
+
+                        engine_move = san_to_move(&new_board, move_str);
                         if (!engine_move)
                             engine_move = fullalg_to_move(&new_board, move_str);
                         if (engine_move)
                         {
-                            /* printf("Move: %s\n", move_str); */
                             do_move(engine_move, 1);
                             free(engine_move);
                         }
                         else
-                            fprintf(stderr, "Could not parse move\n");
+                            DBG_ERROR("failed to parse move string '%s'", move_str);
                     }
                     else if (strstr(s, "llegal move"))
                         game_undo();

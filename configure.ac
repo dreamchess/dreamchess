@@ -23,6 +23,31 @@ else
 fi
 AC_SUBST(CC_FOR_BUILD)
 
+# Check for varargs macro support (borrowed from glib)
+AC_MSG_CHECKING(for ISO C99 varargs macros)
+AC_TRY_COMPILE([],[
+	int a(int p1, int p2, int p3);
+	#define call_a(...) a(1, __VA_ARGS__)
+	call_a(2, 3);
+	], have_c99_varargs=yes, have_c99_varargs=no)
+AC_MSG_RESULT($have_c99_varargs)
+
+AC_MSG_CHECKING(for GNU C varargs macros)
+AC_TRY_COMPILE([],[
+	int a(int p1, int p2, int p3);
+	#define call_a(params...) a(1, params)
+	call_a(2, 3);
+	], have_gnuc_varargs=yes, have_gnuc_varargs=no)
+AC_MSG_RESULT($have_gnuc_varargs)
+
+if test x"$have_c99_varargs" = xyes; then
+	AC_DEFINE([HAVE_C99_VARARGS_MACROS], [1], [Define to 1 if the compiler supports C99 varargs macros.])
+fi
+
+if test x"$have_gnuc_varargs" = xyes; then
+	AC_DEFINE([HAVE_GNUC_VARARGS_MACROS], [1], [Define to 1 if the compiler supports GNU C varargs macros.])
+fi
+
 # Checks for libraries.
 dnl Check for SDL
 AC_ARG_WITH([sdl], [  --without-sdl           do not use SDL])

@@ -21,6 +21,7 @@
 #include <stdarg.h>
 
 #include "comm.h"
+#include "debug.h"
 
 void comm_send(const char *fmt, ...)
 {
@@ -50,5 +51,8 @@ void comm_send(const char *fmt, ...)
     }
 
     comm_send_str(p);
+    if (p[strlen(p) - 1] == '\n')
+        p[strlen(p) - 1] = 0;
+    DBG_LOG("message to engine: '%s'", p);
     free(p);
 }

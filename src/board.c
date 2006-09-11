@@ -22,6 +22,7 @@
 
 #include "board.h"
 #include "san.h"
+#include "debug.h"
 
 static int move_is_semi_valid(board_t *board, move_t *move);
 static int in_check(board_t *board, int turn);
@@ -75,15 +76,19 @@ static int move_is_capture(board_t *board, move_t *move)
     return 0;
 }
 
+static void square_to_str(char *buf, int square)
+{
+    buf[0] = (square % 8) + 'a';
+    buf[1] = (square / 8) + '1';
+}
+
 char *move_to_fullalg(board_t *board, move_t *move)
 {
     char *s = (char *) malloc(6);
     char prom[4] = "nbrq";
 
-    s[0] = (move->source % 8) + 'a';
-    s[1] = (move->source / 8) + '1';
-    s[2] = (move->destination % 8) + 'a';
-    s[3] = (move->destination / 8) + '1';
+    square_to_str(s, move->source);
+    square_to_str(s + 2, move->destination);
     s[4] = '\0';
     s[5] = '\0';
 
@@ -207,10 +212,7 @@ static int square_attacked(board_t *b, int square, int side)
             else
                 move.promotion_piece = NONE;
             if (move_is_semi_valid(&board, &move))
-            {
-                /* printf("Found: %i-%i\n", move.source, move.destination); */
                 return 1;
-            }
         }
     }
     return 0;
@@ -392,7 +394,7 @@ static int in_check(board_t *board, int turn)
 
     if (i == 64)
     {
-        printf("Fatal error: No king on chessboard!\n");
+        DBG_ERROR("board is missing a king");
         exit(1);
     }
 
@@ -523,7 +525,7 @@ move_t *fullalg_to_move(board_t *board, char *move_s)
     return move;
 }
 
-static move_t* find_unique_move(board_t *board, san_move_t *san_move)
+static move_t *find_unique_move(board_t *board, san_move_t *san_move)
 {
     int square;
     int piece;
@@ -600,19 +602,14 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
             move = m;
             found++;
             if (found > 1)
-            {
-                /* fprintf(stderr, "More than one SAN match found\n"); */
+                /* More than one match */
                 return NULL;
-            }
-            /* printf("Found candidate at %i\n", square); */
         }
     }
 
     if (!found)
-    {
-        fprintf(stderr, "No SAN match found\n");
+        /* No match */
         return NULL;
-    }
 
     retval = (move_t *) malloc(sizeof(move_t));
     *retval = move;
@@ -668,6 +665,7 @@ char *move_to_san(board_t *board, move_t *move)
     {
         move_t *u_move;
         u_move = find_unique_move(board, &san_move);
+
         if (!u_move)
         {
             san_move.source_file = move->source % 8;
@@ -683,7 +681,11 @@ char *move_to_san(board_t *board, move_t *move)
                     u_move = find_unique_move(board, &san_move);
                     if (!u_move)
                     {
-                        fprintf(stderr, "Couldn't convert move to SAN.\n");
+                        char *move_s = move_to_fullalg(board, move);
+
+                        DBG_ERROR("failed to convert move %s to SAN notation", move_s);
+
+                        free(move_s);
                         return NULL;
                     }
                 }

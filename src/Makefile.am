@@ -1,6 +1,6 @@
 SUBDIRS = libs dreamer include ui_sdlgl
-noinst_HEADERS = board.h comm.h dir.h dreamchess.h fen.h history.h ui.h \
-	credits.h
+noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
+	ui.h credits.h
 bin_PROGRAMS = dreamchess
 INCLUDES = -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
@@ -8,8 +8,8 @@ BUILT_SOURCES = pgn_parser.h
 AM_YFLAGS = -d
 
 dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
-	dreamchess.c fen.c main.c main_sdlthd.c dir.c comm.c comm_win32.c \
-	credits.c pgn_parser.y pgn_scanner.l
+	debug.c dreamchess.c fen.c main.c main_sdlthd.c dir.c comm.c \
+	comm_win32.c credits.c pgn_parser.y pgn_scanner.l
 
 dreamchess_LDADD = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
 	libs/gamegui/libgamegui.a libs/mxml/libmxml.a @DREAMCHESS_LIBS@ \
