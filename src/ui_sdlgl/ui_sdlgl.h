@@ -21,6 +21,7 @@
 #include "SDL_joystick.h"
 
 #include "dreamchess.h"
+#include "debug.h"
 #include "history.h"
 #include "ui.h"
 #include "dir.h"

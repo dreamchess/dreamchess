@@ -202,7 +202,7 @@ static int zip_savegames()
     zip = zipOpen("/ram/" ZIPNAME, APPEND_STATUS_CREATE);
     if (zip == NULL)
     {
-        printf("Failed to create zip file\n");
+        DBG_ERROR("failed to create zip file");
         return -1;
     }
 
@@ -211,7 +211,7 @@ static int zip_savegames()
 
     if (dir == -1)
     {
-        printf("Failed to read /ram directory\n");
+        DBG_ERROR("failed to read /ram directory");
         return -1;
     }
 
@@ -226,7 +226,7 @@ static int zip_savegames()
 
         if ((file = fs_open(dirent->name, O_RDONLY)) == -1)
         {
-            printf("Failed to open %s\n", dirent->name);
+            DBG_ERROR("failed to open %s", dirent->name);
             return -1;
         }
 
@@ -262,13 +262,13 @@ static int package_savegames(char *vmupath)
 
     if ((inf = fs_open("/ram/" ZIPNAME, O_RDONLY)) == -1)
     {
-        printf("Failed to open /ram/" ZIPNAME "\n");
+        DBG_ERROR("failed to open /ram/" ZIPNAME );
         return -1;
     }
 
     if (!(data = fs_mmap(inf)))
     {
-        printf("Failed to mmap zip file\n");
+        DBG_ERROR("failed to mmap zip file");
         fs_close(inf);
         return -1;
     }
@@ -288,7 +288,7 @@ static int package_savegames(char *vmupath)
 
     if (vmu_pkg_build(&pkg, &pkg_out, &pkg_size) < 0)
     {
-        printf("Failed to build package\n");
+        DBG_WARN("failed to build vmu package");
         fs_close(inf);
         return -1;
     }
@@ -299,7 +299,7 @@ static int package_savegames(char *vmupath)
 
     if ((outf = fs_open(outfname, O_WRONLY | O_TRUNC)) == -1)
     {
-        printf("Failed to create file on VMU\n");
+        DBG_WARN("failed to create file on VMU");
         fs_close(inf);
         free(outfname);
         return -1;
@@ -309,7 +309,7 @@ static int package_savegames(char *vmupath)
 
     if (fs_write(outf, pkg_out, pkg_size) < pkg_size)
     {
-        printf("Failed to write to VMU file\n");
+        DBG_WARN("failed to write to VMU file");
         fs_close(inf);
         fs_close(outf);
         return -1;
@@ -329,7 +329,7 @@ static int unzip_savegames()
     zip = unzOpen("/ram/" ZIPNAME);
     if (zip == NULL)
     {
-        printf("Failed to open zip file\n");
+        DBG_ERROR("failed to open zip file");
         return -1;
     }
 
@@ -348,7 +348,7 @@ static int unzip_savegames()
 
         if ((f = fs_open(filename, O_WRONLY)) == -1)
         {
-            printf("Failed to create %s\n", filename);
+            DBG_ERROR("failed to create %s", filename);
             return -1;
         }
 
@@ -396,7 +396,7 @@ static int unpackage_savegames(char *vmupath)
 
     if ((inf = fs_open(infname, O_RDONLY)) == -1)
     {
-        printf("Failed to open file on VMU\n");
+        DBG_ERROR("failed to open file on VMU");
         free(infname);
         return -1;
     }
@@ -405,28 +405,28 @@ static int unpackage_savegames(char *vmupath)
 
     if (!(data = fs_mmap(inf)))
     {
-        printf("Failed to mmap VMU file\n");
+        DBG_ERROR("failed to mmap VMU file");
         fs_close(inf);
         return -1;
     }
 
     if (vmu_pkg_parse(data, &pkg) == -1)
     {
-        printf("Failed to parse VMU file header\n");
+        DBG_ERROR("failed to parse VMU file header");
         fs_close(inf);
         return -1;
     }
 
     if ((outf = fs_open("/ram/" ZIPNAME, O_WRONLY | O_TRUNC)) == -1)
     {
-        printf("Failed to create zip file\n");
+        DBG_ERROR("failed to create zip file");
         fs_close(inf);
         return -1;
     }
 
     if (fs_write(outf, pkg.data, pkg.data_len) < pkg.data_len)
     {
-        printf("Failed to write zip file\n");
+        DBG_ERROR("failed to write zip file");
         fs_close(inf);
         fs_close(outf);
         return -1;
@@ -447,13 +447,13 @@ static char *find_first_vmu()
 
     if (dir == -1)
     {
-        printf("Failed to read /vmu directory\n");
+        DBG_ERROR("failed to read /vmu directory");
         return NULL;
     }
 
     if (!(dirent = fs_readdir(dir)) || (strlen(dirent->name) != 2))
     {
-        printf("No VMU found\n");
+        DBG_WARN("no VMU found");
         return NULL;
     }
 
@@ -475,14 +475,14 @@ static void clear_ramdisk()
 
     if (dir == -1)
     {
-        printf("Failed to read /ram directory\n");
+        DBG_ERROR("failed to read /ram directory");
         return;
     }
 
     while ((dirent = fs_readdir(dir)))
     {
         if (fs_unlink(dirent->name))
-            printf("Failed to delete file /ram/%s\n", dirent->name);
+            DBG_ERROR("failed to delete file /ram/%s", dirent->name);
     }
 
     fs_close(dir);

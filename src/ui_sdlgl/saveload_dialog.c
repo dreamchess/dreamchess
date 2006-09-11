@@ -67,7 +67,7 @@ static void dialog_saveload_change(gg_widget_t *widget, void *data)
     gg_widget_t *select = GG_WIDGET(data);
     saveload_selected=GG_OPTION(select)->sel;
 
-    /*    printf( "Selected save: %i\n", saveload_selected );*/
+    DBG_LOG( "selected save: %i", saveload_selected );
 
     gg_dialog_close();
     changing_slot=TRUE;
@@ -89,7 +89,7 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
     time( &timething );
     current_time = localtime( &timething );
 
-    /*printf( "Saving slot %i\n", GG_SELECT(vbox)->sel );*/
+    DBG_LOG( "saving slot: %i", saveload_selected );
     sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
              current_time->tm_hour, current_time->tm_min );
 
@@ -132,7 +132,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     if ( !changing_slot )
         saveload_selected=0;
 
-    /*printf( "Dialog opened with saveselected of %i\n", saveload_selected );*/
+    DBG_LOG( "dialog opened with saveselected of %i", saveload_selected );
 
     /* Right side.. */
     if (!changing_slot)

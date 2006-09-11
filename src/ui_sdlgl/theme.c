@@ -134,7 +134,7 @@ void load_theme_xml( char *xmlfile )
     if (fp)
         tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
     else
-        printf( "Error opening theme file.\n" );
+        DBG_ERROR("error opening theme file" );
 
     fclose(fp);
 
@@ -189,7 +189,7 @@ void load_theme_xml( char *xmlfile )
     }
 
     mxmlDelete(tree);
-    /* printf( "We loaded %i themes\n", theme_count ); */
+    DBG_LOG("loaded %i themes", theme_count );
 }
 
 /** @brief Loads a style.
@@ -223,7 +223,6 @@ void load_theme(char* style, char* pieces, char *board)
     load_board("board.dcm", "board.png");
 
     ch_datadir();
-    /* printf( "Loaded theme.\n" ); */
 }
 
 /** @brief Frees all textures of the currently loaded theme. */

@@ -229,7 +229,7 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
     }
     else
     {
-        fprintf(stderr, "Could not load texture: %s!\n", filename);
+        DBG_ERROR("could not load texture: %s", filename);
         exit(1);
     }
 

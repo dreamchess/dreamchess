@@ -29,7 +29,7 @@ void load_border(texture_t border[9], char *filename)
     }
     else
     {
-        fprintf(stderr, "Could not load texture: %s!\n", filename);
+        DBG_ERROR("could not load texture: %s", filename);
         exit(1);
     }
 }

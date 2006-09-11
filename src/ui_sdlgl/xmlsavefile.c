@@ -79,7 +79,7 @@ void write_save_xml( int slot, char *desc )
 
     if (ch_userdir())
     {
-        printf("Could not enter user directory.\n");
+        DBG_WARN("could not enter user directory");
         return;
     }
 
@@ -110,7 +110,7 @@ void write_save_xml( int slot, char *desc )
     fen = fen_encode(get_board());
     if (!fen)
     {
-        fprintf(stderr, "Error encoding FEN\n");
+        DBG_ERROR( "error encoding FEN");
     }
     else
     {
@@ -134,7 +134,7 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
     if (ch_userdir())
     {
-        printf("Could not enter user directory.\n");
+        DBG_WARN("could not enter user directory");
         return;
     }
 

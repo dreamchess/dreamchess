@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "debug.h"
 
 /* Define our booleans */
 #define TRUE  1
@@ -247,13 +248,13 @@ static texture_t *load_piece_texture(char *filename)
 
     if (tex)
     {
-        /* printf("Already loaded %s\n", filename); */
+        DBG_WARN("already loaded %s", filename);
         return tex;
     }
 
     tex = malloc(sizeof(texture_t));
 
-    /* printf("Loading %s\n", filename); */
+    DBG_LOG("loading texture: %s", filename);
     load_texture_png(tex, filename, 1);
     data_col_add(&textures, filename, tex);
     return tex;
@@ -272,26 +273,26 @@ mesh_t *dcm_load(char *filename)
 
     if (!f)
     {
-        fprintf(stderr, "Couldn't open %s\n", filename);
+        DBG_ERROR("couldn't open %s", filename);
         return NULL;
     }
 
     if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4)
             || ((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M')))
     {
-        fprintf(stderr, "Invalid DCM file header\n");
+        DBG_ERROR("invalid DCM file header");
         return NULL;
     }
 
     if (version != 100)
     {
-        fprintf(stderr, "DCM version %i not supported.\n", version);
+        DBG_ERROR( "DCM version %i not supported", version);
         return NULL;
     }
 
     if (fscanf(f, "%d\n", &vertices) != 1)
     {
-        fprintf(stderr, "Error reading DCM file\n");
+        DBG_ERROR("error reading DCM file");
         return NULL;
     }
 
@@ -303,7 +304,7 @@ mesh_t *dcm_load(char *filename)
     {
         if (fscanf(f, "%f\n", &mesh->vertex[i]) != 1)
         {
-            fprintf(stderr, "Error reading DCM file\n");
+            DBG_ERROR("error reading DCM file");
             exit(1);
         }
     }
@@ -314,7 +315,7 @@ mesh_t *dcm_load(char *filename)
     {
         if (fscanf(f, "%f\n", &mesh->normal[i]) != 1)
         {
-            fprintf(stderr, "Error reading DCM file\n");
+            DBG_ERROR("error reading DCM file");
             exit(1);
         }
     }
@@ -325,7 +326,7 @@ mesh_t *dcm_load(char *filename)
     {
         if (fscanf(f, "%f\n", &mesh->tex_coord[i]) != 1)
         {
-            fprintf(stderr, "Error reading DCM file\n");
+            DBG_ERROR("error reading DCM file");
             exit(1);
         }
     }
@@ -336,7 +337,7 @@ mesh_t *dcm_load(char *filename)
 
     if (fscanf(f, "%d\n", &mesh->groups) != 1)
     {
-        fprintf(stderr, "Error reading DCM file\n");
+        DBG_ERROR("error reading DCM file");
         exit(1);
     }
 
@@ -356,13 +357,13 @@ mesh_t *dcm_load(char *filename)
             mesh->group[i].type = PRIM_TRIANGLES;
         else
         {
-            fprintf(stderr, "Error reading DCM file\n");
+            DBG_ERROR("error reading DCM file");
             exit(1);
         }
 
         if (fscanf(f, "%d\n", &group_len) != 1)
         {
-            fprintf(stderr, "Error reading DCM file\n");
+            DBG_ERROR("error reading DCM file");
             exit(1);
         }
 
@@ -374,7 +375,7 @@ mesh_t *dcm_load(char *filename)
         {
             if (fscanf(f, "%u\n", &mesh->group[i].data[j]) != 1)
             {
-                fprintf(stderr, "Error reading DCM file\n");
+                DBG_ERROR("error reading DCM file");
                 exit(1);
             }
         }
@@ -391,11 +392,11 @@ static mesh_t *load_mesh(char *filename)
 
     if (mesh)
     {
-        /* printf("Already loaded %s\n", filename); */
+        DBG_WARN("already loaded %s", filename);
         return mesh;
     }
 
-    /* printf("Loading %s\n", filename); */
+    DBG_LOG("loading mesh: %s\n", filename);
     mesh = dcm_load(filename);
     data_col_add(&meshes, filename, mesh);
     return mesh;
@@ -498,7 +499,7 @@ void loadmodels(char *filename)
 
     if (!f)
     {
-        fprintf(stderr, "Couldn't open %s\n", filename);
+        DBG_ERROR("couldn't open %s\n", filename);
         exit(-1);
     }
 
@@ -508,7 +509,7 @@ void loadmodels(char *filename)
                 || !fgets(texture, 256, f)
                 || (texture[strlen(texture) - 1] != '\n'))
         {
-            fprintf(stderr, "Error reading set file\n");
+            DBG_ERROR("error reading set file\n");
             exit(1);
         }
 
