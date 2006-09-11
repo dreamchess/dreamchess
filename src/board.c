@@ -605,10 +605,7 @@ static move_t *find_unique_move(board_t *board, san_move_t *san_move)
             move = m;
             found++;
             if (found > 1)
-            {
-                DBG_LOG("SAN move is not unique");
                 return NULL;
-            }
         }
     }
 

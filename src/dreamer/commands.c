@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "dreamer.h"
 #include "e_comm.h"
@@ -210,6 +211,28 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
+    if (!strncmp(command, "protover ", 9))
+    {
+        char *endptr;
+        errno = 0;
+        strtol(command + 9, &endptr, 10);
+
+        if (errno || (*endptr != 0))
+             BADPARAM(command);
+
+        e_comm_send("feature setboard=1 done=1\n");
+        return;
+    }
+
+    if (!strncmp(command, "accepted ", 9))
+    {
+        if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done"))
+            return;
+
+        BADPARAM(command);
+        return;
+    }
+
     if (!strcmp(command, "new"))
     {
         setup_board(&state->board);
@@ -338,6 +361,30 @@ void command_handle(state_t *state, char *command)
     if (!strcmp(command, "?"))
     {
         NOT_NOW(command);
+        return;
+    }
+
+    if (!strncmp(command, "setboard ", 9))
+    {
+        board_t board;
+
+        if (state->mode != MODE_FORCE)
+        {
+            NOT_NOW(command);
+            return;
+        }
+
+        if (setup_board_fen(&board, command + 9))
+        {
+            BADPARAM(command);
+            return;
+        }
+
+        state->board = board;
+        forget_history();
+        clear_table();
+        repetition_init(&state->board);
+        state->done = 0;
         return;
     }
 

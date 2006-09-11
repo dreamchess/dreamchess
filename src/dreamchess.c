@@ -108,33 +108,6 @@ static void move_list_view_prev(move_list_t *list)
         list->view--;
 }
 
-static void stop_game()
-{
-    history_exit(history);
-    move_list_exit(&san_list);
-    move_list_exit(&fan_list);
-    move_list_exit(&fullalg_list);
-}
-
-static void start_game()
-{
-    board_t board;
-
-    board_setup(&board);
-    history = history_init(&board);
-    move_list_init(&san_list);
-    move_list_init(&fan_list);
-    move_list_init(&fullalg_list);
-    comm_send("new\n");
-    ui->update(history->view->board, NULL);
-}
-
-static void restart_game()
-{
-    stop_game();
-    start_game();
-}
-
 void game_view_next()
 {
     history_view_next(history);
@@ -321,7 +294,6 @@ int game_load( int slot )
         return 1;
     }
 
-    restart_game();
     comm_send("force\n");
 
     sprintf( temp, "save%i.pgn", slot );
@@ -330,7 +302,7 @@ int game_load( int slot )
     if (retval)
     {
         DBG_ERROR("failed to parse PGN file '%s'", temp);
-        restart_game();
+        return 1;
     }
 
     board = history->last->board;
@@ -506,7 +478,11 @@ int dreamchess(void *data)
         move_list_init(&fullalg_list);
 
         if (pgn_slot >= 0)
-            game_load(pgn_slot);
+            if (game_load(pgn_slot))
+            {
+                 DBG_ERROR("failed to load savegame in slot %i", pgn_slot);
+                 exit(1);
+            }
 
         ui->update(history->view->board, NULL);
         while (in_game)

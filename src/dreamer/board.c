@@ -17,6 +17,9 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 #include "board.h"
 #include "move.h"
@@ -105,6 +108,150 @@ void setup_board(board_t *board)
     board->hash_key = hash_key(board);
 
     board->fifty_moves = 0;
+}
+
+int setup_board_fen(board_t *board, char *fen)
+{
+	int i = 0;
+	int square = 56;
+	int len = strlen(fen);
+	char *endptr;
+	int done = 0;
+
+	clear_board(board);
+
+	while (done < 64)
+	{
+		int j;
+		char c;
+		char piece=0;
+
+		if (i == len)
+			return 1;
+
+		c = fen[i++];
+
+		if ((c >= '1') && (c <= '8'))
+		{
+			square += c - '0';
+			done += c - '0';
+			continue;
+		}
+
+		switch(toupper(c))
+		{
+			case 'P':
+				piece = PAWN;
+				break;
+			case 'N':
+				piece = KNIGHT;
+				break;
+			case 'B':
+				piece = BISHOP;
+				break;
+			case 'R':
+				piece = ROOK;
+				break;
+			case 'Q':
+				piece = QUEEN;
+				break;
+			case 'K':
+				piece = KING;
+				break;
+			case '/':
+				square -= 16;
+				continue;
+		}
+
+		if (c >= 'a')
+			piece += SIDE_BLACK;
+		else
+			piece += SIDE_WHITE;
+
+		if (square < 0 || square > 63)
+			return 1;
+
+		add_piece(board, square++, piece);
+		done++;
+	}
+
+	/* Skip space */
+	if (++i >= len)
+		return 1;
+
+	if (fen[i] == 'w')
+		board->current_player = SIDE_WHITE;
+	else if (fen[i] == 'b')
+		board->current_player = SIDE_BLACK;
+	else
+		return 1;
+
+	i += 2;
+
+	if (i >= len)
+		return 1;
+
+	board->castle_flags = 0;
+
+	if (fen[i] != '-')
+		while ((fen[i] != ' ') && (i < len))
+			switch (fen[i++])
+			{
+			case 'K':
+				board->castle_flags |= WHITE_CAN_CASTLE_KINGSIDE;
+				break;
+			case 'Q':
+				board->castle_flags |= WHITE_CAN_CASTLE_QUEENSIDE;
+				break;
+			case 'k':
+				board->castle_flags |= BLACK_CAN_CASTLE_KINGSIDE;
+				break;
+			case 'q':
+				board->castle_flags |= BLACK_CAN_CASTLE_QUEENSIDE;
+			}
+	else
+		i++;
+
+	/* Skip space */
+	if (++i >= len)
+		return 1;
+
+	board->en_passent = 0LL;
+
+	if (fen[i] != '-')
+	{
+		if ((fen[i] < 'a') || (fen[i] > 'h'))
+			return 1;
+
+		board->en_passent = 1LL << (fen[i++] - 'a');
+
+		if (i >= len)
+			return 1;
+
+		if ((fen[i] < '1') || (fen[i] > '8'))
+			return 1;
+
+		board->en_passent <<= 8 * (fen[i] - '1');
+	}
+
+	i += 2;
+
+	if (i >= len)
+		return 1;
+
+	errno = 0;
+	board->fifty_moves = strtol(fen + i, &endptr, 10);
+	if (errno || (fen + i == endptr))
+		return 1;
+
+	i = endptr - fen + 1;
+
+	if (i >= len)
+		return 1;
+
+	/* FIXME Implement move counter, legality check */
+
+	return 0;
 }
 
 void board_init()
