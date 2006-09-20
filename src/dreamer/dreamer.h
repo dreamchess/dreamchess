@@ -32,7 +32,7 @@
 
 typedef struct
 {
-    bitboard_t en_passent;
+    bitboard_t en_passant;
     int castle_flags;
     int fifty_moves;
     move_t move;

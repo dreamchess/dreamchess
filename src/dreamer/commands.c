@@ -89,7 +89,7 @@ static move_t *get_coord_move(board_t *board, char *ms)
                 ==
                 dest))
         {
-            bitboard_t en_passent = board->en_passent;
+            bitboard_t en_passant = board->en_passant;
             int castle_flags = board->castle_flags;
             int fifty_moves = board->fifty_moves;
 
@@ -100,11 +100,11 @@ static move_t *get_coord_move(board_t *board, char *ms)
             {
                 *move = moves[move_nr];
                 board->current_player = OPPONENT(board->current_player);
-                unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+                unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
                 break;
             }
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
         }
         move_nr++;
     }

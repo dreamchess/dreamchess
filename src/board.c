@@ -125,7 +125,7 @@ int make_move(board_t *board, move_t *move)
 
     if ((PIECE(board->square[move->source]) == PAWN) && ((PIECE(board->square[move->destination]) == NONE)) && ((move->source % 8) != (move->destination % 8)))
     {
-        /* En-passent move. */
+        /* En-passant move. */
         int ep = move->destination - 8 * (move->destination > move->source ? 1 : -1);
         board->captured[board->square[ep]]++;
         board->square[ep] = NONE;
@@ -323,7 +323,7 @@ static int move_is_semi_valid(board_t *board, move_t *move)
                 return 0;
             if (!ray_ok(board, move))
                 return 0;
-            /* En-passent move. */
+            /* En-passant move. */
             if (board->square[move->destination] == NONE)
             {
                 if ((COLOUR(board->square[move->source]) == WHITE) && !((move->source >= 32) && (move->source < 40)))

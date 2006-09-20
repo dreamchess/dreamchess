@@ -21,26 +21,17 @@
 
 #include "board.h"
 
+#define EVAL_NONE 0
 #define EVAL_LOWERBOUND 1
 #define EVAL_ACCURATE 2
 #define EVAL_UPPERBOUND 3
 
-typedef struct entry
-{
-    int eval_type;
-    int eval;
-    int depth;
-    long long hash_key;
-    int time_stamp;
-}
-entry_t;
-
 void
-store_board(board_t *board, int eval, int eval_type, int depth, int
-            time_stamp);
+store_board(board_t *board, int eval, int eval_type, int depth, int ply,
+            int time_stamp);
 
-entry_t *
-lookup_board(board_t *board);
+int
+lookup_board(board_t *board, int depth, int ply, int *eval);
 
 void
 clear_table();

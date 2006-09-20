@@ -102,7 +102,7 @@ int check_game_state(board_t *board)
     total_moves = compute_legal_moves(board, moves);
     for (move_nr = 0; move_nr < total_moves; move_nr++)
     {
-        bitboard_t en_passent = board->en_passent;
+        bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;
         int fifty_moves = board->fifty_moves;
 
@@ -112,11 +112,11 @@ int check_game_state(board_t *board)
         {
             mate = STATE_NORMAL;
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
             break;
         }
         board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+        unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
     if (!is_check(board) && (mate == STATE_MATE))
@@ -173,8 +173,8 @@ void do_move(state_t *state, move_t *move)
     state->moves++;
     state->undo_data = realloc(state->undo_data,
                                sizeof(undo_data_t) * state->moves);
-    state->undo_data[state->moves - 1].en_passent =
-        state->board.en_passent;
+    state->undo_data[state->moves - 1].en_passant =
+        state->board.en_passant;
     state->undo_data[state->moves - 1].castle_flags =
         state->board.castle_flags;
     state->undo_data[state->moves - 1].fifty_moves =
@@ -194,7 +194,7 @@ void undo_move(state_t *state)
 
     unmake_move(&state->board,
                 &state->undo_data[state->moves].move,
-                state->undo_data[state->moves].en_passent,
+                state->undo_data[state->moves].en_passant,
                 state->undo_data[state->moves].castle_flags,
                 state->undo_data[state->moves].fifty_moves);
 

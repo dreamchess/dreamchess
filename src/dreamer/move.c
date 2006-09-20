@@ -313,9 +313,9 @@ FUNCNAME(board_t *board, move_t *move) \
 				} \
 			} \
 			else \
-				if (board->en_passent & square_bit[dest]) \
+				if (board->en_passant & square_bit[dest]) \
 				{ \
-					/* En passent capture. */ \
+					/* En passant capture. */ \
 					move->type = CAPTURE_MOVE_EN_PASSENT; \
 					move->source = source; \
 					move->destination = dest; \

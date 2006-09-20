@@ -57,7 +57,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta)
     int total_moves;
     int move_nr;
     int best_move_score;
-    bitboard_t en_passent;
+    bitboard_t en_passant;
     int castle_flags;
     int fifty_moves;
 
@@ -90,7 +90,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta)
     if (best_move_score > alpha)
         alpha = best_move_score;
 
-    en_passent = board->en_passent;
+    en_passant = board->en_passant;
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
@@ -104,7 +104,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta)
 
             execute_move(board, &moves[move_nr]);
             score = -quiescence(board, ply + 1, check & (board->current_player? 1 : 2), -beta, -alpha);
-            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
             if (abort_search)
                 return 0;
             if (score == -ALPHABETA_ILLEGAL)
@@ -159,11 +159,11 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
     int total_moves;
     int move_nr;
     int best_move_score;
-    entry_t *entry;
+    int trans_eval;
     int hard_alpha = ALPHABETA_MIN;
     int hard_beta = ALPHABETA_MAX;
     int current_alpha = alpha;
-    long long en_passent;
+    long long en_passant;
     int castle_flags;
     int fifty_moves;
 
@@ -176,41 +176,39 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
     if (abort_search)
         return 0;
 
-    if ((entry = lookup_board(board)) && (entry->depth >= depth))
+    if (is_repetition(board, ply))
+        return 0;
+
+    switch (lookup_board(board, depth, ply, &trans_eval))
     {
-        switch (entry->eval_type)
+    case EVAL_ACCURATE:
+        return trans_eval;
+    case EVAL_LOWERBOUND:
+        if (trans_eval >= beta)
+            return trans_eval;
+        else
         {
-        case EVAL_ACCURATE:
-            return entry->eval;
-        case EVAL_LOWERBOUND:
-            if (entry->eval >= beta)
-                return entry->eval;
-            else
-            {
-                hard_alpha = entry->eval;
-                break;
-            }
-        case EVAL_UPPERBOUND:
-            if (entry->eval <= alpha)
-                return entry->eval;
-            else
-                hard_beta = entry->eval;
+            hard_alpha = trans_eval;
+            break;
         }
+    case EVAL_UPPERBOUND:
+        if (trans_eval <= alpha)
+            return trans_eval;
+        else
+            hard_beta = trans_eval;
     }
 
     if (depth == 0)
         return quiescence(board, ply, check, alpha, beta);
-    if (is_repetition(board, ply))
-        return 0;
 
     if ((total_moves = compute_legal_moves(board, moves)) < 0)
         return ALPHABETA_ILLEGAL;
 
     sort_moves(moves, total_moves, board->current_player);
 
-    best_move_score = ALPHABETA_MIN;
+    best_move_score = ALPHABETA_ILLEGAL;
 
-    en_passent = board->en_passent;
+    en_passant = board->en_passant;
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
@@ -219,7 +217,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
         int score;
         execute_move(board, &moves[move_nr]);
         score = -alpha_beta(board, depth - 1, ply + 1, check, -beta, -current_alpha);
-        unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+        unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
         if (abort_search)
             return 0;
         if (score == -ALPHABETA_ILLEGAL)
@@ -231,7 +229,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
             best_move_score = score;
             if (best_move_score >= beta)
             {
-                store_board(board, best_move_score, EVAL_LOWERBOUND, depth,
+                store_board(board, best_move_score, EVAL_LOWERBOUND, depth, ply,
                             moves_made);
                 add_count(&moves[move_nr], board->current_player);
                 break;
@@ -239,18 +237,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
         }
     }
 
-    if (current_alpha == alpha)
-    {
-        /* Fail low. */
-        store_board(board, best_move_score, EVAL_UPPERBOUND, depth,
-                    moves_made);
-    }
-    else if (best_move_score < beta)
-    {
-        store_board(board, best_move_score, EVAL_ACCURATE, depth, moves_made);
-    }
-
-    if (best_move_score <= ALPHABETA_MIN)
+    if (best_move_score == ALPHABETA_ILLEGAL)
     {
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
@@ -277,6 +264,17 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta)
         }
     }
 
+    if (current_alpha == alpha)
+    {
+        /* Fail low. */
+        store_board(board, best_move_score, EVAL_UPPERBOUND, depth, ply,
+                    moves_made);
+    }
+    else if (best_move_score < beta)
+    {
+        store_board(board, best_move_score, EVAL_ACCURATE, depth, ply, moves_made);
+    }
+
     if (best_move_score < hard_alpha)
         best_move_score = hard_alpha;
     if (best_move_score > hard_beta)
@@ -298,7 +296,7 @@ find_best_move(board_t *board, int depth)
     int move_nr;
     int cur_depth;
     int best_score;
-    long long en_passent = board->en_passent;
+    long long en_passant = board->en_passant;
     int castle_flags = board->castle_flags;
     int fifty_moves = board->fifty_moves;
     node_trigger = 10000;
@@ -311,15 +309,17 @@ find_best_move(board_t *board, int depth)
         best_score = ALPHABETA_MIN;
         total_moves = compute_legal_moves(board, moves);
         sort_moves(moves, total_moves, board->current_player);
+        /* e_comm_send("\nDepth %i\n", cur_depth); */ 
         for (move_nr = 0; move_nr < total_moves; move_nr++)
         {
             int score;
             execute_move(board, &moves[move_nr]);
-            /*e_comm_send("Examining move %i-%i.. ", moves[move_nr].source,
-                        moves[move_nr].destination);*/
+            /* e_comm_send("Examining move %c%c-%c%c..\n", moves[move_nr].source % 8 + 'a',
+                moves[move_nr].source / 8 + '1', moves[move_nr].destination % 8 + 'a',
+                moves[move_nr].destination / 8 + '1'); */
             score = -alpha_beta(board, cur_depth, 0, 3, ALPHABETA_MIN, -alpha);
-            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
-            /*e_comm_send("Move scored %i\n", score);*/
+            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+            /* e_comm_send("Move scored %i\n", score); */
             if (abort_search)
                 break;
             if (score == -ALPHABETA_ILLEGAL)
@@ -332,12 +332,18 @@ find_best_move(board_t *board, int depth)
                 best_score = score;
             }
         }
+
+        /* If we found a mate a mate in 'cur_depth' we can stop the search */
+        if (best_score == ALPHABETA_MAX - cur_depth)
+            break;
+
         if (abort_search)
         {
             best_move = prev_best_move;
             best_score = prev_best_score;
             break;
         }
+
         prev_best_move = best_move;
         prev_best_score = best_score;
         /*e_comm_send("Best move at depth %i: %i-%i..\n", cur_depth, prev_best_move->source,

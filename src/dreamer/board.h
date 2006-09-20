@@ -188,8 +188,8 @@ typedef struct board
     */
     int castle_flags;
 
-    /* bitboard containing the current en_passent flags, if any. */
-    bitboard_t en_passent;
+    /* bitboard containing the current en_passant flags, if any. */
+    bitboard_t en_passant;
 
     /* Current player. 0 = white, 1 = black. */
     int current_player;
@@ -281,12 +281,12 @@ execute_move(board_t *board, move_t *move);
 */
 
 void
-unmake_move(board_t *board, move_t *move, bitboard_t old_en_passent,
+unmake_move(board_t *board, move_t *move, bitboard_t old_en_passant,
             int old_castle_flags, int old_fifty_moves);
 /* Unmakes a move on a board.
 ** Parameters: (board_t *) board: Board to unmake the move on.
 **             (move_t *) move: The move to unmake.
-**             (bitboard_t) old_en_passent: The en-passent flags before the
+**             (bitboard_t) old_en_passant: The en-passant flags before the
 **                 last move.
 **             (int) old_castle_flags: The castling flags before the last
 **                 move.

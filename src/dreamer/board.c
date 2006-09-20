@@ -101,7 +101,7 @@ void setup_board(board_t *board)
                           | WHITE_CAN_CASTLE_QUEENSIDE
                           | BLACK_CAN_CASTLE_QUEENSIDE;
 
-    board->en_passent = 0LL;
+    board->en_passant = 0LL;
 
     board->current_player = SIDE_WHITE;
 
@@ -216,14 +216,14 @@ int setup_board_fen(board_t *board, char *fen)
 	if (++i >= len)
 		return 1;
 
-	board->en_passent = 0LL;
+	board->en_passant = 0LL;
 
 	if (fen[i] != '-')
 	{
 		if ((fen[i] < 'a') || (fen[i] > 'h'))
 			return 1;
 
-		board->en_passent = 1LL << (fen[i++] - 'a');
+		board->en_passant = 1LL << (fen[i++] - 'a');
 
 		if (i >= len)
 			return 1;
@@ -231,7 +231,7 @@ int setup_board_fen(board_t *board, char *fen)
 		if ((fen[i] < '1') || (fen[i] > '8'))
 			return 1;
 
-		board->en_passent <<= 8 * (fen[i] - '1');
+		board->en_passant <<= 8 * (fen[i] - '1');
 	}
 
 	i += 2;
@@ -489,31 +489,31 @@ void execute_move(board_t *board, move_t *move)
         add_piece(board, move->destination, QUEEN + board->current_player);
     }
 
-    /* Reset en passent possibility. */
-    if (board->en_passent)
+    /* Reset en passant possibility. */
+    if (board->en_passant)
     {
         int square;
         for (square = 0; square < 64; square++)
         {
-            if (board->en_passent & square_bit[square])
+            if (board->en_passant & square_bit[square])
             {
                 board->hash_key ^= ep_hash[square];
                 break;
             }
         }
-        board->en_passent = 0LL;
+        board->en_passant = 0LL;
     }
 
-    /* Set en passent possibility in case of a double pawn push. */
+    /* Set en passant possibility in case of a double pawn push. */
     if ((move->piece == WHITE_PAWN) && (move->destination - move->source == 16))
     {
-        board->en_passent = square_bit[move->source + 8];
+        board->en_passant = square_bit[move->source + 8];
         board->hash_key ^= ep_hash[move->source + 8];
     }
     else if ((move->piece == BLACK_PAWN) && (move->source -
              move->destination == 16))
     {
-        board->en_passent = square_bit[move->destination + 8];
+        board->en_passant = square_bit[move->destination + 8];
         board->hash_key ^= ep_hash[move->destination + 8];
     }
 
@@ -615,7 +615,7 @@ void execute_move(board_t *board, move_t *move)
 }
 
 void unmake_move(board_t *board, move_t *move, bitboard_t
-                 old_en_passent,                int
+                 old_en_passant,                int
                  old_castle_flags, int old_fifty_moves)
 {
     int castle_diff;
@@ -740,18 +740,18 @@ void unmake_move(board_t *board, move_t *move, bitboard_t
         return;
     }
 
-    /* Restore en passent possibility. */
-    if (board->en_passent || old_en_passent)
+    /* Restore en passant possibility. */
+    if (board->en_passant || old_en_passant)
     {
         int square;
         for (square = 0; square < 64; square++)
         {
-            if (board->en_passent & square_bit[square])
+            if (board->en_passant & square_bit[square])
                 board->hash_key ^= ep_hash[square];
-            if (old_en_passent & square_bit[square])
+            if (old_en_passant & square_bit[square])
                 board->hash_key ^= ep_hash[square];
         }
-        board->en_passent = old_en_passent;
+        board->en_passant = old_en_passant;
     }
 
     castle_diff = board->castle_flags ^ old_castle_flags;
