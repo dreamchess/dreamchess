@@ -9,6 +9,7 @@ static void dialog_quit_ok(gg_widget_t *widget, void *data)
 {
     gg_dialog_close();
     gg_dialog_close();
+    DBG_LOG("entering title menu");
     set_quit_to_menu(1);
 }
 

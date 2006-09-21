@@ -217,6 +217,8 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
     /* Create storage space for the texture */
     SDL_Surface *texture_image;
 
+    DBG_LOG("loading texture: %s", filename );
+
     /* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
     if ( ( texture_image = IMG_Load( filename ) ) )
     {

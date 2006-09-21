@@ -63,9 +63,14 @@ int get_cur_style()
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_set_loading(TRUE);
-    
+    DBG_LOG("starting a new game - difficulty: %i - player scheme: %i", 
+        selected_difficulty, selected_player_layout);
+
     if ( get_egg_req() )
+    {
         set_show_egg(TRUE);
+        DBG_LOG("easter egg enabled");
+    }
 
     gg_dialog_close();
     gg_dialog_close();

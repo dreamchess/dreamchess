@@ -532,6 +532,8 @@ void dc_draw_vmu_icon()
     maple_device_t *dev;
     int i = 0;
 
+    DBG_LOG("updating vmu icon");
+
     while ((dev = maple_enum_type(i++, MAPLE_FUNC_LCD)))
     {
         if ( get_show_egg() )

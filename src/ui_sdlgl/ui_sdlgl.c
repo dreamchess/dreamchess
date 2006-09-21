@@ -233,6 +233,8 @@ static config_t *do_menu(int *pgn)
     dc_draw_vmu_icon();
 #endif
 
+    DBG_LOG("entering title menu");
+
     while ( 1 )
     {
         int mouse_x, mouse_y;
@@ -682,6 +684,7 @@ static void poll_move()
     }
     else if (quit_to_menu)
     {
+        DBG_LOG("returning to title menu");
         set_fading_out(TRUE);
         set_fade_start(gg_system_get_ticks());
         quit_to_menu=FALSE;

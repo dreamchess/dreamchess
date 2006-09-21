@@ -140,7 +140,7 @@ void load_theme_xml( char *xmlfile )
 
     theme = tree;
 
-    DBG_LOG("Loading %s", xmlfile );
+    DBG_LOG("loading %s", xmlfile );
     while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
     {
         mxml_node_t *node;
@@ -184,7 +184,7 @@ void load_theme_xml( char *xmlfile )
                 if ( !strcmp( node->value.opaque, "off" ) )
                     themes[theme_count].lighting=FALSE; */
         }
-        DBG_LOG("Added theme: %s", themes[theme_count].name );
+        DBG_LOG("added theme: %s", themes[theme_count].name );
 
         theme_count++;
     }

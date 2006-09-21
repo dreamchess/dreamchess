@@ -88,6 +88,8 @@ void write_save_xml( int slot, char *desc )
     if (!fp)
         return;
 
+    DBG_LOG("writing save xml: %s", temp );
+
     fprintf( fp, "<?xml version=\"1.0\"?>\n" );
     tree = mxmlNewElement( MXML_NO_PARENT, "save" );
 
@@ -130,7 +132,6 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
     mxml_node_t *tree, *save;
 
     sprintf( temp, "save%i.xml", slot );
-    /*printf( "Loading %s\n", temp );*/
 
     if (ch_userdir())
     {
@@ -141,6 +142,7 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
     fp = fopen(temp, "r");
     if (fp)
     {
+        DBG_LOG("reading save xml: %s", temp );
         tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
         slots |= (1 << slot);
     }

@@ -7,21 +7,25 @@
 
 static void retract_move(gg_widget_t *widget, void *data)
 {
+    DBG_LOG("retracting move");
     game_retract_move();
 }
 
 static void move_now(gg_widget_t *widget, void *data)
 {
+    DBG_LOG("forcing dreamer to move");
     game_move_now();
 }
 
 static void view_prev(gg_widget_t *widget, void *data)
 {
+    DBG_LOG("viewing previous move");
     game_view_prev();
 }
 
 static void view_next(gg_widget_t *widget, void *data)
 {
+    DBG_LOG("viewing next move");
     game_view_next();
 }
 

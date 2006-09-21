@@ -248,7 +248,6 @@ static texture_t *load_piece_texture(char *filename)
 
     if (tex)
     {
-        DBG_LOG("already loaded %s", filename);
         return tex;
     }
 
@@ -392,11 +391,10 @@ static mesh_t *load_mesh(char *filename)
 
     if (mesh)
     {
-        DBG_LOG("already loaded %s", filename);
         return mesh;
     }
 
-    DBG_LOG("loading mesh: %s\n", filename);
+    DBG_LOG("loading mesh: %s", filename);
     mesh = dcm_load(filename);
     data_col_add(&meshes, filename, mesh);
     return mesh;
