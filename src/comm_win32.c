@@ -24,7 +24,9 @@
 
 #include <windows.h>
 #include <stdio.h>
-#include <pipe_win32.h>
+
+#include "pipe_win32.h"
+#include "debug.h"
 
 void comm_init(char *engine)
 {
