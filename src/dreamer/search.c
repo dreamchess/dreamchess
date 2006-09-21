@@ -303,6 +303,7 @@ find_best_move(board_t *board, int depth)
     prev_best_move = NULL;
     prev_best_score = ALPHABETA_MIN;
     abort_search = 0;
+
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
         int alpha = ALPHABETA_MIN;
@@ -349,6 +350,7 @@ find_best_move(board_t *board, int depth)
         /*e_comm_send("Best move at depth %i: %i-%i..\n", cur_depth, prev_best_move->source,
                     prev_best_move->destination);*/
     }
+
     if (best_score <= ALPHABETA_MIN)
     {
         /* There are no legal moves. We're either checkmated or
@@ -375,8 +377,6 @@ find_best_move(board_t *board, int depth)
             return move;
         }
     }
-    if (best_score > 29000)
-    {}
-    /*printf("MATE IN %i!\n", ((ALPHABETA_MAX - best_score) / 2) + 1);*/
+
     return *best_move;
 }
