@@ -57,14 +57,24 @@ void set_mouse_pos( int x, int y )
     mouse_pos.y=y;
 }
 
-int get_mouse_x()
+int get_true_mouse_x()
 {
     return mouse_pos.x;
 }
 
-int get_mouse_y()
+int get_true_mouse_y()
 {
     return mouse_pos.y;
+}
+
+int get_mouse_x()
+{
+    return ((float)mouse_pos.x/(float)get_screen_width())*640;
+}
+
+int get_mouse_y()
+{
+    return ((float)mouse_pos.y/(float)get_screen_height())*480;
 }
 
 /** @brief Computes smallest power of two that's larger than the input value.
@@ -91,7 +101,6 @@ void set_perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zF
     ymin = -ymax;
     xmin = ymin * aspect;
     xmax = ymax * aspect;
-
 
     glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
 }

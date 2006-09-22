@@ -48,13 +48,13 @@ void draw_scene( board_t *b )
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    go_3d(SCREEN_WIDTH, SCREEN_HEIGHT);
+    go_3d(get_screen_width(), get_screen_height());
     glDepthMask(GL_TRUE);
 
     render_scene_3d(b);
-    mouse_square=find_square(get_mouse_x(), get_mouse_y(), get_zerodepth());
+    mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y(), get_zerodepth());
 
-    resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
+    resize_window(get_screen_width(), get_screen_height());
 
     /* draw_captured_pieces( 480, 70 ); */
     glPushMatrix();
@@ -105,8 +105,8 @@ void draw_scene( board_t *b )
 
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-    draw_texture( get_mouse_cursor(), mouse_x, (479-mouse_y-32), 32, 32, 1.0f, get_col(COL_WHITE));
+    /*SDL_GetMouseState(&mouse_x, &mouse_y);*/
+    draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
     #endif /* _arch_dreamcast */
 
     /* Draw it to the screen */

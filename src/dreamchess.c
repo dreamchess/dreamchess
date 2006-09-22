@@ -349,6 +349,10 @@ void game_get_move_list(char ***list, int *total, int *view)
     *view = fan_list.view;
 }
 
+int use_ui_fullscreen=0;
+int use_ui_width=640;
+int use_ui_height=480;
+
 #ifndef _arch_dreamcast
 static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char **engine)
 {
@@ -364,15 +368,18 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
             },
             {"list-drivers", no_argument, NULL, 'l'},
             {"ui", required_argument, NULL, 'u'},
-            {"first-engine", required_argument, NULL, 'f'},
+            {"fullscreen", no_argument, NULL, 'f'},
+            {"width", required_argument, NULL, 'W'},
+            {"height", required_argument, NULL, 'H'},
+            {"1st-engine", required_argument, NULL, '1'},
             {"verbose", required_argument, NULL, 'v'},
             {0, 0, 0, 0}
         };
 
-    while ((c = getopt_long(argc, argv, "f:hlu:v:", options, &optindex)) > -1)
+    while ((c = getopt_long(argc, argv, "1:fhlu:v:W:H:", options, &optindex)) > -1)
 #else
 
-    while ((c = getopt(argc, argv, "f:hlu:v:")) > -1)
+    while ((c = getopt(argc, argv, "1:fhlu:v:W:H:")) > -1)
 #endif /* HAVE_GETOPT_LONG */
 
         switch (c)
@@ -384,7 +391,10 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
                    OPTION_TEXT("--help\t", "-h\t", "Show help.")
                    OPTION_TEXT("--list-drivers", "-l\t", "List all available drivers.")
                    OPTION_TEXT("--ui <drv>\t", "-u<drv>\t", "Use user interface driver <drv>.")
-                   OPTION_TEXT("--first-engine <eng>", "-f<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to 'dreamer'.")
+                   OPTION_TEXT("--fullscreen\t", "-f\t", "Run fullscreen")
+                   OPTION_TEXT("--width\t", "-W<num>\t", "Set screen width")
+                   OPTION_TEXT("--height\t", "-H<num>\t", "Set screen height")
+                   OPTION_TEXT("--1st-engine <eng>", "-1<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to 'dreamer'.")
                    OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.\n\t\t\t\t\t  Verbosity levels:\n\t\t\t\t\t  0 - Silent\n\t\t\t\t\t  1 - Errors only\n\t\t\t\t\t  2 - Errors and warnings only\n\t\t\t\t\t  3 - All\n\t\t\t\t\t  Defaults to 1")
                   );
             exit(0);
@@ -399,8 +409,17 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
                 exit(1);
             }
             break;
-        case 'f':
+        case '1':
             *engine = optarg;
+            break;
+        case 'f':
+            use_ui_fullscreen=1;
+            break;
+        case 'W':
+            use_ui_width=atoi(optarg);
+            break;
+        case 'H':
+            use_ui_height=atoi(optarg);
             break;
         case 'v':
             {
@@ -448,7 +467,7 @@ int dreamchess(void *data)
     comm_init(engine);
     comm_send("xboard\n");
 
-    ui->init();
+    ui->init(use_ui_width,use_ui_height,use_ui_fullscreen);
     while (1)
     {
         board_t board;

@@ -23,6 +23,18 @@ static char** board_list;
 static int board_list_total;
 static int show_egg;
 static int egg_req1=FALSE;
+static int screen_width=640;
+static int screen_height=480;
+
+int get_screen_width()
+{
+    return screen_width;
+}
+
+int get_screen_height()
+{
+    return screen_height;
+}
 
 static int menu_state;
 enum {
@@ -218,7 +230,7 @@ static config_t *do_menu(int *pgn)
     SDL_Joystick *joy1=SDL_JoystickOpen(0);
     title_process_retval=2;
 
-    resize_window(SCREEN_WIDTH, SCREEN_HEIGHT);
+    resize_window(screen_width, screen_height);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -368,8 +380,8 @@ static config_t *do_menu(int *pgn)
         /* Draw mouse cursor.. */
 #ifndef _arch_dreamcast
 
-        SDL_GetMouseState(&mouse_x, &mouse_y);
-        draw_texture( get_mouse_cursor(), mouse_x, (479-mouse_y-32), 32, 32, 1.0f,
+        /*SDL_GetMouseState(&mouse_x, &mouse_y);*/
+        draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 #endif /* _arch_dreamcast */
 
@@ -378,7 +390,7 @@ static config_t *do_menu(int *pgn)
 }
 
 /** Implements ui_driver::init. */
-static void init_gui()
+static void init_gui( int width, int height, int fullscreen)
 {
     int video_flags;
     SDL_Surface *icon, *surface;
@@ -387,6 +399,11 @@ static void init_gui()
     DIR* styledir;
     struct dirent* styledir_entry;
     char temp[80];
+
+    screen_width=width;
+    screen_height=height;
+
+    DBG_LOG( "screen set to %ix%i", width, height );
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
@@ -427,7 +444,12 @@ static void init_gui()
     video_flags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering */
     video_flags |= SDL_HWPALETTE;       /* Store the palette in hardware */
     /* video_flags |= SDL_RESIZABLE; */      /* Enable window resizing */
-    /* video_flags |= SDL_FULLSCREEN; */
+    
+    if ( fullscreen )
+    {
+        video_flags |= SDL_FULLSCREEN;
+        DBG_LOG( "fullscreen set" );
+    }
 
     if ( video_info->hw_available )
         video_flags |= SDL_HWSURFACE;
@@ -439,8 +461,7 @@ static void init_gui()
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-    surface = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
-                                video_flags );
+    surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
         fprintf( stderr,  "Video mode set failed: %s\n", SDL_GetError( ) );
@@ -605,9 +626,9 @@ static void show_result(result_t *res)
 }
 
 /** Implements ui_driver::init. */
-static int sdlgl_init()
+static int sdlgl_init(int width, int height, int fullscreen)
 {
-    init_gui();
+    init_gui(width,height,fullscreen);
     return 0;
 }
 

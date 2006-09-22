@@ -134,6 +134,8 @@ texture_t;
 
 int get_show_egg();
 int get_egg_req();
+int get_screen_width();
+int get_screen_height();
 
 /* dialogs */
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
@@ -262,6 +264,8 @@ void resize_window( int width, int height );
 void set_mouse_pos( int x, int y );
 int get_mouse_x();
 int get_mouse_y();
+int get_true_mouse_x();
+int get_true_mouse_y();
 float get_zerodepth();
 void gl_swap();
 void toggle_show_fps();
