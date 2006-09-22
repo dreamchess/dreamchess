@@ -36,6 +36,11 @@ int get_screen_height()
     return screen_height;
 }
 
+void toggle_fullscreen()
+{
+    SDL_WM_ToggleFullScreen( SDL_GetVideoSurface() );
+}
+
 static int menu_state;
 enum {
     MENU_STATE_FADE_IN,
@@ -297,6 +302,9 @@ static config_t *do_menu(int *pgn)
 
             if ( keystate[SDLK_UP] )
                 egg_req1=TRUE;
+
+            if ( keystate[SDLK_RETURN] && keystate[SDLK_LALT] )
+                toggle_fullscreen();
 
 #ifdef _arch_dreamcast
             if ( SDL_JoystickGetAxis(joy1, 1) < 0 )

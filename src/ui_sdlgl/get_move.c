@@ -23,6 +23,9 @@ int get_move()
     Uint8 *keystate = SDL_GetKeyState(NULL);
     Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
 
+    if ( keystate[SDLK_RETURN] && keystate[SDLK_LALT] )
+        toggle_fullscreen();
+
     if( mousestate & SDL_BUTTON_MIDDLE )
     {
         move_camera( -(mousey-last_mousey)*MOUSE_CAM_SPEED, -(mousex-last_mousex)*MOUSE_CAM_SPEED);

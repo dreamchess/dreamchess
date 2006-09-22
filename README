@@ -260,8 +260,11 @@ Options:
   --help                -h              Show help.
   --list-drivers        -l              List all available drivers.
   --ui <drv>            -u<drv>         Use user interface driver <drv>.
-  --first-engine <eng>  -f<eng>         Use <eng> as first chess engine.
-                                          Defaults to `dreamer'.
+  --fullscreen          -f              Run in fullscreen.
+  --width <num>         -W<num>         Set screen width.
+  --height <num>        -H<num>         Set screen height.
+  --1st-engine <eng>    -1<eng>         Use <eng> as first chess engine.
+                                           Defaults to `dreamer'.
 
 NOTE: It's not possible to specify command-line arguments when running the
 Dreamcast version of DreamChess.
