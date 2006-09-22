@@ -16,7 +16,6 @@ void reset_dc_z()
 }
 #endif
 
-/* Evil ATI! */
 static float zerodepth=1.0f;
 
 static int fps_enabled = 0;
