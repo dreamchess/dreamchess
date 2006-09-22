@@ -111,7 +111,7 @@ void go_3d(int width, int height)
 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    set_perspective(45.0f, (GLfloat)width/(GLfloat)height, 0.1f, 100.0f);
+    set_perspective(45.0f, 640.0f/480.0f, 0.1f, 100.0f);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
