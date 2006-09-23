@@ -451,7 +451,7 @@ int dreamchess(void *data)
 
     ui = ui_driver[0];
 
-    printf( "Dreamchess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
+    printf( "DreamChess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
 
 #ifndef _arch_dreamcast
 

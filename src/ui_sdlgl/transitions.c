@@ -57,7 +57,7 @@ int draw_sonic_fade( int inout )
         gg_system_draw_filled_rect(0, 480-(480*amount), 640, 480, &col_blue );
         gg_system_draw_filled_rect(640-(640*amount), 0, 640, (480/3), &col_yellow );
 
-        text_draw_string( 640-(640*amount)+280, (480/3)-30, "Dreamchess the chess game", 1.2f, &col_white);
+        text_draw_string( 640-(640*amount)+280, (480/3)-30, "DreamChess the chess game", 1.2f, &col_white);
 
         gg_system_draw_filled_rect(0, 0, (((640/3)+(480/14))*amount)-(480/14), 480, &col_red );
 
@@ -111,7 +111,7 @@ int draw_sonic_fade( int inout )
         gg_system_draw_filled_rect(0, 480-(480*amount), 640, 480, &col_blue );
         gg_system_draw_filled_rect(640-(640*amount), 0, 640, (480/3), &col_yellow );
 
-        text_draw_string( 640-(640*amount)+280, (480/3)-30, "Dreamchess the chess game", 1.2f, &col_white);
+        text_draw_string( 640-(640*amount)+280, (480/3)-30, "DreamChess the chess game", 1.2f, &col_white);
 
         gg_system_draw_filled_rect(0, 0, (((640/3)+(480/14))*amount)-(480/14), 480, &col_red );
 

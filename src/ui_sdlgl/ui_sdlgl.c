@@ -485,7 +485,7 @@ static void init_gui( int width, int height, int fullscreen)
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
 
-    SDL_WM_SetCaption( "Dreamchess", NULL );
+    SDL_WM_SetCaption( "DreamChess", NULL );
     init_gl();
 
     gg_system_init(get_gg_driver_sdlgl());
