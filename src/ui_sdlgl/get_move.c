@@ -23,9 +23,6 @@ int get_move()
     Uint8 *keystate = SDL_GetKeyState(NULL);
     Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
 
-    if ( keystate[SDLK_RETURN] && keystate[SDLK_LALT] )
-        toggle_fullscreen();
-
     if( mousestate & SDL_BUTTON_MIDDLE )
     {
         move_camera( -(mousey-last_mousey)*MOUSE_CAM_SPEED, -(mousex-last_mousex)*MOUSE_CAM_SPEED);
@@ -99,6 +96,14 @@ int get_move()
         if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_Y))
         {
             roty = event.jaxis.value;
+            continue;
+        }
+
+        if ( event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_ALT &&
+            event.key.keysym.sym == SDLK_RETURN )
+        {
+            DBG_LOG( "toggled fullscreen" );
+            toggle_fullscreen();
             continue;
         }
 

@@ -205,6 +205,14 @@ static int poll_event(gg_event_t *event)
             /* FIXME */
             exit(0);
 
+        if ( sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
+            sdl_event.key.keysym.sym == SDLK_RETURN )
+        {
+            DBG_LOG( "toggled fullscreen" );
+            toggle_fullscreen();
+            continue;
+        }
+
         gg_event = convert_event(&sdl_event);
 
         if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x06)
@@ -231,7 +239,6 @@ static void draw_press_key_message()
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
-    Uint8 *keystate;
     SDL_Joystick *joy1=SDL_JoystickOpen(0);
     title_process_retval=2;
 
@@ -254,8 +261,11 @@ static config_t *do_menu(int *pgn)
 
     while ( 1 )
     {
+        Uint8 *keystate;
         int mouse_x, mouse_y;
         gg_event_t event;
+
+        keystate = SDL_GetKeyState(NULL);
 
         egg_req1=FALSE;
 
@@ -297,14 +307,8 @@ static config_t *do_menu(int *pgn)
 
         case MENU_STATE_IN_MENU:
 
-            keystate = SDL_GetKeyState(NULL);
-            /*printf( "joy_y: %i\n", SDL_JoystickGetAxis(joy1, 1) );*/
-
             if ( keystate[SDLK_UP] )
                 egg_req1=TRUE;
-
-            if ( keystate[SDLK_RETURN] && keystate[SDLK_LALT] )
-                toggle_fullscreen();
 
 #ifdef _arch_dreamcast
             if ( SDL_JoystickGetAxis(joy1, 1) < 0 )
