@@ -1,3 +1,5 @@
-0.1.0-SVN
 
-- Initial release.
+*** 09/22/06 - Dreamchess v0.1.0 ***
+
+Dreamchess is an open source chess game. Using OpenGL for rendering, it makes available fully 3D board and piece sets. The boards and pieces are fully themeable, as well as the GUI elements, and the backgrounds. Various themes are included, ranging from more classic wooden, and marble sets, to flat figurines, and metal/glass boards. Dreamchess comes with it's own chess engine, Dreamer. With Dreamer being xboard compatible, it will allow you to use it with other xboard interfaces, as well as give you the option of using a different engine with Dreamchess instead of Dreamer. Dreamchess will also allow you to save, and later resume a game in progress. In future releases, we plan to add audio, network play, more visual effects such as reflections and shadows, and 3D animated pieces. If you are an artist, or musician who would like to help us with our future releases, please head on over to http://www.dreamchess.org for more information, and/or send us an email at feedback@dreamchess.org.
+
