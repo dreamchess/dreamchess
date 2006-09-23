@@ -23,7 +23,8 @@
 
 typedef struct rep_list
 {
-    long long position[101];
+    /* FIXME */
+    long long position[101 + 100];
     int head;
 }
 rep_list_t;
