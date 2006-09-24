@@ -193,17 +193,15 @@ static int do_move(move_t *move, int ui_update)
     char *move_s, *move_f, *move_san;
     board_t new_board;
 
-    move_set_attr(history->last->board, move);
-    new_board = *history->last->board;
-    move_s = move_to_fullalg(&new_board, move);
-
     if (!move_is_valid(history->last->board, move))
     {
-        DBG_WARN("move %s is illegal", move_s);
-        free(move_s);
+        DBG_WARN("move is illegal");
         return 0;
     }
 
+    move_set_attr(history->last->board, move);
+    new_board = *history->last->board;
+    move_s = move_to_fullalg(&new_board, move);
     move_list_play(&fullalg_list, move_s);
 
     move_san = move_to_san(&new_board, move);
