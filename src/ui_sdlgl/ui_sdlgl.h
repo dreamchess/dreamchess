@@ -277,12 +277,12 @@ float get_dc_z();
 void reset_dc_z();
 
 /* texture.c */
-texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha);
+texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);
 void draw_texture_uv( texture_t *texture, float xpos, float ypos, float width, float height, 
     float zpos, gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v);
 void draw_texture( texture_t *texture, float xpos,float ypos, float width, float height, 
     float zpos, gg_colour_t *col );
-void load_texture_png( texture_t *texture, char *filename, int alpha );
+void load_texture_png( texture_t *texture, char *filename, int alpha, int clamp );
 
 /* draw_shape.c */
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col);

@@ -494,7 +494,7 @@ static void init_gui( int width, int height, int fullscreen)
     generate_text_chars();
 
     /* For the menu.. */
-    load_texture_png( &menu_title_tex, "menu_title.png" , 0);
+    load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
 
     /* Load themes xml */
 
@@ -544,7 +544,7 @@ static void init_gui( int width, int height, int fullscreen)
     load_border(get_menu_border(), "border.png");
 #ifndef _arch_dreamcast
 
-    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1 );
+    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 #endif /* _arch_dreamcast */
 
     /* Fill pieces list. */

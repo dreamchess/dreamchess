@@ -121,7 +121,7 @@ typedef struct model
 }
 model_t;
 
-void load_texture_png( texture_t *texture, char *filename, int alpha );
+
 
 typedef struct data_col_item
 {
@@ -254,7 +254,7 @@ static texture_t *load_piece_texture(char *filename)
     tex = malloc(sizeof(texture_t));
 
     DBG_LOG("loading texture: %s", filename);
-    load_texture_png(tex, filename, 1);
+    load_texture_png(tex, filename, 1, 0);
     data_col_add(&textures, filename, tex);
     return tex;
 }

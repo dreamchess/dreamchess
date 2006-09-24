@@ -4,7 +4,7 @@
 /*  This function loads the image upside-down. Meaning that texture
  *  coordinate (0,0) corresponds to the top-left corner of the image.
  */
-texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha)
+texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp)
 {
     texture_t texture;
     int w, h;
@@ -64,8 +64,13 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha)
     glBindTexture(GL_TEXTURE_2D, texture.id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    if (clamp)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
+
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  (alpha ? 4 : 3),
@@ -214,7 +219,7 @@ void draw_texture_uv( texture_t *texture, float xpos,
  *  @param alpha 1 = Create texture with alpha channel (taken from image),
  *               0 = Create texture without alpha channel.
  */
-void load_texture_png( texture_t *texture, char *filename, int alpha )
+void load_texture_png( texture_t *texture, char *filename, int alpha, int clamp )
 {
     /* Create storage space for the texture */
     SDL_Surface *texture_image;
@@ -229,7 +234,7 @@ void load_texture_png( texture_t *texture, char *filename, int alpha )
         area.y = 0;
         area.w = texture_image->w;
         area.h = texture_image->h;
-        *texture = SDL_GL_LoadTexture(texture_image, &area, alpha);
+        *texture = SDL_GL_LoadTexture(texture_image, &area, alpha, clamp);
     }
     else
     {

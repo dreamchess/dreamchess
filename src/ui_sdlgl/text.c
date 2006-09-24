@@ -149,7 +149,7 @@ void generate_text_chars()
     int ypos = 0;
     int tex_height, tex_width;
 
-    load_texture_png(&texture, "font.png", 1);
+    load_texture_png(&texture, "font.png", 1, 1);
 
     tex_height = power_of_two(texture.height);
     tex_width = power_of_two(texture.width);

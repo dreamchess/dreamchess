@@ -17,7 +17,7 @@ void load_border(texture_t border[9], char *filename)
             rect.y = (i / 3) * surface->h / 3;
             rect.w = surface->w / 3;
             rect.h = surface->h / 3;
-            border[i] = SDL_GL_LoadTexture(surface, &rect, 1);
+            border[i] = SDL_GL_LoadTexture(surface, &rect, 1,1);
 
             /* Nearest? */
             glBindTexture(GL_TEXTURE_2D, border[i].id);
@@ -52,7 +52,7 @@ void load_pieces()
     int ypos = 0;
     int tex_height, tex_width;
 
-    load_texture_png(&texture, "pieces.png", 1);
+    load_texture_png(&texture, "pieces.png", 1,1);
 
     tex_height = power_of_two(texture.height);
     tex_width = power_of_two(texture.width);

@@ -203,10 +203,10 @@ void load_theme(char* style, char* pieces, char *board)
     chdir(style);
 
     /* Theme! */
-    load_texture_png( &backdrop, "backdrop.png", 0 );
+    load_texture_png( &backdrop, "backdrop.png", 0, 1 );
 
     #ifndef _arch_dreamcast
-    load_texture_png( &mouse_cursor, "mouse_cursor.png", 1 );
+    load_texture_png( &mouse_cursor, "mouse_cursor.png", 1, 1 );
     #endif /* _arch_dreamcast */
 
     load_border(border, "border.png");
