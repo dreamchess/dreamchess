@@ -1,4 +1,4 @@
-!define VERSION "0.1.0-SVN"
+!define VERSION "0.1.0"
 
 !include "MUI.nsh"
 !include "Library.nsh"
