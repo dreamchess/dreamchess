@@ -70,8 +70,7 @@ Section
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL.dll $SYSDIR\SDL.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_image.dll $SYSDIR\SDL_image.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED jpeg.dll $SYSDIR\jpeg.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng12.dll $SYSDIR\libpng12.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libtiff.dll $SYSDIR\libtiff.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng13.dll $SYSDIR\libpng13.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED zlib1.dll $SYSDIR\zlib1.dll $SYSDIR
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -107,8 +106,7 @@ Section "Uninstall"
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_image.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\jpeg.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng12.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libtiff.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng13.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\zlib1.dll
 
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
