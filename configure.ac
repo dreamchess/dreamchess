@@ -301,6 +301,7 @@ extern int mxml_vsnprintf(char *, size_t, const char *, va_list);
 
 AC_CONFIG_FILES([Makefile
 		desktop/Makefile
+		doc/Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
