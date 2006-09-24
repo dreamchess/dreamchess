@@ -235,7 +235,7 @@ Change to a suitable directory and run the following command:
 This will check out the source code and place it in a dreamchess
 subdirectory. Now change to that directory and run:
 
-   autoreconf
+   autoreconf -i
 
 This should generate a configure script. You can now follow the regular build
 instructions in chapter 3.
