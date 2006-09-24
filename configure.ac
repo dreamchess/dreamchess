@@ -303,6 +303,8 @@ AC_CONFIG_FILES([Makefile
 		desktop/Makefile
 		man/Makefile
 		m4/Makefile
+		pkg/Makefile
+		pkg/win32/Makefile
 		src/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile

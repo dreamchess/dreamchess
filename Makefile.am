@@ -1,4 +1,4 @@
-SUBDIRS = desktop src man m4
+SUBDIRS = desktop src man m4 pkg
 EXTRA_DIST = data
 ACLOCAL_AMFLAGS = -I m4
 
