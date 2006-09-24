@@ -136,11 +136,13 @@ void init_gl()
     /* Really Nice Perspective Calculations */
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    #ifndef _arch_dreamcast
+    #ifndef _arch_dreamcast 
+    #ifndef __BEOS__
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth); 
+    glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
     if ( zerodepth != 1.0f )
         DBG_WARN( "z depth should be 1.0f, but we got %f", zerodepth );
+    #endif /* __BEOS__ */    
     #endif /* _arch_dreamcast */
 }
 

@@ -350,8 +350,14 @@ void game_get_move_list(char ***list, int *total, int *view)
 }
 
 int use_ui_fullscreen=0;
+
+#ifdef __BEOS__
+int use_ui_width=480;
+int use_ui_height=360;
+#else
 int use_ui_width=640;
 int use_ui_height=480;
+#endif
 
 #ifndef _arch_dreamcast
 static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char **engine)

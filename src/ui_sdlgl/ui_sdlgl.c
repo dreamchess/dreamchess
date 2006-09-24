@@ -391,10 +391,11 @@ static config_t *do_menu(int *pgn)
 
         /* Draw mouse cursor.. */
 #ifndef _arch_dreamcast
-
+#ifndef __BEOS__
         /*SDL_GetMouseState(&mouse_x, &mouse_y);*/
         draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
+#endif /* __BEOS __ */
 #endif /* _arch_dreamcast */
 
         gl_swap();
@@ -480,7 +481,9 @@ static void init_gui( int width, int height, int fullscreen)
         exit(1);
     }
 
+	#ifndef __BEOS__
     SDL_ShowCursor(SDL_DISABLE);
+	#endif /* __BEOS__ */
 
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
@@ -543,8 +546,9 @@ static void init_gui( int width, int height, int fullscreen)
     chdir("default");
     load_border(get_menu_border(), "border.png");
 #ifndef _arch_dreamcast
-
+#ifndef __BEOS__
     load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
+#endif /* __BEOS__ */    
 #endif /* _arch_dreamcast */
 
     /* Fill pieces list. */
