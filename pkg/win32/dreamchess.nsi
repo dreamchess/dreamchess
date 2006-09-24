@@ -4,7 +4,7 @@
 !include "Library.nsh"
 
 Name "DreamChess ${VERSION}"
-OutFile "DreamChess-${VERSION}.exe"
+OutFile "dreamchess-${VERSION}-win32.exe"
 InstallDir "$PROGRAMFILES\DreamChess"
 
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
