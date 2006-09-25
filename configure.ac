@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.1.0])
+AC_INIT([dreamchess],[0.2.0-SVN])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
