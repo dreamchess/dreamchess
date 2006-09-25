@@ -22,27 +22,33 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-static char* programming[] = { "Programming by",
+static char* programming[] = { "Programming",
                                "Kris McAulay",
                                "Walter van Niftrik",
                                NULL };
 
-static char* graphics[] = { "Graphics by",
+static char* graphics[] = { "Graphics",
                             "Drew 'Hawke' Ball",
+                            "Brandon May (melancholy)",
+                            "Kris McAulay",
                             "Rogier van Schaijk",
                             NULL };
 
-static char* thanks[] = { "Special thanks to",
+static char* modelling[] = { "3D Modelling",
+                            "Walter van Niftrik",
+                            "Rogier van Schaijk",
+                            NULL };
+
+static char* thanks[] = { "Special Thanks To",
                           "François-Dominic Laramée",
                           "Armando Hernández Marroquín",
                           NULL };
 
 static char* copyright[] = { "DreamChess",
-                             "Version " PACKAGE_VERSION,
-                             "© 2003-2005 The DreamChess project",
+                             "© 2003-2006 The DreamChess project",
                              NULL };
 
-static char **credits[] = { copyright, programming, graphics, thanks, NULL };
+static char **credits[] = { copyright, programming, graphics, modelling, thanks, NULL };
 
 char ***get_credits()
 {

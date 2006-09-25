@@ -51,4 +51,6 @@ void gg_vbox_init(gg_vbox_t *vbox, int spacing);
 
 gg_widget_t *gg_vbox_create(int spacing);
 
+void gg_vbox_set_selected(gg_widget_t *widget, int index );
+
 #endif /* GAMEGUI_VBOX_H */

@@ -66,5 +66,6 @@ void gg_bin_init(gg_bin_t *bin, gg_widget_t *child)
     bin->set_focus_pos = gg_bin_set_focus_pos;
     bin->input = gg_bin_input;
     bin->id = gg_bin_get_class_id();
+    bin->enabled = child->enabled;
     gg_container_append(GG_CONTAINER(bin), child);
 }

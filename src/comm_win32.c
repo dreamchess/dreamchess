@@ -24,7 +24,9 @@
 
 #include <windows.h>
 #include <stdio.h>
-#include <pipe_win32.h>
+
+#include "pipe_win32.h"
+#include "debug.h"
 
 void comm_init(char *engine)
 {
@@ -52,9 +54,9 @@ void comm_init(char *engine)
 
     if (!CreatePipe(&from_child_rd, &from_child_wr, &sa_attr, 0))
     {
-        fprintf(stderr, "Stdout pipe creation failed\n");
+        DBG_ERROR("failed to create stdout pipe");
         exit(1);
-    }   
+    }
 
     /* Make a non-inheritable copy of the read handle and close the original
     ** one.
@@ -64,7 +66,7 @@ void comm_init(char *engine)
         GetCurrentProcess(), &from_child_rd_dup, 0, FALSE,
         DUPLICATE_SAME_ACCESS))
     {
-        fprintf(stderr, "DuplicateHandle failed\n");
+        DBG_ERROR("failed to duplicate read handle");
         exit(1);
     }
     CloseHandle(from_child_rd);
@@ -73,7 +75,7 @@ void comm_init(char *engine)
 
     if (! CreatePipe(&to_child_rd, &to_child_wr, &sa_attr, 0))
     {
-        fprintf(stderr, "Stdin pipe creation failed\n");
+        DBG_ERROR("failed to create stdin pipe");
         exit(1);
     }
 
@@ -85,7 +87,7 @@ void comm_init(char *engine)
         GetCurrentProcess(), &to_child_wr_dup, 0, FALSE,
         DUPLICATE_SAME_ACCESS))
     {
-        fprintf(stderr, "DuplicateHandle failed\n");
+        DBG_ERROR("failed to duplicate write handle");
         exit(1);
     }
     CloseHandle(to_child_wr); 
@@ -104,7 +106,7 @@ void comm_init(char *engine)
     if (!CreateProcess(NULL, engine, NULL, NULL, TRUE, DETACHED_PROCESS,
         NULL, NULL, &start_info, &proc_info))
     {
-        fprintf(stderr, "CreateProcess failed\n");
+        DBG_ERROR("failed to create child process");
         exit(1);
     }
 

@@ -121,7 +121,6 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
     widget->width = (size - 1) * box->spacing;
     widget->height = 0;
-    widget->enabled = 0;
 
     for (i = 0; i < size; i++)
     {
@@ -135,12 +134,8 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
         widget->width += child_width;
 
-        if (child->enabled && child->input)
-        {
-            if (box->sel == -1)
-                box->sel = i;
-            widget->enabled = 1;
-        }
+        if (child->enabled && child->input && (box->sel == -1))
+            box->sel = i;
     }
 
     gg_widget_get_requested_size(widget, width, height);
@@ -148,7 +143,6 @@ void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
 void gg_hbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_box_t *box = GG_BOX(widget);
     int i;
 
     for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)
@@ -178,8 +172,6 @@ gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget)
 
     while (nr < box->sel)
     {
-        gg_widget_t *sibling = gg_container_get_child(container, nr);
-
         focus.x += child->width_a;
         nr++;
     }
@@ -203,7 +195,7 @@ int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y)
         gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_x += child->width_a;
-        if (cur_x >= x)
+        if (cur_x > x)
         {
             if (!child->input || !child->enabled ||
                     (!child->set_focus_pos(child, x - cur_x + child->width_a, y)))
@@ -222,6 +214,7 @@ void gg_hbox_init(gg_hbox_t *hbox, int spacing)
 {
     gg_box_init((gg_box_t *) hbox, spacing);
 
+    hbox->id = gg_hbox_get_class_id();
     hbox->render = gg_hbox_render;
     hbox->input = gg_hbox_input;
     hbox->get_requested_size = gg_hbox_get_requested_size;

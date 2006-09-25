@@ -25,6 +25,8 @@
 
 #include <gamegui/system.h>
 
+struct gg_dialog;
+
 enum
 {
     GG_EVENT_NONE,
@@ -34,7 +36,9 @@ enum
 
 enum
 {
-    GG_MOUSE_BUTTON_DOWN
+    GG_MOUSE_BUTTON_DOWN,
+    GG_MOUSE_BUTTON_UP,
+    GG_MOUSE_MOVE
 };
 
 typedef struct gg_event_mouse
@@ -62,20 +66,11 @@ enum gg_event_key
     GG_KEY_END
 };
 
-typedef union gg_event_data
-{
-    int key;
-    gg_event_mouse_t mouse;
-} gg_event_data_t;
-
 typedef struct gg_event
 {
     int type;
-    union
-    {
-        int key;
-        gg_event_mouse_t mouse;
-    };
+    int key;
+    gg_event_mouse_t mouse;
 } gg_event_t;
 
 /** Typecast to widget. */
@@ -217,5 +212,7 @@ void gg_set_size(gg_widget_t *widget, int width, int height);
  *  @param widget The widget.
  */
 void gg_widget_init(gg_widget_t *widget);
+
+struct gg_dialog *gg_widget_find_dialog(gg_widget_t *widget);
 
 #endif /* GAMEGUI_WIDGET_H */

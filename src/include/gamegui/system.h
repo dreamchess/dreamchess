@@ -20,6 +20,10 @@
  *  @brief Core gamegui system header file.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifndef GG_SYSTEM_H
 #define GG_SYSTEM_H
 
@@ -81,6 +85,8 @@ typedef struct gg_driver
 {
     void (* draw_rect) (int x, int y, int width, int height, gg_colour_t *colour);
     void (* draw_filled_rect) (int x, int y, int width, int height, gg_colour_t *colour);
+    void (* draw_gradient_rect) (int x, int y, int width, int height, gg_colour_t *top_left,
+                                 gg_colour_t *top_right, gg_colour_t *bottom_left, gg_colour_t *bottom_right);
     void (* draw_image) (void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
     void *(* get_char_image) (int c);
     void (* draw_char) (int c, int x, int y, gg_colour_t *colour);
@@ -96,8 +102,7 @@ gg_driver_t;
 /** Prints a typecasting error message and aborts the program. */
 #define GG_CAST_ERROR(C) ((C *) gg_cast_error(__FILE__, __LINE__, #C))
 
-#define GG_CHECK_CAST(W, I, C) ((gg_check_cast((gg_widget_t *) W, I)) ? (C *) W \
-    : GG_CAST_ERROR(C))
+#define GG_CHECK_CAST(W, I, C) ((C *) gg_check_cast((gg_widget_t *) W, I, __FILE__, __LINE__, #C))
 
 #define GG_CHILD(C) \
     static gg_class_id class_id = GG_CLASS_ID_NONE;\
@@ -105,17 +110,23 @@ gg_driver_t;
         class_id = gg_register_class(C); \
     return class_id;
 
-/* w_widget_t *cast_error(char *file, int line, char *type); */
+struct gg_widget;
 
-gg_class_id w_register_class(gg_class_id parent);
+gg_class_id gg_register_class(gg_class_id parent);
 
-/* int w_check_cast(w_widget_t *widget, w_class_id id); */
+struct gg_widget *gg_check_cast(struct gg_widget *widget, gg_class_id id, char *file, int line, char *type);
 
 void gg_system_init(gg_driver_t *d);
+
+void gg_system_exit();
 
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour);
 
 void gg_system_draw_filled_rect(int x, int y, int width, int height, gg_colour_t *colour);
+
+void gg_system_draw_gradient_rect(int x, int y, int width, int height,
+                                  gg_colour_t *top_left, gg_colour_t *top_right,
+                                  gg_colour_t *bottom_left, gg_colour_t *bottom_right);
 
 void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
 
@@ -125,8 +136,14 @@ void gg_system_get_image_size(void *image, int *width, int *height);
 
 void gg_system_get_char_size(int c, int *width, int *height);
 
-void gg_system_get_string_size(unsigned char *s, int *width, int *height);
+void gg_system_get_string_size(char *s, int *width, int *height);
 
-void gg_system_draw_string(unsigned char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
+void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
+
+unsigned int gg_system_get_ticks();
+
+gg_colour_t gg_colour(float r, float g, float b, float a);
+
+gg_rect_t gg_rect(int x, int y, int w, int h);
 
 #endif /* GG_SYSTEM_H */

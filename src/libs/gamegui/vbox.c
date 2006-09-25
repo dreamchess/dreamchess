@@ -26,6 +26,12 @@ gg_class_id gg_vbox_get_class_id()
     GG_CHILD(gg_box_get_class_id())
 }
 
+void gg_vbox_set_selected(gg_widget_t *widget, int index )
+{
+    gg_select_t *select = GG_SELECT(widget);
+    select->sel=index;
+}
+
 void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus)
 {
     gg_box_t *box = GG_BOX(widget);
@@ -123,7 +129,6 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
     widget->width = 0;
     widget->height = (size - 1) * box->spacing;
-    widget->enabled = 0;
 
     for (i = 0; i < size; i++)
     {
@@ -137,12 +142,8 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
         widget->height += child_height;
 
-        if (child->enabled && child->input)
-        {
-            if (box->sel == -1)
-                box->sel = i;
-            widget->enabled = 1;
-        }
+        if (child->enabled && child->input && (box->sel == -1))
+            box->sel = i;
     }
 
     gg_widget_get_requested_size(widget, width, height);
@@ -150,7 +151,6 @@ void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height)
 
 void gg_vbox_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_box_t *box = GG_BOX(widget);
     int i;
 
     for (i = 0; i < gg_container_get_size(GG_CONTAINER(widget)); i++)
@@ -206,7 +206,7 @@ int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y)
         gg_widget_t *child = gg_container_get_child(container, box->sel);
 
         cur_y += child->height_a;
-        if (cur_y >= y)
+        if (cur_y > y)
         {
             if (!child->input || !child->enabled || !
                 child->set_focus_pos(child, x, child->height_a - (cur_y - y)))
@@ -225,6 +225,7 @@ void gg_vbox_init(gg_vbox_t *vbox, int spacing)
 {
     gg_box_init((gg_box_t *) vbox, spacing);
 
+    vbox->id = gg_vbox_get_class_id();
     vbox->render = gg_vbox_render;
     vbox->input = gg_vbox_input;
     vbox->get_requested_size = gg_vbox_get_requested_size;

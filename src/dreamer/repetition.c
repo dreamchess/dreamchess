@@ -23,7 +23,8 @@
 
 typedef struct rep_list
 {
-    long long position[101];
+    /* FIXME */
+    long long position[101 + 100];
     int head;
 }
 rep_list_t;
@@ -83,18 +84,12 @@ int is_repetition(board_t *board, int ply)
     if (cur_head < 8)
         return 0;
 
-    if (ply < 2)
-        for (i = cur_head - 2; i >= 0; i -= 2)
-        {
-            if (board->hash_key == cur_list->position[i])
-                count++;
-            if (count == 2)
-                return 1;
-        }
-    else
-        for (i = cur_head - 2; i >= 0; i -= 2)
-            if (board->hash_key == cur_list->position[i])
-                return 1;
+    /* We only check for two occurrences to prevent transposition table
+    ** hits that lead to a third repetition without us knowing about it.
+    */
+    for (i = cur_head - 2; i >= 0; i -= 2)
+        if (board->hash_key == cur_list->position[i])
+            return 1;
 
     return 0;
 }

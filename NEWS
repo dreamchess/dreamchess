@@ -1,3 +1,19 @@
-0.1.0-SVN
+*** 2006-09-24 - DreamChess v0.1.0 ***
 
-- Initial release.
+DreamChess (http://www.dreamchess.org) is an open source chess game. Our
+primary target platforms are Linux, Windows, Dreamcast and BeOS. DreamChess
+features 3D OpenGL graphics and provides various chess board sets, ranging
+from classic wooden to flat figurines.
+
+A moderately strong chess engine is included: Dreamer. However, should this
+engine be too weak for you, then you can use any other XBoard-compatible
+chess engine, including the popular Crafty and GNU Chess.
+
+Other features include on-screen move lists using SAN notation, undo
+functionality, and savegames in PGN format. In future releases we plan to add
+support for time controls, audio, network play, more visual effects such as
+reflections and shadows, and 3D animated pieces. If you're interested in
+helping out, please head on over to http://www.dreamchess.org for more
+information, and/or send an email to feedback at dreamchess.org.
+
+We hope you enjoy the game!

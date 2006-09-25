@@ -22,6 +22,7 @@
 
 #include "board.h"
 #include "san.h"
+#include "debug.h"
 
 static int move_is_semi_valid(board_t *board, move_t *move);
 static int in_check(board_t *board, int turn);
@@ -75,15 +76,19 @@ static int move_is_capture(board_t *board, move_t *move)
     return 0;
 }
 
+static void square_to_str(char *buf, int square)
+{
+    buf[0] = (square % 8) + 'a';
+    buf[1] = (square / 8) + '1';
+}
+
 char *move_to_fullalg(board_t *board, move_t *move)
 {
     char *s = (char *) malloc(6);
     char prom[4] = "nbrq";
 
-    s[0] = (move->source % 8) + 'a';
-    s[1] = (move->source / 8) + '1';
-    s[2] = (move->destination % 8) + 'a';
-    s[3] = (move->destination / 8) + '1';
+    square_to_str(s, move->source);
+    square_to_str(s + 2, move->destination);
     s[4] = '\0';
     s[5] = '\0';
 
@@ -110,6 +115,7 @@ static int san_piece(int piece)
         return SAN_PAWN;
     }
 
+    DBG_ERROR("failed to convert user interface piece to SAN piece");
     exit(1);
 }
 
@@ -119,7 +125,7 @@ int make_move(board_t *board, move_t *move)
 
     if ((PIECE(board->square[move->source]) == PAWN) && ((PIECE(board->square[move->destination]) == NONE)) && ((move->source % 8) != (move->destination % 8)))
     {
-        /* En-passent move. */
+        /* En-passant move. */
         int ep = move->destination - 8 * (move->destination > move->source ? 1 : -1);
         board->captured[board->square[ep]]++;
         board->square[ep] = NONE;
@@ -207,10 +213,7 @@ static int square_attacked(board_t *b, int square, int side)
             else
                 move.promotion_piece = NONE;
             if (move_is_semi_valid(&board, &move))
-            {
-                printf("Found: %i-%i\n", move.source, move.destination);
                 return 1;
-            }
         }
     }
     return 0;
@@ -320,7 +323,7 @@ static int move_is_semi_valid(board_t *board, move_t *move)
                 return 0;
             if (!ray_ok(board, move))
                 return 0;
-            /* En-passent move. */
+            /* En-passant move. */
             if (board->square[move->destination] == NONE)
             {
                 if ((COLOUR(board->square[move->source]) == WHITE) && !((move->source >= 32) && (move->source < 40)))
@@ -392,7 +395,7 @@ static int in_check(board_t *board, int turn)
 
     if (i == 64)
     {
-        printf("Fatal error: No king on chessboard!\n");
+        DBG_ERROR("board is missing a king");
         exit(1);
     }
 
@@ -523,7 +526,31 @@ move_t *fullalg_to_move(board_t *board, char *move_s)
     return move;
 }
 
-static move_t* find_unique_move(board_t *board, san_move_t *san_move)
+static int ui_piece(int san_piece)
+{
+    switch (san_piece)
+    {
+    case SAN_PAWN:
+        return PAWN;
+    case SAN_KNIGHT:
+        return KNIGHT;
+    case SAN_BISHOP:
+        return BISHOP;
+    case SAN_ROOK:
+        return ROOK;
+    case SAN_QUEEN:
+        return QUEEN;
+    case SAN_KING:
+        return KING;
+    case SAN_NOT_SPECIFIED:
+        return NONE;
+    }
+
+    DBG_ERROR("failed to convert SAN piece to user interface piece");
+    exit(1);
+}
+
+static move_t *find_unique_move(board_t *board, san_move_t *san_move)
 {
     int square;
     int piece;
@@ -545,29 +572,7 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
         piece = KING;
     }
     else
-        switch (san_move->piece)
-        {
-        case SAN_PAWN:
-            piece = PAWN;
-            break;
-        case SAN_KNIGHT:
-            piece = KNIGHT;
-            break;
-        case SAN_BISHOP:
-            piece = BISHOP;
-            break;
-        case SAN_ROOK:
-            piece = ROOK;
-            break;
-        case SAN_QUEEN:
-            piece = QUEEN;
-            break;
-        case SAN_KING:
-            piece = KING;
-            break;
-        default:
-            exit(1);
-        }
+        piece = ui_piece(san_move->piece);
 
     piece += board->turn;
 
@@ -590,27 +595,23 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
 
         m.source = square;
         m.destination = san_move->destination;
-        if (san_move->promotion_piece != SAN_NOT_SPECIFIED)
-            m.promotion_piece = san_move->promotion_piece;
-        else
-            m.promotion_piece = NONE;
+        m.promotion_piece = ui_piece(san_move->promotion_piece);
+
+        if (m.promotion_piece != NONE)
+            m.promotion_piece += board->turn;
 
         if (move_is_valid(board, &m))
         {
             move = m;
             found++;
             if (found > 1)
-            {
-                fprintf(stderr, "More than one SAN match found\n");
                 return NULL;
-            }
-            printf("Found candidate at %i\n", square);
         }
     }
 
     if (!found)
     {
-        fprintf(stderr, "No SAN match found\n");
+        DBG_ERROR("failed to find a legal move corresponding to SAN move");
         return NULL;
     }
 
@@ -621,69 +622,74 @@ static move_t* find_unique_move(board_t *board, san_move_t *san_move)
 
 char *move_to_san(board_t *board, move_t *move)
 {
-    san_move_t *san_move = (san_move_t *) malloc(sizeof(san_move_t));
+    san_move_t san_move;
 
     switch (move->state)
     {
     case MOVE_CHECK:
-        san_move->state = SAN_STATE_CHECK;
+        san_move.state = SAN_STATE_CHECK;
         break;
     case MOVE_CHECKMATE:
-        san_move->state = SAN_STATE_CHECKMATE;
+        san_move.state = SAN_STATE_CHECKMATE;
         break;
     default:
-        san_move->state = SAN_STATE_NORMAL;
+        san_move.state = SAN_STATE_NORMAL;
     }
 
     switch (move->type)
     {
     case QUEENSIDE_CASTLE:
-        san_move->type = SAN_QUEENSIDE_CASTLE;
-        return san_string(san_move);
+        san_move.type = SAN_QUEENSIDE_CASTLE;
+        return san_string(&san_move);
     case KINGSIDE_CASTLE:
-        san_move->type = SAN_KINGSIDE_CASTLE;
-        return san_string(san_move);
+        san_move.type = SAN_KINGSIDE_CASTLE;
+        return san_string(&san_move);
     case CAPTURE:
-        san_move->type = SAN_CAPTURE;
+        san_move.type = SAN_CAPTURE;
         break;
     default:
-        san_move->type = SAN_NORMAL;
+        san_move.type = SAN_NORMAL;
     }
 
-    san_move->piece = san_piece(board->square[move->source]);
-    san_move->source_file = SAN_NOT_SPECIFIED;
-    san_move->source_rank = SAN_NOT_SPECIFIED;
-    san_move->destination = move->destination;
+    san_move.piece = san_piece(board->square[move->source]);
+    san_move.source_file = SAN_NOT_SPECIFIED;
+    san_move.source_rank = SAN_NOT_SPECIFIED;
+    san_move.destination = move->destination;
     if (move->promotion_piece != NONE)
-        san_move->promotion_piece = san_piece(move->promotion_piece);
+        san_move.promotion_piece = san_piece(move->promotion_piece);
     else
-        san_move->promotion_piece = NONE;
+        san_move.promotion_piece = SAN_NOT_SPECIFIED;
 
-    if (san_move->piece == SAN_PAWN)
+    if (san_move.piece == SAN_PAWN)
     {
         if (move->source % 8 != move->destination % 8)
-            san_move->source_file = move->source % 8;
+            san_move.source_file = move->source % 8;
     }
     else
     {
         move_t *u_move;
-        u_move = find_unique_move(board, san_move);
+        u_move = find_unique_move(board, &san_move);
+
         if (!u_move)
         {
-            san_move->source_file = move->source % 8;
-            u_move = find_unique_move(board, san_move);
+            san_move.source_file = move->source % 8;
+            u_move = find_unique_move(board, &san_move);
             if (!u_move)
             {
-                san_move->source_file = SAN_NOT_SPECIFIED;
-                san_move->source_rank = move->source / 8;
-                u_move = find_unique_move(board, san_move);
+                san_move.source_file = SAN_NOT_SPECIFIED;
+                san_move.source_rank = move->source / 8;
+                u_move = find_unique_move(board, &san_move);
                 if (!u_move)
                 {
-                    san_move->source_file = move->source % 8;
-                    u_move = find_unique_move(board, san_move);
+                    san_move.source_file = move->source % 8;
+                    u_move = find_unique_move(board, &san_move);
                     if (!u_move)
                     {
-                        fprintf(stderr, "Couldn't convert move to SAN.\n");
+                        char *move_s = move_to_fullalg(board, move);
+
+                        DBG_ERROR("failed to convert move %s to SAN notation", move_s);
+
+                        free(move_s);
                         return NULL;
                     }
                 }
@@ -697,7 +703,7 @@ char *move_to_san(board_t *board, move_t *move)
             free(u_move);
     }
 
-    return san_string(san_move);
+    return san_string(&san_move);
 }
 
 move_t* san_to_move(board_t *board, char *move_s)
@@ -705,7 +711,10 @@ move_t* san_to_move(board_t *board, char *move_s)
     san_move_t *san_move = san_parse(move_s);
 
     if (!san_move)
+    {
+        DBG_LOG("failed to parse SAN move string '%s'", move_s);
         return NULL;
+    }
 
     return find_unique_move(board, san_move);
 }

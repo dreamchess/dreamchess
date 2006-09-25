@@ -17,6 +17,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "history.h"
 #include "board.h"
@@ -71,11 +72,20 @@ void history_exit(history_t *hist)
 
     while (step)
     {
+        step_t *s;
         if (step->move)
             free(step->move);
         if (step->board)
             free(step->board);
+        s = step;
         step = step->prev;
+        free(s);
+    }
+
+    if (hist->result)
+    {
+        free(hist->result->reason);
+        free(hist->result);
     }
 
     free(hist);
@@ -172,7 +182,6 @@ int history_save_pgn(history_t *hist, char *filename)
     while (step->next)
     {
         char buf[16];
-        int len;
         char *san;
 
         if (side == WHITE)
@@ -192,4 +201,6 @@ int history_save_pgn(history_t *hist, char *filename)
     write_token(f, &width, res);
     fputs("\n\n", f);
     fclose(f);
+
+    return 0;
 }

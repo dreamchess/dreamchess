@@ -91,11 +91,25 @@ int ch_userdir()
     return 0;
 }
 
-#else /* !__WIN32__ */
+#elif defined _arch_dreamcast
+
+int ch_datadir()
+{
+    return chdir(DATADIR);
+}
+
+int ch_userdir()
+{
+    return chdir("/ram");
+}
+
+#else /* !__WIN32__ && !_arch_dreamcast */
 
 #define USERDIR ".dreamchess"
 
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 int ch_datadir()
 {

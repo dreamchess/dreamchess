@@ -17,8 +17,10 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <gamegui/entry.h>
+#include <gamegui/clipping.h>
 
 #define CURSOR_WIDTH 1
 
@@ -37,10 +39,10 @@ gg_class_id gg_entry_get_class_id()
     GG_CHILD(gg_widget_get_class_id())
 }
 
-static int string_width(unsigned char *s, int n)
+static int string_width(char *s, int n)
 {
     int retval;
-    unsigned char c = s[n];
+    char c = s[n];
 
     s[n] = 0;
     gg_system_get_string_size(s, &retval, NULL);
@@ -86,7 +88,6 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
 int gg_entry_input(gg_widget_t *widget, gg_event_t event)
 {
     gg_entry_t *entry = GG_ENTRY(widget);
-    int c = -1;
     int len = strlen(entry->text);
     int width, max_width;
 

@@ -27,6 +27,8 @@
 #define GG_LABEL_DATA \
     GG_ALIGN_DATA \
     char *label; \
+    gg_colour_t colour; \
+    gg_colour_t bgcolour; \
     int bouncy;
 
 typedef struct gg_label
@@ -40,6 +42,8 @@ gg_class_id gg_label_get_class_id();
 void gg_label_render(gg_widget_t *widget, int x, int y, int focus);
 
 void gg_label_set_bouncy(gg_label_t *label, int bouncy);
+
+void gg_label_set_colour(gg_label_t *label, gg_colour_t *colour, gg_colour_t *bgcolour);
 
 void gg_label_destroy(gg_widget_t *widget);
 

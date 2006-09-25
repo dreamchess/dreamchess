@@ -1,10 +1,10 @@
-!define VERSION "0.1.0-SVN"
+!define VERSION "0.1.0"
 
 !include "MUI.nsh"
 !include "Library.nsh"
 
 Name "DreamChess ${VERSION}"
-OutFile "DreamChess-${VERSION}.exe"
+OutFile "dreamchess-${VERSION}-win32.exe"
 InstallDir "$PROGRAMFILES\DreamChess"
 
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
@@ -63,7 +63,7 @@ Section
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
+  IfFileExists "$INSTDIR\DreamChess.exe" 0 new_installation
     StrCpy $ALREADY_INSTALLED 1
   new_installation:
 

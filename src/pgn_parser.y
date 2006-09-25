@@ -28,9 +28,12 @@
 %token GAMETERM
 
 %{
+#include "dreamchess.h"
+
 extern char *yystring;
 
-#include "dreamchess.h"
+int yylex(void);
+int yyerror(const char *s);
 %}
 
 %%
@@ -48,10 +51,10 @@ tag_section              : tag_pair tag_section
 tag_pair                 : '[' tag_name tag_value ']'
 ;
 
-tag_name                 : SYMBOL {printf("Tag name: %s\n", yylval.yycharp);}
+tag_name                 : SYMBOL {/*printf("Tag name: %s\n", yylval.yycharp);*/}
 ;
 
-tag_value                : STRING {printf("Tag value: %s\n", yylval.yycharp);}
+tag_value                : STRING {/*printf("Tag value: %s\n", yylval.yycharp);*/}
 ;
 
 movetext_section         : element_sequence game_termination
@@ -73,7 +76,7 @@ recursive_variation      : '(' element_sequence ')'
 game_termination         : GAMETERM
 ;
 
-san_move                 : SYMBOL {game_make_move_str(yylval.yycharp, 0);printf("Found move: %s\n", yylval.yycharp);}
+san_move                 : SYMBOL {game_make_move_str(yylval.yycharp, 0);/*printf("Found move: %s\n", yylval.yycharp);*/}
 ;
 
 move_number_indication   : INTEGER periods

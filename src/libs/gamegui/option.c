@@ -22,19 +22,19 @@
 #include <gamegui/label.h>
 #include <gamegui/align.h>
 
-static gg_colour_t col_dark_red =
-    {
-        0.7f, 0.0f, 0.0f, 1.0f
-    };
-
-static gg_colour_t col_black =
-    {
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
 static gg_colour_t col_grey =
     {
         0.5f, 0.5f, 0.5f, 1.0f
+    };
+
+static gg_colour_t col_texthighlight =
+    {
+        0.55f, 0.65f, 0.95f, 1.0f
+    };
+
+static gg_colour_t col_text =
+    {
+        1.0f, 1.0f, 1.0f, 1.0f
     };
 
 gg_class_id gg_option_get_class_id()
@@ -65,9 +65,9 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
     if (option->sel > 0)
     {
         if (focus != GG_FOCUS_NONE)
-            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_dark_red, 1, 0);
+            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_texthighlight, 1, 0);
         else
-            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_black, 0, 0);
+            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_text, 0, 0);
     }
     else
         gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_grey, 0, 0);
@@ -81,9 +81,9 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
     if (option->sel < gg_container_get_size(GG_CONTAINER(widget)) - 1)
     {
         if (focus != GG_FOCUS_NONE)
-            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_dark_red, 1, 0);
+            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_texthighlight, 1, 0);
         else
-            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_black, 0, 0);
+            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_text, 0, 0);
     }
     else
         gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_grey, 0, 0);
@@ -123,7 +123,6 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
     {
         int border_l;
         int border_r;
-        int height;
 
         gg_system_get_string_size(OPTION_ARROW_LEFT, &border_l, NULL);
         gg_system_get_string_size(OPTION_ARROW_RIGHT, &border_r, NULL);
@@ -145,7 +144,6 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
 
 void gg_option_set_size(gg_widget_t *widget, int width, int height)
 {
-    gg_option_t *option = GG_OPTION(widget);
     gg_container_t *container = GG_CONTAINER(widget);
     int border_l;
     int border_r;
@@ -242,6 +240,11 @@ void gg_option_append_label(gg_option_t *option, char *text, float xalign, float
 int gg_option_get_selected(gg_option_t *option)
 {
     return option->sel;
+}
+
+void gg_option_set_selected(gg_option_t *option, int index)
+{
+    option->sel=index;
 }
 
 /** @brief Sets option widget callback.

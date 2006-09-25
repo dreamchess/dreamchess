@@ -20,24 +20,52 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "state.h"
+#include "dreamer.h"
 #include "board.h"
 #include "move.h"
 #include "search.h"
 #include "hashing.h"
 #include "e_comm.h"
 #include "commands.h"
+#include "repetition.h"
+#include "transposition.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifdef __WIN32__
+
 #include <windows.h>
 #define drm_sleep(M) Sleep(M)
+
 #elif defined _arch_dreamcast
+
 #include <kos/thread.h>
 #define drm_sleep(M) thd_sleep(M)
+
 #elif defined __BEOS__
+
 #define drm_sleep(M) snooze((M) * 1000)
-#else
+
+#elif defined HAVE_USLEEP
+
 #define drm_sleep(M) usleep((M) * 1000)
+
+#else
+
+#include <sys/time.h>
+#include <sys/types.h>
+
+void drm_sleep(unsigned long usec)
+{
+    struct timeval tv;
+
+    tv.tv_sec = 0;
+    tv.tv_usec = usec;
+    select(0, 0, 0, 0, &tv);
+}
+
 #endif
 
 static state_t state;
@@ -74,7 +102,7 @@ int check_game_state(board_t *board)
     total_moves = compute_legal_moves(board, moves);
     for (move_nr = 0; move_nr < total_moves; move_nr++)
     {
-        bitboard_t en_passent = board->en_passent;
+        bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;
         int fifty_moves = board->fifty_moves;
 
@@ -84,11 +112,11 @@ int check_game_state(board_t *board)
         {
             mate = STATE_NORMAL;
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
             break;
         }
         board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, &moves[move_nr], en_passent, castle_flags, fifty_moves);
+        unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
     if (!is_check(board) && (mate == STATE_MATE))
@@ -145,8 +173,8 @@ void do_move(state_t *state, move_t *move)
     state->moves++;
     state->undo_data = realloc(state->undo_data,
                                sizeof(undo_data_t) * state->moves);
-    state->undo_data[state->moves - 1].en_passent =
-        state->board.en_passent;
+    state->undo_data[state->moves - 1].en_passant =
+        state->board.en_passant;
     state->undo_data[state->moves - 1].castle_flags =
         state->board.castle_flags;
     state->undo_data[state->moves - 1].fifty_moves =
@@ -166,7 +194,7 @@ void undo_move(state_t *state)
 
     unmake_move(&state->board,
                 &state->undo_data[state->moves].move,
-                state->undo_data[state->moves].en_passent,
+                state->undo_data[state->moves].en_passant,
                 state->undo_data[state->moves].castle_flags,
                 state->undo_data[state->moves].fifty_moves);
 

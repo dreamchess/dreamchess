@@ -1,7 +1,7 @@
 DreamChess
-Version 0.1.0-SVN
+Version 0.1.0
 
-Copyright (C) 2003-2005  The DreamChess project
+Copyright (C) 2003-2006  The DreamChess project
 
 For the latest information, please check out our project website at:
 http://developer.berlios.de/projects/dreamchess/
@@ -79,9 +79,10 @@ newlib (http://sourceware.org/newlib/), various licenses
 
 The following platforms are currently officially supported:
 
- * UNIX (Linux, Sun Solaris etc)
+ * UNIX (Linux, FreeBSD, Solaris etc)
  * Microsoft Windows (95 and above)
  * Sega Dreamcast
+ * BeOS
 
 2.1 - User Interface Drivers
 ----------------------------
@@ -132,33 +133,27 @@ compile DreamChess.
 Building the Dreamcast version can only be done by cross-compiling it on
 another system. You'll need the following:
 
- * KallistiOS (http://gamedev.allusion.net/softprj/kos/)
+ * dc-toolchain-builder 0.2. (http://freesci.org/?page=dreamcast)
 
-Follow the setup guide at http://gamedev.allusion.net/softprj/kos/setup.php
-closely. We recommend that you use GCC 3.4.1, binutils 2.15 and newlib
-1.12.0 for SH. For ARM we recommend GCC 3.0.4 and binutils 2.15.
+Follow the instructions in the enclosed README to set up the toolchain.
+You'll also need the following software package from our website:
 
-In order to meet the requirements of the sdlgl driver you'll need to build
-the zlib and libpng libraries that can be found in the kos-ports directory
-of KallistiOS. You'll also need the following software package from our
-website:
+ * dreamcast-libs 0.7 (http://developer.berlios.de/projects/dreamchess/)
 
- * dreamcast-libs (http://developer.berlios.de/projects/dreamchess/)
-
-Follow the instructions in the enclosed README file to set it up.
+Again, follow the instructions in the enclosed README file to set it up.
 
 To configure and compile DreamChess you need to first run the KallistiOS
 environ script which you created during the setup process. After that use
 the following commands to configure and compile DreamChess:
 
-   ./configure --host=sh-elf CC=kos-cc CC_FOR_BUILD=gcc CFLAGS= \
-   SDL_CONFIG=$DREAMCAST_PORTS_BASE/SDL/sdl-config --datadir=/cd \
+   ./configure --host=sh-elf CC=kos-cc CC_FOR_BUILD=gcc \
+   SDL_CONFIG=$DREAMCAST_LIBS_BASE/SDL/sdl-config --datadir=/cd \
    --enable-linked-engine
    make
 
 NOTE: The Dreamcast port is configured with the --enable-linked-engine option
 which creates a single executable that includes the Dreamer engine. It is
-therefor not possible to choose another engine at runtime.
+therefore not possible to choose another engine at runtime.
 
 3.3 - Installing DreamChess
 ---------------------------
@@ -221,7 +216,7 @@ source code is kept as it gets updated between releases. If you want
 to try out recent improvements and can't wait for the next release, you can
 check out a copy of the source code and compile it. Note that the source code
 you obtain in this way has not gone through the regular testing phase that
-happens before each release. It is therefor not unlikely that it contains
+happens before each release. It is therefore not unlikely that it contains
 serious bugs.
 
 In order to check out source code from the Subversion repository and build
@@ -231,15 +226,16 @@ it you need the following additional tools:
  * GNU autoconf (http://www.gnu.org/software/autoconf/)
  * Subversion (http://subversion.tigris.org/)
  * GNU bison (http://www.gnu.org/software/bison/)
+ * Flex (http://flex.sourceforge.net/)
 
 Change to a suitable directory and run the following command:
 
-   svn checkout svn://svn.berlios.de/dreamchess/trunk dreamchess
+   svn checkout svn://svn.berlios.de/dreamchess/dreamchess/trunk dreamchess
 
 This will check out the source code and place it in a dreamchess
 subdirectory. Now change to that directory and run:
 
-   ./autogen.sh
+   autoreconf -i
 
 This should generate a configure script. You can now follow the regular build
 instructions in chapter 3.
@@ -247,7 +243,7 @@ instructions in chapter 3.
 NOTE: Should you ever want to update this checkout you can do this:
 
    svn up
-   ./autogen.sh
+   autoreconf
 
 
 5 - Running DreamChess
@@ -264,8 +260,11 @@ Options:
   --help                -h              Show help.
   --list-drivers        -l              List all available drivers.
   --ui <drv>            -u<drv>         Use user interface driver <drv>.
-  --first-engine <eng>  -f<eng>         Use <eng> as first chess engine.
-                                          Defaults to `dreamer'.
+  --fullscreen          -f              Run in fullscreen.
+  --width <num>         -W<num>         Set screen width.
+  --height <num>        -H<num>         Set screen height.
+  --1st-engine <eng>    -1<eng>         Use <eng> as first chess engine.
+                                           Defaults to `dreamer'.
 
 NOTE: It's not possible to specify command-line arguments when running the
 Dreamcast version of DreamChess.

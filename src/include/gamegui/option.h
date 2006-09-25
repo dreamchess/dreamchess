@@ -50,7 +50,10 @@ void gg_option_append(gg_option_t *option, gg_widget_t *child);
 void gg_option_append_label(gg_option_t *option, char *text, float xalign, float yalign);
 
 int gg_option_get_selected(gg_option_t *option);
+void gg_option_set_selected(gg_option_t *option, int index);
 
 void gg_option_set_callback(gg_option_t *option, void (* callback) (gg_widget_t *, void *), void *func_data);
+
+gg_class_id gg_option_get_class_id();
 
 #endif /* GAMEGUI_OPTION_H */

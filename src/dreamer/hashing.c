@@ -87,7 +87,7 @@ hash_key(board_t *board)
         if (board->castle_flags & (1 << i))
             hash ^= castle_hash[i];
 
-    bitboard = board->en_passent;
+    bitboard = board->en_passant;
     if (bitboard)
         for (square = 0; square < 64; square++)
             if (bitboard & square_bit[square])
