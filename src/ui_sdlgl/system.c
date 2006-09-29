@@ -171,6 +171,7 @@ void gl_swap()
 {
     static Uint32 last = 0;
     Uint32 now;
+    Uint32 wait = 0;
 
     if (fps_enabled)
     {
@@ -182,16 +183,19 @@ void gl_swap()
 
     SDL_GL_SwapBuffers();
     now = SDL_GetTicks();
-    if (now - last < 1000 / FPS)
-        SDL_Delay(1000 / FPS - (now - last));
-    last = SDL_GetTicks();
+    if (now - last < (frames + 1) * 1000 / FPS) {
+        wait = (frames + 1) * 1000 / FPS - (now - last);
+        SDL_Delay(wait);
+    }
 
     frames++;
-    if (frames == 10)
+    if (frames == FPS)
     {
-        fps = 10000 / (float) (last - fps_time);
+        Uint32 fps_now = SDL_GetTicks();
+        last = now + wait;
+        fps = 1000 * FPS / (float) (fps_now - fps_time);
         frames = 0;
-        fps_time = last;
+        fps_time = fps_now;
     }
 
 #ifdef _arch_dreamcast
