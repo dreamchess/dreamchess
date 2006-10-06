@@ -62,6 +62,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
+#ifndef __APPLE__
     thread = SDL_CreateThread(dreamchess, &arg);
     if ( thread == NULL )
     {
@@ -74,6 +75,19 @@ int main(int argc, char **argv)
     printf("Waiting for thread to exit\n");
     SDL_WaitThread(thread, NULL);
     printf("Thread exit ok\n");
+#else
+    thread = SDL_CreateThread(engine, NULL);
+    if( thread == NULL )
+    {
+        fprintf(stderr, "Unable to create thread: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    dreamchess(&arg);
+
+    printf("Waiting for thread to exit\n");
+    SDL_WaitThread(thread, &retval);
+#endif
 
     pipe_mem_exit(&to_ui);
     pipe_mem_exit(&to_engine);
