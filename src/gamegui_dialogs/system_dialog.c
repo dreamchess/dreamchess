@@ -1,5 +1,5 @@
 
-#include "ui_sdlgl.h"
+#include "gamegui_dialogs.h"
 
 /* System dialog. */
 

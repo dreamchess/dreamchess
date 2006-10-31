@@ -1,5 +1,5 @@
 
-#include "ui_sdlgl.h"
+#include "gamegui_dialogs.h"
 
 /** The in-game dialog. Provides a set of gameplay-related actions to the
  *  user.

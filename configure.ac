@@ -315,7 +315,8 @@ AC_CONFIG_FILES([Makefile
 		src/include/gamegui/Makefile
 		src/include/minizip/Makefile
 		src/ui_sdlgl/Makefile
-		src/dreamer/Makefile])
+		src/dreamer/Makefile
+		src/gamegui_dialogs/Makefile])
 AC_OUTPUT
 
 cat <<_ACEOF

@@ -1,4 +1,4 @@
-SUBDIRS = libs dreamer include ui_sdlgl
+SUBDIRS = libs dreamer include ui_sdlgl gamegui_dialogs
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef
@@ -13,11 +13,12 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	comm_win32.c credits.c pgn_parser.y pgn_scanner.l
 
 dreamchess_LDADD = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
-	libs/gamegui/libgamegui.a libs/mxml/libmxml.a @DREAMCHESS_LIBS@ \
-	@SDL_LIBS@
+	libs/gamegui/libgamegui.a libs/mxml/libmxml.a gamegui_dialogs/libgamegui_dialogs.a \
+	@DREAMCHESS_LIBS@ @SDL_LIBS@
 
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
-	libs/gamegui/libgamegui.a libs/mxml/libmxml.a @DREAMCHESS_LIBS@
+	libs/gamegui/libgamegui.a libs/mxml/libmxml.a gamegui_dialogs/libgamegui_dialogs.a \
+	@DREAMCHESS_LIBS@
 
 win32_rc.$(OBJEXT):
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

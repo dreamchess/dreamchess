@@ -1,4 +1,4 @@
-#include "ui_sdlgl.h"
+#include "gamegui_dialogs.h"
 
 static void dialog_close_cb(gg_widget_t *widget, void *data)
 {
