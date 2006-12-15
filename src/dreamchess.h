@@ -35,6 +35,7 @@ typedef struct config
 {
     int player[2];
     int cpu_level;
+    int difficulty;
 }
 config_t;
 

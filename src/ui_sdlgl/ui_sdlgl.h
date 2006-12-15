@@ -164,8 +164,8 @@ void open_title_root_dialog();
 void set_fade_start( float start );
 
 /* xmlsavefile.c */
-void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty );
-void write_save_xml( int slot, char *desc );
+void load_save_xml( int slot );
+void write_save_xml( int slot );
 int get_slots();
 void set_slots( int slots );
 char *get_time_save( int index );
@@ -215,7 +215,7 @@ void load_theme_xml( char *xmlfile );
 texture_t *get_menu_border();
 texture_t *get_border();
 void unload_theme();
-void load_opaque(mxml_node_t *top, char *name, char *dest);
+int load_opaque(mxml_node_t *top, char *name, char *dest);
 void set_selected_theme( int index );
 int get_selected_theme();
 int get_theme_count();

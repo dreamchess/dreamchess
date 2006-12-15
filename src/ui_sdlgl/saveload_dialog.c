@@ -76,23 +76,15 @@ static void dialog_saveload_change(gg_widget_t *widget, void *data)
 static void dialog_savegame_save(gg_widget_t *widget, void *data)
 {
     char temp[80];
-    time_t timething;
-    struct tm *current_time;
     int save_good=TRUE;
 
     /* Close the dialogs.. */
     gg_dialog_close();
     gg_dialog_close();
 
-    time( &timething );
-    current_time = localtime( &timething );
-
-    sprintf( temp, "Saved on %02i/%02i at %02i:%02i.", current_time->tm_mday, current_time->tm_mon,
-             current_time->tm_hour, current_time->tm_min );
-
     if (!game_save( saveload_selected ))
     {
-        write_save_xml( saveload_selected, temp );
+        write_save_xml( saveload_selected );
     }
     else
         save_good=FALSE;
@@ -116,9 +108,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_widget_t *hbox = gg_vbox_create(0);
     gg_widget_t *hboxtemp;
     gg_widget_t *widget;
-    char desc[80];
-    int player_layout=0;
-    int difficulty=0;
     char temp[80];
     char whiteis[80], blackis[80];
     int i=0,j=0;
@@ -138,7 +127,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         dc_restore_savegames();
 #endif
         for ( i=0; i<SAVEGAME_SLOTS; i++ )
-            load_save_xml( i, desc, &player_layout, &difficulty );
+            load_save_xml( i );
     }
 
     if ( get_slots() & (1 << saveload_selected) )
@@ -181,7 +170,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        sprintf( temp, "Difficulty: %i", get_config_save(saveload_selected)->cpu_level );
+        sprintf( temp, "Level: %i", get_config_save(saveload_selected)->cpu_level );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -267,8 +256,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     else
     {
         widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
-        set_selected_player_layout(player_layout);
-        set_selected_difficulty(difficulty);
         gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
     }
     gg_container_append(GG_CONTAINER(vbox), widget);

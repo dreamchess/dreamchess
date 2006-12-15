@@ -191,6 +191,22 @@ else
 	with_ui_sdl="no"
 fi
 
+AC_CHECK_SDL_HEADER([SDL_mixer.h], [have_sdl_mixer_h="yes"],
+	[have_sdl_mixer_h="no"]
+	)
+
+AC_CHECK_LIB([SDL_mixer], [Mix_OpenAudio],
+	[have_sdl_mixer="yes" SDL_MIXER_LIBS="-lSDL_mixer"],
+	[have_sdl_mixer="no"],
+	[${SDL_LIBS}]
+	)
+
+if test x"$have_sdl_mixer_h" = xyes -a \
+	x"$have_sdl" = xyes -a \
+	x"$have_sdl_mixer" = xyes; then supported_mixer_sdl="yes"
+else supported_mixer_sdl="no"
+fi
+
 AC_DEFUN([AC_PRINT_LIB],
 	if test x"$2" = xyes; then
 		echo "$1|  yes ($3)"
@@ -339,6 +355,19 @@ cat <<_ACEOF
 
 Supported:        $supported_ui_sdlgl
 Build:            $with_ui_sdlgl
+
+Mixer requirements:
+
+sdl
+---
+
+  Requirement  | Found
+------------------------
+"SDL_mixer.h"  |  $have_sdl_mixer_h
+_ACEOF
+AC_PRINT_LIB([libSDL_mixer   ], [$have_sdl_mixer], [$SDL_MIXER_LIBS])
+
+cat <<_ACEOF
 
 You can now run \`make'.
 

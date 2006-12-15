@@ -48,6 +48,7 @@ typedef struct state
     board_t board;
     undo_data_t *undo_data;
     int moves;
+    int options;
 }
 state_t;
 
@@ -58,11 +59,15 @@ int my_turn(state_t *state);
 #define STATE_MATE 2
 #define STATE_STALEMATE 3
 
+#define OPTION_QUIESCE 0
+
 int check_game_state(board_t *board);
 void check_game_end(state_t *state);
 char *coord_move_str(move_t *move);
 void do_move(state_t *state, move_t *move);
 void undo_move(state_t *state);
 int check_abort();
+int get_option(int option);
+void set_option(int option, int value);
 
 #endif /* STATE_H */

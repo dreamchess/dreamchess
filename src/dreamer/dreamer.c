@@ -126,6 +126,17 @@ int check_game_state(board_t *board)
     return mate;
 }
 
+int get_option(int option)
+{
+    return state.options & (1 << option);
+}
+
+void set_option(int option, int value)
+{
+    state.options &= ~(1 << option);
+    state.options |= (value << option);
+}
+
 void check_game_end(state_t *state)
 {
     board_t *board = &state->board;
@@ -207,10 +218,13 @@ int engine()
     move_init();
     board_init();
     init_hash();
+
     state.mode = MODE_IDLE;
     state.flags = 0;
     state.undo_data = 0;
     state.moves = 0;
+    set_option(OPTION_QUIESCE, 1);
+
     while (state.mode != MODE_QUIT)
     {
         char *s;

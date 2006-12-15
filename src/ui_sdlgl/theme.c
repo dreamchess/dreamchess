@@ -111,15 +111,19 @@ int get_tex_spin_speed()
     return themes[selected_theme].piece_tex_spin_speed;
 }
 
-void load_opaque(mxml_node_t *top, char *name, char *dest)
+int load_opaque(mxml_node_t *top, char *name, char *dest)
 {
     mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
     if (node)
     {
         node = mxmlWalkNext(node, node, MXML_DESCEND);
         if (node && node->type == MXML_OPAQUE)
+        {
             strcpy(dest, node->value.opaque);
+            return 0;
+        }
     }
+    return 1;
 }
 
 /** @brief Load the themes XML

@@ -104,13 +104,25 @@ typedef struct group
 }
 group_t;
 
+typedef struct bone
+{
+    char *name;
+    float offset[3];
+    int children;
+    int *child;
+}
+bone_t;
+
 typedef struct mesh
 {
+    int has_bones;
     float *vertex;
     float *normal;
     float *tex_coord;
+    int *bone_w;
     int groups;
     group_t *group;
+    bone_t *bone;
 }
 mesh_t;
 
@@ -194,7 +206,7 @@ static inline float in_product(float x, float y, float z, float xx, float yy,
     return x * xx + y * yy + z * zz;
 }
 
-static model_t model[12];
+static model_t model[13];
 static model_t board;
 
 static int is_2d;
@@ -297,6 +309,7 @@ mesh_t *dcm_load(char *filename)
 
     mesh = malloc(sizeof(mesh_t));
 
+    mesh->has_bones = 0;
     mesh->vertex = malloc(sizeof(float) * vertices * 3);
 
     for (i = 0; i < vertices * 3; i++)
@@ -385,6 +398,173 @@ mesh_t *dcm_load(char *filename)
     return mesh;
 }
 
+mesh_t *dcm_load_new(char *filename)
+{
+    FILE *f;
+    mesh_t *mesh;
+    int version;
+    char id[3];
+    int vertices;
+    int bones;
+    int i;
+
+    f = fopen(filename, "r");
+
+    if (!f)
+    {
+        DBG_ERROR("couldn't open %s", filename);
+        return NULL;
+    }
+
+    if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4)
+            || ((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M')))
+    {
+        DBG_ERROR("invalid DCM file header");
+        return NULL;
+    }
+
+    if (version != 1)
+    {
+        DBG_ERROR( "DCM version %i not supported", version);
+        return NULL;
+    }
+
+    if (fscanf(f, "VERTICES %d\n", &vertices) != 1)
+    {
+        DBG_ERROR("error reading DCM file");
+        return NULL;
+    }
+
+    mesh = malloc(sizeof(mesh_t));
+    mesh->has_bones = 1;
+
+    mesh->vertex = malloc(sizeof(float) * vertices * 3);
+    mesh->normal = malloc(sizeof(float) * vertices * 3);
+
+    for (i = 0; i < vertices; i++)
+    {
+        if (fscanf(f, "%f %f %f %f %f %f\n", &mesh->vertex[i * 3], &mesh->vertex[i * 3 + 1], &mesh->vertex[i * 3 + 2],
+            &mesh->normal[i * 3], &mesh->normal[i * 3 + 1], &mesh->normal[i * 3 + 2]) != 6)
+        {
+            DBG_ERROR("error reading DCM file: %i of %i", i, vertices);
+            exit(1);
+        }
+    }
+
+    mesh->bone_w = malloc(sizeof(int) * vertices);
+    memset(mesh->bone_w, -1, sizeof(int) * vertices);
+
+    mesh->tex_coord = malloc(sizeof(float) * vertices * 2);
+
+    for (i = 0; i < vertices * 2; i++)
+        mesh->tex_coord[i] = 0;
+
+    /* As we don't flip our images we flip our u coordinates instead. */
+    for (i = 1; i < vertices * 2; i += 2)
+        mesh->tex_coord[i] = 1.0f - mesh->tex_coord[i];
+
+    mesh->groups = 1;
+    mesh->group = malloc(sizeof(group_t) * mesh->groups);
+
+    for (i = 0; i < mesh->groups; i++)
+    {
+        char line[11];
+        int group_len;
+        float fl;
+        int j;
+
+        mesh->group[i].type = PRIM_TRIANGLES;
+
+        if (fscanf(f, "TRIANGLES %d\n", &group_len) != 1)
+        {
+            DBG_ERROR("error reading DCM file");
+            exit(1);
+        }
+
+        mesh->group[i].len = group_len * 3;
+
+        mesh->group[i].data = malloc(sizeof(unsigned int) * group_len * 3);
+
+        for (j = 0; j < group_len; j++)
+        {
+            if (fscanf(f, "%u %u %u %f %f %f %f %f %f\n", &mesh->group[i].data[j * 3], &mesh->group[i].data[j * 3 + 1],
+                &mesh->group[i].data[j * 3 + 2], &fl, &fl, &fl, &fl, &fl, &fl) != 9)
+            {
+                DBG_ERROR("error reading DCM file");
+                exit(1);
+            }
+        }
+    }
+
+    if (fscanf(f, "BONES %d\n", &bones) != 1)
+    {
+        DBG_ERROR("error reading DCM file");
+        return NULL;
+    }
+
+    mesh->bone = malloc(sizeof(bone_t) * bones);
+
+    for (i = 0; i < bones; i++)
+    {
+        int j;
+        int vw;
+
+        mesh->bone[i].name = malloc(256);
+        if (fscanf(f, "BONE %255s\n", mesh->bone[i].name) != 1)
+        {
+            DBG_ERROR("error reading DCM file");
+            exit(1);
+        }
+
+        if (fscanf(f, "%f %f %f\n", &mesh->bone[i].offset[0], &mesh->bone[i].offset[1],
+            &mesh->bone[i].offset[2]) != 3)
+        {
+            DBG_ERROR("error reading DCM file");
+            exit(1);
+        }
+
+        if (fscanf(f, "CHILDREN %d\n", &mesh->bone[i].children) != 1)
+        {
+            DBG_ERROR("error reading DCM file");
+            exit(1);
+        }
+
+        if (mesh->bone[i].children)
+            mesh->bone[i].child = malloc(sizeof(int) * mesh->bone[i].children);
+
+        for (j = 0; j < mesh->bone[i].children; j++)
+        {
+            if (fscanf(f, "%d\n", &mesh->bone[i].child[j]) != 1)
+            {
+                DBG_ERROR("error reading DCM file");
+                exit(1);
+            }
+        }
+
+        if (fscanf(f, "VERTEXWEIGHTS %d\n", &vw) != 1)
+        {
+            DBG_ERROR("error reading DCM file");
+            exit(1);
+        }
+
+        for (j = 0; j < vw; j++)
+        {
+            float weight;
+            int vert_idx;
+            if (fscanf(f, "%i %f\n", &vert_idx, &weight) != 2)
+            {
+                DBG_ERROR("error reading DCM file");
+                exit(1);
+            }
+            mesh->bone_w[vert_idx] = i;
+        }
+    }
+
+    fclose(f);
+
+    return mesh;
+}
+
 static mesh_t *load_mesh(char *filename)
 {
     mesh_t *mesh = data_col_find(&meshes, filename);
@@ -396,6 +576,21 @@ static mesh_t *load_mesh(char *filename)
 
     DBG_LOG("loading mesh: %s", filename);
     mesh = dcm_load(filename);
+    data_col_add(&meshes, filename, mesh);
+    return mesh;
+}
+
+static mesh_t *load_mesh_new(char *filename)
+{
+    mesh_t *mesh = data_col_find(&meshes, filename);
+
+    if (mesh)
+    {
+        return mesh;
+    }
+
+    DBG_LOG("loading mesh: %s", filename);
+    mesh = dcm_load_new(filename);
     data_col_add(&meshes, filename, mesh);
     return mesh;
 }
@@ -467,6 +662,9 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
                 }
             }
 
+            if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
+            glColor4f(0, 0xff, 0, 1);
+            else
             glColor4f(angle, angle, angle, alpha);
 
             glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
@@ -517,7 +715,11 @@ void loadmodels(char *filename)
         model[i].mesh = load_mesh(mesh);
         model[i].texture = load_piece_texture(texture);
     }
-
+/*
+    model[12].mesh = load_mesh_new("/home/walter/devel/ginger/ginger.dcm");
+    model[12].texture = load_piece_texture(texture);
+    model[11].mesh = model[12].mesh;
+*/
     if ((model[0].mesh->groups) == 1 && (model[0].mesh->group[0].len == 4))
         is_2d = 1;
     else
