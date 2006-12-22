@@ -499,8 +499,13 @@ static void init_gui( int width, int height, int fullscreen)
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
 
-    /* Load themes xml */
 
+    /* NEW THEME STUFFAS!!! */
+    ch_datadir();
+    theme_read_theme_dir();
+    /* NEW THEME STFFFSSS */
+
+    /* Load themes xml */
     ch_datadir();
     if ( (styledir=opendir("themes")) != NULL )
     {

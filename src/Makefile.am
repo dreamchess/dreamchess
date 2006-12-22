@@ -10,7 +10,7 @@ AM_YFLAGS = -d
 
 dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	debug.c dreamchess.c fen.c main.c main_sdlthd.c dir.c comm.c \
-	comm_win32.c credits.c pgn_parser.y pgn_scanner.l
+	comm_win32.c credits.c theme.c pgn_parser.y pgn_scanner.l
 
 dreamchess_LDADD = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
 	libs/gamegui/libgamegui.a libs/mxml/libmxml.a gamegui_dialogs/libgamegui_dialogs.a \
