@@ -198,6 +198,8 @@ static int poll_event(gg_event_t *event)
     gg_event_t gg_event;
     SDL_Event sdl_event;
 
+    audio_poll();
+
     while (SDL_PollEvent(&sdl_event))
     {
 
@@ -501,8 +503,10 @@ static void init_gui( int width, int height, int fullscreen)
 
 
     /* NEW THEME STUFFAS!!! */
+    theme_find_music_packs();
     ch_datadir();
     theme_read_theme_dir();
+    audio_init();
     /* NEW THEME STFFFSSS */
 
     /* Load themes xml */
@@ -710,6 +714,7 @@ static void poll_move()
     move_t move;
     int input;
 
+    audio_poll();
     draw_scene(&board);
 
     if (switch_to_menu == TRUE)

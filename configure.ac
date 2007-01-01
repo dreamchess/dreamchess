@@ -216,10 +216,10 @@ AC_DEFUN([AC_PRINT_LIB],
 	)
 
 if test x"$with_ui_sdlgl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_TTF_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
+	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_MIXER_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
 	AC_DEFINE([WITH_UI_SDLGL], [1], [Define to 1 if the sdlgl user interface driver should be compiled.])
 elif test x"$with_ui_sdl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_TTF_LIBS} ${SDL_LIBS}"
+	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS}"
 elif test x"$enable_linked_engine" != xyes; then
 	SDL_CFLAGS=""
 	SDL_LIBS=""
@@ -323,6 +323,7 @@ AC_CONFIG_FILES([Makefile
 		pkg/Makefile
 		pkg/win32/Makefile
 		src/Makefile
+		src/audio/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
 		src/libs/mxml/Makefile

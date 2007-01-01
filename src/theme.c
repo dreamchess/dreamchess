@@ -6,6 +6,7 @@
 #include <dirent.h>
 
 TAILQ_HEAD(, theme_struct) themes;
+static music_packs_t music_packs;
 int theme_count=0;
 
 void theme_printf_theme_list();
@@ -104,7 +105,7 @@ void theme_read_theme_dir( char *datadir )
 {
     struct dirent* themedir_entry;
     DIR* themedir;
-    
+
     char temp[80];
 
     theme_count=0;
@@ -130,8 +131,9 @@ void theme_read_theme_dir( char *datadir )
 void theme_printf_theme_list()
 {
     struct theme_struct *item;
-    item = malloc(sizeof(*item));
+    music_pack_t *music_pack;
 
+    printf("THEMES\n");
     TAILQ_FOREACH(item, &themes, entries) 
     {
         printf("*Name:%s\n", item->name);
@@ -142,6 +144,64 @@ void theme_printf_theme_list()
         printf("---Black:%s\n", item->black_name);
         printf("\n");
     }
+
+    printf("MUSIC PACKS\n");
+    TAILQ_FOREACH(music_pack, &music_packs, entries)
+        printf("*Directory:%s\n\n", music_pack->dir);
 }
 
+static void add_music_pack(char *dir)
+{
+    music_pack_t *music = malloc(sizeof(music_pack_t));
 
+    music->dir = strdup(dir);
+
+    TAILQ_INSERT_TAIL(&music_packs, music, entries);
+}
+
+static void find_music_packs()
+{
+    DIR *dir;
+
+    char temp[80];
+    char cur_dir[PATH_MAX];
+
+    if (!getcwd(cur_dir, PATH_MAX))
+        DBG_ERROR("could not determine current directory");
+
+    if ((dir=opendir("music")) != NULL)
+    {
+        struct dirent *entry;
+        while ((entry = readdir(dir)) != NULL)
+        {
+            if (entry->d_name[0] != '.')
+            {
+                char *dirname = malloc(strlen(cur_dir) + strlen(entry->d_name) + 8);
+
+                strcpy(dirname, cur_dir);
+                strcat(dirname, "/music/");
+                strcat(dirname, entry->d_name);
+
+                add_music_pack(dirname);
+                free(dirname);
+            }
+        }
+        closedir(dir);
+    }
+}
+
+void theme_find_music_packs()
+{
+    TAILQ_INIT(&music_packs);
+
+    ch_datadir();
+    find_music_packs();
+
+    ch_userdir();
+    find_music_packs();
+}
+
+music_packs_t *theme_get_music_packs()
+{
+    return &music_packs;
+}
