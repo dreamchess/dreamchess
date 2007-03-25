@@ -1,1 +1,1 @@
-SUBDIRS = win32
+SUBDIRS = win32 dc-goat

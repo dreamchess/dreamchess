@@ -37,6 +37,7 @@
 #include "dreamchess.h"
 #include "debug.h"
 #include "svn_version.h"
+#include "libmenu.h"
 
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
@@ -457,6 +458,10 @@ int dreamchess(void *data)
 
     printf( "DreamChess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
 
+#ifdef _arch_dreamcast
+    goat_init();
+#endif
+
 #ifndef _arch_dreamcast
 
     parse_options(arg->argc, arg->argv, &ui, &engine);
@@ -588,5 +593,10 @@ int dreamchess(void *data)
     comm_send("quit\n");
     comm_exit();
     ui->exit();
+
+#ifdef _arch_dreamcast
+    goat_exit();
+#endif
+
     return 0;
 }

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.1.0])
+AC_INIT([dreamchess],[0.1.0-goat])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
@@ -307,6 +307,7 @@ AC_CONFIG_FILES([Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
+		pkg/dc-goat/Makefile
 		pkg/win32/Makefile
 		src/Makefile
 		src/libs/Makefile
