@@ -253,8 +253,9 @@ else
 fi
 
 if test x"$CC" = xkos-cc; then
-	DREAMCHESS_LIBS="${DREAMCHESS_LIBS} libs/minizip/libminizip.a"
+	DREAMCHESS_LIBS="${DREAMCHESS_LIBS} libs/minizip/libminizip.a libs/menu/libmenu.a"
 	MINIZIP_LIB="libminizip.a"
+	MENU_LIB="libmenu.a"
 	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
 fi
 
@@ -262,6 +263,7 @@ AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
 AC_SUBST(MINIZIP_LIB)
+AC_SUBST(MENU_LIB)
 
 if test "$host_os" != "mingw32"; then
 	AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
@@ -311,6 +313,7 @@ AC_CONFIG_FILES([Makefile
 		src/libs/gamegui/Makefile
 		src/libs/mxml/Makefile
 		src/libs/minizip/Makefile
+		src/libs/menu/Makefile
 		src/include/Makefile
 		src/include/gamegui/Makefile
 		src/include/minizip/Makefile
