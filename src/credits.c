@@ -42,6 +42,7 @@ static char* modelling[] = { "3D Modelling",
 static char* thanks[] = { "Special Thanks To",
                           "François-Dominic Laramée",
                           "Armando Hernández Marroquín",
+                          "Chris Noll (Christuserloeser)",
                           NULL };
 
 static char* copyright[] = { "DreamChess",

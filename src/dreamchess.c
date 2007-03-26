@@ -490,6 +490,8 @@ int dreamchess(void *data)
 
         comm_send("sd %i\n", config->cpu_level);
         comm_send("depth %i\n", config->cpu_level);
+        if (config->difficulty == 0)
+            comm_send("noquiesce\n");
 
         if (config->player[WHITE] == PLAYER_UI
                 && config->player[BLACK] == PLAYER_UI)

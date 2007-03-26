@@ -242,6 +242,7 @@ void command_handle(state_t *state, char *command)
         state->depth = 1;
         state->mode = MODE_BLACK;
         state->done = 0;
+        set_option(OPTION_QUIESCE, 1);
         return;
     }
 
@@ -385,6 +386,12 @@ void command_handle(state_t *state, char *command)
         clear_table();
         repetition_init(&state->board);
         state->done = 0;
+        return;
+    }
+
+    if (!strncmp(command, "noquiesce", 9))
+    {
+        set_option(OPTION_QUIESCE, 0);
         return;
     }
 

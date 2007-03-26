@@ -84,7 +84,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta)
 
     best_move_score = board_eval_complete(board);
 
-    if (best_move_score >= beta)
+    if (!get_option(OPTION_QUIESCE) || best_move_score >= beta)
         return best_move_score;
 
     if (best_move_score > alpha)

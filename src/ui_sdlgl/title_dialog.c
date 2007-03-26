@@ -19,15 +19,12 @@
 #include "ui_sdlgl.h"
 
 static int selected_player_layout=0;
-static int selected_difficulty=0;
-static int swapping_custom=FALSE;
+static int selected_difficulty=1;
+static int selected_level=0;
 static int selected_custom_board=0;
 static int selected_custom_style=0;
 static int selected_custom_pieces=0;
 static int flip_board;
-static int cur_style;
-static int pieces_list_cur;
-static int board_list_cur;
 
 static void dialog_close_cb(gg_widget_t *widget, void *data)
 {
@@ -44,27 +41,32 @@ void set_selected_difficulty( int set )
     selected_difficulty=set;
 }
 
+void set_selected_level( int set )
+{
+    selected_level=set;
+}
+
 int get_pieces_list_cur()
 {
-    return pieces_list_cur;
+    return selected_custom_pieces;
 }
 
 int get_board_list_cur()
 {
-    return board_list_cur;
+    return selected_custom_board;
 }
 
 int get_cur_style()
 {
-    return cur_style;
+    return selected_custom_style;
 }
 
 /** @brief Triggers gameplay start based on currently selected options. */
 static void menu_title_start(gg_widget_t *widget, void *data)
 {
     set_set_loading(TRUE);
-    DBG_LOG("starting a new game - difficulty: %i - player scheme: %i", 
-        selected_difficulty, selected_player_layout);
+    DBG_LOG("starting a new game - difficulty: %i - level: %i - player scheme: %i", 
+        selected_difficulty, selected_level, selected_player_layout);
 
     if ( get_egg_req() )
     {
@@ -74,18 +76,6 @@ static void menu_title_start(gg_widget_t *widget, void *data)
 
     gg_dialog_close();
     gg_dialog_close();
-}
-
-/** @brief Triggers DreamChess exit. */
-static void menu_title_quit(gg_widget_t *widget, void *data)
-{
-    set_title_process_retval(1);
-    gg_dialog_close();
-}
-
-void dialog_title_players(gg_widget_t *widget, void *data)
-{
-    selected_player_layout=gg_option_get_selected(GG_OPTION(widget));
 
     switch (selected_player_layout)
     {
@@ -104,6 +94,21 @@ void dialog_title_players(gg_widget_t *widget, void *data)
         get_config()->player[BLACK] = PLAYER_UI;
         flip_board = 0;
     }
+
+    get_config()->difficulty = selected_difficulty;
+    get_config()->cpu_level = selected_level + 1;
+}
+
+/** @brief Triggers DreamChess exit. */
+static void menu_title_quit(gg_widget_t *widget, void *data)
+{
+    set_title_process_retval(1);
+    gg_dialog_close();
+}
+
+void dialog_title_players(gg_widget_t *widget, void *data)
+{
+    selected_player_layout=gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_root_new(gg_widget_t *widget, void *data)
@@ -120,15 +125,19 @@ static void dialog_title_root_select_theme(gg_widget_t *widget, void *data)
 {
     /* If created, and theme set to custom.. open custom.. */
     if ( get_selected_theme() == get_theme_count() )
-         gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
+        gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
     else
         gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)));
 }
 
+static void dialog_title_difficulty(gg_widget_t *widget, void *data)
+{
+    selected_difficulty = gg_option_get_selected(GG_OPTION(widget));
+}
+
 static void dialog_title_level(gg_widget_t *widget, void *data)
 {
-    get_config()->cpu_level = gg_option_get_selected(GG_OPTION(widget)) + 1;
-    selected_difficulty=get_config()->cpu_level-1;
+    selected_level=gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
@@ -138,9 +147,7 @@ static void dialog_title_custom_theme(gg_widget_t *widget, void *data)
     {
         /* printf( "Theme changed from Custom!\n" ); */
         gg_dialog_close();
-        swapping_custom=TRUE;
         gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)->parent_dialog));
-        swapping_custom=FALSE;
     }
 }
 
@@ -151,9 +158,7 @@ static void dialog_title_theme(gg_widget_t *widget, void *data)
     {
         /* printf( "Theme changed to Custom!\n" ); */
         gg_dialog_close();
-        swapping_custom=TRUE;
         gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)->parent_dialog));
-        swapping_custom=FALSE;
         gg_option_set_selected(GG_OPTION(widget),get_theme_count()-1);
         gg_dialog_cleanup();
     }
@@ -161,20 +166,17 @@ static void dialog_title_theme(gg_widget_t *widget, void *data)
 
 static void dialog_title_style(gg_widget_t *widget, void *data)
 {
-    cur_style = gg_option_get_selected(GG_OPTION(widget));
-    selected_custom_style=cur_style;
+    selected_custom_style = gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_pieces(gg_widget_t *widget, void *data)
 {
-    pieces_list_cur = gg_option_get_selected(GG_OPTION(widget));
-    selected_custom_pieces=pieces_list_cur;
+    selected_custom_pieces = gg_option_get_selected(GG_OPTION(widget));
 }
 
 static void dialog_title_board(gg_widget_t *widget, void *data)
 {
-    board_list_cur = gg_option_get_selected(GG_OPTION(widget));
-    selected_custom_board=board_list_cur;
+    selected_custom_board = gg_option_get_selected(GG_OPTION(widget));
 }
 
 gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
@@ -187,13 +189,6 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_widget_t *label;
     int i;
 
-    get_config()->player[WHITE] = PLAYER_UI;
-    get_config()->player[BLACK] = PLAYER_ENGINE;
-    get_config()->cpu_level = selected_difficulty;
-    cur_style = selected_custom_style;
-    pieces_list_cur = selected_custom_pieces;
-    board_list_cur = selected_custom_board;
-    flip_board = 0;
     set_pgn_slot(-1);
 
     vbox = gg_vbox_create(0);
@@ -293,12 +288,6 @@ gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
-    /*if ( swapping_custom )
-    {
-        gg_vbox_set_selected(vbox, 0 );
-        gg_vbox_set_selected(vbox2, 0 );
-    }*/
-
     return GG_DIALOG(dialog);
 }
 
@@ -312,13 +301,6 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_widget_t *label;
     int i;
 
-    get_config()->player[WHITE] = PLAYER_UI;
-    get_config()->player[BLACK] = PLAYER_ENGINE;
-    get_config()->cpu_level = 1;
-    cur_style = 0;
-    pieces_list_cur = 0;
-    board_list_cur = 0;
-    flip_board = 0;
     set_pgn_slot(-1);
 
     vbox = gg_vbox_create(0);
@@ -353,12 +335,6 @@ gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
-    /*if ( swapping_custom )
-    {
-        gg_vbox_set_selected(vbox, 1 );
-        gg_vbox_set_selected(vbox2, 2 );
-    }*/
-
     return GG_DIALOG(dialog);
 }
 
@@ -371,13 +347,6 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_widget_t *hbox;
     gg_widget_t *label;
 
-    get_config()->player[WHITE] = PLAYER_UI;
-    get_config()->player[BLACK] = PLAYER_ENGINE;
-    get_config()->cpu_level = 1;
-   /* cur_style = 0;
-    pieces_list_cur = 0;
-    board_list_cur = 0;*/
-    flip_board = 0;
     set_pgn_slot(-1);
 
     widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
@@ -391,6 +360,10 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), label);
 
     label = gg_label_create("  Difficulty:");
+    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label);
+
+    label = gg_label_create("  Level:");
     gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
@@ -411,17 +384,24 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
 
     widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "Level 1", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 2", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 3", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 5", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 6", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 7", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 8", 0.5f, 0.0f);
-    gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
+    gg_option_append_label(GG_OPTION(widget), "Easy", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "Normal", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_difficulty, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
+
+    widget = gg_option_create();
+    gg_option_append_label(GG_OPTION(widget), "1", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "2", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "3", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "4", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "5", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "6", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "7", 0.5f, 0.0f);
+    gg_option_append_label(GG_OPTION(widget), "8", 0.5f, 0.0f);
+    gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+    gg_option_set_selected(GG_OPTION(widget),selected_level);
 
     /* Themelist list.. */
    /* widget = gg_option_create();
@@ -442,32 +422,6 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
-    if ( swapping_custom )
-    {
-        gg_vbox_set_selected(vbox, 1 );
-        gg_vbox_set_selected(vbox2, 2 );
-    }
-
-    /* re-apply configs to match dialog.. */
-    get_config()->cpu_level = selected_difficulty+1;
-    switch (selected_player_layout)
-    {
-    case GAME_TYPE_HUMAN_VS_CPU:
-        get_config()->player[WHITE] = PLAYER_UI;
-        get_config()->player[BLACK] = PLAYER_ENGINE;
-        flip_board = 0;
-        break;
-    case GAME_TYPE_CPU_VS_HUMAN:
-        get_config()->player[WHITE] = PLAYER_ENGINE;
-        get_config()->player[BLACK] = PLAYER_UI;
-        flip_board = 1;
-        break;
-    case GAME_TYPE_HUMAN_VS_HUMAN:
-        get_config()->player[WHITE] = PLAYER_UI;
-        get_config()->player[BLACK] = PLAYER_UI;
-        flip_board = 0;
-    }
-
     return GG_DIALOG(dialog);
 }
 
@@ -476,14 +430,6 @@ gg_dialog_t *dialog_title_root_create()
     gg_widget_t *dialog;
     gg_widget_t *vbox;
     gg_widget_t *widget;
-
-    get_config()->player[WHITE] = PLAYER_UI;
-    get_config()->player[BLACK] = PLAYER_ENGINE;
-    get_config()->cpu_level = 1;
-    cur_style = 0;
-    pieces_list_cur = 0;
-    board_list_cur = 0;
-    flip_board = 0;
 
     vbox = gg_vbox_create(0);
     widget = gg_action_create_with_label("New Game..", 0.0f, 0.0f);

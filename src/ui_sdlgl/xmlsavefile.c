@@ -68,7 +68,7 @@ static void save_opaque(mxml_node_t *parent, char *name, char *value)
     mxmlNewOpaque(node, value);
 }
 
-void write_save_xml( int slot, char *desc )
+void write_save_xml( int slot )
 {
     FILE *fp;
     char temp[80];
@@ -109,6 +109,9 @@ void write_save_xml( int slot, char *desc )
     sprintf(temp, "%i", get_config()->cpu_level);
     save_opaque(tree, "level", temp);
 
+    sprintf(temp, "%i", get_config()->difficulty);
+    save_opaque(tree, "difficulty", temp);
+
     fen = fen_encode(get_board());
     if (!fen)
     {
@@ -125,7 +128,7 @@ void write_save_xml( int slot, char *desc )
 }
 
 /*static void load_opaque(mxml_node_t *top, char *name, char *dest);*/
-void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
+void load_save_xml( int slot )
 {
     FILE *fp;
     char temp[256];
@@ -149,7 +152,6 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
     else
     {
         /*printf( "Error opening theme file.\n" );*/
-        sprintf( desc, "Empty." );
         slots &= ~(1 << slot);
         return;
     }
@@ -185,6 +187,11 @@ void load_save_xml( int slot, char *desc, int *player_layout, int *difficulty )
 
         load_opaque(save, "level", temp);
         config_save[slot].cpu_level = atoi(temp);
+
+        if (!load_opaque(save, "difficulty", temp))
+            config_save[slot].difficulty = atoi(temp);
+        else
+            config_save[slot].difficulty = 1;
 
         load_opaque(save, "fen", temp);
         board = fen_decode(temp);
