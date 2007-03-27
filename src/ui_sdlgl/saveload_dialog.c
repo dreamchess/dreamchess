@@ -170,7 +170,13 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        sprintf( temp, "Level: %i", get_config_save(saveload_selected)->cpu_level );
+        sprintf( temp, "Difficulty: %s",
+            get_config_save(saveload_selected)->difficulty ? "Normal" : "Easy" );
+        widget = gg_label_create(temp);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+
+        sprintf( temp, "Level: %i",
+            get_config_save(saveload_selected)->cpu_level );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -230,7 +236,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        for ( i=0; i<11; i++ )
+        for ( i=0; i<12; i++ )
         {
             widget = gg_label_create(" ");
             gg_container_append(GG_CONTAINER(vbox), widget);
