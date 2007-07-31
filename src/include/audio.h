@@ -18,6 +18,18 @@
 
 #include "gamegui/queue.h"
 
+enum {
+	AUDIO_MENU_MOVE,
+	AUDIO_MENU_CHANGE,
+	AUDIO_MOVE,
+	AUDIO_SOUNDS /* Must be last */
+};
+
+typedef struct sound {
+	int id;
+	char *filename;
+} sound_t;
+
 typedef void (*audio_music_callback)(char *title, char *artist, char *album);
 
 void audio_init();
@@ -29,3 +41,5 @@ void audio_play_music();
 void audio_poll();
 
 void audio_set_music_callback(audio_music_callback callback);
+
+void audio_play_sound(int id);

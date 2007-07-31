@@ -37,6 +37,7 @@
 #include "dreamchess.h"
 #include "debug.h"
 #include "svn_version.h"
+#include "audio.h"
 
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
@@ -532,6 +533,7 @@ int dreamchess(void *data)
                             engine_move = fullalg_to_move(&new_board, move_str);
                         if (engine_move)
                         {
+                            audio_play_sound(AUDIO_MOVE);
                             do_move(engine_move, 1);
                             free(engine_move);
                         }

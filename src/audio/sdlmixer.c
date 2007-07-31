@@ -24,15 +24,51 @@
 #include "audio.h"
 #include "theme.h"
 
+static sound_t sounds[AUDIO_SOUNDS] = 
+{
+	{AUDIO_MENU_MOVE, "menu1.wav"},
+	{AUDIO_MENU_CHANGE, "menu2.wav"},
+	{AUDIO_MOVE, "move1.wav"}
+};
+
 static audio_music_callback music_callback;
 static Mix_Music *music = NULL;
 static playlist_t *playlist;
 static int next_song;
 static playlist_entry_t *current_song;
 
+static Mix_Chunk *wav_data[AUDIO_SOUNDS];
+
+static void load_sounds()
+{
+	int i;
+
+	for (i = 0; i < AUDIO_SOUNDS; i++) {
+		DBG_LOG("loading %s", sounds[i].filename);
+		wav_data[sounds[i].id] = Mix_LoadWAV(sounds[i].filename);
+		if (!wav_data[sounds[i].id]) {
+			DBG_ERROR("failed to load %s", sounds[i].filename);
+			exit(1);
+		}
+	}
+}
+
+static void free_sounds()
+{
+	int i;
+
+	for (i = 0; i < AUDIO_SOUNDS; i++)
+		Mix_FreeChunk(wav_data[i]);
+}
+
 static void music_finished()
 {
 	next_song = 1;
+}
+
+static void sample_finished(int channel)
+{
+	Mix_VolumeMusic(MIX_MAX_VOLUME);
 }
 
 void audio_init()
@@ -52,7 +88,12 @@ void audio_init()
 		DBG_ERROR("unable to open audio");
 	}
 
+	chdir("sounds");
+	load_sounds();
+	chdir("..");
+
 	Mix_HookMusicFinished(music_finished);
+	Mix_ChannelFinished(sample_finished);
 
 	playlist = playlist_create();
 	TAILQ_FOREACH(music_pack, music_packs, entries)
@@ -70,6 +111,7 @@ void audio_init()
 void audio_exit()
 {
 	Mix_CloseAudio();
+	free_sounds();
 	playlist_destroy(playlist);
 }
 
@@ -88,7 +130,7 @@ void audio_poll()
 
 		music = Mix_LoadMUS(current_song->filename);
 
-		printf("Playing %s\n", current_song->filename);
+		DBG_LOG("playing %s", current_song->filename);
 		Mix_PlayMusic(music, 0);
 	}
 }
@@ -96,4 +138,13 @@ void audio_poll()
 void audio_set_music_callback(audio_music_callback callback)
 {
 	music_callback = callback;
+}
+
+void audio_play_sound(int id)
+{
+	Mix_VolumeMusic(32);
+	if (Mix_PlayChannel(0, wav_data[id], 0) == -1) {
+		DBG_WARN("failed to play sound %i", id);
+		Mix_VolumeMusic(MIX_MAX_VOLUME);
+	}
 }
