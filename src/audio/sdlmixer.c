@@ -99,7 +99,8 @@ void audio_init()
 	TAILQ_FOREACH(music_pack, music_packs, entries)
 		playlist_add_tracks(playlist, music_pack->dir);
 
-	if (!TAILQ_EMPTY(playlist))
+	/* Check for at least two songs */
+	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist)))
 	{
 		current_song = TAILQ_LAST(playlist, playlist);
 		next_song = 1;
@@ -115,13 +116,24 @@ void audio_exit()
 	playlist_destroy(playlist);
 }
 
-void audio_poll()
+void audio_poll(int title)
 {
-	if (next_song == 1)
+	/* Start a new song when the previous one is finished. Is also
+	** triggered when going from the title-screen to in-game and back
+	*/
+	if ((next_song == 1) || (!title && (current_song == TAILQ_FIRST(playlist)))
+		|| (title && (current_song != TAILQ_FIRST(playlist))))
 	{
-		current_song = TAILQ_NEXT(current_song, entries);
-		if (!current_song)
+		if (title)
 			current_song = TAILQ_FIRST(playlist);
+		else {
+			current_song = TAILQ_NEXT(current_song, entries);
+			if (!current_song) {
+				/* Go to song 2 */
+				current_song = TAILQ_FIRST(playlist);
+				current_song = TAILQ_NEXT(current_song, entries);
+			}
+		}
 
 		next_song = 0;
 

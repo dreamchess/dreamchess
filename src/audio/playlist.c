@@ -94,11 +94,20 @@ void playlist_add_tracks(playlist_t *playlist, char *dir)
 		char *title, *album, *artist, *filename, *fullname;
 
 		title = read_opaque(track, "title");
+		if (!title)
+			title = "Unknown title";
+
 		album = read_opaque(track, "album");
+		if (!album)
+			album = "Unknown album";
+
 		artist = read_opaque(track, "artist");
+		if (!artist)
+			artist = "Unknown artist";
+
 		filename = read_opaque(track, "filename");
 
-		if (!title || !album || !artist || !filename)
+		if (!filename)
 			DBG_ERROR("could not parse XML file");
 
 		fullname = malloc(strlen(dir) + strlen(filename) + 2);

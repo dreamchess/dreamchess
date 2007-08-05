@@ -38,7 +38,7 @@ void audio_exit();
 
 void audio_play_music();
 
-void audio_poll();
+void audio_poll(int title);
 
 void audio_set_music_callback(audio_music_callback callback);
 

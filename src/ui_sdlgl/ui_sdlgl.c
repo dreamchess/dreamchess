@@ -198,7 +198,7 @@ static int poll_event(gg_event_t *event)
     gg_event_t gg_event;
     SDL_Event sdl_event;
 
-    audio_poll();
+    audio_poll(1);
 
     while (SDL_PollEvent(&sdl_event))
     {
@@ -714,7 +714,7 @@ static void poll_move()
     move_t move;
     int input;
 
-    audio_poll();
+    audio_poll(0);
     draw_scene(&board);
 
     if (switch_to_menu == TRUE)
