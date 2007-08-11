@@ -516,12 +516,16 @@ static void init_gui( int width, int height, int fullscreen)
     {
         set_theme_count(0);
         /*styledir_entry=readdir(styledir);*/
+        load_theme_xml( "themes/default.xml" );
         while ((styledir_entry = readdir(styledir)) != NULL)
         {
             if ( styledir_entry->d_name[0] != '.' )
             {
-                sprintf( temp, "themes/%s", styledir_entry->d_name );
-                load_theme_xml( temp );
+                if ( strcmp( styledir_entry->d_name, "default.xml" ) )
+                {
+                    sprintf( temp, "themes/%s", styledir_entry->d_name );
+                    load_theme_xml( temp );
+                }
             }
         }
         closedir(styledir);
