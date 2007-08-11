@@ -450,9 +450,11 @@ gg_dialog_t *dialog_title_root_create()
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_select_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
+    #ifdef __unix__
     widget = gg_action_create_with_label("Toggle Fullscreen", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_toggle_fullscreen, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
+    #endif
 
     widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), menu_title_quit, NULL);

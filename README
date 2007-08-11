@@ -269,6 +269,9 @@ Options:
 NOTE: It's not possible to specify command-line arguments when running the
 Dreamcast version of DreamChess.
 
+Once DreamChess is running you can use ALT+ENTER or F11 to toggle fullscreen,
+and CTRL+F to toggle a FPS display(can only be used on the title screen).
+
 5.1 - Running Dreamer
 ---------------------
 

@@ -99,8 +99,9 @@ int get_move()
             continue;
         }
 
-        if ( event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_ALT &&
-            event.key.keysym.sym == SDLK_RETURN )
+        if ( (event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_ALT &&
+            event.key.keysym.sym == SDLK_RETURN) || (event.type == SDL_KEYDOWN &&
+            event.key.keysym.sym == SDLK_F11) )
         {
             DBG_LOG( "toggled fullscreen" );
             toggle_fullscreen();
@@ -157,9 +158,6 @@ int get_move()
                 break;
             case 'l':
                 /* load_game(); */
-                break;
-            case 0x06:
-                toggle_show_fps();
                 break;
             default:
                 break;
