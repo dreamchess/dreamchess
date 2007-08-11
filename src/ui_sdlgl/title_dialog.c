@@ -130,6 +130,12 @@ static void dialog_title_root_select_theme(gg_widget_t *widget, void *data)
         gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)));
 }
 
+static void dialog_title_toggle_fullscreen(gg_widget_t *widget, void *data)
+{
+    DBG_LOG( "toggled fullscreen" );
+    toggle_fullscreen();
+}
+
 static void dialog_title_difficulty(gg_widget_t *widget, void *data)
 {
     selected_difficulty = gg_option_get_selected(GG_OPTION(widget));
@@ -442,6 +448,10 @@ gg_dialog_t *dialog_title_root_create()
 
     widget = gg_action_create_with_label("Select Theme..", 0.0f, 0.0f);
     gg_action_set_callback(GG_ACTION(widget), dialog_title_root_select_theme, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Toggle Fullscreen", 0.0f, 0.0f);
+    gg_action_set_callback(GG_ACTION(widget), dialog_title_toggle_fullscreen, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);

@@ -207,8 +207,9 @@ static int poll_event(gg_event_t *event)
             /* FIXME */
             exit(0);
 
-        if ( sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
-            sdl_event.key.keysym.sym == SDLK_RETURN )
+        if ( (sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
+            sdl_event.key.keysym.sym == SDLK_RETURN) || (sdl_event.type == SDL_KEYDOWN &&
+            sdl_event.key.keysym.sym == SDLK_F11) )
         {
             DBG_LOG( "toggled fullscreen" );
             toggle_fullscreen();
