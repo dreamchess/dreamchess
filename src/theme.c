@@ -125,7 +125,7 @@ void theme_read_theme_dir( char *datadir )
         closedir(themedir);
     }
 
-    theme_printf_theme_list();
+    /*theme_printf_theme_list();*/
 }
 
 void theme_printf_theme_list()
