@@ -101,6 +101,8 @@ typedef struct theme
     char piece_tex_spin;
     int piece_tex_spin_speed;
     char lighting;
+    float selector_colour[4];
+    float selector_spinspeed;
 }
 theme;
 

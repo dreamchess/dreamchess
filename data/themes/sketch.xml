@@ -6,5 +6,13 @@
         <pieces>sketch</pieces>
         <board>sketch</board>
         <lighting>off</lighting>
+        <selector spinspeed="5">
+            <colour>
+                <red>0.0</red>
+                <green>0.0</green>
+                <blue>0.0</blue>
+                <alpha>0.5</alpha>
+            </colour>
+        </selector>
     </theme>
 </themes>

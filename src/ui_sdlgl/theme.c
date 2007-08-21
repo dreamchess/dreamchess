@@ -147,7 +147,7 @@ void load_theme_xml( char *xmlfile )
     DBG_LOG("loading %s", xmlfile );
     while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
     {
-        mxml_node_t *node;
+        mxml_node_t *node, *node2;
         /* Set theme to defaults.. incase we have missing bits..*/
         sprintf( themes[theme_count].name, "Un named" );
         sprintf( themes[theme_count].style, "default" );
@@ -158,6 +158,11 @@ void load_theme_xml( char *xmlfile )
         themes[theme_count].lighting=TRUE;
         themes[theme_count].piece_tex_spin=FALSE;
         themes[theme_count].piece_tex_spin_speed=0;
+        themes[theme_count].selector_colour[0]=1.0;
+        themes[theme_count].selector_colour[1]=1.0;
+        themes[theme_count].selector_colour[2]=0.0;
+        themes[theme_count].selector_colour[3]=0.25;  
+        themes[theme_count].selector_spinspeed=0;
 
         load_opaque(theme, "name", themes[theme_count].name);
         load_opaque(theme, "style", themes[theme_count].style);
@@ -165,6 +170,55 @@ void load_theme_xml( char *xmlfile )
         load_opaque(theme, "board", themes[theme_count].board);
         load_opaque(theme, "white_name", themes[theme_count].white_name);
         load_opaque(theme, "black_name", themes[theme_count].black_name);
+
+        node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
+        if (node)
+        {
+            char *temp=mxmlElementGetAttr(node, "spinspeed");
+            if ( temp )
+                themes[theme_count].selector_spinspeed=atof(temp);
+
+            node = mxmlWalkNext(node, node, MXML_DESCEND);
+            node = mxmlFindElement(node, node, "colour", NULL, NULL, MXML_DESCEND);
+            if (node)
+            {
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "red", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    themes[theme_count].selector_colour[0]=atof(node2->value.opaque);
+                }       
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "green", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    themes[theme_count].selector_colour[1]=atof(node2->value.opaque);
+                }       
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "blue", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    themes[theme_count].selector_colour[2]=atof(node2->value.opaque);
+                }        
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "alpha", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    themes[theme_count].selector_colour[3]=atof(node2->value.opaque);
+                }               
+            }
+
+            //themes[theme_count].selector_colour[0]=atof(mxmlElementGetAttr(node, "red"));
+            //themes[theme_count].selector_colour[1]=atof(mxmlElementGetAttr(node, "green"));
+            //themes[theme_count].selector_colour[2]=atof(mxmlElementGetAttr(node, "blue"));
+        }
 
         node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
         if (node)

@@ -13,6 +13,7 @@ struct theme_struct
 
     int lighting;
     int piece_tex_spin, piece_tex_spin_speed;
+    float selector_colour[3];
 
     TAILQ_ENTRY(theme_struct) entries;
 };

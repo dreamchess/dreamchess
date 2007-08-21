@@ -47,6 +47,7 @@
 #include <SDL_opengl.h>
 
 #include "board.h"
+#include "ui_sdlgl.h"
 #include "ui_sdlgl_3d.h"
 
 typedef struct coord3
@@ -64,31 +65,6 @@ typedef struct coord3d
     GLdouble z;
 }
 coord3d_t;
-
-typedef struct texture
-{
-    /** OpenGL Texture ID. */
-    GLuint id;
-
-    /** Lower-left u-coordinate. Ranges from 0.0f to 1.0f. */
-    float u1;
-
-    /** Lower-left v-coordinate. Ranges from 0.0f to 1.0f. */
-    float v1;
-
-    /** Upper-right u-coordinate. Ranges from 0.0f to 1.0f. */
-    float u2;
-
-    /** Upper-right v-coordinate. Ranges from 0.0f to 1.0f. */
-    float v2;
-
-    /** Width of texture in pixels. */
-    int width;
-
-    /** Height of texture in pixels. */
-    int height;
-}
-texture_t;
 
 typedef enum primitive_type
 {
@@ -885,13 +861,20 @@ static void draw_board(float rot_x, float rot_z)
     model_render(&board, 1.0f, &fixed, FALSE);
 }
 
+float selector_rotation=0.0;
 void draw_selector()
 {
     float r,g,b,a;
     float width;
     float height;
 
-    r=1.0f; g=1.0f; b=0.0f; a=0.25f; /* a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1; */
+    theme *t=get_theme(get_selected_theme());
+    r=t->selector_colour[0];
+    g=t->selector_colour[1];
+    b=t->selector_colour[2];
+    a=t->selector_colour[3];
+
+    //r=1.0f; g=1.0f; b=0.0f; a=0.25f; /* a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1; */
     width=0.5;
     height=0.1;
 
@@ -900,6 +883,9 @@ void draw_selector()
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
+    glRotatef(selector_rotation,0,0,1);
+    selector_rotation+=t->selector_spinspeed;
+
     glColor4f(r, g, b, a);
 
     glBegin(GL_QUADS);
