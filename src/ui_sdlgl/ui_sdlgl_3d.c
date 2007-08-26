@@ -880,6 +880,11 @@ void draw_selector()
     width=t->selector_size;
     height=0.1;
 
+    if ( t->selector_spinspeed == 0 )
+    {
+        selector_rotation=0;
+    }
+
     glLoadIdentity();
     glTranslatef(0, -0.5, -12.0);
     glRotatef(x_rotation, 1, 0, 0);
@@ -904,8 +909,11 @@ void draw_selector()
     glVertex3f(-width, -width, height);
     glEnd();
 
-    if ( bounce_inc == 0 )
+    if ( t->selector_bouncespeed == 0 )
+    {
+        selector_bounce=0;
         bounce_inc=t->selector_bouncespeed;
+    }
     
     if ( selector_bounce > 0.25 || selector_bounce < 0.0)
         bounce_inc=-(bounce_inc);

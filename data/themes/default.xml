@@ -19,7 +19,7 @@
         <style>default</style>
         <pieces>classicbw</pieces>
         <board>classic</board>
-        <selector spinspeed="0.0" size="1.0" bouncespeed="0.01">
+        <selector bouncespeed="0.01">
             <colour>
                 <red>1.0</red>
                 <green>1.0</green>
