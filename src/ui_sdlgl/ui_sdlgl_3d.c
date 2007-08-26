@@ -862,6 +862,8 @@ static void draw_board(float rot_x, float rot_z)
 }
 
 float selector_rotation=0.0;
+float selector_bounce=0.0;
+float bounce_inc=0.0;
 void draw_selector()
 {
     float r,g,b,a;
@@ -875,7 +877,7 @@ void draw_selector()
     a=t->selector_colour[3];
 
     //r=1.0f; g=1.0f; b=0.0f; a=0.25f; /* a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1; */
-    width=0.5;
+    width=t->selector_size;
     height=0.1;
 
     glLoadIdentity();
@@ -884,18 +886,46 @@ void draw_selector()
     glRotatef(z_rotation, 0, 0, 1);
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
     glRotatef(selector_rotation,0,0,1);
-    selector_rotation+=t->selector_spinspeed;
+    selector_rotation+=t->selector_spinspeed;       
 
-    glColor4f(r, g, b, a);
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, get_selector_tex()->id);
 
     glBegin(GL_QUADS);
+    glTexCoord2f(0,0);
     glVertex3f(-width, width, height);
+    glTexCoord2f(1,0);
     glVertex3f(width, width, height);
+    glTexCoord2f(1,1);
     glVertex3f(width, -width, height);
+    glTexCoord2f(0,1);
     glVertex3f(-width, -width, height);
     glEnd();
 
+    if ( bounce_inc == 0 )
+        bounce_inc=t->selector_bouncespeed;
+    
+    if ( selector_bounce > 0.25 || selector_bounce < 0.0)
+        bounce_inc=-(bounce_inc);
 
+    selector_bounce+=bounce_inc; 
+    glTranslatef(0, 0, selector_bounce+0.01);
+
+    glColor4f(r, g, b, a);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0,0);
+    glVertex3f(-width, width, height);
+    glTexCoord2f(1,0);
+    glVertex3f(width, width, height);
+    glTexCoord2f(1,1);
+    glVertex3f(width, -width, height);
+    glTexCoord2f(0,1);
+    glVertex3f(-width, -width, height);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 #ifdef _arch_dreamcast

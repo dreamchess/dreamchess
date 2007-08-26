@@ -6,12 +6,12 @@
         <pieces>sketch</pieces>
         <board>sketch</board>
         <lighting>off</lighting>
-        <selector spinspeed="5">
+        <selector spinspeed="5" size="0.5" bouncespeed="0.01">
             <colour>
-                <red>0.0</red>
-                <green>0.0</green>
-                <blue>0.0</blue>
-                <alpha>0.5</alpha>
+                <red>1.0</red>
+                <green>1.0</green>
+                <blue>1.0</blue>
+                <alpha>1.0</alpha>
             </colour>
         </selector>
     </theme>

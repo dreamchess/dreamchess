@@ -5,12 +5,28 @@
         <style>default</style>
         <pieces>classiclow</pieces>
         <board>classic</board>
+        <selector spinspeed="1" size="1.0" bouncespeed="0.01">
+            <colour>
+                <red>1.0</red>
+                <green>1.0</green>
+                <blue>1.0</blue>
+                <alpha>1.0</alpha>
+            </colour>
+        </selector>
     </theme>
     <theme>
         <name>Classic Marble</name>
         <style>default</style>
         <pieces>classicbw</pieces>
         <board>classic</board>
+        <selector spinspeed="0.0" size="1.0" bouncespeed="0.01">
+            <colour>
+                <red>1.0</red>
+                <green>1.0</green>
+                <blue>1.0</blue>
+                <alpha>1.0</alpha>
+            </colour>
+        </selector>
     </theme>
     <theme>
         <name>Classic Flat</name>

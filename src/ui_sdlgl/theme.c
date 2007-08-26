@@ -7,6 +7,7 @@ static texture_t menu_border[9];
 static texture_t mouse_cursor;
 static texture_t white_pieces[7];
 static texture_t black_pieces[7];
+static texture_t selector_tex;
 static theme themes[25];
 static int selected_theme=0;
 static int theme_count=0;
@@ -89,6 +90,11 @@ texture_t *get_black_piece( int index )
     return &black_pieces[index];
 }
 
+texture_t *get_selector_tex()
+{
+    return &selector_tex;
+}
+
 /* xml theme options */
 int use_lighting()
 {
@@ -163,6 +169,8 @@ void load_theme_xml( char *xmlfile )
         themes[theme_count].selector_colour[2]=0.0;
         themes[theme_count].selector_colour[3]=0.25;  
         themes[theme_count].selector_spinspeed=0;
+        themes[theme_count].selector_size=0.5;
+        themes[theme_count].selector_bouncespeed=0;
 
         load_opaque(theme, "name", themes[theme_count].name);
         load_opaque(theme, "style", themes[theme_count].style);
@@ -174,9 +182,19 @@ void load_theme_xml( char *xmlfile )
         node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
         if (node)
         {
-            char *temp=mxmlElementGetAttr(node, "spinspeed");
+            char *temp=(char*)mxmlElementGetAttr(node, "spinspeed");
             if ( temp )
                 themes[theme_count].selector_spinspeed=atof(temp);
+
+            temp=(char*)mxmlElementGetAttr(node, "size");
+            if ( temp )
+                themes[theme_count].selector_size=atof(temp);
+
+            temp=(char*)mxmlElementGetAttr(node, "bouncespeed");
+            if ( temp )
+            {
+                themes[theme_count].selector_bouncespeed=atof(temp);
+            }
 
             node = mxmlWalkNext(node, node, MXML_DESCEND);
             node = mxmlFindElement(node, node, "colour", NULL, NULL, MXML_DESCEND);
@@ -276,6 +294,8 @@ void load_theme(char* style, char* pieces, char *board)
     chdir("pieces");
     chdir(pieces);
     loadmodels("set.cfg");
+    texture_t seltex;
+    load_texture_png(&selector_tex, "selector.png", 1,1);
 
     ch_datadir();
     chdir("boards");
@@ -290,6 +310,7 @@ void unload_theme()
 {
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);
+    glDeleteTextures(1, &selector_tex.id);
     unload_border(border);
     freemodels();
 }

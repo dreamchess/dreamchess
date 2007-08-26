@@ -103,6 +103,8 @@ typedef struct theme
     char lighting;
     float selector_colour[4];
     float selector_spinspeed;
+    float selector_size;
+    float selector_bouncespeed;
 }
 theme;
 
@@ -210,6 +212,7 @@ texture_t *get_black_pieces();
 texture_t *get_white_piece( int index );
 texture_t *get_black_piece( int index );
 texture_t *get_backdrop();
+texture_t *get_selector_tex();
 char *get_white_name();
 char *get_black_name();
 texture_t *get_mouse_cursor();
