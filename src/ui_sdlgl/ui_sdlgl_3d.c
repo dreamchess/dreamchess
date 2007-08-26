@@ -867,7 +867,7 @@ float bounce_inc=0.0;
 void draw_selector()
 {
     float r,g,b,a;
-    float width;
+    float width,width2;
     float height;
 
     theme *t=get_theme(get_selected_theme());
@@ -893,32 +893,33 @@ void draw_selector()
     glRotatef(selector_rotation,0,0,1);
     selector_rotation+=t->selector_spinspeed;       
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, get_selector_tex()->id);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0,0);
-    glVertex3f(-width, width, height);
-    glTexCoord2f(1,0);
-    glVertex3f(width, width, height);
-    glTexCoord2f(1,1);
-    glVertex3f(width, -width, height);
-    glTexCoord2f(0,1);
-    glVertex3f(-width, -width, height);
-    glEnd();
-
-    if ( t->selector_bouncespeed == 0 )
-    {
+    if ( t->selector_bouncespeed == 0.0 )
         selector_bounce=0;
+    else if ( selector_bounce == 0 )
         bounce_inc=t->selector_bouncespeed;
-    }
     
     if ( selector_bounce > 0.25 || selector_bounce < 0.0)
         bounce_inc=-(bounce_inc);
 
     selector_bounce+=bounce_inc; 
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, get_selector_tex()->id);
+
+    width2=width;
+    glBegin(GL_QUADS);
+    glTexCoord2f(0,0);
+    glVertex3f(-width2, width2, height);
+    glTexCoord2f(1,0);
+    glVertex3f(width2, width2, height);
+    glTexCoord2f(1,1);
+    glVertex3f(width2, -width2, height);
+    glTexCoord2f(0,1);
+    glVertex3f(-width2, -width2, height);
+    glEnd();
+
     glTranslatef(0, 0, selector_bounce+0.01);
 
     glColor4f(r, g, b, a);
