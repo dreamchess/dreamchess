@@ -33,6 +33,12 @@ gg_class_id gg_widget_get_class_id()
 
 void gg_widget_destroy(gg_widget_t *widget)
 {
+    while (!TAILQ_EMPTY(&widget->callbacks)) {
+        gg_widget_cb_list_t *cb = TAILQ_FIRST(&widget->callbacks);
+        TAILQ_REMOVE(&widget->callbacks, cb, entries);
+        free(cb);
+    }
+
     free(widget);
 }
 
@@ -111,4 +117,39 @@ void gg_widget_init(gg_widget_t *widget)
     widget->width_f = widget->height_f = -1;
     widget->width_a = widget->height_a = 0;
     widget->parent = NULL;
+    TAILQ_INIT(&widget->callbacks);
+}
+
+void gg_widget_subscribe_signal(gg_widget_t *widget, gg_signal_t signal, gg_widget_cb_t callback, void *extra_data)
+{
+    gg_widget_cb_list_t *cb = malloc(sizeof(gg_widget_cb_list_t));
+    cb->signal = signal;
+    cb->callback = callback;
+    cb->extra_data = extra_data;
+    TAILQ_INSERT_HEAD(&widget->callbacks, cb, entries);
+}
+
+int gg_widget_subscribe_signal_name(gg_widget_t *widget, gg_class_id id, char *name, gg_widget_cb_t callback, void *extra_data)
+{
+    gg_signal_t signal = gg_signal_lookup(id, name);
+
+    if (signal == -1)
+        return -1;
+
+    gg_widget_subscribe_signal(widget, signal, callback, extra_data);
+}
+
+void gg_widget_emit_signal(gg_widget_t *widget, gg_widget_t *emitter, gg_signal_t signal, void *data)
+{
+    gg_widget_cb_list_t *cb_list;
+
+    TAILQ_FOREACH(cb_list, &widget->callbacks, entries) {
+        if (cb_list->signal == signal) {
+            if (cb_list->callback(widget, emitter, data, cb_list->extra_data))
+                return;
+        }
+    }
+
+    if (widget->parent)
+        gg_widget_emit_signal(widget->parent, emitter, signal, data);
 }

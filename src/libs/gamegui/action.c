@@ -47,9 +47,7 @@ int gg_action_input(gg_widget_t *widget, gg_event_t event)
                 event.mouse.type == GG_MOUSE_BUTTON_DOWN &&
                 event.mouse.button == 0))
     {
-        if (action->func)
-            action->func(widget, action->func_data);
-
+        gg_widget_emit_signal(widget, widget, action->pressed, NULL);
         return 1;
     }
 
@@ -68,6 +66,9 @@ void gg_action_init(gg_action_t *action, gg_widget_t *widget)
     action->enabled = 1;
     action->width = widget->width; /* FIXME */
     action->height = widget->height; /* FIXME */
+    action->pressed = gg_signal_lookup(action->id, "action_pressed");
+    if (action->pressed == -1)
+        action->pressed = gg_signal_register(action->id, "action_pressed");
 }
 
 /** @brief Creates an action widget.

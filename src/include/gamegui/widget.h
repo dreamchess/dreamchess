@@ -24,6 +24,8 @@
 #define GAMEGUI_WIDGET_H
 
 #include <gamegui/system.h>
+#include <gamegui/queue.h>
+#include <gamegui/signal.h>
 
 struct gg_dialog;
 
@@ -72,6 +74,8 @@ typedef struct gg_event
     int key;
     gg_event_mouse_t mouse;
 } gg_event_t;
+
+typedef TAILQ_HEAD(gg_widget_cb_head, gg_widget_cb_list) gg_widget_cb_head_t;
 
 /** Typecast to widget. */
 #define GG_WIDGET(W) GG_CHECK_CAST(W, gg_widget_get_class_id(), gg_widget_t)
@@ -167,7 +171,10 @@ typedef struct gg_event
     int width_a;                                                             \
                                                                              \
     /** Allocated height in pixels. */                                       \
-    int height_a;
+    int height_a;                                                            \
+                                                                             \
+    /** Callback list. */                                                    \
+    gg_widget_cb_head_t callbacks;
 
 /** Widget class. */
 typedef struct gg_widget
@@ -214,5 +221,19 @@ void gg_set_size(gg_widget_t *widget, int width, int height);
 void gg_widget_init(gg_widget_t *widget);
 
 struct gg_dialog *gg_widget_find_dialog(gg_widget_t *widget);
+
+/* Signal handling */
+
+typedef int (* gg_widget_cb_t) (gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data);
+
+typedef struct gg_widget_cb_list {
+	TAILQ_ENTRY(gg_widget_cb_list) entries;
+	gg_signal_t signal;
+	void *extra_data;
+	gg_widget_cb_t callback;
+} gg_widget_cb_list_t;
+
+int gg_widget_subscribe_signal_name(gg_widget_t *widget, gg_class_id id, char *name, gg_widget_cb_t callback, void *extra_data);
+void gg_widget_subscribe_signal(gg_widget_t *widget, gg_signal_t signal, gg_widget_cb_t callback, void *extra_data);
 
 #endif /* GAMEGUI_WIDGET_H */

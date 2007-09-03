@@ -23,6 +23,7 @@
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
 #include <gamegui/clipping.h>
+#include <gamegui/signal.h>
 
 static int classes = 0;
 static gg_class_id *parent_class = NULL;
@@ -37,6 +38,19 @@ gg_class_id gg_register_class(gg_class_id parent)
     return classes++;
 }
 
+int gg_is_parent(gg_class_id parent, gg_class_id child)
+{
+    child = parent_class[child];
+
+    while ((child != GG_CLASS_ID_NONE) && (parent != child))
+        child = parent_class[child];
+
+    if (child == GG_CLASS_ID_NONE)
+        return 0;
+
+    return 1;
+}
+
 gg_widget_t *gg_check_cast(gg_widget_t *widget, gg_class_id id, char *file, int line, char *type)
 {
     if (!widget)
@@ -45,18 +59,10 @@ gg_widget_t *gg_check_cast(gg_widget_t *widget, gg_class_id id, char *file, int 
         exit(1);
     }
 
-    if (widget->id != id)
+    if ((widget->id != id) && !gg_is_parent(id, widget->id))
     {
-        gg_class_id parent = parent_class[widget->id];
-
-        while ((parent != GG_CLASS_ID_NONE) && (parent != id))
-            parent = parent_class[parent];
-
-        if (parent == GG_CLASS_ID_NONE)
-        {
-            fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
-            exit(1);
-        }
+        fprintf(stderr, "Fatal error (%s:L%d): Widget is not of type %s.\n", file, line, type);
+        exit(1);
     }
 
     return widget;
@@ -65,6 +71,7 @@ gg_widget_t *gg_check_cast(gg_widget_t *widget, gg_class_id id, char *file, int 
 void gg_system_init(gg_driver_t *d)
 {
     driver = d;
+    gg_signal_init();
 }
 
 /* FIXME */
@@ -75,6 +82,8 @@ void gg_system_exit()
 {
     gg_dialog_close_all();
     gg_dialog_cleanup();
+
+    gg_signal_exit();
 
     if (parent_class)
         free(parent_class);

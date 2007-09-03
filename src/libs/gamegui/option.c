@@ -101,20 +101,14 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
     if (event.type == GG_EVENT_KEY && event.key == GG_KEY_RIGHT)
     {
         if (gg_select_next(select, 0, 0))
-        {
-            if (option->func)
-                option->func(widget, option->func_data);
-        }
+            gg_widget_emit_signal(widget, widget, option->changed, NULL);
 
         return 1;
     }
     if (event.type == GG_EVENT_KEY && event.key == GG_KEY_LEFT)
     {
         if (gg_select_prev(select, 0, 0))
-        {
-            if (option->func)
-                option->func(widget, option->func_data);
-        }
+            gg_widget_emit_signal(widget, widget, option->changed, NULL);
 
         return 1;
     }
@@ -128,13 +122,11 @@ int gg_option_input(gg_widget_t *widget, gg_event_t event)
         gg_system_get_string_size(OPTION_ARROW_RIGHT, &border_r, NULL);
 
         if (event.mouse.x < border_l && gg_select_prev(select, 0, 0))
-            if (option->func)
-                option->func(widget, option->func_data);
+            gg_widget_emit_signal(widget, widget, option->changed, NULL);
 
         if (event.mouse.x >= widget->width_a - border_l &&
                 gg_select_next(select, 0, 0))
-            if (option->func)
-                option->func(widget, option->func_data);
+            gg_widget_emit_signal(widget, widget, option->changed, NULL);
 
         return 1;
     }
@@ -169,6 +161,9 @@ void gg_option_init(gg_option_t *option)
     option->input = gg_option_input;
     option->set_size = gg_option_set_size;
     option->id = gg_option_get_class_id();
+    option->changed = gg_signal_lookup(option->id, "option_changed");
+    if (option->changed == -1)
+        option->changed = gg_signal_register(option->id, "option_changed");
 }
 
 /** @brief Creates an option widget.

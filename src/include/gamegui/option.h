@@ -27,6 +27,7 @@
 #define GG_OPTION_DATA \
     GG_SELECT_DATA \
     void (* func) (gg_widget_t *widget, void *data); \
+    gg_signal_t changed; \
     void *func_data;
 
 typedef struct gg_option

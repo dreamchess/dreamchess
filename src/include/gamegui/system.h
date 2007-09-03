@@ -114,6 +114,8 @@ struct gg_widget;
 
 gg_class_id gg_register_class(gg_class_id parent);
 
+int gg_is_parent(gg_class_id parent, gg_class_id child);
+
 struct gg_widget *gg_check_cast(struct gg_widget *widget, gg_class_id id, char *file, int line, char *type);
 
 void gg_system_init(gg_driver_t *d);

@@ -32,6 +32,7 @@
 #define GG_ACTION_DATA \
     GG_BIN_DATA \
     void (* func) (gg_widget_t *widget, void *data); \
+    gg_signal_t pressed; \
     void *func_data;
 
 typedef struct gg_action
