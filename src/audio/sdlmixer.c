@@ -31,7 +31,7 @@ static sound_t sounds[AUDIO_SOUNDS] =
 	{AUDIO_MOVE, "move1.wav"}
 };
 
-static audio_music_callback music_callback;
+static audio_music_callback_t music_callback = NULL;
 static Mix_Music *music = NULL;
 static playlist_t *playlist;
 static int next_song;
@@ -147,12 +147,15 @@ void audio_poll(int title)
 
 		music = Mix_LoadMUS(current_song->filename);
 
+		if (music_callback)
+			music_callback(current_song->title, current_song->artist, current_song->album);
+
 		DBG_LOG("playing %s", current_song->filename);
 		Mix_PlayMusic(music, 0);
 	}
 }
 
-void audio_set_music_callback(audio_music_callback callback)
+void audio_set_music_callback(audio_music_callback_t callback)
 {
 	music_callback = callback;
 }

@@ -1,6 +1,7 @@
 
 #include "ui_sdlgl.h"
 #include "svn_version.h"
+#include "audio.h"
 
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
@@ -25,6 +26,11 @@ static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
 static int screen_height=480;
+
+static void music_callback(char *title, char *artist, char *album)
+{
+    printf("Now playing: %s - %s\n", artist, title);
+}
 
 int get_screen_width()
 {
@@ -621,6 +627,9 @@ static void init_gui( int width, int height, int fullscreen)
         closedir(styledir);
     }
     update_fps_time();
+
+    /* Register music callback */
+    audio_set_music_callback(music_callback);
 }
 
 /** Implements ui_driver::update. */
@@ -666,6 +675,9 @@ static int sdlgl_init(int width, int height, int fullscreen)
 static int sdlgl_exit()
 {
     int i;
+
+    audio_set_music_callback(NULL);
+
     gg_system_exit();
     glDeleteTextures(1, &menu_title_tex.id);
 

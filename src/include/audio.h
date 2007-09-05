@@ -32,7 +32,7 @@ typedef struct sound {
 	char *filename;
 } sound_t;
 
-typedef void (*audio_music_callback)(char *title, char *artist, char *album);
+typedef void (*audio_music_callback_t)(char *title, char *artist, char *album);
 
 void audio_init();
 
@@ -42,7 +42,7 @@ void audio_play_music();
 
 void audio_poll(int title);
 
-void audio_set_music_callback(audio_music_callback callback);
+void audio_set_music_callback(audio_music_callback_t callback);
 
 void audio_play_sound(int id);
 
