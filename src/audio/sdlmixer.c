@@ -39,6 +39,8 @@ static playlist_entry_t *current_song;
 
 static Mix_Chunk *wav_data[AUDIO_SOUNDS];
 
+static int sound_volume, music_volume;
+
 static void load_sounds()
 {
 	int i;
@@ -68,7 +70,7 @@ static void music_finished()
 
 static void sample_finished(int channel)
 {
-	Mix_VolumeMusic(MIX_MAX_VOLUME);
+	Mix_VolumeMusic(music_volume);
 }
 
 void audio_init()
@@ -91,6 +93,9 @@ void audio_init()
 	chdir("sounds");
 	load_sounds();
 	chdir("..");
+
+	sound_volume = MIX_MAX_VOLUME;
+	music_volume = MIX_MAX_VOLUME;
 
 	Mix_HookMusicFinished(music_finished);
 	Mix_ChannelFinished(sample_finished);
@@ -154,9 +159,21 @@ void audio_set_music_callback(audio_music_callback callback)
 
 void audio_play_sound(int id)
 {
-	Mix_VolumeMusic(32);
+	Mix_VolumeMusic(music_volume / 4);
 	if (Mix_PlayChannel(0, wav_data[id], 0) == -1) {
 		DBG_WARN("failed to play sound %i", id);
-		Mix_VolumeMusic(MIX_MAX_VOLUME);
+		Mix_VolumeMusic(music_volume);
 	}
+}
+
+void audio_set_sound_volume(int vol)
+{
+	sound_volume = vol * MIX_MAX_VOLUME / AUDIO_MAX_VOL;
+	Mix_Volume(0, sound_volume);
+}
+
+void audio_set_music_volume(int vol)
+{
+	music_volume = vol * MIX_MAX_VOLUME / AUDIO_MAX_VOL;
+	Mix_VolumeMusic(music_volume);
 }

@@ -25,6 +25,8 @@ enum {
 	AUDIO_SOUNDS /* Must be last */
 };
 
+#define AUDIO_MAX_VOL 10
+
 typedef struct sound {
 	int id;
 	char *filename;
@@ -43,3 +45,7 @@ void audio_poll(int title);
 void audio_set_music_callback(audio_music_callback callback);
 
 void audio_play_sound(int id);
+
+void audio_set_sound_volume(int vol);
+
+void audio_set_music_volume(int vol);
