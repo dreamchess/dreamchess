@@ -25,6 +25,7 @@
 static char* programming[] = { "Programming",
                                "Kris McAulay",
                                "Walter van Niftrik",
+                               "Lawrence Sebald",
                                NULL };
 
 static char* graphics[] = { "Graphics",
@@ -47,9 +48,14 @@ static char* thanks[] = { "Special Thanks To",
 
 static char* copyright[] = { "DreamChess",
                              "© 2003-2007 The DreamChess project",
+                             "http://www.dreamchess.org",
                              NULL };
 
-static char **credits[] = { copyright, programming, graphics, modelling, thanks, NULL };
+static char* music[] = { "Music",
+                         "Matthew P. Smith (captivatinguitar.com)",
+                         NULL };
+
+static char **credits[] = { copyright, programming, music, graphics, modelling, thanks, NULL };
 
 char ***get_credits()
 {
