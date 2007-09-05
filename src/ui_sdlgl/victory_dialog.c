@@ -1,9 +1,10 @@
 
 #include "ui_sdlgl.h"
 
-static void dialog_close_cb(gg_widget_t *widget, void *data)
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_dialog_close();
+    return 1;
 }
 
 gg_dialog_t *dialog_victory_create(result_t *result)
@@ -41,7 +42,8 @@ gg_dialog_t *dialog_victory_create(result_t *result)
     text = gg_label_create("");
     gg_container_append(GG_CONTAINER(vbox), text);
     action = gg_action_create_with_label("Ok", 0.5f, 0.5f);
-    gg_action_set_callback(GG_ACTION(action), dialog_close_cb, NULL);
+    gg_widget_subscribe_signal_name(action, action->id, "action_pressed", 
+        dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), action);
     gg_container_append(GG_CONTAINER(hbox), image_l);
     gg_container_append(GG_CONTAINER(hbox), vbox);

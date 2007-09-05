@@ -1,8 +1,9 @@
 #include "gamegui_dialogs.h"
 
-static void dialog_close_cb(gg_widget_t *widget, void *data)
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_dialog_close();
+    return 1;
 }
 
 gg_dialog_t *dialog_message_create(char *message)
@@ -16,7 +17,8 @@ gg_dialog_t *dialog_message_create(char *message)
     gg_container_append(GG_CONTAINER(vbox), gg_label_create(message));
     gg_container_append(GG_CONTAINER(vbox), gg_label_create(""));
     widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
-    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
     dialog = gg_dialog_create(vbox, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);

@@ -18,9 +18,10 @@
 
 #include "ui_sdlgl.h"
 
-static void dialog_close_cb(gg_widget_t *widget, void *data)
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_dialog_close();
+    return 1;
 }
 
 int saveload_selected=0;
@@ -49,7 +50,7 @@ char xmlsquaretofont( int square )
     return ' ';
 }
 
-static void dialog_loadgame_load(gg_widget_t *widget, void *data)
+static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     int slot = saveload_selected;
 
@@ -60,20 +61,22 @@ static void dialog_loadgame_load(gg_widget_t *widget, void *data)
         gg_dialog_close();
         gg_dialog_close();
     }
+    return 1;
 }
 
-static void dialog_saveload_change(gg_widget_t *widget, void *data)
+static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_widget_t *select = GG_WIDGET(data);
+    gg_widget_t *select = GG_WIDGET(extra_data);
     saveload_selected=GG_OPTION(select)->sel;
 
     gg_dialog_close();
     changing_slot=TRUE;
     gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget)->parent_dialog, change_saving));
     changing_slot=FALSE;
+    return 1;
 }
 
-static void dialog_savegame_save(gg_widget_t *widget, void *data)
+static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     char temp[80];
     int save_good=TRUE;
@@ -98,6 +101,8 @@ static void dialog_savegame_save(gg_widget_t *widget, void *data)
         show_message_dialog( "Save successful" );
     else
         show_message_dialog( "Save failed" );
+
+    return 1;
 }
 
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
@@ -257,12 +262,14 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     if ( saving )
     {
         widget = gg_action_create_with_label("Save Game", 0.0f, 0.0f);
-        gg_action_set_callback(GG_ACTION(widget), dialog_savegame_save, vbox);
+        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
+            dialog_savegame_save, vbox);
     }
     else
     {
         widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
-        gg_action_set_callback(GG_ACTION(widget), dialog_loadgame_load, vbox);
+        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
+            dialog_loadgame_load, vbox);
     }
     gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -272,14 +279,16 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         sprintf( temp, "Save slot: %i", i+1 );
         gg_option_append_label(GG_OPTION(widget), temp, 0.5f, 0.0f);
     }
-    gg_option_set_callback(GG_OPTION(widget), dialog_saveload_change, widget);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", 
+        dialog_saveload_change, widget);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     if ( changing_slot )
         gg_option_set_selected(GG_OPTION(widget), saveload_selected);
 
     widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), dialog_close_cb, NULL);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
+        dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     /*for ( i=0; i<SAVEGAME_SLOTS; i++ )
