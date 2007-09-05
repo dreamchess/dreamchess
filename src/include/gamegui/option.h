@@ -26,9 +26,7 @@
 
 #define GG_OPTION_DATA \
     GG_SELECT_DATA \
-    void (* func) (gg_widget_t *widget, void *data); \
-    gg_signal_t changed; \
-    void *func_data;
+    gg_signal_t changed;
 
 typedef struct gg_option
 {
@@ -52,8 +50,6 @@ void gg_option_append_label(gg_option_t *option, char *text, float xalign, float
 
 int gg_option_get_selected(gg_option_t *option);
 void gg_option_set_selected(gg_option_t *option, int index);
-
-void gg_option_set_callback(gg_option_t *option, void (* callback) (gg_widget_t *, void *), void *func_data);
 
 gg_class_id gg_option_get_class_id();
 

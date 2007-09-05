@@ -24,17 +24,19 @@ int get_vkeyboard_enabled()
     return vkeyboard_enabled;
 }
 
-static void dialog_vkeyboard_key(gg_widget_t *widget, void *data)
+static int dialog_vkeyboard_key(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data )
 {
     if (gg_dialog_get_active())
     {
         gg_event_t event;
         event.type = GG_EVENT_KEY;
-        event.key = *((int *) data);
+        event.key = *((int *) extra_data);
         gg_dialog_input_current(event);
     }
 
     printf( "Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
+
+    return 1;
 }
 
 gg_dialog_t *dialog_vkeyboard_create()
@@ -75,7 +77,8 @@ gg_dialog_t *dialog_vkeyboard_create()
                 key_str[1] = '\0';
                 action = gg_action_create_with_label(key_str, 0.5f, 0.5f);
                 gg_set_requested_size(action, max_width, 0);
-                gg_action_set_callback(GG_ACTION(action), dialog_vkeyboard_key, &keys[k]);
+                gg_widget_subscribe_signal_name(action, action->id, "action_pressed",
+                    dialog_vkeyboard_key, &keys[k]);;
 
                 gg_container_append(GG_CONTAINER(hbox), action);
                 k++;

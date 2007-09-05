@@ -242,14 +242,3 @@ void gg_option_set_selected(gg_option_t *option, int index)
     option->sel=index;
 }
 
-/** @brief Sets option widget callback.
- *
- *  @param widget The option widget.
- *  @param callback Function that should be called when an option is
- *                  selected.
- */
-void gg_option_set_callback(gg_option_t *option, void (* callback) (gg_widget_t *, void *), void *func_data)
-{
-    option->func = callback;
-    option->func_data = func_data;
-}

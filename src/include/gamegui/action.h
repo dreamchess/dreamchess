@@ -31,9 +31,7 @@
 
 #define GG_ACTION_DATA \
     GG_BIN_DATA \
-    void (* func) (gg_widget_t *widget, void *data); \
-    gg_signal_t pressed; \
-    void *func_data;
+    gg_signal_t pressed; 
 
 typedef struct gg_action
 {
@@ -52,7 +50,5 @@ void gg_action_init(gg_action_t *action, gg_widget_t *widget);
 gg_widget_t *gg_action_create(gg_widget_t *widget);
 
 gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign);
-
-void gg_action_set_callback(gg_action_t *action, void (* callback) (gg_widget_t *, void *), void *func_data);
 
 #endif /* GAMEGUI_ACTION_H */
