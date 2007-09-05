@@ -17,6 +17,12 @@ Walter van Niftrik  <w.f.b.w.v.niftrik@stud.tue.nl>
 Rogier van Schaijk  <rogiervanschaijk@roninonline.net>
 - Title screen graphics
 
+Lawrence Sebald
+- Mac OS X port
+
+Matthew P. Smith (http://www.captivatinguitar.com)
+- Music
+
 We made use of the Chess Merida font by Armando Hernandez Marroquin to
 generate the figurine chess set images both in the default theme and our
 bitmap font. The latin1 characters in our bitmap font were generated with
