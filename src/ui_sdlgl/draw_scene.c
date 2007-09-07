@@ -29,7 +29,7 @@ float get_mouse_square()
  *
  *  @param b Board configuration to render.
  */
-void draw_scene( board_t *b )
+void draw_scene( board_t *b, int reflections )
 {
     char temp[80];
     int clock_seconds=0;
@@ -51,7 +51,7 @@ void draw_scene( board_t *b )
     go_3d(get_screen_width(), get_screen_height());
     glDepthMask(GL_TRUE);
 
-    render_scene_3d(b);
+    render_scene_3d(b, reflections);
     mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y(), get_zerodepth());
 
     resize_window(get_screen_width(), get_screen_height());

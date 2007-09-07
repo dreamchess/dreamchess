@@ -227,7 +227,7 @@ int get_theme_count();
 void set_theme_count( int count );
 
 /* draw_scene.c */
-void draw_scene( board_t *b );
+void draw_scene( board_t *b, int reflections );
 float get_mouse_square();
 
 /* credits.c */

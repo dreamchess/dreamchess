@@ -25,7 +25,7 @@ int use_lighting();
 int get_tex_spin_speed();
 int use_tex_spin();
 void move_camera(float x, float z);
-void render_scene_3d(board_t *board);
+void render_scene_3d(board_t *board, int reflections);
 void move_selector(int direction);
 int get_selector();
 void select_piece(int square);

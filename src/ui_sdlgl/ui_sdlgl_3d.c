@@ -756,7 +756,7 @@ extern int piece_moving_x_done;
 extern int piece_moving_y_done;
 extern int piece_moving_done;
 
-static void draw_pieces(board_t *board, float rot_x, float rot_z)
+static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
 {
     int i,j,k;
     float moved=0;
@@ -835,22 +835,16 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z)
                     l = &light_inv;
                 }
 
-                if ( !is_2d && piece_moving_done == 0 &&
-                        (i*8+j) == piece_moving_dest )
-                {
-                    glPushMatrix();
-                    /* glRotatef( 10.0f, xrot, yrot, 0.0f ); */
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
-                    glPopMatrix();
-
+                if (!is_2d && flip) {
+                    glScalef(1.0f, 1.0f, -1.0f);
                 }
-                else
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
+
+                model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
             }
         }
 }
 
-static void draw_board(float rot_x, float rot_z)
+static void draw_board(float rot_x, float rot_z, int blend)
 {
     coord3_t fixed = {0, 0, -1};
     glLoadIdentity();
@@ -858,7 +852,11 @@ static void draw_board(float rot_x, float rot_z)
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
 
-    model_render(&board, 1.0f, &fixed, FALSE);
+    if (blend) {
+        model_render(&board, 0.8f, &fixed, FALSE);
+    }
+    else
+        model_render(&board, 1.0f, &fixed, FALSE);
 }
 
 float selector_rotation=0.0;
@@ -950,7 +948,7 @@ int find_square(int x, int y, float fd)
     GLint viewport[4];
     GLdouble modelview[16];
     GLdouble projection[16];
-    
+
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(x_rotation, 1, 0, 0);
@@ -976,11 +974,88 @@ int find_square(int x, int y, float fd)
 }
 #endif
 
-void render_scene_3d(board_t *board)
+static void draw_board_center()
+{
+    float tc = 46 / 512.0f;
+
+    glLoadIdentity();
+    glTranslatef(0, -0.5f, -12.0f );
+    glRotatef(x_rotation, 1, 0, 0);
+    glRotatef(z_rotation, 0, 0, 1);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, board.texture->id);
+
+    glBegin(GL_QUADS);
+    glColor4f(1, 1, 1, 0.75f);
+    glTexCoord2f(tc, tc);
+    glVertex3f(-4, -4, 0);
+    glTexCoord2f(1 - tc, tc);
+    glVertex3f(4, -4, 0);
+    glTexCoord2f(1 - tc, 1 - tc);
+    glVertex3f(4, 4, 0);
+    glTexCoord2f(tc, 1 - tc);
+    glVertex3f(-4, 4, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+static void setup_stencil()
+{
+    float tc = 46 / 512.0f;
+
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 1);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+
+    glLoadIdentity();
+    glTranslatef(0, -0.5f, -12.0f );
+    glRotatef(x_rotation, 1, 0, 0);
+    glRotatef(z_rotation, 0, 0, 1);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, board.texture->id);
+
+    glBegin(GL_QUADS);
+    glColor4f(0, 0, 0, 1);
+    glTexCoord2f(tc, tc);
+    glVertex3f(-4, -4, 0);
+    glTexCoord2f(1 - tc, tc);
+    glVertex3f(4, -4, 0);
+    glTexCoord2f(1 - tc, 1 - tc);
+    glVertex3f(4, 4, 0);
+    glTexCoord2f(tc, 1 - tc);
+    glVertex3f(-4, 4, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glStencilFunc(GL_EQUAL, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glDepthMask(GL_TRUE);
+}
+
+void render_scene_3d(board_t *board, int reflections)
 {
     glEnable(GL_CULL_FACE);
-    draw_board(x_rotation, z_rotation);
-    draw_pieces(board, x_rotation, z_rotation);
+    if (reflections) {
+        setup_stencil();
+        glCullFace(GL_FRONT);
+        draw_pieces(board, x_rotation, z_rotation, 1);
+        glDisable(GL_STENCIL_TEST);
+        glCullFace(GL_BACK);
+        draw_board_center();
+        draw_board(x_rotation, z_rotation, 0);
+        draw_pieces(board, x_rotation, z_rotation, 0);
+    } else {
+        draw_board(x_rotation, z_rotation, 0);
+        draw_pieces(board, x_rotation, z_rotation, 0);
+    }
     glDisable(GL_CULL_FACE);
     draw_selector();
 }

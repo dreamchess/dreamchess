@@ -26,6 +26,7 @@ static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
 static int screen_height=480;
+static int reflections=1;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -482,6 +483,7 @@ static void init_gui( int width, int height, int fullscreen)
         video_flags |= SDL_HWACCEL;
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+    SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
 
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
@@ -732,7 +734,7 @@ static void poll_move()
     int input;
 
     audio_poll(0);
-    draw_scene(&board);
+    draw_scene(&board, reflections);
 
     if (switch_to_menu == TRUE)
     {

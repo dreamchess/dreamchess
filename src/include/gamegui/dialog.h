@@ -79,8 +79,6 @@
 #define SCREEN_WIDTH  640
 /** Screen height in pixels. */
 #define SCREEN_HEIGHT 480
-/** Screen colour depth in bits per pixel. */
-#define SCREEN_BPP     16
 
 /** Textured dialog border style. */
 typedef struct gg_dialog_border
