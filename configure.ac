@@ -274,6 +274,9 @@ if test x"$CC" = xkos-cc; then
 	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
 fi
 
+AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])])
+AC_CHECK_LIB(mxml, mxmlLoadFile, [DREAMCHESS_LIBS="${DREAMCHESS_LIBS} -lmxml"], [AC_MSG_ERROR([Cannot find Mini-XML library.])])
+
 AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
@@ -292,27 +295,6 @@ AC_CHECK_FUNCS(getopt_long strdup vsnprintf usleep)
 AC_C_CONST
 AC_C_VOLATILE
 
-# Needed for Mini-XML.
-AH_TOP(/* Needed for Mini-XML. */
-[#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>])
-
-AH_BOTTOM(/* Needed for Mini-XML. */
-[#ifndef HAVE_STRDUP
-extern char *mxml_strdup(const char *);
-#define strdup mxml_strdup
-#endif
-
-extern char *mxml_strdupf(const char *, va_list);
-
-#ifndef HAVE_VSNPRINTF
-extern int mxml_vsnprintf(char *, size_t, const char *, va_list);
-#define vsnprintf mxml_vsnprintf
-#endif])
-
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
@@ -326,7 +308,6 @@ AC_CONFIG_FILES([Makefile
 		src/audio/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
-		src/libs/mxml/Makefile
 		src/libs/minizip/Makefile
 		src/include/Makefile
 		src/include/gamegui/Makefile

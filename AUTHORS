@@ -24,7 +24,7 @@ Matthew P. Smith (http://www.captivatinguitar.com)
 - Music
 
 We made use of the Chess Merida font by Armando Hernandez Marroquin to
-generate the figurine chess set images both in the default theme and our
-bitmap font. The latin1 characters in our bitmap font were generated with
-the Bitstream Vera font by Bitstream, Inc. The moon on the title screen is
-Courtesy NASA/JPL-Caltech.
+generate the figurine chess images. The latin1 characters in our bitmap font
+were generated with the Bitstream Vera font by Bitstream, Inc.
+
+The moon on the title screen is Courtesy NASA/JPL-Caltech.
