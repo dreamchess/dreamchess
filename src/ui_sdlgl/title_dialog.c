@@ -140,13 +140,6 @@ static int dialog_title_root_select_theme(gg_widget_t *widget, gg_widget_t *emit
     return 1;
 }
 
-static int dialog_title_toggle_fullscreen(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    DBG_LOG( "toggled fullscreen" );
-    toggle_fullscreen();
-    return 1;
-}
-
 static int dialog_title_difficulty(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     selected_difficulty = gg_option_get_selected(GG_OPTION(widget));
@@ -201,6 +194,12 @@ static int dialog_title_pieces(gg_widget_t *widget, gg_widget_t *emitter, void *
 static int dialog_title_board(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     selected_custom_board = gg_option_get_selected(GG_OPTION(widget));
+    return 1;
+}
+
+static int dialog_title_open_systemopts(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_dialog_open(dialog_systemopts_create(gg_widget_find_dialog(widget)));
     return 1;
 }
 
@@ -470,11 +469,11 @@ gg_dialog_t *dialog_title_root_create()
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_select_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    #ifdef __unix__
-    widget = gg_action_create_with_label("Toggle Fullscreen", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_toggle_fullscreen, NULL);
+    widget = gg_action_create_with_label("System Options", 0.0f, 0.0f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        dialog_title_open_systemopts, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
-    #endif
+
 
     widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_quit, NULL);
