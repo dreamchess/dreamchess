@@ -37,6 +37,28 @@ Var ALREADY_INSTALLED
 !define MUI_FINISHPAGE_RUN_TEXT "Create Desktop Icon"
 !define MUI_FINISHPAGE_RUN_FUNCTION "DesktopShortcut"
 
+Function .onInit
+ 
+  ReadRegStr $R0 HKLM \
+  "Software\Microsoft\Windows\CurrentVersion\Uninstall\DreamChess" \
+  "UninstallString"
+  StrCmp $R0 "" done
+ 
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+  "DreamChess is already installed. $\n$\nClick 'OK' to remove the \
+  previous version or 'Cancel' to cancel this upgrade." \
+  IDOK uninst
+  Abort
+  
+;Run the uninstaller
+uninst:
+  ClearErrors
+  Exec $R0
+  
+done:
+ 
+FunctionEnd
+
 Function "DesktopShortcut"
 CreateShortCut "$DESKTOP\DreamChess.lnk" "$INSTDIR\DreamChess.exe"
 FunctionEnd
