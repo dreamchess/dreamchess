@@ -125,6 +125,10 @@ void audio_exit()
 
 void audio_poll(int title)
 {
+        /* Less than two songs, abort. */
+        if ((TAILQ_FIRST(playlist) == TAILQ_LAST(playlist, playlist)))
+                return;
+
 	/* Start a new song when the previous one is finished. Is also
 	** triggered when going from the title-screen to in-game and back
 	*/

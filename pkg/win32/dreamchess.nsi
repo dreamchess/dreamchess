@@ -1,4 +1,4 @@
-!define VERSION "0.1.0"
+!define VERSION "0.2.0"
 
 !include "MUI.nsh"
 !include "Library.nsh"
@@ -58,6 +58,7 @@ Section
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
   File /oname=Copying.txt ..\..\COPYING
+  File /oname=Copyright.txt ..\..\COPYRIGHT
   File /r /x .* ..\..\data
   File /r /x .* ..\..\doc
 
@@ -70,8 +71,14 @@ Section
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL.dll $SYSDIR\SDL.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_image.dll $SYSDIR\SDL_image.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED jpeg.dll $SYSDIR\jpeg.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng13.dll $SYSDIR\libpng13.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libtiff-3.dll $SYSDIR\libtiff-3.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng12-0.dll $SYSDIR\libpng12-0.dll $SYSDIR
   !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED zlib1.dll $SYSDIR\zlib1.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED smpeg.dll $SYSDIR\smpeg.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libogg-0.dll $SYSDIR\libogg-0.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libvorbis-0.dll $SYSDIR\libvorbis-0.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libvorbisfile-3.dll $SYSDIR\libvorbisfile-3.dll $SYSDIR
+  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_mixer.dll $SYSDIR\SDL_mixer.dll $SYSDIR
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -79,6 +86,7 @@ Section
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme.lnk" "$INSTDIR\Readme.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Authors.lnk" "$INSTDIR\Authors.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copying.txt"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copyright.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -100,14 +108,21 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\Readme.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Authors.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Copying.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Copyright.lnk"
 
   Delete "$DESKTOP\DreamChess.lnk"
 
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_image.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\jpeg.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng13.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libtiff-3.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng12-0.dll
   !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\zlib1.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\smpeg.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libogg-0.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libvorbis-0.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libvorbisfile-3.dll
+  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_mixer.dll
 
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  

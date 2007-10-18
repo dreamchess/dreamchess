@@ -595,39 +595,12 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
-glPushMatrix();
-glLoadIdentity();
-glTranslatef(0, -0.5f, -12.0f );
-
-// Somewhere in the initialization part of your program…
-glEnable(GL_LIGHTING);
-glEnable(GL_LIGHT0);
-
-// Create light components
-GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat diffuseLight[] = { 0.5f, 0.5f, 0.5, 1.0f };
-GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat position[] = { 10.0f, -10.0f, 10.0f, 1.0f };
-
-// Assign created components to GL_LIGHT0
-glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
-float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
-glMateriali(GL_FRONT, GL_SHININESS, 128);
-
-glPopMatrix();
-
     if ( tex_spin )
         tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)get_tex_spin_speed()));
 
-light = NULL;
+    /* printf( "pos: %f\n", tex_spin_pos );
+    printf( "%f\n", (1000/(float)get_tex_spin_speed()) );
+    tex_spin_pos=(float)ticks / (float)(1000/(float)get_tex_spin_speed()); */
 
     for (g = 0; g < mesh->groups; g++)
     {
@@ -675,10 +648,6 @@ light = NULL;
             glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
                          mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
 
-            glNormal3f(mesh->normal[data[i] * 3],
-                       mesh->normal[data[i] * 3 + 1],
-                       mesh->normal[data[i] * 3 + 2]);
-
             glVertex3f(mesh->vertex[data[i] * 3],
                        mesh->vertex[data[i] * 3 + 1],
                        mesh->vertex[data[i] * 3 + 2]);
@@ -688,8 +657,6 @@ light = NULL;
     }
 
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_LIGHT0);
 }
 
 void loadmodels(char *filename)

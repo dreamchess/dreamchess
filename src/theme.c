@@ -20,6 +20,11 @@
 
 #include <mxml.h>
 #include <dirent.h>
+#include <limits.h>
+
+#ifdef __WIN32
+#include <windows.h>
+#endif
 
 #include "dreamchess.h"
 #include "theme.h"
@@ -183,7 +188,6 @@ static void find_music_packs()
 {
     DIR *dir;
 
-    char temp[80];
     char cur_dir[PATH_MAX];
 
     if (!getcwd(cur_dir, PATH_MAX))
@@ -219,6 +223,35 @@ void theme_find_music_packs()
 
     ch_userdir();
     find_music_packs();
+
+#ifdef __WIN32
+    {
+        HKEY key;
+        char data[PATH_MAX];
+        DWORD size = PATH_MAX - 1;
+
+        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+            "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\DreamChess Music",
+            0, KEY_QUERY_VALUE, &key) != ERROR_SUCCESS)
+        {
+            DBG_LOG("couldn't find music pack in registry");
+            return;
+        }
+
+        if (RegQueryValueEx(key, "InstallLocation", NULL, NULL, data, &size)
+            != ERROR_SUCCESS)
+        {
+            DBG_LOG("couldn't find music pack in registry");
+            return;
+        }
+
+        data[size] = 0;
+        DBG_LOG("music pack location: %s", data);
+
+        chdir(data);
+        find_music_packs();
+    }
+#endif
 }
 
 music_packs_t *theme_get_music_packs()

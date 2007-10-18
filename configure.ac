@@ -275,7 +275,7 @@ if test x"$CC" = xkos-cc; then
 fi
 
 AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])])
-AC_CHECK_LIB(mxml, mxmlLoadFile, [DREAMCHESS_LIBS="${DREAMCHESS_LIBS} -lmxml"], [AC_MSG_ERROR([Cannot find Mini-XML library.])])
+AC_CHECK_LIB(mxml, mxmlLoadFile, [], [AC_MSG_ERROR([Cannot find Mini-XML library.])])
 
 AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)

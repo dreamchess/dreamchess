@@ -43,18 +43,18 @@ static char* modelling[] = { "3D Modelling",
                             NULL };
 
 static char* thanks[] = { "Special Thanks To",
-                          "Franï¿½ois-Dominic Laramï¿½e",
-                          "Armando Hernï¿½ndez Marroquï¿½n",
+                          "François-Dominic Laramée",
+                          "Armando Hernández Marroquín",
                           "Chris Noll (Christuserloeser)",
                           NULL };
 
 static char* copyright[] = { "DreamChess",
-                             "ï¿½ 2003-2007 The DreamChess project",
+                             "© 2003-2007 The DreamChess project",
                              "http://www.dreamchess.org",
                              NULL };
 
 static char* music[] = { "Music",
-                         "Matthew P. Smith (captivatinguitar.com)",
+                         "Matthew P. Smith",
                          NULL };
 
 static char **credits[] = { copyright, programming, music, graphics, modelling, thanks, NULL };
