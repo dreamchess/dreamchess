@@ -19,6 +19,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "theme.h"
 #include "options.h"
@@ -57,6 +58,11 @@ void config_init()
 	}
 	option_select_value_by_name(option, "8");
 
+	option_group_load_xml(config);
+}
+
+void config_save()
+{
 	option_group_save_xml(config);
 }
 

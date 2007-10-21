@@ -35,6 +35,12 @@ static int dialog_title_toggle_fullscreen(gg_widget_t *widget, gg_widget_t *emit
     return 1;
 }
 
+static int dialog_title_save_options(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    config_save();
+    return 1;
+}
+
 static int dialog_title_theme(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     option_t *option = config_get_option("theme");
@@ -110,6 +116,11 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
         dialog_title_toggle_fullscreen, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
     #endif
+
+    widget = gg_action_create_with_label("Save options", 0.0f, 0.0f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        dialog_title_save_options, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_action_create_with_label("Back...", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 

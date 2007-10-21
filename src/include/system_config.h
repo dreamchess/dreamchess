@@ -24,6 +24,7 @@
 #include "options.h"
 
 void config_init();
+void config_save();
 option_t *config_get_option(char *name);
 
 #endif

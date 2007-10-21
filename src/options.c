@@ -40,7 +40,7 @@ static char *remove_spaces(const char *str)
 
 static const char *whitespace_cb(mxml_node_t *node, int where)
 {
-	if (!strcmp(node->value.element.name, "?xml version=\"1.0\"") && (where == MXML_WS_AFTER_OPEN))
+	if (!strcmp(node->value.element.name, "?xml version=\"1.0\"?") && (where == MXML_WS_AFTER_OPEN))
 		return "\n";
 
 	if (where == MXML_WS_AFTER_CLOSE)
@@ -78,7 +78,7 @@ int option_group_save_xml(option_group_t *group)
 	char *filename;
 	int error;
 
-	xml = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"");
+	xml = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
 
 	TAILQ_FOREACH(option, &group->options, entries) {
 		if (option->selected) {
@@ -107,7 +107,57 @@ int option_group_save_xml(option_group_t *group)
 	free(filename);
 	mxmlDelete(xml);
 
+	fclose(f);
+
 	return error;
+}
+
+int option_group_load_xml(option_group_t *group)
+{
+	FILE *f;
+	mxml_node_t *tree, *node;
+	char *filename;
+	char *option = NULL;
+	char *value = NULL;
+
+	filename = malloc(strlen(group->name) + 4 + 1);
+	strcpy(filename, group->name);
+	strcat(filename, ".xml");
+
+	f = fopen(filename, "r");
+	if (f)
+		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
+	else {
+		DBG_WARN("failed to open '%s'", filename);
+		return -1;
+	}
+
+	fclose(f);
+
+	if (!tree) {
+		DBG_ERROR("failed to parse '%s'", filename);
+		return -1;
+	}
+
+	node = tree;
+	while ((node = mxmlWalkNext(node, tree, MXML_DESCEND))) {
+		if (node->type == MXML_ELEMENT) {
+			option_t *option;
+			node = mxmlWalkNext(node, tree, MXML_DESCEND);
+			if (!node)
+				break;
+			option = option_group_find_option(group, node->parent->value.opaque);
+			if (!option) {
+				DBG_WARN("option '%s' does not exist", node->parent->value.opaque);
+				continue;
+			}
+			if (option_select_value_by_name(option, node->value.opaque) == -1)
+				DBG_WARN("option '%s' has no value '%s'", option->name, node->value.opaque);
+			DBG_LOG("setting option '%s' to '%s'", option->name, node->value.opaque);
+		}
+	}
+
+	return 0;
 }
 
 void option_add_value(option_t *option, char *name, void *data)
@@ -118,6 +168,8 @@ void option_add_value(option_t *option, char *name, void *data)
 	value->data = data;
 	value->index = option->size++;
 	TAILQ_INSERT_TAIL(&option->values, value, entries);
+	if (option->size == 1)
+		option->selected = value;
 }
 
 int option_select_value_by_name(option_t *option, char *name)
