@@ -21,6 +21,9 @@
 #include "ui_sdlgl.h"
 #include "svn_version.h"
 #include "audio.h"
+#include "options.h"
+#include "theme.h"
+#include "system_config.h"
 
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
@@ -34,13 +37,7 @@ static int title_process_retval;
 static int set_loading=FALSE;
 static int dialog_promote_piece;
 static SDL_Joystick *joy;
-static char** themelist;
-static char** stylelist;
 static int num_style;
-static int pieces_list_total;
-static char** pieces_list;
-static char** board_list;
-static int board_list_total;
 static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
@@ -92,41 +89,6 @@ void set_show_egg( int set )
 int get_show_egg()
 {
     return show_egg;
-}
-
-int get_pieces_list_total()
-{
-    return pieces_list_total;
-}
-
-int get_board_list_total()
-{
-    return board_list_total;
-}
-
-int get_num_style()
-{
-    return num_style;
-}
-
-char *get_board_list( int index )
-{
-    return board_list[index];
-}
-
-char *get_pieces_list( int index )
-{
-    return pieces_list[index];
-}
-
-char *get_stylelist( int index )
-{
-    return stylelist[index];
-}
-
-char *get_themelist( int index )
-{
-    return themelist[index];
 }
 
 int get_dialog_promote_piece()
@@ -365,22 +327,13 @@ static config_t *do_menu(int *pgn)
             break;
 
         case MENU_STATE_LOAD:
-            /* We using custom? */
-            if ( get_selected_theme()==get_theme_count() )
             {
-                sprintf(get_white_name(),"White");
-                sprintf(get_black_name(),"Black");
-                load_theme(get_stylelist(get_cur_style()),
-                           get_pieces_list(get_pieces_list_cur()),
-                           get_board_list(get_board_list_cur()));
-            }
-            else
-            {
-                /* printf( "Loading theme %i\n", selected_theme ); */
-                load_theme(get_theme(get_selected_theme())->style, get_theme(get_selected_theme())->pieces,
-                           get_theme(get_selected_theme())->board);
-                sprintf(get_white_name(),"%s",get_theme(get_selected_theme())->white_name);
-                sprintf(get_black_name(),"%s",get_theme(get_selected_theme())->black_name);
+                option_t *option = config_get_option("theme");
+                struct theme_struct *theme = (struct theme_struct *) option->selected->data;
+
+                load_theme(theme->style, theme->pieces, theme->board);
+                sprintf(get_white_name(),"%s", theme->white_name);
+                sprintf(get_black_name(),"%s", theme->black_name);
             }
 
             reset_3d();
@@ -438,9 +391,6 @@ static void init_gui( int width, int height, int fullscreen)
     SDL_Surface *icon, *surface;
     const SDL_VideoInfo *video_info;
     int i;
-    DIR* styledir;
-    struct dirent* styledir_entry;
-    char temp[80];
 
     screen_width=width;
     screen_height=height;
@@ -529,59 +479,8 @@ static void init_gui( int width, int height, int fullscreen)
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
 
-
-    /* NEW THEME STUFFAS!!! */
-    theme_find_music_packs();
     ch_datadir();
-    theme_read_theme_dir();
     audio_init();
-    /* NEW THEME STFFFSSS */
-
-    /* Load themes xml */
-    ch_datadir();
-    if ( (styledir=opendir("themes")) != NULL )
-    {
-        set_theme_count(0);
-        /*styledir_entry=readdir(styledir);*/
-        load_theme_xml( "themes/default.xml" );
-        while ((styledir_entry = readdir(styledir)) != NULL)
-        {
-            if ( styledir_entry->d_name[0] != '.' )
-            {
-                if ( strcmp( styledir_entry->d_name, "default.xml" ) )
-                {
-                    sprintf( temp, "themes/%s", styledir_entry->d_name );
-                    load_theme_xml( temp );
-                }
-            }
-        }
-        closedir(styledir);
-    }
-
-    /* Fill theme list. */
-    themelist = malloc(sizeof(char *) * (get_theme_count() + 1));
-    if ( get_theme_count() > 0 )
-    {
-        for ( i=0; i<get_theme_count(); i++ )
-            themelist[i]=strdup( get_theme(i)->name );
-    }
-    themelist[get_theme_count()]=strdup( "Custom" );
-
-    /* Fill style list. */
-    if ( (styledir=opendir("styles")) != NULL )
-    {
-        num_style = 0;
-        while ((styledir_entry = readdir(styledir)) != NULL)
-        {
-            if ( styledir_entry->d_name[0] != '.' )
-            {
-                stylelist = realloc(stylelist, (num_style + 1) *
-                                    sizeof(char *));
-                stylelist[num_style++]=strdup( styledir_entry->d_name );
-            }
-        }
-        closedir(styledir);
-    }
 
     chdir("styles");
     chdir("default");
@@ -591,25 +490,6 @@ static void init_gui( int width, int height, int fullscreen)
     load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 #endif /* __BEOS__ */    
 #endif /* _arch_dreamcast */
-
-    /* Fill pieces list. */
-    ch_datadir();
-
-    if ((styledir=opendir("pieces")) != NULL )
-    {
-        pieces_list_total = 0;
-        while ((styledir_entry = readdir(styledir)) != NULL)
-        {
-            if (styledir_entry->d_name[0] != '.')
-            {
-                pieces_list = realloc(pieces_list, (pieces_list_total + 1) *
-                                      sizeof(char *));
-                pieces_list[pieces_list_total++] =
-                    strdup(styledir_entry->d_name);
-            }
-        }
-        closedir(styledir);
-    }
 
     style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
     style_ingame.hor_pad = 20;
@@ -626,27 +506,9 @@ static void init_gui( int width, int height, int fullscreen)
     for (i = 0; i < 9; i++)
         style_menu.border.image[i] = &get_menu_border()[i];
 
-    /* Fill board list. */
-    ch_datadir();
-
     /* Make virtual keyboard table? */
     populate_key_table();
 
-    if ((styledir=opendir("boards")) != NULL )
-    {
-        board_list_total = 0;
-        while ((styledir_entry = readdir(styledir)) != NULL)
-        {
-            if (styledir_entry->d_name[0] != '.')
-            {
-                board_list = realloc(board_list, (board_list_total + 1) *
-                                     sizeof(char *));
-                board_list[board_list_total++] =
-                    strdup(styledir_entry->d_name);
-            }
-        }
-        closedir(styledir);
-    }
     update_fps_time();
 
     /* Register music callback */
@@ -704,35 +566,6 @@ static int sdlgl_exit()
 
     if (joy)
         SDL_JoystickClose(joy);
-
-    if (themelist)
-    {
-        for (i = 0; i < get_theme_count() + 1; i++)
-            free(themelist[i]);
-        free(themelist);
-    }
-
-    if (stylelist)
-    {
-        for (i = 0; i < num_style; i++)
-            free(stylelist[i]);
-        free(stylelist);
-    }
-
-    if (pieces_list)
-    {
-        for (i = 0; i < pieces_list_total; i++)
-            free(pieces_list[i]);
-
-        free(pieces_list);
-    }
-
-    if (board_list)
-    {
-        for (i = 0; i < board_list_total; i++)
-            free(board_list[i]);
-        free(board_list);
-    }
 
     SDL_Quit();
     return 0;

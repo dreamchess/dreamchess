@@ -47,6 +47,8 @@
 #include "ui_sdlgl_3d.h"
 #include "fen.h"
 #include <gamegui.h>
+#include "options.h"
+#include "theme.h"
 
 #define GAME_TYPE_HUMAN_VS_CPU      0
 #define GAME_TYPE_CPU_VS_HUMAN      1
@@ -108,7 +110,7 @@
 #define GUI_PIECE_KING     5
 #define GUI_PIECE_AVATAR   6
 
-typedef struct theme
+/*typedef struct theme
 {
     char name[25];
     char style[25];
@@ -124,7 +126,7 @@ typedef struct theme
     float selector_size;
     float selector_bouncespeed;
 }
-theme;
+theme;*/
 
 /** Describes a texture. The OpenGL texture ID is paired with texture
  *  coordinates to allow for only a small portion of the image to be used.
@@ -164,6 +166,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
 gg_dialog_t *dialog_system_create();
 gg_dialog_t *dialog_quit_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_message_create(char *message);
 gg_dialog_t *dialog_promote_create(int colour);
 gg_dialog_t *dialog_victory_create(result_t *result);
@@ -174,12 +177,6 @@ void set_selected_player_layout( int set );
 void set_selected_difficulty( int set );
 gg_dialog_t *dialog_title_root_create();
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
-/*gg_dialog_t *dialog_title_create(gg_dialog_t *parent);*/
-gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent);
-gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent);
-int get_cur_style();
-int get_pieces_list_cur();
-int get_board_list_cur();
 void open_title_root_dialog();
 
 /* transitions.c */
@@ -267,13 +264,6 @@ void set_set_loading( int set );
 void set_title_process_retval( int ret );
 void set_dialog_promote_piece( int piece );
 int get_dialog_promote_piece();
-int get_num_style();
-char *get_themelist( int index );
-char *get_stylelist( int index );
-char *get_pieces_list( int index );
-char *get_board_list( int index );
-int get_pieces_list_total();
-int get_board_list_total();
 
 /* vkeyboard.c*/
 gg_dialog_t *dialog_vkeyboard_create();

@@ -29,12 +29,11 @@
 #include "dreamchess.h"
 #include "theme.h"
 #include "debug.h"
+#include "options.h"
 
 TAILQ_HEAD(, theme_struct) themes;
 static music_packs_t music_packs;
 int theme_count=0;
-
-void theme_printf_theme_list();
 
 void theme_load_opaque(mxml_node_t *top, char *name, char **dest)
 {
@@ -47,14 +46,10 @@ void theme_load_opaque(mxml_node_t *top, char *name, char **dest)
     }
 }
 
-void theme_add_theme( char *xmlfile )
+void theme_add_theme( char *xmlfile, option_t *option )
 {
-    // Read in the theme XML...
     FILE *fp;
     mxml_node_t *tree=NULL, *theme=NULL;
-    char *lighting, *tex_spin, *text_spin_speed;
-
-    struct theme_struct *temp_theme;
 
     fp = fopen(xmlfile, "r");
     if (fp)
@@ -69,39 +64,100 @@ void theme_add_theme( char *xmlfile )
     DBG_LOG("loading %s", xmlfile );
     while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
     {
-        mxml_node_t *node;
+        struct theme_struct *cur_theme = malloc(sizeof(struct theme_struct));
+        mxml_node_t *node, *node2;
+        /* Set theme to defaults.. incase we have missing bits..*/
+        sprintf( cur_theme->name, "Un named" );
+        sprintf( cur_theme->style, "default" );
+        sprintf( cur_theme->pieces, "classiclow" );
+        sprintf( cur_theme->board, "classic" );
+        sprintf( cur_theme->white_name, "White" );
+        sprintf( cur_theme->black_name, "Black" );
+        cur_theme->lighting=TRUE;
+        cur_theme->piece_tex_spin=FALSE;
+        cur_theme->piece_tex_spin_speed=0;
+        cur_theme->selector_colour[0]=1.0;
+        cur_theme->selector_colour[1]=1.0;
+        cur_theme->selector_colour[2]=0.0;
+        cur_theme->selector_colour[3]=0.25;  
+        cur_theme->selector_spinspeed=0;
+        cur_theme->selector_size=0.5;
+        cur_theme->selector_bouncespeed=0;
 
-        temp_theme = malloc(sizeof(*temp_theme));
+        load_opaque(theme, "name", cur_theme->name);
+        load_opaque(theme, "style", cur_theme->style);
+        load_opaque(theme, "pieces", cur_theme->pieces);
+        load_opaque(theme, "board", cur_theme->board);
+        load_opaque(theme, "white_name", cur_theme->white_name);
+        load_opaque(theme, "black_name", cur_theme->black_name);
 
-        temp_theme->name=strdup("Untitled");
-        temp_theme->style=strdup("default");
-        temp_theme->pieces=strdup("classiclow");
-        temp_theme->board=strdup("classic");
-        temp_theme->white_name=strdup("White");
-        temp_theme->black_name=strdup("Black");
-        temp_theme->lighting=TRUE;
-        temp_theme->piece_tex_spin=FALSE;
-        temp_theme->piece_tex_spin_speed=0;
+        node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
+        if (node)
+        {
+            char *temp=(char*)mxmlElementGetAttr(node, "spinspeed");
+            if ( temp )
+                cur_theme->selector_spinspeed=atof(temp);
 
-        theme_load_opaque(theme, "name", &temp_theme->name);
-        theme_load_opaque(theme, "style", &temp_theme->style);
-        theme_load_opaque(theme, "pieces", &temp_theme->pieces);
-        theme_load_opaque(theme, "board", &temp_theme->board);
-        theme_load_opaque(theme, "white_name", &temp_theme->white_name);
-        theme_load_opaque(theme, "black_name", &temp_theme->black_name);
+            temp=(char*)mxmlElementGetAttr(node, "size");
+            if ( temp )
+                cur_theme->selector_size=atof(temp);
 
-      /*  theme_load_opaque(theme, "lighting", &temp_theme->black_name);
-        theme_load_opaque(theme, "tex_spin", &temp_theme->black_name);
-        theme_load_opaque(theme, "text_spin_speed", &temp_theme->black_name);
+            temp=(char*)mxmlElementGetAttr(node, "bouncespeed");
+            if ( temp )
+            {
+                cur_theme->selector_bouncespeed=atof(temp);
+            }
 
-      /*  node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
+            node = mxmlWalkNext(node, node, MXML_DESCEND);
+            node = mxmlFindElement(node, node, "colour", NULL, NULL, MXML_DESCEND);
+            if (node)
+            {
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "red", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    cur_theme->selector_colour[0]=atof(node2->value.opaque);
+                }       
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "green", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    cur_theme->selector_colour[1]=atof(node2->value.opaque);
+                }       
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "blue", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    cur_theme->selector_colour[2]=atof(node2->value.opaque);
+                }        
+
+                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
+                node2 = mxmlFindElement(node2, node2, "alpha", NULL, NULL, MXML_DESCEND);  
+                if (node2)
+                {
+                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
+                    cur_theme->selector_colour[3]=atof(node2->value.opaque);
+                }               
+            }
+
+            //themes[theme_count].selector_colour[0]=atof(mxmlElementGetAttr(node, "red"));
+            //themes[theme_count].selector_colour[1]=atof(mxmlElementGetAttr(node, "green"));
+            //themes[theme_count].selector_colour[2]=atof(mxmlElementGetAttr(node, "blue"));
+        }
+
+        node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
         if (node)
         {
             node = mxmlWalkNext(node, node, MXML_DESCEND);
 
             if (node && node->type == MXML_OPAQUE)
                 if ( !strcmp( node->value.opaque, "off" ) )
-                    themes[theme_count].lighting=FALSE;
+                    cur_theme->lighting=FALSE;
         }
 
         node = mxmlFindElement(theme, theme, "tex_spin", NULL, NULL, MXML_DESCEND);
@@ -109,70 +165,46 @@ void theme_add_theme( char *xmlfile )
         {
             node = mxmlWalkNext(node, node, MXML_DESCEND);
 
-            themes[theme_count].piece_tex_spin=TRUE;
-            themes[theme_count].piece_tex_spin_speed=atoi(node->value.opaque);
-            /* printf( "Speed: %i\n", themes[theme_count].piece_tex_spin_speed );
-            if (node && node->type == MXML_OPAQUE)
-                if ( !strcmp( node->value.opaque, "off" ) )
-                    themes[theme_count].lighting=FALSE; */
-        //}
-        //DBG_LOG("added theme: %s", themes[theme_count].name );
-
-        TAILQ_INSERT_TAIL(&themes, temp_theme, entries);
-
-        theme_count++;
+            cur_theme->piece_tex_spin=TRUE;
+            cur_theme->piece_tex_spin_speed=atoi(node->value.opaque);
+        }
+        DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style );
+        option_add_value(option, cur_theme->name, cur_theme);
     }
 
     mxmlDelete(tree);
 }
 
-void theme_read_theme_dir( char *datadir )
+static void find_themes(option_t *option)
 {
-    struct dirent* themedir_entry;
     DIR* themedir;
-
-    char temp[80];
-
-    theme_count=0;
-
-    TAILQ_INIT(&themes);
+    struct dirent* themedir_entry;
 
     if ( (themedir=opendir("themes")) != NULL )
     {
         while ((themedir_entry = readdir(themedir)) != NULL)
         {
+            char temp[80];
             if ( themedir_entry->d_name[0] != '.' )
             {
+                struct theme_struct *theme;
                 sprintf( temp, "themes/%s", themedir_entry->d_name );
-                theme_add_theme( temp );
+                theme_add_theme(temp, option);
             }
         }
         closedir(themedir);
     }
-
-    /*theme_printf_theme_list();*/
 }
 
-void theme_printf_theme_list()
+void theme_find_themes(option_t *option)
 {
-    struct theme_struct *item;
-    music_pack_t *music_pack;
+    ch_datadir();
+    find_themes(option);
 
-    printf("THEMES\n");
-    TAILQ_FOREACH(item, &themes, entries) 
-    {
-        printf("*Name:%s\n", item->name);
-        printf("---Style:%s\n", item->style);
-        printf("---Pieces:%s\n", item->pieces);
-        printf("---Board:%s\n", item->board);
-        printf("---White:%s\n", item->white_name);
-        printf("---Black:%s\n", item->black_name);
-        printf("\n");
-    }
+    ch_userdir();
+    find_themes(option);
 
-    printf("MUSIC PACKS\n");
-    TAILQ_FOREACH(music_pack, &music_packs, entries)
-        printf("*Directory:%s\n\n", music_pack->dir);
+    option_select_value_by_name(option, "Classic Wooden");
 }
 
 static void add_music_pack(char *dir)

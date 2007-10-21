@@ -869,7 +869,7 @@ void draw_selector()
     float r,g,b,a;
     float width,width2;
     float height;
-
+#if 0
     theme *t=get_theme(get_selected_theme());
     r=t->selector_colour[0];
     g=t->selector_colour[1];
@@ -933,7 +933,7 @@ void draw_selector()
     glTexCoord2f(0,1);
     glVertex3f(-width, -width, height);
     glEnd();
-
+#endif
     glDisable(GL_TEXTURE_2D);
 }
 

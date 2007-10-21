@@ -18,62 +18,12 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THEME_H
-#define THEME_H
+#ifndef SYSTEM_CONFIG_H
+#define SYSTEM_CONFIG_H
 
-#include "gamegui/queue.h"
 #include "options.h"
 
-/* Define our booleans */
-#define TRUE  1
-#define FALSE 0
-
-typedef struct theme_struct
-{
-    char name[25];
-    char style[25];
-    char pieces[25];
-    char board[25];
-    char white_name[25];
-    char black_name[25];
-    char piece_tex_spin;
-    int piece_tex_spin_speed;
-    char lighting;
-    float selector_colour[4];
-    float selector_spinspeed;
-    float selector_size;
-    float selector_bouncespeed;
-}
-theme;
-
-typedef TAILQ_HEAD(, music_pack) music_packs_t;
-
-typedef struct
-{
-    char *name;
-
-}theme_style_t;
-
-typedef struct
-{
-    char *name;
-
-}theme_pieces_t;
-
-typedef struct
-{
-    char *name;
-
-}theme_board_t;
-
-typedef struct music_pack
-{
-    char *dir;
-    TAILQ_ENTRY(music_pack) entries;
-} music_pack_t;
-
-void theme_find_themes(option_t *option);
-void theme_find_music_packs();
-music_packs_t *theme_get_music_packs();
+void config_init();
+option_t *config_get_option(char *name);
 
 #endif

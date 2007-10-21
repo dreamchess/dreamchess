@@ -40,6 +40,7 @@
 #include "debug.h"
 #include "svn_version.h"
 #include "audio.h"
+#include "system_config.h"
 
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
@@ -474,6 +475,7 @@ int dreamchess(void *data)
     comm_init(engine);
     comm_send("xboard\n");
 
+    config_init();
     ui->init(use_ui_width,use_ui_height,use_ui_fullscreen);
     while (1)
     {

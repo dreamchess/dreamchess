@@ -19,13 +19,11 @@
 */
 
 #include "ui_sdlgl.h"
+#include "options.h"
 
 static int selected_player_layout=0;
 static int selected_difficulty=1;
 static int selected_level=0;
-static int selected_custom_board=0;
-static int selected_custom_style=0;
-static int selected_custom_pieces=0;
 static int flip_board;
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
@@ -47,21 +45,6 @@ void set_selected_difficulty( int set )
 void set_selected_level( int set )
 {
     selected_level=set;
-}
-
-int get_pieces_list_cur()
-{
-    return selected_custom_pieces;
-}
-
-int get_board_list_cur()
-{
-    return selected_custom_board;
-}
-
-int get_cur_style()
-{
-    return selected_custom_style;
 }
 
 /** @brief Triggers gameplay start based on currently selected options. */
@@ -130,20 +113,9 @@ static int dialog_title_root_load(gg_widget_t *widget, gg_widget_t *emitter, voi
     return 1;
 }
 
-static int dialog_title_root_select_theme(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    /* If created, and theme set to custom.. open custom.. */
-    if ( get_selected_theme() == get_theme_count() )
-        gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)));
-    else
-        gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)));
-    return 1;
-}
-
 static int dialog_title_difficulty(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     selected_difficulty = gg_option_get_selected(GG_OPTION(widget));
-printf("Y\n");
     return 1;
 }
 
@@ -153,213 +125,10 @@ static int dialog_title_level(gg_widget_t *widget, gg_widget_t *emitter, void *d
     return 1;
 }
 
-static int dialog_title_custom_theme(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    set_selected_theme( gg_option_get_selected(GG_OPTION(widget)) );
-    if ( gg_option_get_selected(GG_OPTION(widget)) != get_theme_count() )
-    {
-        /* printf( "Theme changed from Custom!\n" ); */
-        gg_dialog_close();
-        gg_dialog_open(dialog_title_select_theme_create(gg_widget_find_dialog(widget)->parent_dialog));
-    }
-    return 1;
-}
-
-static int dialog_title_theme(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    set_selected_theme( gg_option_get_selected(GG_OPTION(widget)) );
-    if ( gg_option_get_selected(GG_OPTION(widget)) == get_theme_count() )
-    {
-        /* printf( "Theme changed to Custom!\n" ); */
-        gg_dialog_close();
-        gg_dialog_open(dialog_title_custom_create(gg_widget_find_dialog(widget)->parent_dialog));
-        gg_option_set_selected(GG_OPTION(widget),get_theme_count()-1);
-        gg_dialog_cleanup();
-    }
-    return 1;
-}
-
-static int dialog_title_style(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    selected_custom_style = gg_option_get_selected(GG_OPTION(widget));
-    return 1;
-}
-
-static int dialog_title_pieces(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    selected_custom_pieces = gg_option_get_selected(GG_OPTION(widget));
-    return 1;
-}
-
-static int dialog_title_board(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    selected_custom_board = gg_option_get_selected(GG_OPTION(widget));
-    return 1;
-}
-
 static int dialog_title_open_systemopts(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_dialog_open(dialog_systemopts_create(gg_widget_find_dialog(widget)));
     return 1;
-}
-
-gg_dialog_t *dialog_title_custom_create(gg_dialog_t *parent)
-{
-    gg_widget_t *dialog;
-    gg_widget_t *vbox;
-    gg_widget_t *widget;
-    gg_widget_t *vbox2;
-    gg_widget_t *hbox;
-    gg_widget_t *label;
-    int i;
-
-    set_pgn_slot(-1);
-
-    vbox = gg_vbox_create(0);
-    vbox2 = gg_vbox_create(0);
-    /*widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
-    gg_action_set_callback(GG_ACTION(widget), menu_title_start, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    label = gg_label_create("  Players:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    label = gg_label_create("  Difficulty:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);*/
-
-    label = gg_label_create("  Theme:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    label = gg_label_create("    Style:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    label = gg_label_create("    Pieces:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    label = gg_label_create("    Board:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    /*   label = gg_label_create("Name:");
-       gg_alignable_set_alignment(GG_ALIGNABLE(label), 0.0f, 0.0f);
-       gg_container_append(GG_CONTAINER(vbox2), label);*/
-
-    hbox = gg_hbox_create(20);
-    gg_set_requested_size(vbox2, 100, 0);
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    vbox2 = gg_vbox_create(0);
-
-   /* widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
-    gg_option_set_callback(GG_OPTION(widget), dialog_title_players, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
-
-    widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "Level 1", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 2", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 3", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Level 4", 0.5f, 0.0f);
-    gg_option_set_callback(GG_OPTION(widget), dialog_title_level, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_difficulty);*/
-
-    /* Themelist list.. */
-    widget = gg_option_create();
-    for (i = 0; i < get_theme_count()+1; i++)
-        gg_option_append_label(GG_OPTION(widget), get_themelist(i), 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_custom_theme, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),get_theme_count());
-
-    widget = gg_option_create();
-    for (i = 0; i < get_num_style(); i++)
-        gg_option_append_label(GG_OPTION(widget), get_stylelist(i), 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_style, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_custom_style);
-
-    widget = gg_option_create();
-    for (i = 0; i < get_pieces_list_total(); i++)
-        gg_option_append_label(GG_OPTION(widget), get_pieces_list(i), 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_pieces, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_custom_pieces);
-
-    widget = gg_option_create();
-    for (i = 0; i < get_board_list_total(); i++)
-        gg_option_append_label(GG_OPTION(widget), get_board_list(i), 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_board, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_custom_board);
-
-    gg_set_requested_size(vbox2, 250, 0);
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    gg_container_append(GG_CONTAINER(vbox), hbox);
-
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 0, 0.5f, 0.0f);
-    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
-
-    return GG_DIALOG(dialog);
-}
-
-gg_dialog_t *dialog_title_select_theme_create(gg_dialog_t *parent)
-{
-    gg_widget_t *dialog;
-    gg_widget_t *vbox;
-    gg_widget_t *widget;
-    gg_widget_t *vbox2;
-    gg_widget_t *hbox;
-    gg_widget_t *label;
-    int i;
-
-    set_pgn_slot(-1);
-
-    vbox = gg_vbox_create(0);
-    vbox2 = gg_vbox_create(0);
-
-    label = gg_label_create("  Theme:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);
-
-    hbox = gg_hbox_create(20);
-    gg_set_requested_size(vbox2, 100, 0);
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    vbox2 = gg_vbox_create(0);
-
-    /* Themelist list.. */
-    widget = gg_option_create();
-    for (i = 0; i < get_theme_count()+1; i++)
-        gg_option_append_label(GG_OPTION(widget), get_themelist(i), 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_theme, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),get_selected_theme());
-
-    gg_set_requested_size(vbox2, 250, 0);
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    gg_container_append(GG_CONTAINER(vbox), hbox);
-
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
-    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
-
-    return GG_DIALOG(dialog);
 }
 
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
@@ -428,14 +197,6 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), widget);
     gg_option_set_selected(GG_OPTION(widget),selected_level);
 
-    /* Themelist list.. */
-   /* widget = gg_option_create();
-    for (i = 0; i < get_theme_count()+1; i++)
-        gg_option_append_label(GG_OPTION(widget), get_themelist(i), 0.5f, 0.0f);
-    gg_option_set_callback(GG_OPTION(widget), dialog_title_theme, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),get_selected_theme());*/
-
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
@@ -465,11 +226,7 @@ gg_dialog_t *dialog_title_root_create()
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Select Theme..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_select_theme, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    widget = gg_action_create_with_label("System Options", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Configuration..", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_title_open_systemopts, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
