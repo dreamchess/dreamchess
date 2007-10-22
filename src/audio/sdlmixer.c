@@ -25,6 +25,7 @@
 #include "playlist.h"
 #include "audio.h"
 #include "theme.h"
+#include "system_config.h"
 
 static sound_t sounds[AUDIO_SOUNDS] = 
 {
@@ -37,6 +38,7 @@ static audio_music_callback_t music_callback = NULL;
 static Mix_Music *music = NULL;
 static playlist_t *playlist;
 static int next_song;
+static int have_songs;
 static playlist_entry_t *current_song;
 
 static Mix_Chunk *wav_data[AUDIO_SOUNDS];
@@ -70,11 +72,6 @@ static void music_finished()
 	next_song = 1;
 }
 
-static void sample_finished(int channel)
-{
-	Mix_VolumeMusic(music_volume);
-}
-
 void audio_init()
 {
         music_packs_t *music_packs;
@@ -83,6 +80,7 @@ void audio_init()
 	int audio_channels = 2;
 	int audio_buffers = 4096;
 	music_pack_t *music_pack;
+	option_t *option;
 
 	music_packs = theme_get_music_packs();
 
@@ -96,11 +94,12 @@ void audio_init()
 	load_sounds();
 	chdir("..");
 
-	sound_volume = MIX_MAX_VOLUME;
-	music_volume = MIX_MAX_VOLUME;
-
 	Mix_HookMusicFinished(music_finished);
-	Mix_ChannelFinished(sample_finished);
+
+	option = config_get_option("music_volume");
+	audio_set_music_volume(option->selected->index);
+	option = config_get_option("sound_volume");
+	audio_set_sound_volume(option->selected->index);
 
 	playlist = playlist_create();
 	TAILQ_FOREACH(music_pack, music_packs, entries)
@@ -110,10 +109,11 @@ void audio_init()
 	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist)))
 	{
 		current_song = TAILQ_LAST(playlist, playlist);
+		have_songs = 1;
 		next_song = 1;
 	}
 	else
-		next_song = 0;
+		have_songs = 0;
 }
 
 void audio_exit()
@@ -125,8 +125,8 @@ void audio_exit()
 
 void audio_poll(int title)
 {
-        /* Less than two songs, abort. */
-        if ((TAILQ_FIRST(playlist) == TAILQ_LAST(playlist, playlist)))
+        /* Less than two songs or volume off, abort. */
+        if (!have_songs || !music_volume)
                 return;
 
 	/* Start a new song when the previous one is finished. Is also
@@ -168,11 +168,11 @@ void audio_set_music_callback(audio_music_callback_t callback)
 
 void audio_play_sound(int id)
 {
-	Mix_VolumeMusic(music_volume / 4);
-	if (Mix_PlayChannel(0, wav_data[id], 0) == -1) {
+	if (sound_volume == 0)
+		return;
+
+	if (Mix_PlayChannel(0, wav_data[id], 0) == -1)
 		DBG_WARN("failed to play sound %i", id);
-		Mix_VolumeMusic(music_volume);
-	}
 }
 
 void audio_set_sound_volume(int vol)
@@ -183,6 +183,14 @@ void audio_set_sound_volume(int vol)
 
 void audio_set_music_volume(int vol)
 {
+	int restart = vol && (music_volume == 0);
 	music_volume = vol * MIX_MAX_VOLUME / AUDIO_MAX_VOL;
 	Mix_VolumeMusic(music_volume);
+
+	if (music_volume == 0) {
+		Mix_HaltMusic();
+	}
+	else if (restart) {
+		next_song = 1;
+	}
 }

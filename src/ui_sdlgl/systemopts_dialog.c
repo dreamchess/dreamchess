@@ -21,6 +21,7 @@
 #include "ui_sdlgl.h"
 #include "options.h"
 #include "system_config.h"
+#include "audio.h"
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
@@ -45,6 +46,27 @@ static int dialog_title_theme(gg_widget_t *widget, gg_widget_t *emitter, void *d
 {
     option_t *option = config_get_option("theme");
     option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
+    return 1;
+}
+
+static int dialog_title_music_vol(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    option_t *option = config_get_option("music_volume");
+    option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
+
+    audio_set_music_volume(option->selected->index);
+
+    return 1;
+}
+
+static int dialog_title_sound_vol(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    option_t *option = config_get_option("sound_volume");
+    option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
+
+    audio_set_sound_volume(option->selected->index);
+    audio_play_sound(AUDIO_MOVE);
+
     return 1;
 }
 
@@ -96,16 +118,14 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     option = config_get_option("music_volume");
     widget = gg_option_create();
     create_option_values(GG_OPTION(widget), option);
-    //gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", NULL, NULL);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_music_vol, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    //gg_option_set_selected(GG_OPTION(widget),selected_level);
 
     option = config_get_option("sound_volume");
     widget = gg_option_create();
     create_option_values(GG_OPTION(widget), option);
-    //gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", NULL, NULL);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_sound_vol, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    //gg_option_set_selected(GG_OPTION(widget),selected_level);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
