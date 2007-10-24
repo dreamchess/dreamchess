@@ -28,8 +28,11 @@
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
 static texture_t menu_title_tex;
+static int game_in_stalemate;
 static int white_in_check;
 static int black_in_check;
+static int white_in_checkmate;
+static int black_in_checkmate;
 static board_t board;
 static int pgn_slot;
 static int quit_to_menu=FALSE;
@@ -151,6 +154,11 @@ void set_fading_out(int fade)
     fading_out=fade;
 }
 
+int get_game_stalemate()
+{
+    return game_in_stalemate;
+}
+
 int get_white_in_check()
 {
     return white_in_check;
@@ -159,6 +167,16 @@ int get_white_in_check()
 int get_black_in_check()
 {
     return black_in_check;
+}
+
+int get_white_in_checkmate()
+{
+    return white_in_checkmate;
+}
+
+int get_black_in_checkmate()
+{
+    return black_in_checkmate;
 }
 
 gg_dialog_style_t *get_ingame_style()
@@ -523,6 +541,13 @@ static void update(board_t *b, move_t *move)
     if ( move != NULL )
         start_piece_move( move->source, move->destination );
 
+    if ( board.state == BOARD_STALEMATE )
+    {
+        game_in_stalemate=TRUE;
+    }
+    else
+        game_in_stalemate=FALSE;
+
     if ( board.state == BOARD_CHECK )
     {
         if (IS_WHITE(board.turn))
@@ -534,6 +559,19 @@ static void update(board_t *b, move_t *move)
     {
         black_in_check=FALSE;
         white_in_check=FALSE;
+    }
+
+    if ( board.state == BOARD_CHECKMATE )
+    {
+        if (IS_WHITE(board.turn))
+            white_in_checkmate=TRUE;
+        else
+            black_in_checkmate=TRUE;
+    }
+    else
+    {
+        black_in_checkmate=FALSE;
+        white_in_checkmate=FALSE;
     }
 
     /* FIXME */
