@@ -402,46 +402,15 @@ static config_t *do_menu(int *pgn)
     }
 }
 
-/** Implements ui_driver::init. */
-static void init_gui( int width, int height, int fullscreen)
+SDL_Surface *surface;
+static void set_video( int width, int height, int fullscreen )
 {
     int video_flags;
-    SDL_Surface *icon, *surface;
     const SDL_VideoInfo *video_info;
-    int i;
+    video_info = SDL_GetVideoInfo( );
 
     screen_width=width;
     screen_height=height;
-
-    DBG_LOG( "screen set to %ix%i", width, height );
-
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
-    {
-        fprintf( stderr, "Video initialization failed: %s\n",
-                 SDL_GetError( ) );
-        exit(1);
-    }
-
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-    SDL_EnableUNICODE(1);
-
-    ch_datadir();
-    icon = IMG_Load("icon.png");
-
-    if (!icon)
-    {
-        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_WM_SetIcon(icon, NULL);
-    SDL_FreeSurface(icon);
-
-#ifdef _arch_dreamcast
-    dc_draw_vmu_icon();
-#endif
-
-    video_info = SDL_GetVideoInfo( );
 
     if ( !video_info )
     {
@@ -472,12 +441,57 @@ static void init_gui( int width, int height, int fullscreen)
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
 
+    if ( surface )
+        SDL_FreeSurface(surface);
+
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
         fprintf( stderr,  "Video mode set failed: %s\n", SDL_GetError( ) );
         exit(1);
     }
+
+    init_gl();
+}
+
+/** Implements ui_driver::init. */
+static void init_gui( int width, int height, int fullscreen)
+{
+    SDL_Surface *icon;
+    int i;
+
+    screen_width=width;
+    screen_height=height;
+
+    DBG_LOG( "screen set to %ix%i", width, height );
+
+    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
+    {
+        fprintf( stderr, "Video initialization failed: %s\n",
+                 SDL_GetError( ) );
+        exit(1);
+    }
+
+    set_video( screen_width, screen_height, fullscreen );
+
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableUNICODE(1);
+
+    ch_datadir();
+    icon = IMG_Load("icon.png");
+
+    if (!icon)
+    {
+        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_WM_SetIcon(icon, NULL);
+    SDL_FreeSurface(icon);
+
+#ifdef _arch_dreamcast
+    dc_draw_vmu_icon();
+#endif
 
 	#ifndef __BEOS__
     SDL_ShowCursor(SDL_DISABLE);
@@ -487,7 +501,6 @@ static void init_gui( int width, int height, int fullscreen)
         joy=SDL_JoystickOpen(0);
 
     SDL_WM_SetCaption( "DreamChess", NULL );
-    init_gl();
 
     gg_system_init(get_gg_driver_sdlgl());
 
@@ -583,6 +596,12 @@ static void update(board_t *b, move_t *move)
 static void show_result(result_t *res)
 {
     gg_dialog_open(dialog_victory_create(res));
+}
+
+static int sdlgl_set_video(int width, int height, int fullscreen)
+{
+    set_video(width,height,fullscreen);
+    return 0;
 }
 
 /** Implements ui_driver::init. */
@@ -718,6 +737,7 @@ ui_driver_t ui_sdlgl =
     {
         "sdlgl",
         sdlgl_init,
+        sdlgl_set_video,
         sdlgl_exit,
         do_menu,
         update,
