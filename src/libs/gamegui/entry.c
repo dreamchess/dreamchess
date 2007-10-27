@@ -26,20 +26,21 @@
 
 #define CURSOR_WIDTH 1
 
-static gg_colour_t col_dark_red =
-    {
-        0.7f, 0.0f, 0.0f, 1.0f
-    };
+static gg_colour_t col_grey = {
+    0.5f, 0.5f, 0.5f, 1.0f
+};
 
-static gg_colour_t col_black =
-    {
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+static gg_colour_t col_texthighlight = {
+    0.55f, 0.65f, 0.95f, 1.0f
+};
+
+static gg_colour_t col_text = {
+    1.0f, 1.0f, 1.0f, 1.0f
+};
 
 gg_class_id gg_entry_get_class_id()
 {
-    GG_CHILD(gg_widget_get_class_id())
-}
+GG_CHILD(gg_widget_get_class_id())}
 
 static int string_width(char *s, int n)
 {
@@ -53,16 +54,31 @@ static int string_width(char *s, int n)
 }
 
 /** Implements widget::render for text entry widgets. */
-void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
+void gg_entry_render(gg_widget_t * widget, int x, int y, int focus)
 {
     gg_entry_t *entry = GG_ENTRY(widget);
     gg_rect_t rect;
     int len = string_width(entry->text, entry->cursor_pos);
+    gg_colour_t *colour;
 
-    if (focus != GG_FOCUS_NONE)
-        gg_system_draw_rect(x, y, entry->width_a, entry->height_a, &col_dark_red);
-    else
-        gg_system_draw_rect(x, y, entry->width_a, entry->height_a, &col_black);
+    switch (focus)
+    {
+    case GG_FOCUS_DISABLED:
+        colour = &col_grey;
+        break;
+    case GG_FOCUS_ONE:
+    case GG_FOCUS_ALL:
+        colour = &col_texthighlight;
+        break;
+    case GG_FOCUS_NONE:
+        colour = &col_text;
+    }
+
+	/* TODO Fix temporary hack */
+	if (!widget->enabled)
+		colour = &col_grey;
+	
+    gg_system_draw_rect(x, y, entry->width_a, entry->height_a, colour);
 
     x += ENTRY_SPACING;
     y += ENTRY_SPACING;
@@ -73,21 +89,23 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus)
     rect.height = entry->height_a - 2 * ENTRY_SPACING;
     gg_clipping_adjust(&rect);
 
-    if (focus != GG_FOCUS_NONE)
+    gg_system_draw_string(entry->text, x - entry->display_pos, y, colour,
+                          0, 0);
+
+    if (focus == GG_FOCUS_ONE || focus == GG_FOCUS_ALL)
     {
-        gg_system_draw_string(entry->text, x - entry->display_pos, y, &col_dark_red, 0, 0);
         if (gg_system_get_ticks() % 400 < 200)
-            gg_system_draw_filled_rect(x + len - entry->display_pos, y, CURSOR_WIDTH,
-                                       entry->height_a - 2 * ENTRY_SPACING, &col_dark_red);
+            gg_system_draw_filled_rect(x + len - entry->display_pos, y,
+                                       CURSOR_WIDTH,
+                                       entry->height_a - 2 * ENTRY_SPACING,
+                                       &col_texthighlight);
     }
-    else
-        gg_system_draw_string(entry->text, x - entry->display_pos, y, &col_black, 0, 0);
 
     gg_clipping_undo();
 }
 
 /** Implements widget::input for text entry widgets. */
-int gg_entry_input(gg_widget_t *widget, gg_event_t event)
+int gg_entry_input(gg_widget_t * widget, gg_event_t event)
 {
     gg_entry_t *entry = GG_ENTRY(widget);
     int len = strlen(entry->text);
@@ -100,11 +118,15 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
         {
             if (entry->cursor_pos > 0)
                 entry->cursor_pos--;
+			else
+				return 0;
         }
         else if (event.key == GG_KEY_RIGHT)
         {
             if (entry->cursor_pos < len)
                 entry->cursor_pos++;
+			else
+				return 0;
         }
         else if (event.key == GG_KEY_HOME)
             entry->cursor_pos = 0;
@@ -115,6 +137,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
             if (entry->cursor_pos > 0)
             {
                 int i;
+
                 for (i = entry->cursor_pos; i <= len; i++)
                     entry->text[i - 1] = entry->text[i];
                 entry->cursor_pos--;
@@ -125,6 +148,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
             if (entry->cursor_pos < len)
             {
                 int i;
+
                 for (i = entry->cursor_pos + 1; i <= len; i++)
                     entry->text[i - 1] = entry->text[i];
             }
@@ -148,8 +172,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
     }
 
     if (event.type == GG_EVENT_MOUSE
-        && event.mouse.type == GG_MOUSE_BUTTON_DOWN
-        && event.mouse.button == 0)
+        && event.mouse.type == GG_MOUSE_BUTTON_DOWN && event.mouse.button == 0)
     {
         int total_width = 0;
         int i;
@@ -162,7 +185,8 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
             total_width += width;
             if (total_width > entry->display_pos + event.mouse.x)
             {
-                if (total_width - width / 2 < entry->display_pos + event.mouse.x)
+                if (total_width - width / 2 <
+                    entry->display_pos + event.mouse.x)
                     i++;
                 break;
             }
@@ -183,7 +207,7 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event)
     return 1;
 }
 
-void gg_entry_init(gg_entry_t *entry)
+void gg_entry_init(gg_entry_t * entry, int width)
 {
     gg_widget_init((gg_widget_t *) entry);
 
@@ -194,10 +218,28 @@ void gg_entry_init(gg_entry_t *entry)
     entry->cursor_pos = 0;
     entry->text[0] = '\0';
     entry->enabled = 1;
-    gg_system_get_string_size("Visible text", &entry->width, &entry->height);
-    entry->width += ENTRY_SPACING * 2;
+    gg_system_get_string_size("A", NULL, &entry->height);
+    entry->width = width + ENTRY_SPACING * 2;
     entry->height += ENTRY_SPACING * 2;
     entry->display_pos = 0;
+}
+
+char *gg_entry_get_text(gg_entry_t *entry)
+{
+    return entry->text;
+}
+
+int gg_entry_set_text(gg_entry_t *entry, char *text)
+{
+    if (strlen(text) >  entry->max_len)
+        return 1;
+
+    strcpy(entry->text, text);
+}
+
+void gg_entry_set_max_len(gg_entry_t *entry, int len)
+{
+    entry->max_len = len;
 }
 
 /** @brief Creates a text entry widget.
@@ -206,11 +248,11 @@ void gg_entry_init(gg_entry_t *entry)
  *
  *  @return The created widget.
  */
-gg_widget_t *gg_entry_create()
+gg_widget_t *gg_entry_create(int width)
 {
     gg_entry_t *entry = malloc(sizeof(gg_entry_t));
 
-    gg_entry_init(entry);
+    gg_entry_init(entry, width);
 
     return GG_WIDGET(entry);
 }

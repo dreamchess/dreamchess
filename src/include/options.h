@@ -36,7 +36,13 @@ typedef struct option_value
 
 typedef struct option_data
 {
+	int type;
 	char *name;
+
+	/* Int type */
+	int value;
+
+	/* Option type */
 	option_value_t *selected;
 	TAILQ_HEAD(values_head, option_value) values;
 	int size;
@@ -48,6 +54,9 @@ typedef struct option_group
 	char *name;
 	TAILQ_HEAD(options_head, option_data) options;
 } option_group_t;
+
+#define OPTION_TYPE_OPTION 0
+#define OPTION_TYPE_INT 1
 
 option_group_t *option_group_create(char *name);
 option_t *option_group_add_option(option_group_t *group, char *name);

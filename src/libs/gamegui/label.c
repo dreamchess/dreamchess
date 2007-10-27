@@ -23,6 +23,10 @@
 
 #include <gamegui/label.h>
 
+static gg_colour_t col_grey = {
+    0.5f, 0.5f, 0.5f, 1.0f
+};
+
 static gg_colour_t col_trans =
     {
         0.0f, 0.0f, 0.0f, 0.0f
@@ -54,7 +58,10 @@ void gg_label_render(gg_widget_t *widget, int x, int y, int focus)
     x += label->xalign * (label->width_a - label->width);
     y += (1.0f - label->yalign) * (label->height_a - label->height);
 
-    if (focus != GG_FOCUS_NONE)
+	/* TODO Fix temporary hack */
+	if (!widget->enabled)
+        gg_system_draw_string(label->label, x, y, &col_grey, 0, 0);
+    else if (focus != GG_FOCUS_NONE)
         gg_system_draw_string(label->label, x, y, &col_texthighlight, label->bouncy, 0);
     else
         gg_system_draw_string(label->label, x, y, &label->colour, 0, 0);
@@ -97,6 +104,7 @@ void gg_label_init(gg_label_t *label, char *text)
     label->id = gg_label_get_class_id();
     label->label = strdup(text);
     label->bouncy = 0;
+	label->enabled = 1;
     label->colour = col_text;
     label->bgcolour = col_trans;
     gg_system_get_string_size(text, &label->width, &label->height);

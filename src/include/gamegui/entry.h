@@ -47,8 +47,15 @@ void gg_entry_render(gg_widget_t *widget, int x, int y, int focus);
 
 int gg_entry_input(gg_widget_t *widget, gg_event_t event);
 
-void gg_entry_init(gg_entry_t *entry);
+void gg_entry_init(gg_entry_t *entry, int width);
 
-gg_widget_t *gg_entry_create();
+gg_widget_t *gg_entry_create(int width);
+
+char *gg_entry_get_text(gg_entry_t *entry);
+
+int gg_entry_set_text(gg_entry_t *entry, char *text);
+
+void gg_entry_set_max_len(gg_entry_t *entry, int len);
 
 #endif /* GAMEGUI_ENTRY_H */
+

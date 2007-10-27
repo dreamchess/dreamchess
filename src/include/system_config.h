@@ -27,4 +27,8 @@ void config_init();
 void config_save();
 option_t *config_get_option(char *name);
 
+typedef struct config_resolution {
+	int w, h;
+} config_resolution_t;
+
 #endif

@@ -62,6 +62,20 @@ option_t *option_group_add_option(option_group_t *group, char *name)
 {
 	option_t *option = malloc(sizeof(option_t));
 
+	option->type = OPTION_TYPE_OPTION;
+	option->name = remove_spaces(name);
+	option->selected = NULL;
+	option->size = 0;
+	TAILQ_INIT(&option->values);
+	TAILQ_INSERT_TAIL(&group->options, option, entries);
+	return option;
+}
+
+option_t *option_group_add_int(option_group_t *group, char *name)
+{
+	option_t *option = malloc(sizeof(option_t));
+
+	option->type = OPTION_TYPE_INT;
 	option->name = remove_spaces(name);
 	option->selected = NULL;
 	option->size = 0;
@@ -81,12 +95,13 @@ int option_group_save_xml(option_group_t *group)
 	xml = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
 
 	TAILQ_FOREACH(option, &group->options, entries) {
-		if (option->selected) {
-			mxml_node_t *data;
+		mxml_node_t *data;
+		data = mxmlNewElement(xml, option->name);
 
-			data = mxmlNewElement(xml, option->name);
+		if (option->type == OPTION_TYPE_OPTION)
 			mxmlNewText(data, 0, option->selected->name);
-		}
+		else
+			mxmlNewInteger(data, option->value);
 	}
 
 	filename = malloc(strlen(group->name) + 4 + 1);
@@ -151,9 +166,21 @@ int option_group_load_xml(option_group_t *group)
 				DBG_WARN("option '%s' does not exist", node->parent->value.opaque);
 				continue;
 			}
-			if (option_select_value_by_name(option, node->value.opaque) == -1)
-				DBG_WARN("option '%s' has no value '%s'", option->name, node->value.opaque);
-			DBG_LOG("setting option '%s' to '%s'", option->name, node->value.opaque);
+			if (option->type == OPTION_TYPE_OPTION) {
+				if (option_select_value_by_name(option, node->value.opaque) == -1)
+					DBG_WARN("option '%s' has no value '%s'", option->name, node->value.opaque);
+				DBG_LOG("setting option '%s' to '%s'", option->name, node->value.opaque);
+			} else {
+				int val;
+
+				errno = 0;
+				val = strtol(node->value.opaque, NULL, 10);
+				if (errno) {
+					DBG_WARN("value '%s' for option '%s' is not an integer", node->value.opaque, option->name);
+				} else {
+					option->value = val;
+				}
+			}
 		}
 	}
 
@@ -240,3 +267,4 @@ option_t *option_group_find_option(option_group_t *group, char *name)
 	free(namews);
 	return option;
 }
+

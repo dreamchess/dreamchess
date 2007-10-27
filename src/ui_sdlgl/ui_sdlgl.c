@@ -62,11 +62,6 @@ int get_screen_height()
     return screen_height;
 }
 
-void toggle_fullscreen()
-{
-    SDL_WM_ToggleFullScreen( SDL_GetVideoSurface() );
-}
-
 static int menu_state;
 enum {
     MENU_STATE_FADE_IN,
@@ -402,12 +397,12 @@ static config_t *do_menu(int *pgn)
     }
 }
 
-SDL_Surface *surface;
 static void set_video( int width, int height, int fullscreen )
 {
     int video_flags;
     const SDL_VideoInfo *video_info;
     video_info = SDL_GetVideoInfo( );
+    SDL_Surface *surface;
 
     screen_width=width;
     screen_height=height;
@@ -441,17 +436,15 @@ static void set_video( int width, int height, int fullscreen )
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
 
-    if ( surface )
-        SDL_FreeSurface(surface);
-
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
-        fprintf( stderr,  "Video mode set failed: %s\n", SDL_GetError( ) );
+        DBG_ERROR("video mode set failed: %s", SDL_GetError());
         exit(1);
     }
 
     init_gl();
+    resize_window(screen_width, screen_height);
 }
 
 /** Implements ui_driver::init. */
@@ -598,12 +591,6 @@ static void show_result(result_t *res)
     gg_dialog_open(dialog_victory_create(res));
 }
 
-static int sdlgl_set_video(int width, int height, int fullscreen)
-{
-    set_video(width,height,fullscreen);
-    return 0;
-}
-
 /** Implements ui_driver::init. */
 static int sdlgl_init(int width, int height, int fullscreen)
 {
@@ -737,7 +724,7 @@ ui_driver_t ui_sdlgl =
     {
         "sdlgl",
         sdlgl_init,
-        sdlgl_set_video,
+        set_video,
         sdlgl_exit,
         do_menu,
         update,

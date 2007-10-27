@@ -24,8 +24,23 @@
 #include "theme.h"
 #include "options.h"
 #include "audio.h"
+#include "system_config.h"
 
 static option_group_t *config;
+
+static add_resolution(option_t *option, int w, int h)
+{
+	config_resolution_t *res;
+	char str[10];
+
+	res = malloc(sizeof(config_resolution_t));
+	res->w = w;
+	res->h = h;
+	if (snprintf(str, 10, "%dx%d", w, h) > 0)
+		option_add_value(option, str, res);
+	else
+		free(res);
+}
 
 void config_init()
 {
@@ -57,6 +72,22 @@ void config_init()
 		option_add_value(option, buf, NULL);
 	}
 	option_select_value_by_name(option, "8");
+
+	option = option_group_add_option(config, "resolution");
+	add_resolution(option, 640, 480);
+	add_resolution(option, 800, 600);
+	add_resolution(option, 1024, 768);
+	add_resolution(option, 1280, 1024);
+	option_add_value(option, "Custom", NULL);
+
+	option = option_group_add_option(config, "full_screen");
+	option_add_value(option, "Off", NULL);
+	option_add_value(option, "On", NULL);
+
+	option = option_group_add_int(config, "custom_resolution_width");
+	option->value = 640;
+	option = option_group_add_int(config, "custom_resolution_height");
+	option->value = 480;
 
 	option_group_load_xml(config);
 }

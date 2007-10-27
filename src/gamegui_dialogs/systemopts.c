@@ -18,7 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ui_sdlgl.h"
+#include "dreamchess.h"
+#include "gamegui_dialogs.h"
 #include "options.h"
 #include "system_config.h"
 #include "audio.h"
@@ -67,6 +68,12 @@ static int dialog_title_sound_vol(gg_widget_t *widget, gg_widget_t *emitter, voi
     audio_set_sound_volume(option->selected->index);
     audio_play_sound(AUDIO_MOVE);
 
+    return 1;
+}
+
+static int dialog_title_resolution_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_dialog_open(dialog_resolution_create(gg_widget_find_dialog(widget)));
     return 1;
 }
 
@@ -130,19 +137,17 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    #ifdef __unix__
-    widget = gg_action_create_with_label("Toggle Fullscreen", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Change resolution..", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_title_toggle_fullscreen, NULL);
+        dialog_title_resolution_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
-    #endif
 
     widget = gg_action_create_with_label("Save options", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_title_save_options, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Back...", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
         dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
