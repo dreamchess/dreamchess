@@ -89,6 +89,9 @@ void config_init()
 	option = option_group_add_int(config, "custom_resolution_height");
 	option->value = 480;
 
+	option = option_group_add_string(config, "1st_engine");
+	option->string = strdup("dreamer");
+
 	option_group_load_xml(config);
 }
 

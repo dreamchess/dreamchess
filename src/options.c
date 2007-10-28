@@ -77,9 +77,17 @@ option_t *option_group_add_int(option_group_t *group, char *name)
 
 	option->type = OPTION_TYPE_INT;
 	option->name = remove_spaces(name);
-	option->selected = NULL;
-	option->size = 0;
-	TAILQ_INIT(&option->values);
+	TAILQ_INSERT_TAIL(&group->options, option, entries);
+	return option;
+}
+
+option_t *option_group_add_string(option_group_t *group, char *name)
+{
+	option_t *option = malloc(sizeof(option_t));
+
+	option->type = OPTION_TYPE_STRING;
+	option->name = remove_spaces(name);
+	option->string = NULL;
 	TAILQ_INSERT_TAIL(&group->options, option, entries);
 	return option;
 }
@@ -100,8 +108,10 @@ int option_group_save_xml(option_group_t *group)
 
 		if (option->type == OPTION_TYPE_OPTION)
 			mxmlNewText(data, 0, option->selected->name);
-		else
+		else if (option->type == OPTION_TYPE_INT)
 			mxmlNewInteger(data, option->value);
+                else
+                        mxmlNewText(data, 0, option->string);
 	}
 
 	filename = malloc(strlen(group->name) + 4 + 1);
@@ -170,7 +180,7 @@ int option_group_load_xml(option_group_t *group)
 				if (option_select_value_by_name(option, node->value.opaque) == -1)
 					DBG_WARN("option '%s' has no value '%s'", option->name, node->value.opaque);
 				DBG_LOG("setting option '%s' to '%s'", option->name, node->value.opaque);
-			} else {
+			} else if (option->type == OPTION_TYPE_INT) {
 				int val;
 
 				errno = 0;
@@ -180,7 +190,8 @@ int option_group_load_xml(option_group_t *group)
 				} else {
 					option->value = val;
 				}
-			}
+			} else
+                                option->string = strdup(node->value.opaque);
 		}
 	}
 
@@ -266,5 +277,13 @@ option_t *option_group_find_option(option_group_t *group, char *name)
 
 	free(namews);
 	return option;
+}
+
+void option_string_set_text(option_t *option, char *text)
+{
+	if (option->string)
+		free(option->string);
+
+	option->string = strdup(text);
 }
 

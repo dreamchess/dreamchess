@@ -18,28 +18,23 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
 #include "dreamchess.h"
 #include "gamegui_dialogs.h"
 #include "options.h"
 #include "system_config.h"
 #include "audio.h"
 
+static gg_widget_t *entry;
+
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_close();
-    return 1;
-}
-
-static int dialog_title_toggle_fullscreen(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    DBG_LOG( "toggled fullscreen" );
-    toggle_fullscreen();
-    return 1;
-}
-
-static int dialog_title_save_options(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+    option_t *option = config_get_option("1st_engine");
+    free(option->string);
+    option->string = strdup(gg_entry_get_text(GG_ENTRY(entry)));
     config_save();
+    gg_dialog_close();
     return 1;
 }
 
@@ -104,6 +99,10 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
+    widget = gg_label_create("Engine:");
+    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
     widget = gg_label_create("Music Volume:");
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
@@ -121,6 +120,11 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     create_option_values(GG_OPTION(widget), option);
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    option = config_get_option("1st_engine");
+    entry = gg_entry_create(100);
+    gg_entry_set_text(GG_ENTRY(entry), option->string);
+    gg_container_append(GG_CONTAINER(vbox2), entry);
 
     option = config_get_option("music_volume");
     widget = gg_option_create();
@@ -142,12 +146,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
         dialog_title_resolution_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Save options", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_title_save_options, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
         dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);

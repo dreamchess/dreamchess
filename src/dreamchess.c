@@ -62,6 +62,7 @@ typedef struct cl_options {
 	int width;
 	int height;
 	int fs;
+	char *engine;
 } cl_options_t;
 
 static ui_driver_t *ui;
@@ -392,7 +393,7 @@ void toggle_fullscreen()
 }
 
 #ifndef _arch_dreamcast
-static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char **engine, cl_options_t *cl_options)
+static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_options_t *cl_options)
 {
     int c;
 
@@ -447,7 +448,7 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
             }
             break;
         case '1':
-            *engine = optarg;
+            cl_options->engine = optarg;
             break;
         case 'f':
             cl_options->fs = 1;
@@ -483,6 +484,11 @@ static void set_cl_options(cl_options_t *cl_options)
 {
         option_t *option;
 
+	if (cl_options->engine) {
+	    option = config_get_option("1st_engine");
+	    option_string_set_text(option, cl_options->engine);
+	}
+
 	if (cl_options->fs) {
 	    option = config_get_option("full_screen");
 	    option_select_value_by_name(option, "On");
@@ -505,7 +511,6 @@ static void set_cl_options(cl_options_t *cl_options)
 
 int dreamchess(void *data)
 {
-    char *engine = "dreamer";
     cl_options_t cl_options = {};
 
 #ifndef _arch_dreamcast
@@ -519,7 +524,7 @@ int dreamchess(void *data)
 
 #ifndef _arch_dreamcast
 
-    parse_options(arg->argc, arg->argv, &ui, &engine, &cl_options);
+    parse_options(arg->argc, arg->argv, &ui, &cl_options);
 #endif
 
     config_init();
@@ -532,18 +537,21 @@ int dreamchess(void *data)
         exit(1);
     }
 
-    comm_init(engine);
-    comm_send("xboard\n");
-
     set_resolution(1);
 
     while (1)
     {
         board_t board;
         int pgn_slot;
+        option_t *option;
 
         if (!(config = ui->config(&pgn_slot)))
             break;
+
+        ch_userdir();
+        option = config_get_option("1st_engine");
+        comm_init(option->string);
+        comm_send("xboard\n");
 
         comm_send("new\n");
         comm_send("random\n");
@@ -648,13 +656,13 @@ int dreamchess(void *data)
             }
             ui->poll();
         }
+        comm_send("quit\n");
+        comm_exit();
         history_exit(history);
         move_list_exit(&san_list);
         move_list_exit(&fan_list);
         move_list_exit(&fullalg_list);
     }
-    comm_send("quit\n");
-    comm_exit();
     ui->exit();
     return 0;
 }
