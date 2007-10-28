@@ -151,15 +151,13 @@ int load_opaque(mxml_node_t *top, char *name, char *dest)
     return 1;
 }
 
-/** @brief Loads a style.
- *
- *  @param name The name of the subdirectory of the theme to load.
- */
-void load_theme(char* style, char* pieces, char *board)
+static int ld_style(char *name)
 {
-    ch_datadir();
-    chdir("styles");
-    chdir(style);
+    if (chdir("styles"))
+        return 1;
+
+    if (chdir(name))
+        return 1;
 
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0, 1 );
@@ -173,17 +171,69 @@ void load_theme(char* style, char* pieces, char *board)
     load_border(border, "border.png");
     load_pieces();
 
-    ch_datadir();
-    chdir("pieces");
-    chdir(pieces);
+    return 0;
+}
+
+static int ld_pieces(char *name)
+{
+    if (chdir("pieces"))
+        return 1;
+
+    if (chdir(name))
+        return 1;
+
     loadmodels("set.cfg");
     texture_t seltex;
     load_texture_png(&selector_tex, "selector.png", 1,1);
 
-    ch_datadir();
-    chdir("boards");
-    chdir(board);
+    return 0;
+}
+
+static int ld_board(char *name)
+{
+    if (chdir("boards"))
+        return 1;
+
+    if (chdir(name))
+        return 1;
+
     load_board("board.dcm", "board.png");
+
+    return 0;
+}
+
+/** @brief Loads a style.
+ *
+ *  @param name The name of the subdirectory of the theme to load.
+ */
+void load_theme(char* style, char* pieces, char *board)
+{
+    ch_userdir();
+    if (ld_style(style)) {
+        ch_datadir();
+        if (ld_style(style)) {
+            DBG_ERROR("failed to find style '%'", style);
+            exit(1);
+        }
+    }
+
+    ch_userdir();
+    if (ld_pieces(pieces)) {
+        ch_datadir();
+        if (ld_pieces(pieces)) {
+            DBG_ERROR("failed to find pieces '%'", pieces);
+            exit(1);
+        }
+    }
+
+    ch_userdir();
+    if (ld_board(board)) {
+        ch_datadir();
+        if (ld_board(board)) {
+            DBG_ERROR("failed to find board '%'", board);
+            exit(1);
+        }
+    }
 
     ch_datadir();
 }
