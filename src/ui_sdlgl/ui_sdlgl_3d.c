@@ -194,8 +194,10 @@ static model_t board;
 
 static int is_2d;
 
+#define SELECTOR_SHOW_TICKS 5000
 static int selector, selected;
 static float x_rotation, z_rotation;
+static int selector_hide_time;
 
 int piece_moving_done=1;
 int piece_moving_start;
@@ -872,7 +874,7 @@ static void draw_board(float rot_x, float rot_z, int blend)
         model_render(&board, 1.0f, &fixed, FALSE);
 }
 
-void draw_selector()
+void draw_selector(float alpha)
 {
     static float selector_rotation = 0.0;
     static float selector_bounce = 0.0;
@@ -901,7 +903,7 @@ void draw_selector()
 
     selector_bounce+=bounce_inc; 
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f * alpha);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, sel_tex.id);
@@ -919,7 +921,7 @@ void draw_selector()
 
     glTranslatef(0, 0, selector_bounce+0.01);
 
-    glColor4fv(sel.colour);
+    glColor4f(sel.colour[0], sel.colour[1], sel.colour[2], sel.colour[3] * alpha);
     glBegin(GL_QUADS);
     glTexCoord2f(0,0);
     glVertex3f(-sel.size, sel.size, SEL_HEIGHT);
@@ -1041,6 +1043,8 @@ static void setup_stencil()
 
 void render_scene_3d(board_t *board, int reflections)
 {
+  int ticks = SDL_GetTicks();
+
     glEnable(GL_CULL_FACE);
     if (reflections) {
         setup_stencil();
@@ -1056,7 +1060,11 @@ void render_scene_3d(board_t *board, int reflections)
         draw_pieces(board, x_rotation, z_rotation, 0);
     }
     glDisable(GL_CULL_FACE);
-    draw_selector();
+
+    if (ticks <= selector_hide_time)
+        draw_selector(1.0f);
+    else if (ticks < selector_hide_time + 1000)
+        draw_selector(1.0f - ((ticks - selector_hide_time) / 1000.0f));
 }
 
 static void update_light()
@@ -1096,6 +1104,8 @@ void move_camera(float x, float z)
 void move_selector(int direction)
 {
     int steps = (z_rotation + 45.0f) / 90.0f;
+
+    selector_hide_time = SDL_GetTicks() + SELECTOR_SHOW_TICKS;
 
     while (steps--)
     {
@@ -1143,15 +1153,13 @@ int get_selector()
 void select_piece(int square)
 {
     selected = square;
-
-    if ( square>=0 )
-        selector = square;
 }
 
 void reset_3d()
 {
     selected = -1;
     selector = 0;
+    selector_hide_time = SDL_GetTicks() + SELECTOR_SHOW_TICKS;
     if (is_2d)
     {
         x_rotation = -10.0f;
