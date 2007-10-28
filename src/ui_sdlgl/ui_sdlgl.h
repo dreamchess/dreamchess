@@ -110,24 +110,6 @@
 #define GUI_PIECE_KING     5
 #define GUI_PIECE_AVATAR   6
 
-/*typedef struct theme
-{
-    char name[25];
-    char style[25];
-    char pieces[25];
-    char board[25];
-    char white_name[25];
-    char black_name[25];
-    char piece_tex_spin;
-    int piece_tex_spin_speed;
-    char lighting;
-    float selector_colour[4];
-    float selector_spinspeed;
-    float selector_size;
-    float selector_bouncespeed;
-}
-theme;*/
-
 /** Describes a texture. The OpenGL texture ID is paired with texture
  *  coordinates to allow for only a small portion of the image to be used.
  */
@@ -198,6 +180,7 @@ gg_driver_t *get_gg_driver_sdlgl();
 /* ui_sdlgl_3d.h */
 void start_piece_move( int source, int dest );
 int get_piece_moving_done();
+void set_selector(theme_selector_t *selector, texture_t texture);
 
 /* load_data.c */
 void load_pieces();
@@ -221,7 +204,7 @@ void draw_backdrop();
 
 /* theme.c */
 theme *get_theme( int index );
-void load_theme(char* style, char* pieces, char *board);
+void load_theme(struct theme_struct *theme);
 texture_t *get_white_pieces();
 texture_t *get_black_pieces();
 texture_t *get_white_piece( int index );

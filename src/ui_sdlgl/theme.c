@@ -109,11 +109,6 @@ texture_t *get_black_piece( int index )
     return &black_pieces[index];
 }
 
-texture_t *get_selector_tex()
-{
-    return &selector_tex;
-}
-
 /* xml theme options */
 int use_lighting()
 {
@@ -206,34 +201,36 @@ static int ld_board(char *name)
  *
  *  @param name The name of the subdirectory of the theme to load.
  */
-void load_theme(char* style, char* pieces, char *board)
+void load_theme(struct theme_struct *theme)
 {
     ch_userdir();
-    if (ld_style(style)) {
+    if (ld_style(theme->style)) {
         ch_datadir();
-        if (ld_style(style)) {
-            DBG_ERROR("failed to find style '%'", style);
+        if (ld_style(theme->style)) {
+            DBG_ERROR("failed to find style '%'", theme->style);
             exit(1);
         }
     }
 
     ch_userdir();
-    if (ld_pieces(pieces)) {
+    if (ld_pieces(theme->pieces)) {
         ch_datadir();
-        if (ld_pieces(pieces)) {
-            DBG_ERROR("failed to find pieces '%'", pieces);
+        if (ld_pieces(theme->pieces)) {
+            DBG_ERROR("failed to find pieces '%'", theme->pieces);
             exit(1);
         }
     }
 
     ch_userdir();
-    if (ld_board(board)) {
+    if (ld_board(theme->board)) {
         ch_datadir();
-        if (ld_board(board)) {
-            DBG_ERROR("failed to find board '%'", board);
+        if (ld_board(theme->board)) {
+            DBG_ERROR("failed to find board '%'", theme->board);
             exit(1);
         }
     }
+
+    set_selector(&theme->selector, selector_tex);
 
     ch_datadir();
 }

@@ -28,6 +28,14 @@
 #define TRUE  1
 #define FALSE 0
 
+typedef struct theme_selector
+{
+    float colour[4];
+    float spinspeed;
+    float size;
+    float bouncespeed;
+} theme_selector_t;
+
 typedef struct theme_struct
 {
     char name[25];
@@ -39,10 +47,7 @@ typedef struct theme_struct
     char piece_tex_spin;
     int piece_tex_spin_speed;
     char lighting;
-    float selector_colour[4];
-    float selector_spinspeed;
-    float selector_size;
-    float selector_bouncespeed;
+    theme_selector_t selector;
 }
 theme;
 

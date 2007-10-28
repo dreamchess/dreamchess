@@ -76,13 +76,13 @@ void theme_add_theme( char *xmlfile, option_t *option )
         cur_theme->lighting=TRUE;
         cur_theme->piece_tex_spin=FALSE;
         cur_theme->piece_tex_spin_speed=0;
-        cur_theme->selector_colour[0]=1.0;
-        cur_theme->selector_colour[1]=1.0;
-        cur_theme->selector_colour[2]=0.0;
-        cur_theme->selector_colour[3]=0.25;  
-        cur_theme->selector_spinspeed=0;
-        cur_theme->selector_size=0.5;
-        cur_theme->selector_bouncespeed=0;
+        cur_theme->selector.colour[0]=1.0;
+        cur_theme->selector.colour[1]=1.0;
+        cur_theme->selector.colour[2]=0.0;
+        cur_theme->selector.colour[3]=0.25;  
+        cur_theme->selector.spinspeed=0;
+        cur_theme->selector.size=0.5;
+        cur_theme->selector.bouncespeed=0;
 
         load_opaque(theme, "name", cur_theme->name);
         load_opaque(theme, "style", cur_theme->style);
@@ -96,16 +96,16 @@ void theme_add_theme( char *xmlfile, option_t *option )
         {
             char *temp=(char*)mxmlElementGetAttr(node, "spinspeed");
             if ( temp )
-                cur_theme->selector_spinspeed=atof(temp);
+                cur_theme->selector.spinspeed=atof(temp);
 
             temp=(char*)mxmlElementGetAttr(node, "size");
             if ( temp )
-                cur_theme->selector_size=atof(temp);
+                cur_theme->selector.size=atof(temp);
 
             temp=(char*)mxmlElementGetAttr(node, "bouncespeed");
             if ( temp )
             {
-                cur_theme->selector_bouncespeed=atof(temp);
+                cur_theme->selector.bouncespeed=atof(temp);
             }
 
             node = mxmlWalkNext(node, node, MXML_DESCEND);
@@ -117,7 +117,7 @@ void theme_add_theme( char *xmlfile, option_t *option )
                 if (node2)
                 {
                     node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector_colour[0]=atof(node2->value.opaque);
+                    cur_theme->selector.colour[0]=atof(node2->value.opaque);
                 }       
 
                 node2 = mxmlWalkNext(node, node, MXML_DESCEND);
@@ -125,7 +125,7 @@ void theme_add_theme( char *xmlfile, option_t *option )
                 if (node2)
                 {
                     node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector_colour[1]=atof(node2->value.opaque);
+                    cur_theme->selector.colour[1]=atof(node2->value.opaque);
                 }       
 
                 node2 = mxmlWalkNext(node, node, MXML_DESCEND);
@@ -133,7 +133,7 @@ void theme_add_theme( char *xmlfile, option_t *option )
                 if (node2)
                 {
                     node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector_colour[2]=atof(node2->value.opaque);
+                    cur_theme->selector.colour[2]=atof(node2->value.opaque);
                 }        
 
                 node2 = mxmlWalkNext(node, node, MXML_DESCEND);
@@ -141,7 +141,7 @@ void theme_add_theme( char *xmlfile, option_t *option )
                 if (node2)
                 {
                     node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector_colour[3]=atof(node2->value.opaque);
+                    cur_theme->selector.colour[3]=atof(node2->value.opaque);
                 }               
             }
 

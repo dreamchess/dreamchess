@@ -342,9 +342,9 @@ static config_t *do_menu(int *pgn)
         case MENU_STATE_LOAD:
             {
                 option_t *option = config_get_option("theme");
-                struct theme_struct *theme = (struct theme_struct *) option->selected->data;
+                struct theme_struct *theme = option->selected->data;
 
-                load_theme(theme->style, theme->pieces, theme->board);
+                load_theme(theme);
                 sprintf(get_white_name(),"%s", theme->white_name);
                 sprintf(get_black_name(),"%s", theme->black_name);
             }

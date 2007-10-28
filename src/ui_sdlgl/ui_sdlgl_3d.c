@@ -51,6 +51,7 @@
 #include "board.h"
 #include "ui_sdlgl.h"
 #include "ui_sdlgl_3d.h"
+#include "theme.h"
 
 typedef struct coord3
 {
@@ -167,6 +168,10 @@ static void data_col_add(data_col_t *data_col, char *name, void *data)
 
 static data_col_t textures;
 static data_col_t meshes;
+
+#define SEL_HEIGHT 0.1f
+static theme_selector_t sel;
+static texture_t sel_tex;
 
 texture_t ground;
 
@@ -659,6 +664,12 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     glDisable(GL_TEXTURE_2D);
 }
 
+void set_selector(theme_selector_t *selector, texture_t texture)
+{
+    sel = *selector;
+    sel_tex = texture;
+}
+
 void loadmodels(char *filename)
 {
     int i;
@@ -861,28 +872,15 @@ static void draw_board(float rot_x, float rot_z, int blend)
         model_render(&board, 1.0f, &fixed, FALSE);
 }
 
-float selector_rotation=0.0;
-float selector_bounce=0.0;
-float bounce_inc=0.0;
 void draw_selector()
 {
-    float r,g,b,a;
-    float width,width2;
-    float height;
-#if 0
-    theme *t=get_theme(get_selected_theme());
-    r=t->selector_colour[0];
-    g=t->selector_colour[1];
-    b=t->selector_colour[2];
-    a=t->selector_colour[3];
+    static float selector_rotation = 0.0;
+    static float selector_bounce = 0.0;
+    static float bounce_inc = 0.0;
 
-    //r=1.0f; g=1.0f; b=0.0f; a=0.25f; /* a=((((SDL_GetTicks() % (1000 / 1)) / (float) (1000 / 1)))/4)+0.1; */
-    width=t->selector_size;
-    height=0.1;
-
-    if ( t->selector_spinspeed == 0 )
+    if (sel.spinspeed == 0)
     {
-        selector_rotation=0;
+        selector_rotation = 0;
     }
 
     glLoadIdentity();
@@ -890,50 +888,49 @@ void draw_selector()
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
-    glRotatef(selector_rotation,0,0,1);
-    selector_rotation+=t->selector_spinspeed;       
+    glRotatef(selector_rotation, 0, 0, 1);
+    selector_rotation += sel.spinspeed;       
 
-    if ( t->selector_bouncespeed == 0.0 )
+    if ( sel.bouncespeed == 0.0 )
         selector_bounce=0;
     else if ( selector_bounce == 0 )
-        bounce_inc=t->selector_bouncespeed;
-    
+        bounce_inc = sel.bouncespeed;
+
     if ( selector_bounce > 0.25 || selector_bounce < 0.0)
         bounce_inc=-(bounce_inc);
 
     selector_bounce+=bounce_inc; 
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, get_selector_tex()->id);
+    glBindTexture(GL_TEXTURE_2D, sel_tex.id);
 
-    width2=width;
     glBegin(GL_QUADS);
     glTexCoord2f(0,0);
-    glVertex3f(-width2, width2, height);
+    glVertex3f(-sel.size, sel.size, SEL_HEIGHT);
     glTexCoord2f(1,0);
-    glVertex3f(width2, width2, height);
+    glVertex3f(sel.size, sel.size, SEL_HEIGHT);
     glTexCoord2f(1,1);
-    glVertex3f(width2, -width2, height);
+    glVertex3f(sel.size, -sel.size, SEL_HEIGHT);
     glTexCoord2f(0,1);
-    glVertex3f(-width2, -width2, height);
+    glVertex3f(-sel.size, -sel.size, SEL_HEIGHT);
     glEnd();
 
     glTranslatef(0, 0, selector_bounce+0.01);
 
-    glColor4f(r, g, b, a);
+    glColor4fv(sel.colour);
     glBegin(GL_QUADS);
     glTexCoord2f(0,0);
-    glVertex3f(-width, width, height);
+    glVertex3f(-sel.size, sel.size, SEL_HEIGHT);
     glTexCoord2f(1,0);
-    glVertex3f(width, width, height);
+    glVertex3f(sel.size, sel.size, SEL_HEIGHT);
     glTexCoord2f(1,1);
-    glVertex3f(width, -width, height);
+    glVertex3f(sel.size, -sel.size, SEL_HEIGHT);
     glTexCoord2f(0,1);
-    glVertex3f(-width, -width, height);
+    glVertex3f(-sel.size, -sel.size, SEL_HEIGHT);
     glEnd();
-#endif
+
     glDisable(GL_TEXTURE_2D);
 }
 
