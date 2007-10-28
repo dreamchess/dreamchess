@@ -58,6 +58,12 @@ typedef struct move_list
 }
 move_list_t;
 
+typedef struct cl_options {
+	int width;
+	int height;
+	int fs;
+} cl_options_t;
+
 static ui_driver_t *ui;
 static config_t *config;
 static move_list_t san_list, fan_list, fullalg_list;
@@ -386,7 +392,7 @@ void toggle_fullscreen()
 }
 
 #ifndef _arch_dreamcast
-static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char **engine)
+static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char **engine, cl_options_t *cl_options)
 {
     int c;
 
@@ -413,8 +419,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
 
     while ((c = getopt(argc, argv, "1:fhlu:v:W:H:")) > -1) {
 #endif /* HAVE_GETOPT_LONG */
-        option_t *option;
-
         switch (c)
         {
         case 'h':
@@ -446,20 +450,13 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
             *engine = optarg;
             break;
         case 'f':
-            option = config_get_option("full_screen");
-            option_select_value_by_name(option, "On");
+            cl_options->fs = 1;
             break;
         case 'W':
-            option = config_get_option("custom_resolution_width");
-            option->value = atoi(optarg);
-            option = config_get_option("resolution");
-            option_select_value_by_name(option, "Custom");
+            cl_options->width = atoi(optarg);
             break;
         case 'H':
-            option = config_get_option("custom_resolution_height");
-            option->value = atoi(optarg);
-            option = config_get_option("resolution");
-            option_select_value_by_name(option, "Custom");
+            cl_options->height = atoi(optarg);
             break;
         case 'v':
             {
@@ -482,9 +479,35 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, char *
 }
 #endif
 
+static void set_cl_options(cl_options_t *cl_options)
+{
+        option_t *option;
+
+	if (cl_options->fs) {
+	    option = config_get_option("full_screen");
+	    option_select_value_by_name(option, "On");
+	}
+
+	if (cl_options->width) {
+	    option = config_get_option("custom_resolution_width");
+	    option->value = cl_options->width;
+	    option = config_get_option("resolution");
+	    option_select_value_by_name(option, "Custom");
+        }
+
+        if (cl_options->height) {
+	    option = config_get_option("custom_resolution_height");
+	    option->value = cl_options->height;
+	    option = config_get_option("resolution");
+	    option_select_value_by_name(option, "Custom");
+        }
+}
+
 int dreamchess(void *data)
 {
     char *engine = "dreamer";
+    cl_options_t cl_options = {};
+
 #ifndef _arch_dreamcast
 
     arguments_t *arg = data;
@@ -494,12 +517,14 @@ int dreamchess(void *data)
 
     printf( "DreamChess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
 
-    config_init();
-
 #ifndef _arch_dreamcast
 
-    parse_options(arg->argc, arg->argv, &ui, &engine);
+    parse_options(arg->argc, arg->argv, &ui, &engine, &cl_options);
 #endif
+
+    config_init();
+
+    set_cl_options(&cl_options);
 
     if (!ui)
     {
