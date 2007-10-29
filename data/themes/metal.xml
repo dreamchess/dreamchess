@@ -6,7 +6,7 @@
         <pieces>metal</pieces>
         <board>metal</board>
         <lighting>on</lighting>
-        <selector spinspeed="2" size="0.5" bouncespeed="0.01">
+        <selector spinspeed="0.33" size="0.5" bouncespeed="1.2">
             <colour>
                 <red>1.0</red>
                 <green>1.0</green>

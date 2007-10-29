@@ -5,7 +5,7 @@
         <style>default</style>
         <pieces>classiclow</pieces>
         <board>classic</board>
-        <selector spinspeed="1" size="1.0" bouncespeed="0.01">
+        <selector spinspeed="0.16" size="1.0" bouncespeed="1.2">
             <colour>
                 <red>1.0</red>
                 <green>1.0</green>
@@ -19,7 +19,7 @@
         <style>default</style>
         <pieces>classicbw</pieces>
         <board>classic</board>
-        <selector bouncespeed="0.01">
+        <selector bouncespeed="1.2">
             <colour>
                 <red>1.0</red>
                 <green>1.0</green>
@@ -33,5 +33,6 @@
         <style>default</style>
         <pieces>figurine</pieces>
         <board>classic</board>
+        <lighting>off</lighting>
     </theme>
 </themes>

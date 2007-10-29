@@ -27,32 +27,9 @@ static texture_t mouse_cursor;
 static texture_t white_pieces[7];
 static texture_t black_pieces[7];
 static texture_t selector_tex;
-static theme themes[25];
-static int selected_theme=0;
-static int theme_count=0;
 
 static char white_name[80];
 static char black_name[80];
-
-void set_theme_count( int count )
-{
-    theme_count=count;
-}
-
-int get_theme_count()
-{
-    return theme_count;
-}
-
-int get_selected_theme()
-{
-    return selected_theme;
-}
-
-void set_selected_theme( int index )
-{
-    selected_theme=index;
-}
 
 texture_t *get_menu_border()
 {
@@ -62,11 +39,6 @@ texture_t *get_menu_border()
 texture_t *get_border()
 {
     return border;
-}
-
-theme *get_theme( int index )
-{
-    return &themes[index];
 }
 
 texture_t *get_mouse_cursor()
@@ -107,28 +79,6 @@ texture_t *get_white_piece( int index )
 texture_t *get_black_piece( int index )
 {
     return &black_pieces[index];
-}
-
-/* xml theme options */
-int use_lighting()
-{
-    if (selected_theme==theme_count)
-        return TRUE;
-    else
-        return themes[selected_theme].lighting;
-}
-
-int use_tex_spin()
-{
-    if (selected_theme==theme_count)
-        return FALSE;
-    else
-        return themes[selected_theme].piece_tex_spin;
-}
-
-int get_tex_spin_speed()
-{
-    return themes[selected_theme].piece_tex_spin_speed;
 }
 
 int load_opaque(mxml_node_t *top, char *name, char *dest)
@@ -230,7 +180,7 @@ void load_theme(struct theme_struct *theme)
         }
     }
 
-    set_selector(&theme->selector, selector_tex);
+    set_theme(theme, selector_tex);
 
     ch_datadir();
 }

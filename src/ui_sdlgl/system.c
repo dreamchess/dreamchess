@@ -208,9 +208,9 @@ void gl_swap()
     frames++;
     if (frames == 10)
     {
-        fps = 10000 / (float) (last - fps_time);
+        fps = 10000 / (float) (now - fps_time);
         frames = 0;
-        fps_time = last;
+        fps_time = now;
     }
 
 #ifdef _arch_dreamcast

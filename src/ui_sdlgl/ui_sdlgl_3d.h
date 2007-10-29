@@ -23,9 +23,6 @@
 #define SELECTOR_LEFT 2
 #define SELECTOR_RIGHT 3
 
-int use_lighting();
-int get_tex_spin_speed();
-int use_tex_spin();
 void move_camera(float x, float z);
 void render_scene_3d(board_t *board, int reflections);
 void move_selector(int direction);

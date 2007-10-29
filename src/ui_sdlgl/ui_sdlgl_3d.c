@@ -169,11 +169,15 @@ static void data_col_add(data_col_t *data_col, char *name, void *data)
 static data_col_t textures;
 static data_col_t meshes;
 
+#define SEL_BOUNCE_AMP 0.25f
 #define SEL_HEIGHT 0.1f
 static theme_selector_t sel;
 static texture_t sel_tex;
 
-texture_t ground;
+static int tex_spin_speed;
+static int use_lighting;
+
+static texture_t ground;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -602,12 +606,8 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
-    if ( tex_spin )
-        tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)get_tex_spin_speed()));
-
-    /* printf( "pos: %f\n", tex_spin_pos );
-    printf( "%f\n", (1000/(float)get_tex_spin_speed()) );
-    tex_spin_pos=(float)ticks / (float)(1000/(float)get_tex_spin_speed()); */
+    if (tex_spin && tex_spin_speed != 0)
+        tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)tex_spin_speed));
 
     for (g = 0; g < mesh->groups; g++)
     {
@@ -627,7 +627,7 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
             unsigned int *data = mesh->group[g].data;
             float angle = 1.0f;
 
-            if (light && use_lighting())
+            if (light)
             {
                 angle = arccos(dot_product(mesh->normal[data[i] * 3],
                                            mesh->normal[data[i] * 3 + 1],
@@ -666,9 +666,11 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     glDisable(GL_TEXTURE_2D);
 }
 
-void set_selector(theme_selector_t *selector, texture_t texture)
+void set_theme(struct theme_struct *theme, texture_t texture)
 {
-    sel = *selector;
+    sel = theme->selector;
+    tex_spin_speed = theme->piece_tex_spin_speed;
+    use_lighting = theme->lighting;
     sel_tex = texture;
 }
 
@@ -854,7 +856,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     glScalef(1.0f, 1.0f, -1.0f);
                 }
 
-                model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), l, use_tex_spin());
+                model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), use_lighting ? l : NULL, 1);
             }
         }
 }
@@ -876,13 +878,25 @@ static void draw_board(float rot_x, float rot_z, int blend)
 
 void draw_selector(float alpha)
 {
-    static float selector_rotation = 0.0;
-    static float selector_bounce = 0.0;
-    static float bounce_inc = 0.0;
+    float bounce_offset = 0.0;
+    float spin_offset = 0.0;
+    Uint32 ticks = SDL_GetTicks();
 
-    if (sel.spinspeed == 0)
+    if (sel.bouncespeed)
     {
-        selector_rotation = 0;
+        float phase = ((ticks % (int) (1000 / sel.bouncespeed)) / (float) (1000 / sel.bouncespeed));
+
+        if (phase < 0.5)
+            bounce_offset = phase * 2 * SEL_BOUNCE_AMP;
+        else
+            bounce_offset = (1.0 - phase) * 2 * SEL_BOUNCE_AMP;
+    }
+
+    if (sel.spinspeed)
+    {
+        float phase = ((ticks % (int) (1000 / sel.spinspeed)) / (float) (1000 / sel.spinspeed));
+
+        spin_offset = phase * 360;
     }
 
     glLoadIdentity();
@@ -890,18 +904,7 @@ void draw_selector(float alpha)
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
-    glRotatef(selector_rotation, 0, 0, 1);
-    selector_rotation += sel.spinspeed;       
-
-    if ( sel.bouncespeed == 0.0 )
-        selector_bounce=0;
-    else if ( selector_bounce == 0 )
-        bounce_inc = sel.bouncespeed;
-
-    if ( selector_bounce > 0.25 || selector_bounce < 0.0)
-        bounce_inc=-(bounce_inc);
-
-    selector_bounce+=bounce_inc; 
+    glRotatef(spin_offset, 0, 0, 1);
 
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f * alpha);
 
@@ -919,7 +922,7 @@ void draw_selector(float alpha)
     glVertex3f(-sel.size, -sel.size, SEL_HEIGHT);
     glEnd();
 
-    glTranslatef(0, 0, selector_bounce+0.01);
+    glTranslatef(0, 0, bounce_offset + 0.01f);
 
     glColor4f(sel.colour[0], sel.colour[1], sel.colour[2], sel.colour[3] * alpha);
     glBegin(GL_QUADS);

@@ -74,7 +74,6 @@ void theme_add_theme( char *xmlfile, option_t *option )
         sprintf( cur_theme->white_name, "White" );
         sprintf( cur_theme->black_name, "Black" );
         cur_theme->lighting=TRUE;
-        cur_theme->piece_tex_spin=FALSE;
         cur_theme->piece_tex_spin_speed=0;
         cur_theme->selector.colour[0]=1.0;
         cur_theme->selector.colour[1]=1.0;
@@ -165,7 +164,6 @@ void theme_add_theme( char *xmlfile, option_t *option )
         {
             node = mxmlWalkNext(node, node, MXML_DESCEND);
 
-            cur_theme->piece_tex_spin=TRUE;
             cur_theme->piece_tex_spin_speed=atoi(node->value.opaque);
         }
         DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style );

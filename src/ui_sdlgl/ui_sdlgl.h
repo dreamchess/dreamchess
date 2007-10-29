@@ -177,10 +177,10 @@ board_t *get_saved_board( int index );
 gg_event_t convert_event(SDL_Event *event);
 gg_driver_t *get_gg_driver_sdlgl();
 
-/* ui_sdlgl_3d.h */
+/* ui_sdlgl_3d.c */
 void start_piece_move( int source, int dest );
 int get_piece_moving_done();
-void set_selector(theme_selector_t *selector, texture_t texture);
+void set_theme(struct theme_struct *theme, texture_t texture);
 
 /* load_data.c */
 void load_pieces();
@@ -203,7 +203,6 @@ void draw_health_bars();
 void draw_backdrop();
 
 /* theme.c */
-theme *get_theme( int index );
 void load_theme(struct theme_struct *theme);
 texture_t *get_white_pieces();
 texture_t *get_black_pieces();
@@ -219,10 +218,6 @@ texture_t *get_menu_border();
 texture_t *get_border();
 void unload_theme();
 int load_opaque(mxml_node_t *top, char *name, char *dest);
-void set_selected_theme( int index );
-int get_selected_theme();
-int get_theme_count();
-void set_theme_count( int count );
 
 /* draw_scene.c */
 void draw_scene( board_t *b, int reflections );
