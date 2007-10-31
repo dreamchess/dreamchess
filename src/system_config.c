@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "theme.h"
 #include "options.h"
@@ -28,7 +29,7 @@
 
 static option_group_t *config;
 
-static add_resolution(option_t *option, int w, int h)
+static void add_resolution(option_t *option, int w, int h)
 {
 	config_resolution_t *res;
 	char str[10];

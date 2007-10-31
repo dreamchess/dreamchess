@@ -110,6 +110,7 @@ int ch_userdir()
 #define USERDIR ".dreamchess"
 
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 

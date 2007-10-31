@@ -32,7 +32,7 @@ typedef struct ui_driver
 {
     char *name;
     int (* init) (int height, int width, int fullscreen);
-    void (* set_video) (int height, int width, int fullscreen);
+    int (* set_video) (int height, int width, int fullscreen);
     int (* exit) (void);
     config_t *( *config) (int *pgn_slot);
     void (* update) (board_t *board, move_t *move);

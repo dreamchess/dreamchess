@@ -36,7 +36,6 @@ void draw_scene( board_t *b, int reflections )
     char temp[80];
     int clock_seconds=0;
     int clock_minutes=0;
-    int mouse_x=0, mouse_y=0;
 
     gg_dialog_cleanup();
 
@@ -108,7 +107,6 @@ void draw_scene( board_t *b, int reflections )
     /* Draw mouse cursor.. */
     #ifndef _arch_dreamcast
     #ifndef __BEOS__
-    /*SDL_GetMouseState(&mouse_x, &mouse_y);*/
     draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
 	#endif /* __BEOS__ */
     #endif /* _arch_dreamcast */

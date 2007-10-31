@@ -73,5 +73,7 @@ option_t *option_group_find_option(option_group_t *group, char *name);
 int option_select_next_value(option_t *option);
 int option_select_prev_value(option_t *option);
 void option_string_set_text(option_t *option, char *text);
+option_t *option_group_add_int(option_group_t *group, char *name);
+option_t *option_group_add_string(option_group_t *group, char *name);
 
 #endif

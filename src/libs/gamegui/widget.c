@@ -139,6 +139,7 @@ int gg_widget_subscribe_signal_name(gg_widget_t *widget, gg_class_id id, char *n
         return -1;
 
     gg_widget_subscribe_signal(widget, signal, callback, extra_data);
+    return 0;
 }
 
 void gg_widget_emit_signal(gg_widget_t *widget, gg_widget_t *emitter, gg_signal_t signal, void *data)

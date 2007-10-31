@@ -78,7 +78,7 @@ AC_DEFUN([AC_NEEDS],
 	LIBS="${OLD_LIBS}"
 	)
 
-AM_PATH_SDL([1.2.0], [have_sdl="yes"], [have_sdl="no"])
+AM_PATH_SDL([1.2.6], [have_sdl="yes"], [have_sdl="no"])
 SDL_OLD_LIBS="${SDL_LIBS}"
 
 AC_CHECK_SDL_HEADER([SDL_image.h], [have_sdl_image_h="yes"],

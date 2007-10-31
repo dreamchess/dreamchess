@@ -80,7 +80,6 @@ static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, voi
 
 static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    char temp[80];
     int save_good=TRUE;
 
     /* Close the dialogs.. */

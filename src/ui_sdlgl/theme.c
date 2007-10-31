@@ -81,21 +81,6 @@ texture_t *get_black_piece( int index )
     return &black_pieces[index];
 }
 
-int load_opaque(mxml_node_t *top, char *name, char *dest)
-{
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-        {
-            strcpy(dest, node->value.opaque);
-            return 0;
-        }
-    }
-    return 1;
-}
-
 static int ld_style(char *name)
 {
     if (chdir("styles"))
@@ -128,7 +113,6 @@ static int ld_pieces(char *name)
         return 1;
 
     loadmodels("set.cfg");
-    texture_t seltex;
     load_texture_png(&selector_tex, "selector.png", 1,1);
 
     return 0;

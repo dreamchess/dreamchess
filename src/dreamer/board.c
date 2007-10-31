@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "board.h"
 #include "move.h"
@@ -124,7 +125,6 @@ int setup_board_fen(board_t *board, char *fen)
 
 	while (done < 64)
 	{
-		int j;
 		char c;
 		char piece=0;
 

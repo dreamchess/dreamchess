@@ -18,6 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdlib.h>
+
 #include <gamegui/frame.h>
 
 /** Spacing on each side of the rectangle. */

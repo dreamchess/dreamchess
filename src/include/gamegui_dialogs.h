@@ -39,4 +39,8 @@ gg_dialog_t *dialog_message_create(char *message);
 gg_dialog_t *dialog_promote_create(int colour);
 gg_dialog_t *dialog_victory_create(result_t *result);
 gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
 void show_message_dialog( char *message );
+
+/* FIXME */
+void set_quit_to_menu( int menu );

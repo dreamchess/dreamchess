@@ -72,7 +72,7 @@
 #define SCREEN_BPP     16
 
 /** Desired frames per second. */
-#define FPS 60
+#define FPS 9999
 
 /* Speed that text types, characters per second. */
 #define STRING_TYPE_SPEED 20
@@ -139,6 +139,7 @@ typedef struct texture
 texture_t;
 
 int get_show_egg();
+void set_show_egg( int set );
 int get_egg_req();
 int get_screen_width();
 int get_screen_height();
@@ -217,7 +218,6 @@ void load_theme_xml( char *xmlfile );
 texture_t *get_menu_border();
 texture_t *get_border();
 void unload_theme();
-int load_opaque(mxml_node_t *top, char *name, char *dest);
 
 /* draw_scene.c */
 void draw_scene( board_t *b, int reflections );
@@ -232,6 +232,9 @@ gg_dialog_style_t *get_ingame_style();
 gg_dialog_style_t *get_menu_style();
 int get_white_in_check();
 int get_black_in_check();
+int get_black_in_checkmate();
+int get_white_in_checkmate();
+int get_game_stalemate();
 void set_switch_to_menu(int sw);
 board_t *get_board();
 int get_fading_out();

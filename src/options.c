@@ -23,6 +23,7 @@
 
 #include "options.h"
 #include "debug.h"
+#include "dir.h"
 
 static char *remove_spaces(const char *str)
 {
@@ -142,8 +143,6 @@ int option_group_load_xml(option_group_t *group)
 	FILE *f;
 	mxml_node_t *tree, *node;
 	char *filename;
-	char *option = NULL;
-	char *value = NULL;
 
 	filename = malloc(strlen(group->name) + 4 + 1);
 	strcpy(filename, group->name);
@@ -252,6 +251,7 @@ int option_select_next_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_NEXT(option->selected, entries);
+        return 0;
 }
 
 int option_select_prev_value(option_t *option)
@@ -263,6 +263,7 @@ int option_select_prev_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_PREV(option->selected, values_head, entries);
+        return 0;
 }
 
 option_t *option_group_find_option(option_group_t *group, char *name)

@@ -235,6 +235,7 @@ int gg_entry_set_text(gg_entry_t *entry, char *text)
         return 1;
 
     strcpy(entry->text, text);
+    return 0;
 }
 
 void gg_entry_set_max_len(gg_entry_t *entry, int len)

@@ -77,7 +77,6 @@ void repetition_remove()
 int is_repetition(board_t *board, int ply)
 {
     int i;
-    int count = 0;
     int cur_head = cur_list->head + ply;
 
     /* We won't go out of bounds here because of the 50-move rule. */

@@ -81,6 +81,21 @@ const char *whitespace_cb(mxml_node_t *node, int where)
     return (NULL);
 }
 
+static int load_opaque(mxml_node_t *top, char *name, char *dest)
+{
+    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
+    if (node)
+    {
+        node = mxmlWalkNext(node, node, MXML_DESCEND);
+        if (node && node->type == MXML_OPAQUE)
+        {
+            strcpy(dest, node->value.opaque);
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static void save_opaque(mxml_node_t *parent, char *name, char *value)
 {
     mxml_node_t *node = mxmlNewElement(parent, name);

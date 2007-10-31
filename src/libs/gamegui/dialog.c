@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <gamegui/dialog.h>
 #include <gamegui/clipping.h>

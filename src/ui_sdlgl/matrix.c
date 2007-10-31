@@ -24,6 +24,8 @@
 
 #ifdef WITH_UI_SDLGL
 
+#include <stdio.h>
+
 #include "matrix.h"
 
 void mat_print(matrix4x4_t *mat)
@@ -73,7 +75,7 @@ matrix4x4_t mat_multiply(matrix4x4_t *mat1, matrix4x4_t *mat2)
 
 vector3_t mat_apply(matrix4x4_t *mat, vector3_t *vect)
 {
-    int i, j, k;
+    int i, j;
     vector3_t v;
 
     for (j = 0; j < 3; j++)

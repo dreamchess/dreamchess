@@ -21,6 +21,7 @@
 #include <mxml.h>
 #include <dirent.h>
 #include <limits.h>
+#include <unistd.h>
 
 #ifdef __WIN32
 #include <windows.h>
@@ -30,12 +31,29 @@
 #include "theme.h"
 #include "debug.h"
 #include "options.h"
+#include "dir.h"
 
 TAILQ_HEAD(, theme_struct) themes;
 static music_packs_t music_packs;
 int theme_count=0;
 
-void theme_load_opaque(mxml_node_t *top, char *name, char **dest)
+static int load_opaque(mxml_node_t *top, char *name, char *dest)
+{
+    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
+    if (node)
+    {
+        node = mxmlWalkNext(node, node, MXML_DESCEND);
+        if (node && node->type == MXML_OPAQUE)
+        {
+            strcpy(dest, node->value.opaque);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+#if 0
+static void load_opaque(mxml_node_t *top, char *name, char **dest)
 {
     mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
     if (node)
@@ -45,6 +63,7 @@ void theme_load_opaque(mxml_node_t *top, char *name, char **dest)
             *dest=strdup(node->value.opaque);
     }
 }
+#endif
 
 void theme_add_theme( char *xmlfile, option_t *option )
 {
@@ -185,7 +204,6 @@ static void find_themes(option_t *option)
             char temp[80];
             if ( themedir_entry->d_name[0] != '.' )
             {
-                struct theme_struct *theme;
                 sprintf( temp, "themes/%s", themedir_entry->d_name );
                 theme_add_theme(temp, option);
             }

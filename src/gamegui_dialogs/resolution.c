@@ -18,6 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdlib.h>
 #include <errno.h>
 
 #include "gamegui_dialogs.h"
@@ -111,6 +112,7 @@ static int fs_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, voi
         option_t *option = config_get_option("full_screen");
 
         option_select_value_by_index(option, nr);
+        return 1;
 }
 
 gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
@@ -118,9 +120,7 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_widget_t *dialog;
     gg_widget_t *vbox, *vbox2, *hbox;
     gg_widget_t *widget;
-    gg_option_t *options;
     option_t *option;
-    option_value_t *value;
     char val[5];
 
     vbox = gg_vbox_create(0);

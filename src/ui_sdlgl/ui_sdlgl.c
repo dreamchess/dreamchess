@@ -40,7 +40,6 @@ static int title_process_retval;
 static int set_loading=FALSE;
 static int dialog_promote_piece;
 static SDL_Joystick *joy;
-static int num_style;
 static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
@@ -243,7 +242,9 @@ static void draw_press_key_message()
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
+#ifdef _arch_dreamcast
     SDL_Joystick *joy1=SDL_JoystickOpen(0);
+#endif
     title_process_retval=2;
 
     resize_window(screen_width, screen_height);
@@ -266,7 +267,6 @@ static config_t *do_menu(int *pgn)
     while ( 1 )
     {
         Uint8 *keystate;
-        int mouse_x, mouse_y;
         gg_event_t event;
 
         keystate = SDL_GetKeyState(NULL);
@@ -387,7 +387,6 @@ static config_t *do_menu(int *pgn)
         /* Draw mouse cursor.. */
 #ifndef _arch_dreamcast
 #ifndef __BEOS__
-        /*SDL_GetMouseState(&mouse_x, &mouse_y);*/
         draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 #endif /* __BEOS __ */
@@ -397,41 +396,20 @@ static config_t *do_menu(int *pgn)
     }
 }
 
-static void set_video( int width, int height, int fullscreen )
+static int set_video( int width, int height, int fullscreen )
 {
     int video_flags;
-    const SDL_VideoInfo *video_info;
-    video_info = SDL_GetVideoInfo( );
     SDL_Surface *surface;
 
     screen_width=width;
     screen_height=height;
 
-    if ( !video_info )
-    {
-        fprintf( stderr, "Video query failed: %s\n",
-                 SDL_GetError( ) );
-        exit(1);
-    }
+    video_flags = SDL_OPENGL;          /* Enable OpenGL in SDL */
 
-    video_flags  = SDL_OPENGL;          /* Enable OpenGL in SDL */
-    video_flags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering */
-    video_flags |= SDL_HWPALETTE;       /* Store the palette in hardware */
-    /* video_flags |= SDL_RESIZABLE; */      /* Enable window resizing */
-    
+    DBG_LOG("setting video mode to %ix%i %s", width, height, fullscreen ? "full screen" : "");
+
     if ( fullscreen )
-    {
         video_flags |= SDL_FULLSCREEN;
-        DBG_LOG( "fullscreen set" );
-    }
-
-    if ( video_info->hw_available )
-        video_flags |= SDL_HWSURFACE;
-    else
-        video_flags |= SDL_SWSURFACE;
-
-    if ( video_info->blit_hw )
-        video_flags |= SDL_HWACCEL;
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
@@ -439,12 +417,14 @@ static void set_video( int width, int height, int fullscreen )
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
-        DBG_ERROR("video mode set failed: %s", SDL_GetError());
-        exit(1);
+        DBG_WARN("video mode set failed: %s", SDL_GetError());
+        return 1;
     }
 
     init_gl();
     resize_window(screen_width, screen_height);
+
+    return 0;
 }
 
 /** Implements ui_driver::init. */
@@ -456,16 +436,17 @@ static void init_gui( int width, int height, int fullscreen)
     screen_width=width;
     screen_height=height;
 
-    DBG_LOG( "screen set to %ix%i", width, height );
-
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
-        fprintf( stderr, "Video initialization failed: %s\n",
-                 SDL_GetError( ) );
+        DBG_ERROR("video initialization failed: %s", SDL_GetError());
         exit(1);
     }
 
-    set_video( screen_width, screen_height, fullscreen );
+    if (set_video( screen_width, screen_height, fullscreen ))
+    {
+        DBG_ERROR("failed to find a matching video mode");
+        exit(1);
+    }
 
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
@@ -475,7 +456,7 @@ static void init_gui( int width, int height, int fullscreen)
 
     if (!icon)
     {
-        fprintf(stderr, "Could not load icon: %s\n", SDL_GetError());
+        DBG_ERROR("failed to load icon: %s", SDL_GetError());
         exit(1);
     }
 
@@ -601,8 +582,6 @@ static int sdlgl_init(int width, int height, int fullscreen)
 /** Implements ui_driver::exit. */
 static int sdlgl_exit()
 {
-    int i;
-
     audio_set_music_callback(NULL);
 
     gg_system_exit();

@@ -177,8 +177,6 @@ static texture_t sel_tex;
 static int tex_spin_speed;
 static int use_lighting;
 
-static texture_t ground;
-
 #define BUF_SIZE 256
 #define FN_LEN 256
 
@@ -387,6 +385,7 @@ mesh_t *dcm_load(char *filename)
     return mesh;
 }
 
+#if 0
 mesh_t *dcm_load_new(char *filename)
 {
     FILE *f;
@@ -457,7 +456,6 @@ mesh_t *dcm_load_new(char *filename)
 
     for (i = 0; i < mesh->groups; i++)
     {
-        char line[11];
         int group_len;
         float fl;
         int j;
@@ -553,6 +551,7 @@ mesh_t *dcm_load_new(char *filename)
 
     return mesh;
 }
+#endif
 
 static mesh_t *load_mesh(char *filename)
 {
@@ -569,6 +568,7 @@ static mesh_t *load_mesh(char *filename)
     return mesh;
 }
 
+#if 0
 static mesh_t *load_mesh_new(char *filename)
 {
     mesh_t *mesh = data_col_find(&meshes, filename);
@@ -583,6 +583,7 @@ static mesh_t *load_mesh_new(char *filename)
     data_col_add(&meshes, filename, mesh);
     return mesh;
 }
+#endif
 
 coord3_t light = {0.0f, 0.0f, -1.0f};
 
@@ -978,7 +979,7 @@ int find_square(int x, int y, float fd)
 }
 #endif
 
-static void draw_board_center()
+static void draw_board_center(float r, float g, float b, float a)
 {
     float tc = 46 / 512.0f;
 
@@ -991,7 +992,7 @@ static void draw_board_center()
     glBindTexture(GL_TEXTURE_2D, board.texture->id);
 
     glBegin(GL_QUADS);
-    glColor4f(1, 1, 1, 0.75f);
+    glColor4f(r, g, b, a);
     glTexCoord2f(tc, tc);
     glVertex3f(-4, -4, 0);
     glTexCoord2f(1 - tc, tc);
@@ -1055,10 +1056,11 @@ void render_scene_3d(board_t *board, int reflections)
         draw_pieces(board, x_rotation, z_rotation, 1);
         glDisable(GL_STENCIL_TEST);
         glCullFace(GL_BACK);
-        draw_board_center();
+        draw_board_center(1.0f, 1.0f, 1.0f, 0.75f);
         draw_board(x_rotation, z_rotation, 0);
         draw_pieces(board, x_rotation, z_rotation, 0);
     } else {
+        draw_board_center(0.75f, 0.75f, 0.75f, 1.0f);
         draw_board(x_rotation, z_rotation, 0);
         draw_pieces(board, x_rotation, z_rotation, 0);
     }

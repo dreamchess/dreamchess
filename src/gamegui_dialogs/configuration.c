@@ -18,6 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "dreamchess.h"
@@ -88,9 +89,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     gg_widget_t *dialog;
     gg_widget_t *vbox, *vbox2, *hbox;
     gg_widget_t *widget;
-    gg_option_t *options;
     option_t *option;
-    option_value_t *value;
 
     vbox = gg_vbox_create(0);
     vbox2 = gg_vbox_create(0);

@@ -297,4 +297,6 @@ unmake_move(board_t *board, move_t *move, bitboard_t old_en_passant,
 ** Returns   : (void)
 */
 
+int setup_board_fen(board_t *board, char *fen);
+
 #endif /* BOARD_H */

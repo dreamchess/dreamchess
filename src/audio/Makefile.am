@@ -1,4 +1,4 @@
-noinst_HEADERS =
+noinst_HEADERS = playlist.h
 noinst_LIBRARIES = libaudio.a
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src
