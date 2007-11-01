@@ -382,7 +382,7 @@ void set_resolution(int init)
     if (init)
         ui->init(width, height, fs);
     else
-        ui->set_video(width, height, fs);
+        ui->resize(width, height, fs);
 }
 
 void toggle_fullscreen()

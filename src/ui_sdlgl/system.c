@@ -163,6 +163,9 @@ void init_gl()
         DBG_WARN( "z depth should be 1.0f, but we got %f", zerodepth );
     #endif /* __BEOS__ */    
     #endif /* _arch_dreamcast */
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /** @brief Resizes the OpenGL window.

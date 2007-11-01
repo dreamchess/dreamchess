@@ -44,6 +44,7 @@ static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
 static int screen_height=480;
+static int screen_fs=0;
 static int reflections=1;
 
 static void music_callback(char *title, char *artist, char *album)
@@ -401,9 +402,6 @@ static int set_video( int width, int height, int fullscreen )
     int video_flags;
     SDL_Surface *surface;
 
-    screen_width=width;
-    screen_height=height;
-
     video_flags = SDL_OPENGL;          /* Enable OpenGL in SDL */
 
     DBG_LOG("setting video mode to %ix%i %s", width, height, fullscreen ? "full screen" : "");
@@ -422,9 +420,54 @@ static int set_video( int width, int height, int fullscreen )
     }
 
     init_gl();
-    resize_window(screen_width, screen_height);
+    resize_window(width, height);
+
+    ch_datadir();
+
+    /* For the menu.. */
+    load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
+
+    /* New text stuff. */
+    generate_text_chars();
+
+    chdir("styles");
+    chdir("default");
+    load_border(get_menu_border(), "border.png");
+#ifndef _arch_dreamcast
+#ifndef __BEOS__
+    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
+#endif /* __BEOS__ */    
+#endif /* _arch_dreamcast */
 
     return 0;
+}
+
+static void free_menu_tex()
+{
+    glDeleteTextures(1, &menu_title_tex.id);
+    glDeleteTextures(1, &get_mouse_cursor()->id);
+    glDeleteTextures(1, &get_menu_border()->id);
+    glDeleteTextures(1, &get_text_character(0)->id);
+}
+
+static int resize(int width, int height, int fullscreen)
+{
+    free_menu_tex();
+    if (!set_video(width, height, fullscreen))
+    {
+        screen_width=width;
+        screen_height=height;
+        screen_fs=fullscreen;
+        return 0;
+    }
+
+    if (set_video(screen_width, screen_height, screen_fs))
+    {
+        DBG_ERROR("failed to restore original video mode: %ix%i %s",
+            screen_width, screen_height, screen_fs ? "full screen" : "");
+        exit(1);
+    }
+    return 1;
 }
 
 /** Implements ui_driver::init. */
@@ -435,6 +478,7 @@ static void init_gui( int width, int height, int fullscreen)
 
     screen_width=width;
     screen_height=height;
+    screen_fs=fullscreen;
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
@@ -478,24 +522,6 @@ static void init_gui( int width, int height, int fullscreen)
 
     gg_system_init(get_gg_driver_sdlgl());
 
-    /* New text stuff. */
-    generate_text_chars();
-
-    /* For the menu.. */
-    load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
-
-    ch_datadir();
-    audio_init();
-
-    chdir("styles");
-    chdir("default");
-    load_border(get_menu_border(), "border.png");
-#ifndef _arch_dreamcast
-#ifndef __BEOS__
-    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
-#endif /* __BEOS__ */    
-#endif /* _arch_dreamcast */
-
     style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
     style_ingame.hor_pad = 20;
     style_ingame.vert_pad = 10;
@@ -510,6 +536,9 @@ static void init_gui( int width, int height, int fullscreen)
 
     for (i = 0; i < 9; i++)
         style_menu.border.image[i] = &get_menu_border()[i];
+
+    ch_datadir();
+    audio_init();
 
     /* Make virtual keyboard table? */
     populate_key_table();
@@ -585,7 +614,7 @@ static int sdlgl_exit()
     audio_set_music_callback(NULL);
 
     gg_system_exit();
-    glDeleteTextures(1, &menu_title_tex.id);
+    free_menu_tex();
 
     if (joy)
         SDL_JoystickClose(joy);
@@ -703,7 +732,7 @@ ui_driver_t ui_sdlgl =
     {
         "sdlgl",
         sdlgl_init,
-        set_video,
+        resize,
         sdlgl_exit,
         do_menu,
         update,
