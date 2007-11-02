@@ -397,6 +397,34 @@ static config_t *do_menu(int *pgn)
     }
 }
 
+static void free_menu_tex()
+{
+    glDeleteTextures(1, &menu_title_tex.id);
+    glDeleteTextures(1, &get_mouse_cursor()->id);
+    glDeleteTextures(1, &get_menu_border()->id);
+    glDeleteTextures(1, &get_text_character(0)->id);
+}
+
+static void load_menu_tex()
+{
+    ch_datadir();
+
+    /* For the menu.. */
+    load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
+
+    /* New text stuff. */
+    generate_text_chars();
+
+    chdir("styles");
+    chdir("default");
+    load_border(get_menu_border(), "border.png");
+#ifndef _arch_dreamcast
+#ifndef __BEOS__
+    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
+#endif /* __BEOS__ */    
+#endif /* _arch_dreamcast */
+}
+
 static int set_video( int width, int height, int fullscreen )
 {
     int video_flags;
@@ -422,51 +450,31 @@ static int set_video( int width, int height, int fullscreen )
     init_gl();
     resize_window(width, height);
 
-    ch_datadir();
-
-    /* For the menu.. */
-    load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
-
-    /* New text stuff. */
-    generate_text_chars();
-
-    chdir("styles");
-    chdir("default");
-    load_border(get_menu_border(), "border.png");
-#ifndef _arch_dreamcast
-#ifndef __BEOS__
-    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
-#endif /* __BEOS__ */    
-#endif /* _arch_dreamcast */
-
     return 0;
-}
-
-static void free_menu_tex()
-{
-    glDeleteTextures(1, &menu_title_tex.id);
-    glDeleteTextures(1, &get_mouse_cursor()->id);
-    glDeleteTextures(1, &get_menu_border()->id);
-    glDeleteTextures(1, &get_text_character(0)->id);
 }
 
 static int resize(int width, int height, int fullscreen)
 {
     free_menu_tex();
+
     if (!set_video(width, height, fullscreen))
     {
+        load_menu_tex();
         screen_width=width;
         screen_height=height;
         screen_fs=fullscreen;
         return 0;
     }
 
+    /* Have we now lost our original surface? */
     if (set_video(screen_width, screen_height, screen_fs))
     {
         DBG_ERROR("failed to restore original video mode: %ix%i %s",
             screen_width, screen_height, screen_fs ? "full screen" : "");
         exit(1);
     }
+
+    load_menu_tex();
     return 1;
 }
 
@@ -491,6 +499,8 @@ static void init_gui( int width, int height, int fullscreen)
         DBG_ERROR("failed to find a matching video mode");
         exit(1);
     }
+
+    load_menu_tex();
 
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
