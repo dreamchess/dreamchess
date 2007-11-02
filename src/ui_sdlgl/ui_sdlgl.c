@@ -501,17 +501,6 @@ static void init_gui( int width, int height, int fullscreen)
         exit(1);
     }
 
-    if (set_video( screen_width, screen_height, fullscreen ))
-    {
-        DBG_ERROR("failed to find a matching video mode");
-        exit(1);
-    }
-
-    init_gl();
-    resize_window(width, height);
-
-    load_menu_tex();
-
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
 
@@ -531,9 +520,20 @@ static void init_gui( int width, int height, int fullscreen)
     dc_draw_vmu_icon();
 #endif
 
-	#ifndef __BEOS__
+    if (set_video( screen_width, screen_height, fullscreen ))
+    {
+        DBG_ERROR("failed to find a matching video mode");
+        exit(1);
+    }
+
+    init_gl();
+    resize_window(width, height);
+
+    load_menu_tex();
+
+#ifndef __BEOS__
     SDL_ShowCursor(SDL_DISABLE);
-	#endif /* __BEOS__ */
+#endif /* __BEOS__ */
 
     if( SDL_NumJoysticks()>0 )
         joy=SDL_JoystickOpen(0);
