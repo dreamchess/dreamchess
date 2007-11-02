@@ -447,19 +447,23 @@ static int set_video( int width, int height, int fullscreen )
         return 1;
     }
 
-    init_gl();
-    resize_window(width, height);
-
     return 0;
 }
 
 static int resize(int width, int height, int fullscreen)
 {
+#ifdef _WIN32
     free_menu_tex();
+#endif
 
     if (!set_video(width, height, fullscreen))
     {
+#ifdef _WIN32
+        /* We lose the GL context on win32 */
+        init_gl();
         load_menu_tex();
+#endif
+        resize_window(width, height);
         screen_width=width;
         screen_height=height;
         screen_fs=fullscreen;
@@ -474,7 +478,10 @@ static int resize(int width, int height, int fullscreen)
         exit(1);
     }
 
+#ifdef _WIN32
     load_menu_tex();
+#endif
+
     return 1;
 }
 
@@ -499,6 +506,9 @@ static void init_gui( int width, int height, int fullscreen)
         DBG_ERROR("failed to find a matching video mode");
         exit(1);
     }
+
+    init_gl();
+    resize_window(width, height);
 
     load_menu_tex();
 
