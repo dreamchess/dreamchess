@@ -387,9 +387,13 @@ void set_resolution(int init)
 
 void toggle_fullscreen()
 {
+#ifdef _WIN32
+    DBG_WARN("fullscreen toggling is currently not supported on win32");
+#else
     option_t *option = config_get_option("full_screen");
     option_select_value_by_index(option, 1 - option->selected->index);
     set_resolution(0);
+#endif
 }
 
 #ifndef _arch_dreamcast
