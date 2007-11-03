@@ -32,13 +32,13 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
     return 1;
 }
 
-static gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message)
+gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message)
 {
     gg_widget_t *dialog;
     gg_widget_t *widget;
 
     gg_widget_t *vbox = gg_vbox_create(0);
-    gg_container_append(GG_CONTAINER(vbox), gg_label_create("Error: failed to change video mode"));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create(message));
     widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_close_cb, NULL);
@@ -46,6 +46,7 @@ static gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message)
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+    gg_dialog_set_position(GG_DIALOG(dialog), 320, 60, 0.5f, 0.0f);
 
     return GG_DIALOG(dialog);
 }
@@ -98,7 +99,7 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 	if (set_resolution(0)) {
 		config_restore(old_config);
 
-		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Failed to set video mode."));
+		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode"));
 	}
 
 	free(old_config);

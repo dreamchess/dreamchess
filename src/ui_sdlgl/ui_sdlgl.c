@@ -24,6 +24,7 @@
 #include "options.h"
 #include "theme.h"
 #include "system_config.h"
+#include "gamegui_dialogs.h"
 
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
@@ -47,6 +48,7 @@ static int screen_height=480;
 static int screen_fs=0;
 static int screen_ms=0;
 static int reflections=1;
+static int mode_set_failed=0;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -256,6 +258,11 @@ static config_t *do_menu(int *pgn)
     set_loading=FALSE;
     draw_credits(1);
     open_title_root_dialog();
+
+    if (mode_set_failed) {
+        gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults"));
+        mode_set_failed = 0;
+    }
 
     set_fade_start(gg_system_get_ticks());
     set_show_egg(FALSE);
@@ -534,6 +541,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
+        mode_set_failed = 1;
         return 1;
     }
 
