@@ -260,7 +260,7 @@ static config_t *do_menu(int *pgn)
     open_title_root_dialog();
 
     if (mode_set_failed) {
-        gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults"));
+        gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults", NULL));
         mode_set_failed = 0;
     }
 

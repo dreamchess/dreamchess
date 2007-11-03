@@ -394,6 +394,8 @@ static void init_resolution()
     if (set_resolution(1)) {
         DBG_LOG("switching to failsafe video mode defaults");
         config_set_failsafe_video();
+        config_save();
+
         if (set_resolution(1)) {
             exit(1);
         }

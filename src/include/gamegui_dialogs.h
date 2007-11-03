@@ -41,7 +41,7 @@ gg_dialog_t *dialog_victory_create(result_t *result);
 gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
 void show_message_dialog( char *message );
-gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message);
+gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *message2);
 
 /* FIXME */
 void set_quit_to_menu( int menu );

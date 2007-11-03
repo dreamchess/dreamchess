@@ -25,6 +25,7 @@
 #include "system_config.h"
 
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;
+static int old_ms;
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
@@ -32,13 +33,15 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
     return 1;
 }
 
-gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message)
+gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *message2)
 {
     gg_widget_t *dialog;
     gg_widget_t *widget;
 
     gg_widget_t *vbox = gg_vbox_create(0);
-    gg_container_append(GG_CONTAINER(vbox), gg_label_create(message));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create(message1));
+    if (message2)
+        gg_container_append(GG_CONTAINER(vbox), gg_label_create(message2));
     widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_close_cb, NULL);
@@ -99,10 +102,19 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 	if (set_resolution(0)) {
 		config_restore(old_config);
 
-		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode"));
+		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
 	}
 
 	free(old_config);
+
+#ifndef _WIN32
+	if (config_get_option("multisampling")->selected->index != old_ms) {
+		gg_dialog_open(dialog_error_create(gg_dialog_get_active(),
+		"Notice: a DreamChess restart is required for the",
+		"new multisampling settings to take effect"));
+	}
+#endif
+
 	return 1;
 }
 
@@ -176,7 +188,7 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    widget = gg_label_create("Multisampling *:");
+    widget = gg_label_create("Multisampling:");
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
@@ -215,6 +227,7 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
     option = config_get_option("multisampling");
+    old_ms = option->selected->index;
     widget = gg_option_create();
     create_option_values(GG_OPTION(widget), option);
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", multisampling_changed, NULL);
@@ -222,10 +235,6 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
-
-    widget = gg_label_create("(*) DreamChess restart required");
-    gg_align_set_alignment(GG_ALIGN(widget), 0.5f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox), widget);
 
 	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
