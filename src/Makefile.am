@@ -13,13 +13,11 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	comm_win32.c credits.c theme.c options.c pgn_parser.y pgn_scanner.l \
 	system_config.c
 
-dreamchess_LDADD = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
-	gamegui_dialogs/libgamegui_dialogs.a libs/gamegui/libgamegui.a \
-	audio/libaudio.a -lmxml @DREAMCHESS_LIBS@ @SDL_LIBS@
+dreamchess_LDADD = @WIN32_RC@ libs/libsan.a audio/libaudio.a @UI_LIBS@ \
+	libs/gamegui/libgamegui.a -lmxml @DREAMCHESS_LIBS@ @SDL_LIBS@
 
-dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a ui_sdlgl/libui_sdlgl.a \
-	libs/gamegui/libgamegui.a gamegui_dialogs/libgamegui_dialogs.a \
-	audio/libaudio.a @DREAMCHESS_LIBS@
+dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
+	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@
 
 win32_rc.$(OBJEXT): win32.rc win32.ico
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

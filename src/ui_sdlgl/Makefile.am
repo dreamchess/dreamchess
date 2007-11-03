@@ -1,5 +1,7 @@
 noinst_HEADERS = ui_sdlgl_3d.h ui_sdlgl.h matrix.h
+if UI_SDLGL
 noinst_LIBRARIES = libui_sdlgl.a
+endif
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src
 libui_sdlgl_a_SOURCES = ui_sdlgl.c ui_sdlgl_3d.c texture.c draw_shape.c text.c colours.c \

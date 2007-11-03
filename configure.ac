@@ -207,6 +207,14 @@ if test x"$have_sdl_mixer_h" = xyes -a \
 else supported_mixer_sdl="no"
 fi
 
+if test x"$supported_mixer_sdl" = xno; then
+	with_mixer_sdl="no"
+elif test x"$with_sdl" = xno; then
+	with_mixer_sdl="no"
+else
+	with_mixer_sdl="yes"
+fi
+
 AC_DEFUN([AC_PRINT_LIB],
 	if test x"$2" = xyes; then
 		echo "$1|  yes ($3)"
@@ -217,10 +225,20 @@ AC_DEFUN([AC_PRINT_LIB],
 
 if test x"$with_ui_sdlgl" = xyes; then
 	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_MIXER_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
+	AC_SUBST([UI_LIBS],"ui_sdlgl/libui_sdlgl.a gamegui_dialogs/libgamegui_dialogs.a")
 	AC_DEFINE([WITH_UI_SDLGL], [1], [Define to 1 if the sdlgl user interface driver should be compiled.])
 elif test x"$with_ui_sdl" = xyes; then
 	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS}"
-elif test x"$enable_linked_engine" != xyes; then
+fi
+
+AM_CONDITIONAL([UI_SDLGL], test x"$with_ui_sdlgl" = xyes)
+
+if test x"$with_mixer_sdl" = xyes; then
+	SDL_LIBS="${SDL_MIXER_LIBS} ${SDL_LIBS}"
+	AC_DEFINE([WITH_MIXER_SDL], [1], [Define to 1 to enable music and sound effects through SDL_mixer.])
+fi
+
+if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$enable_linked_engine" != xyes; then
 	SDL_CFLAGS=""
 	SDL_LIBS=""
 fi
@@ -350,6 +368,9 @@ _ACEOF
 AC_PRINT_LIB([libSDL_mixer   ], [$have_sdl_mixer], [$SDL_MIXER_LIBS])
 
 cat <<_ACEOF
+
+Supported:        $supported_mixer_sdl
+Build:            $with_mixer_sdl
 
 You can now run \`make'.
 
