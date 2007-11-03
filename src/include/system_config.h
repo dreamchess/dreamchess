@@ -26,6 +26,9 @@
 void config_init();
 void config_save();
 option_t *config_get_option(char *name);
+char *config_backup();
+int config_restore(char *string);
+void config_set_failsafe_video();
 
 typedef struct config_resolution {
 	int w, h;

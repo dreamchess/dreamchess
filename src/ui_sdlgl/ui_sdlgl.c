@@ -45,6 +45,7 @@ static int egg_req1=FALSE;
 static int screen_width=640;
 static int screen_height=480;
 static int screen_fs=0;
+static int screen_ms=0;
 static int reflections=1;
 
 static void music_callback(char *title, char *artist, char *album)
@@ -425,14 +426,15 @@ static void load_menu_tex()
 #endif /* _arch_dreamcast */
 }
 
-static int set_video( int width, int height, int fullscreen )
+static int set_video( int width, int height, int fullscreen, int ms )
 {
     int video_flags;
     SDL_Surface *surface;
 
     video_flags = SDL_OPENGL;          /* Enable OpenGL in SDL */
 
-    DBG_LOG("setting video mode to %ix%i %s", width, height, fullscreen ? "full screen" : "");
+    DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling",
+            width, height, fullscreen ? "on" : "off", ms);
 
     if ( fullscreen )
         video_flags |= SDL_FULLSCREEN;
@@ -440,23 +442,31 @@ static int set_video( int width, int height, int fullscreen )
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
 
+    if (ms) {
+        SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
+    } else {
+        SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 0 );
+    }
+    SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, ms );
+
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
-        DBG_WARN("video mode set failed: %s", SDL_GetError());
+        DBG_WARN("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
+            width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
         return 1;
     }
 
     return 0;
 }
 
-static int resize(int width, int height, int fullscreen)
+static int resize(int width, int height, int fullscreen, int ms)
 {
 #ifdef _WIN32
     free_menu_tex();
 #endif
 
-    if (!set_video(width, height, fullscreen))
+    if (!set_video(width, height, fullscreen, ms))
     {
 #ifdef _WIN32
         /* We lose the GL context on win32 */
@@ -467,14 +477,15 @@ static int resize(int width, int height, int fullscreen)
         screen_width=width;
         screen_height=height;
         screen_fs=fullscreen;
+        screen_ms=ms;
         return 0;
     }
 
     /* Have we now lost our original surface? */
-    if (set_video(screen_width, screen_height, screen_fs))
+    if (set_video(screen_width, screen_height, screen_fs, screen_ms))
     {
-        DBG_ERROR("failed to restore original video mode: %ix%i %s",
-            screen_width, screen_height, screen_fs ? "full screen" : "");
+        DBG_ERROR("failed to restore original video mode: %ix%i; %s; %ix multisampling",
+            screen_width, screen_height, screen_fs ? "full screen" : "", screen_ms);
         exit(1);
     }
 
@@ -486,7 +497,7 @@ static int resize(int width, int height, int fullscreen)
 }
 
 /** Implements ui_driver::init. */
-static void init_gui( int width, int height, int fullscreen)
+static int init_gui( int width, int height, int fullscreen, int ms)
 {
     SDL_Surface *icon;
     int i;
@@ -494,10 +505,11 @@ static void init_gui( int width, int height, int fullscreen)
     screen_width=width;
     screen_height=height;
     screen_fs=fullscreen;
+    screen_ms=ms;
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
     {
-        DBG_ERROR("video initialization failed: %s", SDL_GetError());
+        DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
         exit(1);
     }
 
@@ -520,10 +532,9 @@ static void init_gui( int width, int height, int fullscreen)
     dc_draw_vmu_icon();
 #endif
 
-    if (set_video( screen_width, screen_height, fullscreen ))
+    if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
-        DBG_ERROR("failed to find a matching video mode");
-        exit(1);
+        return 1;
     }
 
     init_gl();
@@ -567,6 +578,8 @@ static void init_gui( int width, int height, int fullscreen)
 
     /* Register music callback */
     audio_set_music_callback(music_callback);
+
+    return 0;
 }
 
 /** Implements ui_driver::update. */
@@ -622,10 +635,9 @@ static void show_result(result_t *res)
 }
 
 /** Implements ui_driver::init. */
-static int sdlgl_init(int width, int height, int fullscreen)
+static int sdlgl_init(int width, int height, int fullscreen, int ms)
 {
-    init_gui(width,height,fullscreen);
-    return 0;
+    return init_gui(width,height,fullscreen,ms);
 }
 
 /** Implements ui_driver::exit. */

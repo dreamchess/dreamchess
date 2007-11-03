@@ -358,14 +358,18 @@ void game_get_move_list(char ***list, int *total, int *view)
     *view = fan_list.view;
 }
 
-void set_resolution(int init)
+int set_resolution(int init)
 {
-    int width, height, fs;
+    int width, height, fs, ms;
     option_t *option = config_get_option("resolution");
     config_resolution_t *res = option->selected->data;
-    option = config_get_option("full_screen");
 
+    option = config_get_option("full_screen");
     fs = option->selected->index;
+
+    option = config_get_option("multisampling");
+
+    ms = option->selected->index * 2;
 
     if (res) {
         width = res->w;
@@ -380,9 +384,20 @@ void set_resolution(int init)
     }
 
     if (init)
-        ui->init(width, height, fs);
+        return ui->init(width, height, fs, ms);
     else
-        ui->resize(width, height, fs);
+        return ui->resize(width, height, fs, ms);
+}
+
+static void init_resolution()
+{
+    if (set_resolution(1)) {
+        DBG_LOG("switching to failsafe video mode defaults");
+        config_set_failsafe_video();
+        if (set_resolution(1)) {
+            exit(1);
+        }
+    }
 }
 
 void toggle_fullscreen()
@@ -541,7 +556,7 @@ int dreamchess(void *data)
         exit(1);
     }
 
-    set_resolution(1);
+    init_resolution();
 
     while (1)
     {

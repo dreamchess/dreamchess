@@ -24,12 +24,33 @@
 #include "gamegui_dialogs.h"
 #include "system_config.h"
 
-static gg_widget_t *resolution;
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;
-static int old_resolution;
-static int old_fs;
 
-static void create_option_values(gg_option_t *widget, option_t *option, int *save)
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_dialog_close();
+    return 1;
+}
+
+static gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message)
+{
+    gg_widget_t *dialog;
+    gg_widget_t *widget;
+
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create("Error: failed to change video mode"));
+    widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+
+    return GG_DIALOG(dialog);
+}
+
+static void create_option_values(gg_option_t *widget, option_t *option)
 {
     option_value_t *value;
 
@@ -37,20 +58,15 @@ static void create_option_values(gg_option_t *widget, option_t *option, int *sav
         gg_option_append_label(widget, value->name, 0.5f, 0.0f);
     }
 
-    *save = option->selected->index;
     gg_option_set_selected(widget, option->selected->index);
 }
 
 static int dialog_cancel_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data )
 {
-	option_t *option;
-	/* Restore config */
-	
-	option = config_get_option("resolution");
-	option_select_value_by_index(option, old_resolution);
+	char *old_config = extra_data;
 
-	option = config_get_option("full_screen");
-	option_select_value_by_index(option, old_fs);
+	config_restore(old_config);
+	free(old_config);
 
 	gg_dialog_close();
 	return 1;
@@ -61,6 +77,7 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 	int width;
 	int height;
 	option_t *option;
+	char *old_config = extra_data;
 
 	errno = 0;
 	width = strtol(gg_entry_get_text(GG_ENTRY(entry1)), NULL, 10);
@@ -76,8 +93,15 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 		option->value = height;
 	}
 
-	set_resolution(0);
 	gg_dialog_close();
+
+	if (set_resolution(0)) {
+		config_restore(old_config);
+
+		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Failed to set video mode."));
+	}
+
+	free(old_config);
 	return 1;
 }
 
@@ -115,13 +139,26 @@ static int fs_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, voi
         return 1;
 }
 
+static int multisampling_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+	int nr = gg_option_get_selected(GG_OPTION(widget));
+        option_t *option = config_get_option("multisampling");
+
+        option_select_value_by_index(option, nr);
+        return 1;
+}
+
 gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox, *vbox2, *hbox;
     gg_widget_t *widget;
+    gg_widget_t *resolution;
     option_t *option;
     char val[5];
+    char *old_config;
+
+    old_config = config_backup();
 
     vbox = gg_vbox_create(0);
     vbox2 = gg_vbox_create(0);
@@ -138,13 +175,17 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
+    widget = gg_label_create("Multisampling *:");
+    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     vbox2 = gg_vbox_create(0);
 
     option = config_get_option("resolution");
     resolution = gg_option_create();
-    create_option_values(GG_OPTION(resolution), option, &old_resolution);
+    create_option_values(GG_OPTION(resolution), option);
     gg_widget_subscribe_signal_name(resolution, resolution->id, "option_changed", resolution_changed, NULL);
     gg_container_append(GG_CONTAINER(vbox2), resolution);
 
@@ -168,20 +209,30 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
 
     option = config_get_option("full_screen");
     widget = gg_option_create();
-    create_option_values(GG_OPTION(widget), option, &old_fs);
+    create_option_values(GG_OPTION(widget), option);
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", fs_changed, NULL);
+    gg_container_append(GG_CONTAINER(vbox2), widget);
+
+    option = config_get_option("multisampling");
+    widget = gg_option_create();
+    create_option_values(GG_OPTION(widget), option);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", multisampling_changed, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
+    widget = gg_label_create("(*) DreamChess restart required");
+    gg_align_set_alignment(GG_ALIGN(widget), 0.5f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
 	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_ok_cb, NULL);
+        dialog_ok_cb, old_config);
     gg_container_append(GG_CONTAINER(vbox), widget);
 	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_cancel_cb, NULL);
+        dialog_cancel_cb, old_config);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);

@@ -31,8 +31,8 @@
 typedef struct ui_driver
 {
     char *name;
-    int (* init) (int height, int width, int fullscreen);
-    int (* resize) (int height, int width, int fullscreen);
+    int (* init) (int height, int width, int fullscreen, int ms);
+    int (* resize) (int height, int width, int fullscreen, int ms);
     int (* exit) (void);
     config_t *( *config) (int *pgn_slot);
     void (* update) (board_t *board, move_t *move);

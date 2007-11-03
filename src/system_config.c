@@ -90,15 +90,49 @@ void config_init()
 	option = option_group_add_int(config, "custom_resolution_height");
 	option->value = 480;
 
+	option = option_group_add_option(config, "multisampling");
+	option_add_value(option, "Off", NULL);
+	option_add_value(option, "2x", NULL);
+	option_add_value(option, "4x", NULL);
+	option_add_value(option, "6x", NULL);
+	option_add_value(option, "8x", NULL);
+
 	option = option_group_add_string(config, "1st_engine");
 	option->string = strdup("dreamer");
 
 	option_group_load_xml(config);
 }
 
+void config_set_failsafe_video()
+{
+	option_t *option = option_group_find_option(config, "resolution");
+	option_select_value_by_name(option, "640x480");
+
+	option = option_group_find_option(config, "full_screen");
+	option_select_value_by_name(option, "Off");
+
+	option = option_group_find_option(config, "custom_resolution_width");
+	option->value = 640;
+	option = option_group_find_option(config, "custom_resolution_height");
+	option->value = 480;
+
+	option = option_group_find_option(config, "multisampling");
+	option_select_value_by_name(option, "Off");
+}
+
 void config_save()
 {
 	option_group_save_xml(config);
+}
+
+char *config_backup()
+{
+	return option_group_save_string(config);
+}
+
+int config_restore(char *string)
+{
+	return option_group_load_string(config, string);
 }
 
 option_t *config_get_option(char *name)

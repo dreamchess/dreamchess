@@ -56,7 +56,7 @@ int game_save( int slot );
 int game_load( int slot );
 void game_make_move_str(char *move_str, int ui_update);
 
-void set_resolution(int init);
+int set_resolution(int init);
 void toggle_fullscreen();
 
 #endif /* DREAMCHESS_H */

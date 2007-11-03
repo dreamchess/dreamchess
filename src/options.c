@@ -93,13 +93,10 @@ option_t *option_group_add_string(option_group_t *group, char *name)
 	return option;
 }
 
-int option_group_save_xml(option_group_t *group)
+static mxml_node_t *option_group_save(option_group_t *group)
 {
 	mxml_node_t *xml;
 	option_t *option;
-	FILE *f;
-	char *filename;
-	int error;
 
 	xml = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
 
@@ -114,6 +111,18 @@ int option_group_save_xml(option_group_t *group)
                 else
                         mxmlNewText(data, 0, option->string);
 	}
+
+	return xml;
+}
+
+int option_group_save_xml(option_group_t *group)
+{
+	mxml_node_t *xml;
+	FILE *f;
+	char *filename;
+	int error;
+
+	xml = option_group_save(group);
 
 	filename = malloc(strlen(group->name) + 4 + 1);
 	strcpy(filename, group->name);
@@ -138,30 +147,17 @@ int option_group_save_xml(option_group_t *group)
 	return error;
 }
 
-int option_group_load_xml(option_group_t *group)
+char *option_group_save_string(option_group_t *group)
 {
-	FILE *f;
-	mxml_node_t *tree, *node;
-	char *filename;
+	mxml_node_t *xml;
 
-	filename = malloc(strlen(group->name) + 4 + 1);
-	strcpy(filename, group->name);
-	strcat(filename, ".xml");
+	xml = option_group_save(group);
+	return mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+}
 
-	f = fopen(filename, "r");
-	if (f)
-		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
-	else {
-		DBG_WARN("failed to open '%s'", filename);
-		return -1;
-	}
-
-	fclose(f);
-
-	if (!tree) {
-		DBG_ERROR("failed to parse '%s'", filename);
-		return -1;
-	}
+static void option_group_load(option_group_t *group, mxml_node_t *tree)
+{
+	mxml_node_t *node;
 
 	node = tree;
 	while ((node = mxmlWalkNext(node, tree, MXML_DESCEND))) {
@@ -193,6 +189,48 @@ int option_group_load_xml(option_group_t *group)
                                 option->string = strdup(node->value.opaque);
 		}
 	}
+}
+
+int option_group_load_xml(option_group_t *group)
+{
+	FILE *f;
+	mxml_node_t *tree;
+	char *filename;
+
+	filename = malloc(strlen(group->name) + 4 + 1);
+	strcpy(filename, group->name);
+	strcat(filename, ".xml");
+
+	f = fopen(filename, "r");
+	if (f)
+		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
+	else {
+		DBG_WARN("failed to open '%s'", filename);
+		return -1;
+	}
+
+	fclose(f);
+
+	if (!tree) {
+		DBG_ERROR("failed to parse '%s'", filename);
+		return -1;
+	}
+
+        option_group_load(group, tree);
+
+	return 0;
+}
+
+int option_group_load_string(option_group_t *group, char *string)
+{
+	mxml_node_t *tree =mxmlLoadString(NULL, string, MXML_OPAQUE_CALLBACK);
+
+	if (!tree) {
+		DBG_ERROR("failed to parse XML string");
+		return -1;
+	}
+
+	option_group_load(group, tree);
 
 	return 0;
 }
