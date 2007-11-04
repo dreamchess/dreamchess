@@ -68,7 +68,6 @@ int get_screen_height()
 static int menu_state;
 enum {
     MENU_STATE_FADE_IN,
-    MENU_STATE_PRESS_KEY,
     MENU_STATE_IN_MENU,
     MENU_STATE_LOAD,
     MENU_STATE_FADE_OUT,
@@ -235,14 +234,6 @@ static int poll_event(gg_event_t *event)
     return 0;
 }
 
-static void draw_press_key_message()
-{
-    char *msg = "Press any key or button to start";
-
-    text_draw_string_bouncy(SCREEN_WIDTH / 2 - text_width(msg) * 0.75, 40,
-                            msg, 1.5f, get_col(COL_WHITE));
-}
-
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
@@ -296,25 +287,12 @@ static config_t *do_menu(int *pgn)
         {
         case MENU_STATE_FADE_IN:
             while (poll_event(&event));
-            draw_press_key_message();
+            gg_dialog_render_all();
 
             if (!draw_fade(FADE_IN))
             {
-                menu_state = MENU_STATE_PRESS_KEY;
+                menu_state = MENU_STATE_IN_MENU;
                 draw_credits(1);
-            }
-            break;
-
-        case MENU_STATE_PRESS_KEY:
-            draw_press_key_message();
-            draw_credits(0);
-
-            while (poll_event(&event))
-            {
-                if (event.type == GG_EVENT_KEY
-                        || (event.type == GG_EVENT_MOUSE
-                            && event.mouse.type == GG_MOUSE_BUTTON_DOWN))
-                    menu_state = MENU_STATE_IN_MENU;
             }
             break;
 
