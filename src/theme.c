@@ -33,11 +33,9 @@
 #include "options.h"
 #include "dir.h"
 
-TAILQ_HEAD(, theme_struct) themes;
 static music_packs_t music_packs;
-int theme_count=0;
 
-static int load_opaque(mxml_node_t *top, char *name, char *dest)
+static int load_opaque(mxml_node_t *top, char *name, char **dest)
 {
     mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
     if (node)
@@ -45,25 +43,13 @@ static int load_opaque(mxml_node_t *top, char *name, char *dest)
         node = mxmlWalkNext(node, node, MXML_DESCEND);
         if (node && node->type == MXML_OPAQUE)
         {
-            strcpy(dest, node->value.opaque);
+            free(*dest);
+            *dest = strdup(node->value.opaque);
             return 0;
         }
     }
     return 1;
 }
-
-#if 0
-static void load_opaque(mxml_node_t *top, char *name, char **dest)
-{
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-            *dest=strdup(node->value.opaque);
-    }
-}
-#endif
 
 void theme_add_theme( char *xmlfile, option_t *option )
 {
@@ -86,12 +72,12 @@ void theme_add_theme( char *xmlfile, option_t *option )
         struct theme_struct *cur_theme = malloc(sizeof(struct theme_struct));
         mxml_node_t *node, *node2;
         /* Set theme to defaults.. incase we have missing bits..*/
-        sprintf( cur_theme->name, "Un named" );
-        sprintf( cur_theme->style, "default" );
-        sprintf( cur_theme->pieces, "classiclow" );
-        sprintf( cur_theme->board, "classic" );
-        sprintf( cur_theme->white_name, "White" );
-        sprintf( cur_theme->black_name, "Black" );
+        cur_theme->name = strdup("Untitled");
+        cur_theme->style = strdup("default");
+        cur_theme->pieces = strdup("classiclow");
+        cur_theme->board = strdup("classic");
+        cur_theme->white_name = strdup("White");
+        cur_theme->black_name = strdup("Black");
         cur_theme->lighting=TRUE;
         cur_theme->piece_tex_spin_speed=0;
         cur_theme->selector.colour[0]=1.0;
@@ -102,12 +88,12 @@ void theme_add_theme( char *xmlfile, option_t *option )
         cur_theme->selector.size=0.5;
         cur_theme->selector.bouncespeed=0;
 
-        load_opaque(theme, "name", cur_theme->name);
-        load_opaque(theme, "style", cur_theme->style);
-        load_opaque(theme, "pieces", cur_theme->pieces);
-        load_opaque(theme, "board", cur_theme->board);
-        load_opaque(theme, "white_name", cur_theme->white_name);
-        load_opaque(theme, "black_name", cur_theme->black_name);
+        load_opaque(theme, "name", &cur_theme->name);
+        load_opaque(theme, "style", &cur_theme->style);
+        load_opaque(theme, "pieces", &cur_theme->pieces);
+        load_opaque(theme, "board", &cur_theme->board);
+        load_opaque(theme, "white_name", &cur_theme->white_name);
+        load_opaque(theme, "black_name", &cur_theme->black_name);
 
         node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
         if (node)
@@ -162,10 +148,6 @@ void theme_add_theme( char *xmlfile, option_t *option )
                     cur_theme->selector.colour[3]=atof(node2->value.opaque);
                 }               
             }
-
-            //themes[theme_count].selector_colour[0]=atof(mxmlElementGetAttr(node, "red"));
-            //themes[theme_count].selector_colour[1]=atof(mxmlElementGetAttr(node, "green"));
-            //themes[theme_count].selector_colour[2]=atof(mxmlElementGetAttr(node, "blue"));
         }
 
         node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);

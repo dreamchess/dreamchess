@@ -38,12 +38,12 @@ typedef struct theme_selector
 
 typedef struct theme_struct
 {
-    char name[25];
-    char style[25];
-    char pieces[25];
-    char board[25];
-    char white_name[25];
-    char black_name[25];
+    char *name;
+    char *style;
+    char *pieces;
+    char *board;
+    char *white_name;
+    char *black_name;
     int piece_tex_spin_speed;
     char lighting;
     theme_selector_t selector;
