@@ -100,6 +100,24 @@ void config_init()
 	option = option_group_add_string(config, "1st_engine");
 	option->string = strdup("dreamer");
 
+	option = option_group_add_option(config, "game_mode");
+	option_add_value(option, "Human vs. CPU", NULL);
+	option_add_value(option, "CPU vs. Human", NULL);
+	option_add_value(option, "Human vs. Human", NULL);
+
+	option = option_group_add_option(config, "difficulty");
+	option_add_value(option, "Easy", NULL);
+	option_add_value(option, "Normal", NULL);
+	option_select_value_by_name(option, "Normal");
+
+	option = option_group_add_option(config, "level");
+	for (i = 1; i <= 8; i++) {
+		char buf[2];
+
+		snprintf(buf, 2, "%d", i);
+		option_add_value(option, buf, NULL);
+	}
+
 	option_group_load_xml(config);
 }
 

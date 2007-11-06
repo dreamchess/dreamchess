@@ -20,11 +20,18 @@
 
 #include "ui_sdlgl.h"
 #include "options.h"
+#include "system_config.h"
 
-static int selected_player_layout=0;
-static int selected_difficulty=1;
-static int selected_level=0;
-static int flip_board;
+static void create_option_values(gg_option_t *widget, option_t *option)
+{
+    option_value_t *value;
+
+    OPTION_VALUE_FOREACH(value, option) {
+        gg_option_append_label(widget, value->name, 0.5f, 0.0f);
+    }
+
+    gg_option_set_selected(widget, option->selected->index);
+}
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
@@ -32,25 +39,21 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
     return 1;
 }
 
-void set_selected_player_layout( int set )
-{
-    selected_player_layout=set;
-}
-
-void set_selected_difficulty( int set )
-{
-    selected_difficulty=set;
-}
-
-void set_selected_level( int set )
-{
-    selected_level=set;
-}
-
 /** @brief Triggers gameplay start based on currently selected options. */
 static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
+    int selected_difficulty, selected_level, selected_player_layout;
+    option_t *option;
+
     set_set_loading(TRUE);
+
+    option = config_get_option("game_mode");
+    selected_player_layout = option->selected->index;
+    option = config_get_option("difficulty");
+    selected_difficulty = option->selected->index;
+    option = config_get_option("level");
+    selected_level = option->selected->index;
+
     DBG_LOG("starting a new game - difficulty: %i - level: %i - player scheme: %i", 
         selected_difficulty, selected_level, selected_player_layout);
 
@@ -68,21 +71,20 @@ static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *dat
     case GAME_TYPE_HUMAN_VS_CPU:
         get_config()->player[WHITE] = PLAYER_UI;
         get_config()->player[BLACK] = PLAYER_ENGINE;
-        flip_board = 0;
         break;
     case GAME_TYPE_CPU_VS_HUMAN:
         get_config()->player[WHITE] = PLAYER_ENGINE;
         get_config()->player[BLACK] = PLAYER_UI;
-        flip_board = 1;
         break;
     case GAME_TYPE_HUMAN_VS_HUMAN:
         get_config()->player[WHITE] = PLAYER_UI;
         get_config()->player[BLACK] = PLAYER_UI;
-        flip_board = 0;
     }
 
     get_config()->difficulty = selected_difficulty;
     get_config()->cpu_level = selected_level + 1;
+
+    config_save();
 
     return 1;
 }
@@ -92,12 +94,6 @@ static int menu_title_quit(gg_widget_t *widget, gg_widget_t *emitter, void *data
 {
     set_title_process_retval(1);
     gg_dialog_close();
-    return 1;
-}
-
-static int dialog_title_players(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    selected_player_layout=gg_option_get_selected(GG_OPTION(widget));
     return 1;
 }
 
@@ -113,15 +109,10 @@ static int dialog_title_root_load(gg_widget_t *widget, gg_widget_t *emitter, voi
     return 1;
 }
 
-static int dialog_title_difficulty(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+static int dialog_title_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    selected_difficulty = gg_option_get_selected(GG_OPTION(widget));
-    return 1;
-}
-
-static int dialog_title_level(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    selected_level=gg_option_get_selected(GG_OPTION(widget));
+    option_t *option = config_get_option((char *) extra_data);
+    option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
     return 1;
 }
 
@@ -139,70 +130,55 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_widget_t *vbox2;
     gg_widget_t *hbox;
     gg_widget_t *label;
+    option_t *option;
 
     set_pgn_slot(-1);
 
-    widget = gg_action_create_with_label("Start Game", 0.0f, 0.0f);
-
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_start, NULL);
     vbox = gg_vbox_create(0);
-    gg_container_append(GG_CONTAINER(vbox), widget);
 
-    label = gg_label_create("  Players:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    label = gg_label_create("Players:");
     vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("  Difficulty:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    label = gg_label_create("Difficulty:");
     gg_container_append(GG_CONTAINER(vbox2), label);
 
-    label = gg_label_create("  Level:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
+    label = gg_label_create("Level:");
     gg_container_append(GG_CONTAINER(vbox2), label);
-
-   /* label = gg_label_create("  Theme:");
-    gg_align_set_alignment(GG_ALIGN(label), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label);*/
 
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
 
+    option = config_get_option("game_mode");
     widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "Human vs. CPU", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "CPU vs. Human", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Human vs. Human", 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_players, NULL);
+    create_option_values(GG_OPTION(widget), option);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_cb, "game_mode");
     vbox2 = gg_vbox_create(0);
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_player_layout);
 
+    option = config_get_option("difficulty");
     widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "Easy", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "Normal", 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_difficulty, NULL);
+    create_option_values(GG_OPTION(widget), option);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_cb, "difficulty");
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_difficulty);
 
+    option = config_get_option("level");
     widget = gg_option_create();
-    gg_option_append_label(GG_OPTION(widget), "1", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "2", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "3", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "4", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "5", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "6", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "7", 0.5f, 0.0f);
-    gg_option_append_label(GG_OPTION(widget), "8", 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_level, NULL);
+    create_option_values(GG_OPTION(widget), option);
+    gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_cb, "level");
     gg_container_append(GG_CONTAINER(vbox2), widget);
-    gg_option_set_selected(GG_OPTION(widget),selected_level);
 
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Start Game", 0.5f, 0.0f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_start, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
+    gg_vbox_set_selected(vbox, 1);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);

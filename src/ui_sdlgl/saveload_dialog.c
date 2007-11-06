@@ -260,20 +260,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
         gg_container_append(GG_CONTAINER(vbox), widget);
     }
 
-    if ( saving )
-    {
-        widget = gg_action_create_with_label("Save Game", 0.0f, 0.0f);
-        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
-            dialog_savegame_save, vbox);
-    }
-    else
-    {
-        widget = gg_action_create_with_label("Load Game", 0.0f, 0.0f);
-        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
-            dialog_loadgame_load, vbox);
-    }
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
     widget = gg_option_create();
     for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
@@ -287,7 +273,21 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     if ( changing_slot )
         gg_option_set_selected(GG_OPTION(widget), saveload_selected);
 
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    if ( saving )
+    {
+        widget = gg_action_create_with_label("Save Game", 0.5f, 0.0f);
+        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
+            dialog_savegame_save, vbox);
+    }
+    else
+    {
+        widget = gg_action_create_with_label("Load Game", 0.5f, 0.0f);
+        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
+            dialog_loadgame_load, vbox);
+    }
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", 
         dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
@@ -305,7 +305,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_container_append(GG_CONTAINER(hbox), vbox );
 
     if ( changing_slot )
-        gg_vbox_set_selected(vbox, padding+1 );
+        gg_vbox_set_selected(vbox, padding );
 
     /* Dialog stuff */
     gg_container_append(GG_CONTAINER(rootvbox), hbox);

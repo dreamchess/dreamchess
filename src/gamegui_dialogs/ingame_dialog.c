@@ -52,15 +52,6 @@ static int view_next(gg_widget_t *widget, gg_widget_t *emitter, void *data, void
     return 1;
 }
 
-static int dialog_return_to_game(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    gg_dialog_close();
-
-    /* Close parent too..*/
-    gg_dialog_close();
-    return 1;
-}
-
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_dialog_close();
@@ -73,35 +64,30 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
  */
 gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent)
 {
-    gg_widget_t *dialog;
+    gg_widget_t *dialog, *widget;
     gg_widget_t *vbox = gg_vbox_create(0);
 
-    gg_widget_t *widget = gg_action_create_with_label("Return To Game", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_return_to_game, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-
-    widget = gg_action_create_with_label("  Retract Move", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Retract Move", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         retract_move, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("  Move Now", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Move Now", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         move_now, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("  View Previous Move", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("View Previous Move", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         view_prev, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("  View Next Move", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("View Next Move", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         view_next, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Back..", 0.0f, 0.0f);
+    widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);

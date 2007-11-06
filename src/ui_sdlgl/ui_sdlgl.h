@@ -156,8 +156,6 @@ gg_dialog_t *dialog_victory_create(result_t *result);
 void show_message_dialog( char *message );
 
 /* title_dialog.c */
-void set_selected_player_layout( int set );
-void set_selected_difficulty( int set );
 gg_dialog_t *dialog_title_root_create();
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
 void open_title_root_dialog();
