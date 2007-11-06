@@ -774,6 +774,20 @@ extern int piece_moving_x_done;
 extern int piece_moving_y_done;
 extern int piece_moving_done;
 
+/* Draw a selected piece after the rest.. */
+int selected_piece_render;
+int selected_piece_model;
+float selected_piece_alpha;
+coord3_t *selected_piece_lighting;
+int selected_piece_grab;
+
+/* Draw any moving piece.. */
+int moving_piece_render;
+int moving_piece_model;
+float moving_piece_alpha;
+coord3_t *moving_piece_lighting;
+int moving_piece_grab;
+
 static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
 {
     int i,j,k;
@@ -785,6 +799,11 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
     light_inv.z = light.z;
 
     moved=(float)((SDL_GetTicks()-piece_moving_start)/(1000/PIECE_MOVE_SPEED));
+    selected_piece_grab=FALSE;
+    moving_piece_grab=FALSE;
+    selected_piece_render=FALSE;  
+    moving_piece_render=FALSE;  
+
 
     /* Draw the pieces.. */
     for (i = 7; i >= 0; i--)
@@ -837,6 +856,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     else
                         glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
                                      piece_moving_ypos, 0.02);
+
                 }
                 else
                     glTranslatef(-3.5f + j, -3.5f + i, 0.02);
@@ -857,8 +877,51 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     glScalef(1.0f, 1.0f, -1.0f);
                 }
 
-                model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), use_lighting ? l : NULL, 1);
+                if ( i * 8 + j == selected )
+                {
+                    selected_piece_render=TRUE;
+                    selected_piece_model=k;
+                    selected_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
+                    selected_piece_lighting=use_lighting ? l : NULL;
+                    selected_piece_grab=TRUE;
+                    glPushMatrix();
+                }
+                else
+                    selected_piece_grab=FALSE;
+
+                if ( piece_moving_done == FALSE && piece_moving_dest == (i*8+j) )
+                {
+                    moving_piece_render=TRUE;
+                    moving_piece_model=k;
+                    moving_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
+                    moving_piece_lighting=use_lighting ? l : NULL;
+                    moving_piece_grab=TRUE;
+                    glPushMatrix();
+                }             
+                else
+                    moving_piece_grab=FALSE;         
+
+                if ( !selected_piece_grab && !moving_piece_grab )
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 
+                        use_lighting ? l : NULL, 1);                    
             }
+        }
+
+        /* Do we need to draw a selected piece? */
+        if ( selected_piece_render )
+        {
+            glPopMatrix();
+            glColor3f(0.0,0.0,1.0);
+            model_render(&model[selected_piece_model], selected_piece_alpha, selected_piece_lighting, 1);
+            glColor3f(1.0,1.0,1.0);
+        }
+
+        if ( moving_piece_render )
+        {
+            glPopMatrix();
+            glColor3f(1.0,0.0,0.0);
+            model_render(&model[moving_piece_model], moving_piece_alpha, moving_piece_lighting, 1);
+            glColor3f(1.0,1.0,1.0);
         }
 }
 
