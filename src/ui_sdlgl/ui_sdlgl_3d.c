@@ -1227,7 +1227,7 @@ void reset_3d()
 {
     selected = -1;
     selector = 0;
-    selector_hide_time = SDL_GetTicks() + SELECTOR_SHOW_TICKS;
+    selector_hide_time = 0; //SDL_GetTicks() + SELECTOR_SHOW_TICKS;
     if (is_2d)
     {
         x_rotation = -10.0f;
