@@ -202,7 +202,7 @@ void theme_find_themes(option_t *option)
     ch_userdir();
     find_themes(option);
 
-    option_select_value_by_name(option, "Classic Wooden");
+    option_select_value_by_name(option, "Classic Wooden HQ");
 }
 
 static void add_music_pack(char *dir)
