@@ -604,6 +604,37 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     int ticks = SDL_GetTicks();
     float tex_spin_pos=0.0f;
 
+    if ( alpha == 1.0 )
+    {
+     	glPushMatrix();
+      	glLoadIdentity();
+      	glTranslatef(0, -0.5f, -12.0f );
+
+      	glEnable(GL_LIGHTING);
+  	    glEnable(GL_LIGHT0);
+  	 
+      	// Create light components
+  	    GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  	    GLfloat diffuseLight[] = { 0.55f, 0.55f, 0.55, 1.0f };
+  	    GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+  	    GLfloat position[] = { 10.0f, -10.0f, 5.0f, 1.0f };
+  	 
+  	    // Assign created components to GL_LIGHT0
+  	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+  	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+  	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+  	    glLightfv(GL_LIGHT0, GL_POSITION, position);
+  	 
+  	    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+  	 
+  	    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+  	    glMateriali(GL_FRONT, GL_SHININESS, 128);
+  	 
+  	    glPopMatrix();
+    }
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
@@ -628,7 +659,7 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
             unsigned int *data = mesh->group[g].data;
             float angle = 1.0f;
 
-            if (light)
+           /* if (light)
             {
                 angle = arccos(dot_product(mesh->normal[data[i] * 3],
                                            mesh->normal[data[i] * 3 + 1],
@@ -646,15 +677,21 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
                     angle *= 1.5;
                     angle += 0.25f;
                 }
-            }
+            }*/
+
+            angle=180;
 
             if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
-            glColor4f(0, 0xff, 0, 1);
+                glColor4f(0, 0xff, 0, 1);
             else
-            glColor4f(angle, angle, angle, alpha);
+                glColor4f(angle, angle, angle, alpha);
 
             glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
                          mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
+
+ 	        glNormal3f(mesh->normal[data[i] * 3],
+  	                     mesh->normal[data[i] * 3 + 1],
+  	                     mesh->normal[data[i] * 3 + 2]);
 
             glVertex3f(mesh->vertex[data[i] * 3],
                        mesh->vertex[data[i] * 3 + 1],
@@ -665,6 +702,8 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     }
 
     glDisable(GL_TEXTURE_2D);
+ 	    glDisable(GL_LIGHTING);
+  	    glDisable(GL_LIGHT0);
 }
 
 void set_theme(struct theme_struct *theme, texture_t texture)
