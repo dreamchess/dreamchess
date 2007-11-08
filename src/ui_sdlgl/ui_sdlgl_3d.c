@@ -604,7 +604,7 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     int ticks = SDL_GetTicks();
     float tex_spin_pos=0.0f;
 
-    if ( alpha == 1.0 )
+    if ( light && alpha == 1.0 )
     {
      	glPushMatrix();
       	glLoadIdentity();
