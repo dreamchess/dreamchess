@@ -914,6 +914,8 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
 
                 if (!is_2d && flip) {
                     glScalef(1.0f, 1.0f, -1.0f);
+                    /* Make sure flipped piece does note extend above the board */
+                    glTranslatef(0, 0, 0.03f);
                 }
 
                 if ( i * 8 + j == selected )
