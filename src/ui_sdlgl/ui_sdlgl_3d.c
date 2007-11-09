@@ -32,19 +32,6 @@
 #define TRUE  1
 #define FALSE 0
 
-#ifdef _arch_dreamcast
-#include <dc/fmath.h>
-#define sin fsin
-#define cos fcos
-#define sqrt fsqrt
-#define magnitude_sqr(X, Y, Z) fipr_magnitude_sqr(X, Y, Z, 0)
-#define dot_product(X, Y, Z, XX, YY, ZZ) fipr(X, Y, Z, 0, XX, YY, ZZ, 0)
-#else
-#include <math.h>
-#define magnitude_sqr in_product_self
-#define dot_product in_product
-#endif
-
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -201,18 +188,18 @@ static int selector, selected;
 static float x_rotation, z_rotation;
 static int selector_hide_time;
 
-int piece_moving_done=1;
-int piece_moving_start;
-int piece_moving_dest;
-int piece_moving_source;
-int piece_moving_x_done;
-int piece_moving_y_done;
-float piece_moving_source_xpos;
-float piece_moving_source_ypos;
-float piece_moving_dest_xpos;
-float piece_moving_dest_ypos;
-float piece_moving_xpos;
-float piece_moving_ypos;
+static int piece_moving_done=1;
+static int piece_moving_start;
+static int piece_moving_dest;
+static int piece_moving_source;
+static int piece_moving_x_done;
+static int piece_moving_y_done;
+static float piece_moving_source_xpos;
+static float piece_moving_source_ypos;
+static float piece_moving_dest_xpos;
+static float piece_moving_dest_ypos;
+static float piece_moving_xpos;
+static float piece_moving_ypos;
 
 int get_piece_moving_done()
 {
@@ -585,8 +572,6 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-coord3_t light = {0.0f, 0.0f, -1.0f};
-
 #define DC_PI 3.14159265358979323846
 
 inline float arccos(float f)
@@ -596,7 +581,7 @@ inline float arccos(float f)
                                                        + .1383216735 * f) * f) * f);
 }
 
-void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
+void model_render(model_t *model, float alpha, int light, char tex_spin )
 {
     mesh_t *mesh = model->mesh;
     int g;
@@ -606,33 +591,8 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
 
     if ( light && alpha == 1.0 )
     {
-     	glPushMatrix();
-      	glLoadIdentity();
-      	glTranslatef(0, -0.5f, -12.0f );
-
       	glEnable(GL_LIGHTING);
-  	    glEnable(GL_LIGHT0);
-  	 
-      	// Create light components
-  	    GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-  	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
-  	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
-  	 
-  	    // Assign created components to GL_LIGHT0
-  	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-  	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-  	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-  	    glLightfv(GL_LIGHT0, GL_POSITION, position);
-  	 
-  	    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-  	 
-  	    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
-  	    glMateriali(GL_FRONT, GL_SHININESS, 128);
-  	 
-  	    glPopMatrix();
+        glEnable(GL_LIGHT0);
     }
 
     glEnable(GL_TEXTURE_2D);
@@ -657,39 +617,16 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
         for (i = 0; i < mesh->group[g].len; i++)
         {
             unsigned int *data = mesh->group[g].data;
-            float angle = 1.0f;
-
-           /* if (light)
-            {
-                angle = arccos(dot_product(mesh->normal[data[i] * 3],
-                                           mesh->normal[data[i] * 3 + 1],
-                                           mesh->normal[data[i] * 3 + 2],
-                                           light->x, light->y, light->z));
-
-                angle /= 2.8;
-
-                if (angle < 0.5f)
-                    angle = 0.25f;
-
-                else
-                {
-                    angle -= 0.5f;
-                    angle *= 1.5;
-                    angle += 0.25f;
-                }
-            }*/
-
-            angle=180;
 
             if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
-                glColor4f(0, 0xff, 0, 1);
+                glColor4f(0, 1, 0, 1);
             else
-                glColor4f(angle, angle, angle, alpha);
+                glColor4f(1, 1, 1, alpha);
 
             glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
                          mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
 
- 	        glNormal3f(mesh->normal[data[i] * 3],
+            glNormal3f(mesh->normal[data[i] * 3],
   	                     mesh->normal[data[i] * 3 + 1],
   	                     mesh->normal[data[i] * 3 + 2]);
 
@@ -702,8 +639,8 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
     }
 
     glDisable(GL_TEXTURE_2D);
- 	    glDisable(GL_LIGHTING);
-  	    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
 }
 
 void set_theme(struct theme_struct *theme, texture_t texture)
@@ -800,42 +737,24 @@ void freemodels()
 /* How many squares per second? */
 #define PIECE_MOVE_SPEED 3.0
 
-extern float piece_moving_source_xpos;
-extern float piece_moving_source_ypos;
-extern float piece_moving_dest_xpos;
-extern float piece_moving_dest_ypos;
-extern float piece_moving_xpos;
-extern float piece_moving_ypos;
-extern int piece_moving_dest;
-extern int piece_moving_source;
-extern int piece_moving_start;
-extern int piece_moving_x_done;
-extern int piece_moving_y_done;
-extern int piece_moving_done;
-
 /* Draw a selected piece after the rest.. */
-int selected_piece_render;
-int selected_piece_model;
-float selected_piece_alpha;
-coord3_t *selected_piece_lighting;
-int selected_piece_grab;
+static int selected_piece_render;
+static int selected_piece_model;
+static float selected_piece_alpha;
+static int selected_piece_lighting;
+static int selected_piece_grab;
 
 /* Draw any moving piece.. */
-int moving_piece_render;
-int moving_piece_model;
-float moving_piece_alpha;
-coord3_t *moving_piece_lighting;
-int moving_piece_grab;
+static int moving_piece_render;
+static int moving_piece_model;
+static float moving_piece_alpha;
+static int moving_piece_lighting;
+static int moving_piece_grab;
 
 static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
 {
     int i,j,k;
     float moved=0;
-    coord3_t light_inv;
-
-    light_inv.x = -light.x;
-    light_inv.y = -light.y;
-    light_inv.z = light.z;
 
     moved=(float)((SDL_GetTicks()-piece_moving_start)/(1000/PIECE_MOVE_SPEED));
     selected_piece_grab=FALSE;
@@ -850,7 +769,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         {
             if ((k = board->square[(0/*flip_board*/ ? 63 - (i*8+j) : i*8+j)]) != NONE)
             {
-                coord3_t *l = &light;
                 glLoadIdentity();
                 glTranslatef(0, -0.5f, -12.0f );
                 glRotatef(rot_x, 1, 0, 0);
@@ -909,7 +827,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                 else if (k < 12 && IS_BLACK(k))
                 {
                     glRotatef(180, 0, 0, 1);
-                    l = &light_inv;
                 }
 
                 if (!is_2d && flip) {
@@ -923,7 +840,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     selected_piece_render=TRUE;
                     selected_piece_model=k;
                     selected_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
-                    selected_piece_lighting=use_lighting ? l : NULL;
+                    selected_piece_lighting=use_lighting;
                     selected_piece_grab=TRUE;
                     glPushMatrix();
                 }
@@ -935,7 +852,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_render=TRUE;
                     moving_piece_model=k;
                     moving_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
-                    moving_piece_lighting=use_lighting ? l : NULL;
+                    moving_piece_lighting=use_lighting;
                     moving_piece_grab=TRUE;
                     glPushMatrix();
                 }             
@@ -943,8 +860,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_grab=FALSE;         
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 
-                        use_lighting ? l : NULL, 1);                    
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), use_lighting, 1);                    
             }
         }
 
@@ -952,33 +868,28 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            glColor3f(0.0,0.0,1.0);
             model_render(&model[selected_piece_model], selected_piece_alpha, selected_piece_lighting, 1);
-            glColor3f(1.0,1.0,1.0);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            glColor3f(1.0,0.0,0.0);
             model_render(&model[moving_piece_model], moving_piece_alpha, moving_piece_lighting, 1);
-            glColor3f(1.0,1.0,1.0);
         }
 }
 
 static void draw_board(float rot_x, float rot_z, int blend)
 {
-    coord3_t fixed = {0, 0, -1};
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
 
     if (blend) {
-        model_render(&board, 0.8f, &fixed, FALSE);
+        model_render(&board, 0.8f, 1, FALSE);
     }
     else
-        model_render(&board, 1.0f, &fixed, FALSE);
+        model_render(&board, 1.0f, 1, FALSE);
 }
 
 void draw_selector(float alpha)
@@ -1044,12 +955,6 @@ void draw_selector(float alpha)
     glDisable(GL_TEXTURE_2D);
 }
 
-#ifdef _arch_dreamcast
-int find_square(int x, int y, float fd)
-{
-    return -1;
-}
-#else
 int find_square(int x, int y, float fd)
 {
     coord3d_t obj;
@@ -1081,7 +986,6 @@ int find_square(int x, int y, float fd)
 
     return (floor(obj.y) + 4) * 8 + floor(obj.x) + 4;
 }
-#endif
 
 static void draw_board_center(float r, float g, float b, float a)
 {
@@ -1176,21 +1080,6 @@ void render_scene_3d(board_t *board, int reflections)
         draw_selector(1.0f - ((ticks - selector_hide_time) / 1000.0f));
 }
 
-static void update_light()
-{
-    float len;
-
-    light.x = sin(z_rotation * DC_PI / 180.0f) * (1.0f - cos(x_rotation * DC_PI / 180.0f));
-    light.y = -sin(x_rotation * DC_PI / 180.0f) * cos(z_rotation * DC_PI / 180.0f);
-    light.z = -cos(x_rotation * DC_PI / 180.0f);
-
-    len = sqrt(magnitude_sqr(light.x, light.y, light.z));
-
-    light.x /= len;
-    light.y /= len;
-    light.z /= len;
-}
-
 void move_camera(float x, float z)
 {
     x_rotation -= x;
@@ -1206,8 +1095,6 @@ void move_camera(float x, float z)
 
     if (z_rotation <= 0.0f)
         z_rotation = 360.0f;
-
-    update_light();
 }
 
 void move_selector(int direction)
@@ -1268,10 +1155,10 @@ void reset_3d()
 {
     selected = -1;
     selector = 0;
-    selector_hide_time = 0; //SDL_GetTicks() + SELECTOR_SHOW_TICKS;
+    selector_hide_time = 0;
     if (is_2d)
     {
-        x_rotation = -10.0f;
+        x_rotation = 0.0f;
         z_rotation = 0.0f;
     }
     else
@@ -1279,7 +1166,25 @@ void reset_3d()
         x_rotation = -45.0f;
         z_rotation = 0.0f;
     }
-    update_light();
+
+      	// Create light components
+  	    GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+  	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
+  	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
+  	 
+  	    // Assign created components to GL_LIGHT0
+  	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+  	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+  	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+  	    glLightfv(GL_LIGHT0, GL_POSITION, position);
+  	 
+  	    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+  	 
+  	    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+  	    glMateriali(GL_FRONT, GL_SHININESS, 128);
 }
 
 #endif /* WITH_UI_SDLGL */

@@ -46,7 +46,7 @@
         <name>Classic Flat</name>
         <style>default</style>
         <pieces>figurine</pieces>
-        <board>classic</board>
+        <board>flat</board>
         <lighting>off</lighting>
     </theme>
 </themes>
