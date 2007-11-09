@@ -20,7 +20,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* HAVE_CONFIG_H */
+#endif /* HAVE_CONFIG_H */http://kotaku.com/gaming/fandom/quests-chess-tells-kasparov-to-try-another-piece-320456.php
 
 #ifdef WITH_UI_SDLGL
 
@@ -747,12 +747,21 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
 {
     int i,j,k;
     float moved=0;
+    int boardpos;
 
     moved=(float)((SDL_GetTicks()-piece_moving_start)/(1000/PIECE_MOVE_SPEED));
     selected_piece_grab=FALSE;
     moving_piece_grab=FALSE;
     selected_piece_render=FALSE;  
     moving_piece_render=FALSE;  
+
+
+
+
+    // Test thing! yay!
+    boardpos=find_square(get_true_mouse_x(), get_true_mouse_y(), get_zerodepth());
+    //printf( "Boardpos! %i\n", boardpos );
+
 
 
     /* Draw the pieces.. */
@@ -764,7 +773,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                 glLoadIdentity();
                 glTranslatef(0, -0.5f, -12.0f );
                 glRotatef(rot_x, 1, 0, 0);
-                glRotatef(rot_z, 0, 0, 1);
+                glRotatef(rot_z, 0, 0, 1);                 
 
                 if ( (i*8+j) == piece_moving_dest )
                 {
@@ -849,6 +858,24 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                 else
                     moving_piece_grab=FALSE;         
 
+    if ( boardpos == (i*8+j) )
+    {
+        // Create light components
+    	GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    	GLfloat diffuseLight[] = { 0.0f, 0.0f, 0.15f, 1.0f };
+    	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    	GLfloat position[] = { 0.0f, 0.0f, 3.0f, 1.0f };
+	  	 
+    	// Assign created components to GL_LIGHT0
+    	glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
+    	glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
+    	glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
+    	glLightfv(GL_LIGHT1, GL_POSITION, position);
+
+        glEnable(GL_LIGHT1);
+    }  
+
                 if ( !selected_piece_grab && !moving_piece_grab )
                     model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
             }
@@ -866,6 +893,8 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
             glPopMatrix();
             model_render(&model[moving_piece_model], moving_piece_alpha, 1);
         }
+
+       // glDisable(GL_LIGHT1);
 }
 
 static void draw_board(float rot_x, float rot_z, int blend)
@@ -1058,6 +1087,7 @@ void render_scene_3d(board_t *board, int reflections)
   int ticks = SDL_GetTicks();
 
     glEnable(GL_LIGHTING);
+
     glEnable(GL_CULL_FACE);
     if (reflections) {
         setup_stencil();
@@ -1180,7 +1210,7 @@ void reset_3d()
         z_rotation = 0.0f;
 
 	// Create light components
-	GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
 	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
