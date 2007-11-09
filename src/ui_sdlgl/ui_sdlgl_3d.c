@@ -1015,10 +1015,8 @@ static void draw_board_center(float r, float g, float b, float a)
 static void setup_stencil()
 {
     float tc = 46 / 512.0f;
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
+    glDisable(GL_LIGHTING);
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
     glDepthMask(GL_FALSE);
@@ -1036,7 +1034,7 @@ static void setup_stencil()
     glBindTexture(GL_TEXTURE_2D, board.texture->id);
 
     glBegin(GL_QUADS);
-    glColor4f(0, 0, 0, 1);
+    glColor4f(0.5f, 0.5f, 0.5f, 1);
     glTexCoord2f(tc, tc);
     glVertex3f(-4, -4, 0);
     glTexCoord2f(1 - tc, tc);
@@ -1052,6 +1050,7 @@ static void setup_stencil()
     glStencilFunc(GL_EQUAL, 1, 1);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     glDepthMask(GL_TRUE);
+    glEnable(GL_LIGHTING);
 }
 
 void render_scene_3d(board_t *board, int reflections)
