@@ -614,10 +614,10 @@ void model_render(model_t *model, float alpha, coord3_t *light, char tex_spin )
   	    glEnable(GL_LIGHT0);
   	 
       	// Create light components
-  	    GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  	    GLfloat diffuseLight[] = { 0.55f, 0.55f, 0.55, 1.0f };
-  	    GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-  	    GLfloat position[] = { 10.0f, -10.0f, 5.0f, 1.0f };
+  	    GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+  	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
+  	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  	    GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
   	 
   	    // Assign created components to GL_LIGHT0
   	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
