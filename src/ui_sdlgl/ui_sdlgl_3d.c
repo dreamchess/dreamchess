@@ -162,7 +162,6 @@ static theme_selector_t sel;
 static texture_t sel_tex;
 
 static int tex_spin_speed;
-static int use_lighting;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -581,19 +580,17 @@ inline float arccos(float f)
                                                        + .1383216735 * f) * f) * f);
 }
 
-void model_render(model_t *model, float alpha, int light, char tex_spin )
+void model_render(model_t *model, float alpha, char tex_spin )
 {
+    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     mesh_t *mesh = model->mesh;
     int g;
     texture_t *texture = model->texture;
     int ticks = SDL_GetTicks();
     float tex_spin_pos=0.0f;
 
-    if ( light && alpha == 1.0 )
-    {
-      	glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-    }
+    mcolor[3] = alpha;
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
@@ -639,15 +636,12 @@ void model_render(model_t *model, float alpha, int light, char tex_spin )
     }
 
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHTING);
 }
 
 void set_theme(struct theme_struct *theme, texture_t texture)
 {
     sel = theme->selector;
     tex_spin_speed = theme->piece_tex_spin_speed;
-    use_lighting = theme->lighting;
     sel_tex = texture;
 }
 
@@ -741,14 +735,12 @@ void freemodels()
 static int selected_piece_render;
 static int selected_piece_model;
 static float selected_piece_alpha;
-static int selected_piece_lighting;
 static int selected_piece_grab;
 
 /* Draw any moving piece.. */
 static int moving_piece_render;
 static int moving_piece_model;
 static float moving_piece_alpha;
-static int moving_piece_lighting;
 static int moving_piece_grab;
 
 static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
@@ -840,7 +832,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     selected_piece_render=TRUE;
                     selected_piece_model=k;
                     selected_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
-                    selected_piece_lighting=use_lighting;
                     selected_piece_grab=TRUE;
                     glPushMatrix();
                 }
@@ -852,7 +843,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_render=TRUE;
                     moving_piece_model=k;
                     moving_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
-                    moving_piece_lighting=use_lighting;
                     moving_piece_grab=TRUE;
                     glPushMatrix();
                 }             
@@ -860,7 +850,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_grab=FALSE;         
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), use_lighting, 1);                    
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
             }
         }
 
@@ -868,13 +858,13 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], selected_piece_alpha, selected_piece_lighting, 1);
+            model_render(&model[selected_piece_model], selected_piece_alpha, 1);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], moving_piece_alpha, moving_piece_lighting, 1);
+            model_render(&model[moving_piece_model], moving_piece_alpha, 1);
         }
 }
 
@@ -886,10 +876,10 @@ static void draw_board(float rot_x, float rot_z, int blend)
     glRotatef(rot_z, 0, 0, 1);
 
     if (blend) {
-        model_render(&board, 0.8f, 1, FALSE);
+        model_render(&board, 0.8f, FALSE);
     }
     else
-        model_render(&board, 1.0f, 1, FALSE);
+        model_render(&board, 1.0f, FALSE);
 }
 
 void draw_selector(float alpha)
@@ -990,6 +980,10 @@ int find_square(int x, int y, float fd)
 static void draw_board_center(float r, float g, float b, float a)
 {
     float tc = 46 / 512.0f;
+    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    mcolor[3] = a;
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
@@ -1002,12 +996,16 @@ static void draw_board_center(float r, float g, float b, float a)
     glBegin(GL_QUADS);
     glColor4f(r, g, b, a);
     glTexCoord2f(tc, tc);
+    glNormal3f(0, 0, 1);
     glVertex3f(-4, -4, 0);
     glTexCoord2f(1 - tc, tc);
+    glNormal3f(0, 0, 1);
     glVertex3f(4, -4, 0);
     glTexCoord2f(1 - tc, 1 - tc);
+    glNormal3f(0, 0, 1);
     glVertex3f(4, 4, 0);
     glTexCoord2f(tc, 1 - tc);
+    glNormal3f(0, 0, 1);
     glVertex3f(-4, 4, 0);
     glEnd();
 
@@ -1017,6 +1015,9 @@ static void draw_board_center(float r, float g, float b, float a)
 static void setup_stencil()
 {
     float tc = 46 / 512.0f;
+    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
@@ -1057,6 +1058,7 @@ void render_scene_3d(board_t *board, int reflections)
 {
   int ticks = SDL_GetTicks();
 
+    glEnable(GL_LIGHTING);
     glEnable(GL_CULL_FACE);
     if (reflections) {
         setup_stencil();
@@ -1073,6 +1075,7 @@ void render_scene_3d(board_t *board, int reflections)
         draw_pieces(board, x_rotation, z_rotation, 0);
     }
     glDisable(GL_CULL_FACE);
+    glDisable(GL_LIGHTING);
 
     if (ticks <= selector_hide_time)
         draw_selector(1.0f);
@@ -1158,33 +1161,44 @@ void reset_3d()
     selector_hide_time = 0;
     if (is_2d)
     {
+	float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
         x_rotation = 0.0f;
         z_rotation = 0.0f;
+
+	// Create light components
+	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
     }
     else
     {
+	float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
         x_rotation = -45.0f;
         z_rotation = 0.0f;
+
+	// Create light components
+	GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
+	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
+	  	 
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+	glMateriali(GL_FRONT, GL_SHININESS, 128);
     }
 
-      	// Create light components
-  	    GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-  	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
-  	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
-  	 
-  	    // Assign created components to GL_LIGHT0
-  	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-  	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-  	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-  	    glLightfv(GL_LIGHT0, GL_POSITION, position);
-  	 
-  	    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-  	 
-  	    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  	    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
-  	    glMateriali(GL_FRONT, GL_SHININESS, 128);
+    glEnable(GL_LIGHT0);
 }
 
 #endif /* WITH_UI_SDLGL */
