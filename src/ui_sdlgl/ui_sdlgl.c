@@ -47,7 +47,7 @@ static int screen_width=640;
 static int screen_height=480;
 static int screen_fs=0;
 static int screen_ms=0;
-static int reflections=1;
+static int reflections=0;
 static int mode_set_failed=0;
 
 static void music_callback(char *title, char *artist, char *album)
@@ -273,11 +273,14 @@ static config_t *do_menu(int *pgn)
 
         egg_req1=FALSE;
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gg_dialog_cleanup();
 
         /* Draw the menu.. */
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
+        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
         text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (r" SVN_VERSION ")", 0.75f, get_col(COL_WHITE));
 
         /*if (get_show_egg())

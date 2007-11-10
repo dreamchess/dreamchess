@@ -39,35 +39,20 @@ void draw_scene( board_t *b, int reflections )
 
     gg_dialog_cleanup();
 
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT); 
-
     glDisable(GL_BLEND);
-    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_ALWAYS);
 
     draw_backdrop();
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthFunc(GL_LEQUAL);
 
     go_3d(get_screen_width(), get_screen_height());
-    glDepthMask(GL_TRUE);
 
     render_scene_3d(b, reflections);
     mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y(), get_zerodepth());
 
     resize_window(get_screen_width(), get_screen_height());
-
-    /* draw_captured_pieces( 480, 70 ); */
-    glPushMatrix();
-
-    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 440, 170, 20), 8);*/
-
-    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(455, 440, 170, 20), 8);*/
-
-    /* Da clocken */
-    /*draw_border(style_ingame.border.textured.image, NULL, 0, gg_rect(290, 440, 60, 20), 8);*/
-
-    glPopMatrix();
 
     glPushMatrix();
     draw_name_dialog( 50, 430, get_white_name(), TRUE, 1 );

@@ -80,7 +80,7 @@ void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
 /** @brief Renders the in-game backdrop. */
 void draw_backdrop()
 {
-    draw_texture( get_backdrop(), 0, 0, 640, 480, 1.0f, get_col(COL_WHITE) );
+    draw_texture( get_backdrop(), 0, 0, 640, 480, -1.0f, get_col(COL_WHITE) );
 }
 
 /** @brief Renders the move list.
