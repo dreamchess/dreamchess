@@ -1,12 +1,21 @@
 <?xml version="1.0"?>
 <themes>
     <theme>
-        <name>Opposing Elements</name>
+        <name>Opposing Elements LQ</name>
         <style>elements</style>
-        <pieces>elements</pieces>
+        <pieces>elementslow</pieces>
         <board>elements</board>
         <white_name>Ice</white_name>
         <black_name>Fire</black_name>
-        <tex_spin>50</tex_spin>
+        <tex_spin>20</tex_spin>
+    </theme>
+    <theme>
+        <name>Opposing Elements HQ</name>
+        <style>elements</style>
+        <pieces>elementshigh</pieces>
+        <board>elements</board>
+        <white_name>Ice</white_name>
+        <black_name>Fire</black_name>
+        <tex_spin>20</tex_spin>
     </theme>
 </themes>

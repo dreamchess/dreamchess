@@ -82,9 +82,12 @@ bone_t;
 typedef struct mesh
 {
     int has_bones;
+    int vertices;
     GLfloat *vertex;
     GLfloat *normal;
     GLfloat *tex_coord;
+    /* Extra copy for texture spin */
+    GLfloat *tex_coord_org;
     int *bone_w;
     int groups;
     group_t *group;
@@ -283,6 +286,7 @@ mesh_t *dcm_load(char *filename)
     mesh = malloc(sizeof(mesh_t));
 
     mesh->has_bones = 0;
+    mesh->vertices = vertices;
     mesh->vertex = malloc(sizeof(GLfloat) * vertices * 3);
 
     for (i = 0; i < vertices * 3; i++)
@@ -306,6 +310,7 @@ mesh_t *dcm_load(char *filename)
     }
 
     mesh->tex_coord = malloc(sizeof(GLfloat) * vertices * 2);
+    mesh->tex_coord_org = malloc(sizeof(GLfloat) * vertices * 2);
 
     for (i = 0; i < vertices * 2; i++)
     {
@@ -315,6 +320,8 @@ mesh_t *dcm_load(char *filename)
             exit(1);
         }
     }
+
+    memcpy(mesh->tex_coord_org, mesh->tex_coord, sizeof(GLfloat) * vertices * 2);
 
     /* As we don't flip our images we flip our u coordinates instead. */
     for (i = 1; i < vertices * 2; i += 2)
@@ -580,14 +587,13 @@ inline float arccos(float f)
                                                        + .1383216735 * f) * f) * f);
 }
 
-void model_render(model_t *model, float alpha, char tex_spin )
+void model_render(model_t *model, float alpha, char tex_spin)
 {
     float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     mesh_t *mesh = model->mesh;
     int g;
     texture_t *texture = model->texture;
     int ticks = SDL_GetTicks();
-    float tex_spin_pos=0.0f;
 
     mcolor[3] = alpha;
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
@@ -603,8 +609,12 @@ void model_render(model_t *model, float alpha, char tex_spin )
     glNormalPointer(GL_FLOAT, 0, mesh->normal);
     glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
 
-    if (tex_spin && tex_spin_speed != 0)
-        tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)tex_spin_speed));
+    if (tex_spin && tex_spin_speed != 0) {
+        float tex_spin_pos = ticks % (tex_spin_speed * 1000) / (float) (tex_spin_speed * 1000);
+
+        for (g = 0; g < mesh->vertices; g++)
+            mesh->tex_coord[g * 2] = mesh->tex_coord_org[g * 2] + tex_spin_pos;
+    }
 
     for (g = 0; g < mesh->groups; g++)
     {
