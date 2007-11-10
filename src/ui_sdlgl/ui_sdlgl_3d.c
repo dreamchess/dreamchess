@@ -69,6 +69,7 @@ typedef struct group
     primitive_type_t type;
     int len;
     GLuint *data;
+    GLuint data_vbo;
 }
 group_t;
 
@@ -430,6 +431,10 @@ mesh_t *dcm_load(char *filename)
                 exit(1);
             }
         }
+
+    glGenBuffersARB(1, &mesh->group[i].data_vbo);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mesh->group[i].data_vbo);
+    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, group_len * sizeof(GLuint), mesh->group[i].data, GL_STATIC_DRAW_ARB);
     }
 
     if (have_vbo)
@@ -690,13 +695,14 @@ void model_render(model_t *model, float alpha, char tex_spin)
 
     for (g = 0; g < mesh->groups; g++)
     {
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mesh->group[g].data_vbo);
         switch (mesh->group[g].type)
         {
         case PRIM_TRIANGLES:
-            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, 0);
             break;
         case PRIM_STRIP:
-            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, 0);
         }
     }
 
