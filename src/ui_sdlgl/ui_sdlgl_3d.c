@@ -32,6 +32,8 @@
 #define TRUE  1
 #define FALSE 0
 
+#define GL_GLEXT_PROTOTYPES
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 
@@ -86,13 +88,15 @@ typedef struct mesh
     GLfloat *vertex;
     GLfloat *normal;
     GLfloat *tex_coord;
+    GLuint vertex_vbo;
+    GLuint normal_vbo;
+    GLuint tex_coord_vbo;
     /* Extra copy for texture spin */
     GLfloat *tex_coord_org;
     int *bone_w;
     int groups;
     group_t *group;
     bone_t *bone;
-    GLuint list;
 }
 mesh_t;
 
@@ -166,6 +170,8 @@ static theme_selector_t sel;
 static texture_t sel_tex;
 
 static int tex_spin_speed;
+
+static int have_vbo;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -246,6 +252,58 @@ static texture_t *load_piece_texture(char *filename)
     load_texture_png(tex, filename, 1, 0);
     data_col_add(&textures, filename, tex);
     return tex;
+}
+
+static int isExtensionSupported(const char *extension)
+{
+  const GLubyte *extensions = NULL;
+  const GLubyte *start;
+  GLubyte *where, *terminator;
+
+  /* Extension names should not have spaces. */
+  where = (GLubyte *) strchr(extension, ' ');
+  if (where || *extension == '\0')
+    return 0;
+  extensions = glGetString(GL_EXTENSIONS);
+  /* It takes a bit of care to be fool-proof about parsing the
+     OpenGL extensions string. Don't be fooled by sub-strings,
+     etc. */
+  start = extensions;
+  for (;;) {
+    where = (GLubyte *) strstr((const char *) start, extension);
+    if (!where)
+      break;
+    terminator = where + strlen(extension);
+    if (where == start || *(where - 1) == ' ')
+      if (*terminator == ' ' || *terminator == '\0')
+        return 1;
+    start = terminator;
+  }
+  return 0;
+}
+
+void mesh_vbo(mesh_t *mesh)
+{
+    glGenBuffersARB(1, &mesh->vertex_vbo);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->vertex_vbo);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, mesh->vertices * 3 * sizeof(GLfloat), mesh->vertex, GL_STATIC_DRAW_ARB);
+
+    glGenBuffersARB(1, &mesh->normal_vbo);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->normal_vbo);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, mesh->vertices * 3 * sizeof(GLfloat), mesh->normal, GL_STATIC_DRAW_ARB);
+
+    glGenBuffersARB(1, &mesh->tex_coord_vbo);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->tex_coord_vbo);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, mesh->vertices * 2 * sizeof(GLfloat), mesh->tex_coord, GL_STATIC_DRAW_ARB);
+
+    free(mesh->vertex);
+    mesh->vertex = NULL;
+
+    free(mesh->normal);
+    mesh->normal = NULL;
+
+    free(mesh->tex_coord);
+    mesh->tex_coord = NULL;
 }
 
 mesh_t *dcm_load(char *filename)
@@ -373,6 +431,9 @@ mesh_t *dcm_load(char *filename)
             }
         }
     }
+
+    if (have_vbo)
+        mesh_vbo(mesh);
 
     fclose(f);
 
@@ -606,9 +667,19 @@ void model_render(model_t *model, float alpha, char tex_spin)
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, mesh->vertex);
-    glNormalPointer(GL_FLOAT, 0, mesh->normal);
-    glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
+    if (have_vbo)
+    {
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->vertex_vbo);
+        glVertexPointer(3, GL_FLOAT, 0, NULL);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->normal_vbo);
+        glNormalPointer(GL_FLOAT, 0, NULL);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, mesh->tex_coord_vbo);
+        glTexCoordPointer( 2, GL_FLOAT, 0, NULL);
+    } else {
+        glVertexPointer(3, GL_FLOAT, 0, mesh->vertex);
+        glNormalPointer(GL_FLOAT, 0, mesh->normal);
+        glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
+    }
 
     if (tex_spin && tex_spin_speed != 0) {
         float tex_spin_pos = ticks % (tex_spin_speed * 1000) / (float) (tex_spin_speed * 1000);
@@ -635,73 +706,6 @@ void model_render(model_t *model, float alpha, char tex_spin)
     glDisable(GL_TEXTURE_2D);
 }
 
-void model_render_list(model_t *model, float alpha, char tex_spin)
-{
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    mesh_t *mesh = model->mesh;
-    texture_t *texture = model->texture;
-
-    mcolor[3] = alpha;
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-
-    glCallList(mesh->list);
-
-    glDisable(GL_TEXTURE_2D);
-}
-
-void model_make_list(model_t *model, float alpha)
-{
-    int g;
-    mesh_t *mesh = model->mesh;
-    texture_t *texture = model->texture;
-    float tex_spin_pos=0.0f;
-
-    mesh->list = glGenLists(1);
-    glNewList(mesh->list, GL_COMPILE);
-
-    for (g = 0; g < mesh->groups; g++)
-    {
-        int i;
-
-        switch (mesh->group[g].type)
-        {
-        case PRIM_TRIANGLES:
-            glBegin(GL_TRIANGLES);
-            break;
-        case PRIM_STRIP:
-            glBegin(GL_TRIANGLE_STRIP);
-        }
-
-        for (i = 0; i < mesh->group[g].len; i++)
-        {
-            unsigned int *data = mesh->group[g].data;
-
-            if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
-                glColor4f(0, 1, 0, 1);
-            else
-                glColor4f(1, 1, 1, alpha);
-
-            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
-                         mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
-
-            glNormal3f(mesh->normal[data[i] * 3],
-                               mesh->normal[data[i] * 3 + 1],
-                               mesh->normal[data[i] * 3 + 2]);
-
-            glVertex3f(mesh->vertex[data[i] * 3],
-                       mesh->vertex[data[i] * 3 + 1],
-                       mesh->vertex[data[i] * 3 + 2]);
-        }
-
-        glEnd();
-    }
-
-    glEndList();
-}
-
 void set_theme(struct theme_struct *theme, texture_t texture)
 {
     sel = theme->selector;
@@ -711,6 +715,8 @@ void set_theme(struct theme_struct *theme, texture_t texture)
 
 void loadmodels(char *filename)
 {
+    have_vbo = isExtensionSupported("GL_ARB_vertex_buffer_object");
+printf("VBO support: %s\n", have_vbo ? "yes" : "no");
     int i;
     FILE *f;
     char mesh[256];
@@ -742,7 +748,6 @@ void loadmodels(char *filename)
 
         model[i].mesh = load_mesh(mesh);
         model[i].texture = load_piece_texture(texture);
-        model_make_list(model + i, 1.0f);
     }
 /*
     model[12].mesh = load_mesh_new("/home/walter/devel/ginger/ginger.dcm");
@@ -759,6 +764,8 @@ void loadmodels(char *filename)
 
 void load_board(char *dcm_name, char *texture_name)
 {
+    have_vbo = isExtensionSupported("GL_ARB_vertex_buffer_object");
+
     board.mesh = load_mesh(dcm_name);
     board.texture = load_piece_texture(texture_name);
 }
@@ -910,7 +917,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render_list(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
             }
         }
 
@@ -918,13 +925,13 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render_list(&model[selected_piece_model], 0.5f, 1);
+            model_render(&model[selected_piece_model], 0.5f, 1);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render_list(&model[moving_piece_model], 1.0f, 1);
+            model_render(&model[moving_piece_model], 1.0f, 1);
         }
 }
 
