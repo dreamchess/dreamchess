@@ -656,33 +656,48 @@ void model_make_list(model_t *model, float alpha)
 {
     int g;
     mesh_t *mesh = model->mesh;
+    texture_t *texture = model->texture;
+    float tex_spin_pos=0.0f;
 
     mesh->list = glGenLists(1);
     glNewList(mesh->list, GL_COMPILE);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, mesh->vertex);
-    glNormalPointer(GL_FLOAT, 0, mesh->normal);
-    glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
-
     for (g = 0; g < mesh->groups; g++)
     {
+        int i;
+
         switch (mesh->group[g].type)
         {
         case PRIM_TRIANGLES:
-            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+            glBegin(GL_TRIANGLES);
             break;
         case PRIM_STRIP:
-            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+            glBegin(GL_TRIANGLE_STRIP);
         }
-    }
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        for (i = 0; i < mesh->group[g].len; i++)
+        {
+            unsigned int *data = mesh->group[g].data;
+
+            if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
+                glColor4f(0, 1, 0, 1);
+            else
+                glColor4f(1, 1, 1, alpha);
+
+            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
+                         mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
+
+            glNormal3f(mesh->normal[data[i] * 3],
+                               mesh->normal[data[i] * 3 + 1],
+                               mesh->normal[data[i] * 3 + 2]);
+
+            glVertex3f(mesh->vertex[data[i] * 3],
+                       mesh->vertex[data[i] * 3 + 1],
+                       mesh->vertex[data[i] * 3 + 2]);
+        }
+
+        glEnd();
+    }
 
     glEndList();
 }
