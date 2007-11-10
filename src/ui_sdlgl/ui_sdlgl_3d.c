@@ -92,6 +92,7 @@ typedef struct mesh
     int groups;
     group_t *group;
     bone_t *bone;
+    GLuint list;
 }
 mesh_t;
 
@@ -634,6 +635,58 @@ void model_render(model_t *model, float alpha, char tex_spin)
     glDisable(GL_TEXTURE_2D);
 }
 
+void model_render_list(model_t *model, float alpha, char tex_spin)
+{
+    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    mesh_t *mesh = model->mesh;
+    texture_t *texture = model->texture;
+
+    mcolor[3] = alpha;
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    glCallList(mesh->list);
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+void model_make_list(model_t *model, float alpha)
+{
+    int g;
+    mesh_t *mesh = model->mesh;
+
+    mesh->list = glGenLists(1);
+    glNewList(mesh->list, GL_COMPILE);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, mesh->vertex);
+    glNormalPointer(GL_FLOAT, 0, mesh->normal);
+    glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
+
+    for (g = 0; g < mesh->groups; g++)
+    {
+        switch (mesh->group[g].type)
+        {
+        case PRIM_TRIANGLES:
+            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+            break;
+        case PRIM_STRIP:
+            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
+        }
+    }
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glEndList();
+}
+
 void set_theme(struct theme_struct *theme, texture_t texture)
 {
     sel = theme->selector;
@@ -674,6 +727,7 @@ void loadmodels(char *filename)
 
         model[i].mesh = load_mesh(mesh);
         model[i].texture = load_piece_texture(texture);
+        model_make_list(model + i, 1.0f);
     }
 /*
     model[12].mesh = load_mesh_new("/home/walter/devel/ginger/ginger.dcm");
@@ -841,7 +895,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
+                    model_render_list(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
             }
         }
 
@@ -849,13 +903,13 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], 0.5f, 1);
+            model_render_list(&model[selected_piece_model], 0.5f, 1);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], 1.0f, 1);
+            model_render_list(&model[moving_piece_model], 1.0f, 1);
         }
 }
 
