@@ -47,7 +47,7 @@ static int screen_width=640;
 static int screen_height=480;
 static int screen_fs=0;
 static int screen_ms=0;
-static int reflections=0;
+static int reflections=1;
 static int mode_set_failed=0;
 
 static void music_callback(char *title, char *artist, char *album)
