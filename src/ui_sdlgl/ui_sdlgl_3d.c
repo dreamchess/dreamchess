@@ -20,7 +20,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* HAVE_CONFIG_H */http://kotaku.com/gaming/fandom/quests-chess-tells-kasparov-to-try-another-piece-320456.php
+#endif /* HAVE_CONFIG_H */
 
 #ifdef WITH_UI_SDLGL
 
@@ -66,7 +66,7 @@ typedef struct group
 {
     primitive_type_t type;
     int len;
-    unsigned int *data;
+    GLuint *data;
 }
 group_t;
 
@@ -82,9 +82,9 @@ bone_t;
 typedef struct mesh
 {
     int has_bones;
-    float *vertex;
-    float *normal;
-    float *tex_coord;
+    GLfloat *vertex;
+    GLfloat *normal;
+    GLfloat *tex_coord;
     int *bone_w;
     int groups;
     group_t *group;
@@ -283,7 +283,7 @@ mesh_t *dcm_load(char *filename)
     mesh = malloc(sizeof(mesh_t));
 
     mesh->has_bones = 0;
-    mesh->vertex = malloc(sizeof(float) * vertices * 3);
+    mesh->vertex = malloc(sizeof(GLfloat) * vertices * 3);
 
     for (i = 0; i < vertices * 3; i++)
     {
@@ -294,7 +294,7 @@ mesh_t *dcm_load(char *filename)
         }
     }
 
-    mesh->normal = malloc(sizeof(float) * vertices * 3);
+    mesh->normal = malloc(sizeof(GLfloat) * vertices * 3);
 
     for (i = 0; i < vertices * 3; i++)
     {
@@ -305,7 +305,7 @@ mesh_t *dcm_load(char *filename)
         }
     }
 
-    mesh->tex_coord = malloc(sizeof(float) * vertices * 2);
+    mesh->tex_coord = malloc(sizeof(GLfloat) * vertices * 2);
 
     for (i = 0; i < vertices * 2; i++)
     {
@@ -354,7 +354,7 @@ mesh_t *dcm_load(char *filename)
 
         mesh->group[i].len = group_len;
 
-        mesh->group[i].data = malloc(sizeof(unsigned int) * group_len);
+        mesh->group[i].data = malloc(sizeof(GLuint) * group_len);
 
         for (j = 0; j < group_len; j++)
         {
@@ -595,46 +595,32 @@ void model_render(model_t *model, float alpha, char tex_spin )
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, mesh->vertex);
+    glNormalPointer(GL_FLOAT, 0, mesh->normal);
+    glTexCoordPointer(2, GL_FLOAT, 0, mesh->tex_coord);
+
     if (tex_spin && tex_spin_speed != 0)
         tex_spin_pos=(float)ticks / (float)(1000 * (1000/(float)tex_spin_speed));
 
     for (g = 0; g < mesh->groups; g++)
     {
-        int i;
-
         switch (mesh->group[g].type)
         {
         case PRIM_TRIANGLES:
-            glBegin(GL_TRIANGLES);
+            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
             break;
         case PRIM_STRIP:
-            glBegin(GL_TRIANGLE_STRIP);
+            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, mesh->group[g].data);
         }
-
-        for (i = 0; i < mesh->group[g].len; i++)
-        {
-            unsigned int *data = mesh->group[g].data;
-
-            if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
-                glColor4f(0, 1, 0, 1);
-            else
-                glColor4f(1, 1, 1, alpha);
-
-            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
-                         mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
-
-            glNormal3f(mesh->normal[data[i] * 3],
-  	                     mesh->normal[data[i] * 3 + 1],
-  	                     mesh->normal[data[i] * 3 + 2]);
-
-            glVertex3f(mesh->vertex[data[i] * 3],
-                       mesh->vertex[data[i] * 3 + 1],
-                       mesh->vertex[data[i] * 3 + 2]);
-        }
-
-        glEnd();
     }
 
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -734,13 +720,11 @@ void freemodels()
 /* Draw a selected piece after the rest.. */
 static int selected_piece_render;
 static int selected_piece_model;
-static float selected_piece_alpha;
 static int selected_piece_grab;
 
 /* Draw any moving piece.. */
 static int moving_piece_render;
 static int moving_piece_model;
-static float moving_piece_alpha;
 static int moving_piece_grab;
 
 static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
@@ -830,7 +814,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                 {
                     selected_piece_render=TRUE;
                     selected_piece_model=k;
-                    selected_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
                     selected_piece_grab=TRUE;
                     glPushMatrix();
                 }
@@ -841,7 +824,6 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
                 {
                     moving_piece_render=TRUE;
                     moving_piece_model=k;
-                    moving_piece_alpha=(i * 8 + j == selected ? 0.5f : 1.0f);
                     moving_piece_grab=TRUE;
                     glPushMatrix();
                 }             
@@ -857,13 +839,13 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], selected_piece_alpha, 1);
+            model_render(&model[selected_piece_model], 0.5f, 1);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], moving_piece_alpha, 1);
+            model_render(&model[moving_piece_model], 1.0f, 1);
         }
 }
 
@@ -874,11 +856,7 @@ static void draw_board(float rot_x, float rot_z, int blend)
     glRotatef(rot_x, 1, 0, 0);
     glRotatef(rot_z, 0, 0, 1);
 
-    if (blend) {
-        model_render(&board, 0.8f, FALSE);
-    }
-    else
-        model_render(&board, 1.0f, FALSE);
+    model_render(&board, 1.0f, FALSE);
 }
 
 void draw_selector(float alpha)
@@ -1033,7 +1011,7 @@ static void setup_stencil()
     glBindTexture(GL_TEXTURE_2D, board.texture->id);
 
     glBegin(GL_QUADS);
-    glColor4f(0.5f, 0.5f, 0.5f, 1);
+    glColor4f(0, 0, 0, 1);
     glTexCoord2f(tc, tc);
     glVertex3f(-4, -4, 0);
     glTexCoord2f(1 - tc, tc);
@@ -1065,7 +1043,7 @@ void render_scene_3d(board_t *board, int reflections)
         draw_pieces(board, x_rotation, z_rotation, 1);
         glDisable(GL_STENCIL_TEST);
         glCullFace(GL_BACK);
-        draw_board_center(1.0f, 1.0f, 1.0f, 0.75f);
+        draw_board_center(1.0f, 1.0f, 1.0f, 0.8f);
         draw_board(x_rotation, z_rotation, 0);
         draw_pieces(board, x_rotation, z_rotation, 0);
     } else {
