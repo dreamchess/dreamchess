@@ -70,6 +70,7 @@ typedef struct group
     int len;
     GLuint *data;
     GLuint data_vbo;
+    int min, max;
 }
 group_t;
 
@@ -422,14 +423,23 @@ mesh_t *dcm_load(char *filename)
         mesh->group[i].len = group_len;
 
         mesh->group[i].data = malloc(sizeof(GLuint) * group_len);
+        mesh->group[i].min = mesh->vertices - 1;
+        mesh->group[i].max = 0;
 
         for (j = 0; j < group_len; j++)
         {
-            if (fscanf(f, "%u\n", &mesh->group[i].data[j]) != 1)
+            GLuint data;
+            if (fscanf(f, "%u\n", &data) != 1)
             {
                 DBG_ERROR("error reading DCM file");
                 exit(1);
             }
+            mesh->group[i].data[j] = data;
+            if (data > mesh->group[i].max)
+                mesh->group[i].max = data;
+
+            if (data < mesh->group[i].min)
+                mesh->group[i].min = data;
         }
 
     glGenBuffersARB(1, &mesh->group[i].data_vbo);
@@ -699,10 +709,10 @@ void model_render(model_t *model, float alpha, char tex_spin)
         switch (mesh->group[g].type)
         {
         case PRIM_TRIANGLES:
-            glDrawElements(GL_TRIANGLES, mesh->group[g].len, GL_UNSIGNED_INT, 0);
+            glDrawRangeElements(GL_TRIANGLES, mesh->group[g].min, mesh->group[g].max, mesh->group[g].len, GL_UNSIGNED_INT, 0);
             break;
         case PRIM_STRIP:
-            glDrawElements(GL_TRIANGLE_STRIP, mesh->group[g].len, GL_UNSIGNED_INT, 0);
+            glDrawRangeElements(GL_TRIANGLE_STRIP, mesh->group[g].min, mesh->group[g].max, mesh->group[g].len, GL_UNSIGNED_INT, 0);
         }
     }
 
