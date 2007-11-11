@@ -628,14 +628,11 @@ void model_render_spin(model_t *model, float alpha)
 void model_render(model_t *model, float alpha, int spin)
 {
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float mcolor[4] = { 1.0f, 1.0f, 1.0f };
     texture_t *texture = model->texture;
 
     mcolor[3] = alpha;
-    if (is_2d)
-        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
-    else
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
     glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
     glMateriali(GL_FRONT, GL_SHININESS, 128);
@@ -1025,13 +1022,10 @@ int find_square(int x, int y, float fd)
 static void draw_board_center(float r, float g, float b, float a)
 {
     float tc = 46 / 512.0f;
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float mcolor[4] = { 1.0f, 1.0f, 1.0f };
 
     mcolor[3] = a;
-    if (is_2d)
-        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
-    else
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
@@ -1204,9 +1198,12 @@ void select_piece(int square)
 
 void reset_3d()
 {
+    float mcolor[] = { 1.0f, 1.0f, 1.0f };
+
     selected = -1;
     selector = 0;
     selector_hide_time = 0;
+
     if (is_2d)
     {
         x_rotation = 0.0f;
@@ -1233,6 +1230,8 @@ void reset_3d()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
     }
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
 
     glEnable(GL_LIGHT0);
 }
