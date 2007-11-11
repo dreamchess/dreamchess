@@ -35,6 +35,7 @@ static char* graphics[] = { "Graphics",
                             "Brandon May (melancholy)",
                             "Kris McAulay",
                             "Rogier van Schaijk",
+                            "Laranesight",
                             NULL };
 
 static char* modelling[] = { "3D Modelling",
