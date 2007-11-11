@@ -1,23 +1,9 @@
 <?xml version="1.0"?>
 <themes>
     <theme>
-        <name>Classic Wooden LQ</name>
+        <name>Classic Wooden</name>
         <style>default</style>
-        <pieces>classiclow</pieces>
-        <board>classic</board>
-        <selector spinspeed="0.16" size="1.0" bouncespeed="1.2">
-            <colour>
-                <red>1.0</red>
-                <green>1.0</green>
-                <blue>1.0</blue>
-                <alpha>1.0</alpha>
-            </colour>
-        </selector>
-    </theme>
-    <theme>
-        <name>Classic Wooden HQ</name>
-        <style>default</style>
-        <pieces>classichigh</pieces>
+        <pieces>classic</pieces>
         <board>classic</board>
         <selector spinspeed="0.16" size="1.0" bouncespeed="1.2">
             <colour>

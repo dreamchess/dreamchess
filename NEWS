@@ -9,11 +9,16 @@ The main new feature is sound support. Matthew P. Smith was kind of enough to
 allow us to use some of his songs in the game. The music pack containing these
 songs is available for download from our website.
 
-Other new features include a new easy mode (for those who felt that our engine
-Dreamer put up too much of a fight even on Level 1). Graphically there have
-been a number of small changes, e.g. the pieces now reflect in the chess
-board. Furthermore, the GUI has seen many small improvements, such as
-additional options that could previously only be set from the command line.
+Graphically the game has been improved significantly. This was made possible
+by the decision to drop the Dreamcast port (see below). The old 3D models have
+been replaced by new models with a lot more detail. Other improvements include
+reflections, hardware lighting, new textures, and a new sketch theme by
+Laranesight.
+
+The GUI has seen many small improvements, such as additional options that
+could previously only be set from the command line. A new feature is the
+"easy mode" (for those who felt that our engine Dreamer put up too much of a
+fight even on Level 1).
 
 DreamChess is now also available for Mac OS X by courtesy of Lawrence Sebald.
 Unfortunately, we were forced to drop support for Dreamcast and BeOS. If
