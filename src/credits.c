@@ -32,10 +32,10 @@ static char* programming[] = { "Programming",
 
 static char* graphics[] = { "Graphics",
                             "Drew 'Hawke' Ball",
+                            "Annie Kirkpatrick",
                             "Brandon May (melancholy)",
                             "Kris McAulay",
                             "Rogier van Schaijk",
-                            "Laranesight",
                             NULL };
 
 static char* modelling[] = { "3D Modelling",
