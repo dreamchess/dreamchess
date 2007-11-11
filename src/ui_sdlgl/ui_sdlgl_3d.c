@@ -581,18 +581,11 @@ static mesh_t *load_mesh_new(char *filename)
 
 void model_render_spin(model_t *model, float alpha)
 {
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     mesh_t *mesh = model->mesh;
     int g;
     texture_t *texture = model->texture;
     int ticks = SDL_GetTicks();
     float tex_spin_pos = ticks % (tex_spin_speed * 1000) / (float) (tex_spin_speed * 1000);
-
-    mcolor[3] = alpha;
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
 
     for (g = 0; g < mesh->groups; g++)
     {
@@ -630,33 +623,32 @@ void model_render_spin(model_t *model, float alpha)
 
         glEnd();
     }
-
-    glDisable(GL_TEXTURE_2D);
-}
-
-void model_render_list(model_t *model, float alpha)
-{
-    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    mesh_t *mesh = model->mesh;
-    texture_t *texture = model->texture;
-
-    mcolor[3] = alpha;
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-
-    glCallList(mesh->list);
-
-    glDisable(GL_TEXTURE_2D);
 }
 
 void model_render(model_t *model, float alpha, int spin)
 {
+    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    texture_t *texture = model->texture;
+
+    mcolor[3] = alpha;
+    if (is_2d)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
+    else
+        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    glMateriali(GL_FRONT, GL_SHININESS, 128);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
     if (spin && tex_spin_speed != 0.0f)
         model_render_spin(model, alpha);
     else
-        model_render_list(model, alpha);
+        glCallList(model->mesh->list);
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 void model_make_list(model_t *model)
@@ -1036,7 +1028,10 @@ static void draw_board_center(float r, float g, float b, float a)
     float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     mcolor[3] = a;
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+    if (is_2d)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
+    else
+        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 
     glLoadIdentity();
     glTranslatef(0, -0.5f, -12.0f );
@@ -1214,22 +1209,15 @@ void reset_3d()
     selector_hide_time = 0;
     if (is_2d)
     {
-	float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
         x_rotation = 0.0f;
         z_rotation = 0.0f;
 
 	// Create light components
 	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
     }
     else
     {
-	float mcolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
         x_rotation = -45.0f;
         z_rotation = 0.0f;
 
@@ -1244,11 +1232,6 @@ void reset_3d()
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
-
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
-	glMateriali(GL_FRONT, GL_SHININESS, 128);
     }
 
     glEnable(GL_LIGHT0);
