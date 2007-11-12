@@ -212,6 +212,7 @@ texture_t *get_selector_tex();
 char *get_white_name();
 char *get_black_name();
 texture_t *get_mouse_cursor();
+texture_t *get_menu_mouse_cursor();
 void load_theme_xml( char *xmlfile );
 texture_t *get_menu_border();
 texture_t *get_border();

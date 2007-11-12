@@ -7,6 +7,5 @@
         <board>elements</board>
         <white_name>Ice</white_name>
         <black_name>Fire</black_name>
-        <tex_spin>20</tex_spin>
     </theme>
 </themes>

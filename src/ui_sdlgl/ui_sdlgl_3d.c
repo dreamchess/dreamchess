@@ -86,8 +86,6 @@ typedef struct mesh
     GLfloat *vertex;
     GLfloat *normal;
     GLfloat *tex_coord;
-    /* Extra copy for texture spin */
-    GLfloat *tex_coord_org;
     int *bone_w;
     int groups;
     group_t *group;
@@ -164,8 +162,6 @@ static data_col_t meshes;
 #define SEL_HEIGHT 0.003f
 static theme_selector_t sel;
 static texture_t sel_tex;
-
-static int tex_spin_speed;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -319,7 +315,6 @@ mesh_t *dcm_load(char *filename)
     }
 
     mesh->tex_coord = malloc(sizeof(GLfloat) * vertices * 2);
-    mesh->tex_coord_org = malloc(sizeof(GLfloat) * vertices * 2);
 
     for (i = 0; i < vertices * 2; i++)
     {
@@ -329,8 +324,6 @@ mesh_t *dcm_load(char *filename)
             exit(1);
         }
     }
-
-    memcpy(mesh->tex_coord_org, mesh->tex_coord, sizeof(GLfloat) * vertices * 2);
 
     /* As we don't flip our images we flip our u coordinates instead. */
     for (i = 1; i < vertices * 2; i += 2)
@@ -587,53 +580,7 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-void model_render_spin(model_t *model, float alpha)
-{
-    mesh_t *mesh = model->mesh;
-    int g;
-    texture_t *texture = model->texture;
-    int ticks = SDL_GetTicks();
-    float tex_spin_pos = ticks % (tex_spin_speed * 1000) / (float) (tex_spin_speed * 1000);
-
-    for (g = 0; g < mesh->groups; g++)
-    {
-        int i;
-
-        switch (mesh->group[g].type)
-        {
-        case PRIM_TRIANGLES:
-            glBegin(GL_TRIANGLES);
-            break;
-        case PRIM_STRIP:
-            glBegin(GL_TRIANGLE_STRIP);
-        }
-
-        for (i = 0; i < mesh->group[g].len; i++)
-        {
-            unsigned int *data = mesh->group[g].data;
-
-            if (mesh->has_bones && (mesh->bone_w[data[i]] == 1))
-                glColor4f(0, 1, 0, 1);
-            else
-                glColor4f(1, 1, 1, alpha);
-
-            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
-                         mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
-
-            glNormal3f(mesh->normal[data[i] * 3],
-                               mesh->normal[data[i] * 3 + 1],
-                               mesh->normal[data[i] * 3 + 2]);
-
-            glVertex3f(mesh->vertex[data[i] * 3],
-                       mesh->vertex[data[i] * 3 + 1],
-                       mesh->vertex[data[i] * 3 + 2]);
-        }
-
-        glEnd();
-    }
-}
-
-void model_render(model_t *model, float alpha, int spin)
+void model_render(model_t *model, float alpha)
 {
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
@@ -648,10 +595,7 @@ void model_render(model_t *model, float alpha, int spin)
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
-    if (spin && tex_spin_speed != 0.0f)
-        model_render_spin(model, alpha);
-    else
-        glCallList(model->mesh->list);
+    glCallList(model->mesh->list);
 
     glDisable(GL_TEXTURE_2D);
 }
@@ -660,8 +604,6 @@ void model_make_list(model_t *model)
 {
     int g;
     mesh_t *mesh = model->mesh;
-    texture_t *texture = model->texture;
-    float tex_spin_pos=0.0f;
 
     mesh->list = glGenLists(1);
     glNewList(mesh->list, GL_COMPILE);
@@ -683,8 +625,7 @@ void model_make_list(model_t *model)
         {
             unsigned int *data = mesh->group[g].data;
 
-            glTexCoord2f(mesh->tex_coord[data[i] * 2] * texture->u2+tex_spin_pos,
-                         mesh->tex_coord[data[i] * 2 + 1] * texture->v2);
+            glTexCoord2fv(mesh->tex_coord + data[i] * 2);
             glNormal3fv(mesh->normal + data[i] * 3);
             glVertex3fv(mesh->vertex + data[i] * 3);
         }
@@ -698,7 +639,6 @@ void model_make_list(model_t *model)
 void set_theme(struct theme_struct *theme, texture_t texture)
 {
     sel = theme->selector;
-    tex_spin_speed = theme->piece_tex_spin_speed;
     sel_tex = texture;
 }
 
@@ -898,7 +838,7 @@ static void draw_pieces(board_t *board, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f), 1);                    
+                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f));
             }
         }
 
@@ -906,20 +846,20 @@ static void draw_pieces(board_t *board, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], 0.5f, 1);
+            model_render(&model[selected_piece_model], 0.5f);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], 1.0f, 1);
+            model_render(&model[moving_piece_model], 1.0f);
         }
 }
 
 static void draw_board(int blend)
 {
     setup_view();
-    model_render(&board, 1.0f, FALSE);
+    model_render(&board, 1.0f);
 }
 
 void draw_selector(float alpha)

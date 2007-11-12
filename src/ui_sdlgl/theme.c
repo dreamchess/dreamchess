@@ -23,7 +23,7 @@
 static texture_t backdrop;
 static texture_t border[9];
 static texture_t menu_border[9];
-static texture_t mouse_cursor;
+static texture_t mouse_cursor, menu_mouse_cursor;
 static texture_t white_pieces[7];
 static texture_t black_pieces[7];
 static texture_t selector_tex;
@@ -44,6 +44,11 @@ texture_t *get_border()
 texture_t *get_mouse_cursor()
 {
     return &mouse_cursor;
+}
+
+texture_t *get_menu_mouse_cursor()
+{
+    return &menu_mouse_cursor;
 }
 
 char *get_white_name()
@@ -175,6 +180,7 @@ void unload_theme()
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);
     glDeleteTextures(1, &selector_tex.id);
+    glDeleteTextures(1, &mouse_cursor.id);
     unload_border(border);
     freemodels();
 }

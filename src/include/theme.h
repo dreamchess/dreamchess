@@ -44,7 +44,6 @@ typedef struct theme_struct
     char *board;
     char *white_name;
     char *black_name;
-    int piece_tex_spin_speed;
     char lighting;
     theme_selector_t selector;
 }

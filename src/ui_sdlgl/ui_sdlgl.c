@@ -377,7 +377,7 @@ static config_t *do_menu(int *pgn)
         /* Draw mouse cursor.. */
 #ifndef _arch_dreamcast
 #ifndef __BEOS__
-        draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
+        draw_texture( get_menu_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 #endif /* __BEOS __ */
 #endif /* _arch_dreamcast */
@@ -389,7 +389,7 @@ static config_t *do_menu(int *pgn)
 static void free_menu_tex()
 {
     glDeleteTextures(1, &menu_title_tex.id);
-    glDeleteTextures(1, &get_mouse_cursor()->id);
+    glDeleteTextures(1, &get_menu_mouse_cursor()->id);
     glDeleteTextures(1, &get_menu_border()->id);
     glDeleteTextures(1, &get_text_character(0)->id);
 }
@@ -409,7 +409,7 @@ static void load_menu_tex()
     load_border(get_menu_border(), "border.png");
 #ifndef _arch_dreamcast
 #ifndef __BEOS__
-    load_texture_png( get_mouse_cursor(), "mouse_cursor.png", 1, 1 );
+    load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 #endif /* __BEOS__ */    
 #endif /* _arch_dreamcast */
 }

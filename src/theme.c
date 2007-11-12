@@ -79,7 +79,6 @@ void theme_add_theme( char *xmlfile, option_t *option )
         cur_theme->white_name = strdup("White");
         cur_theme->black_name = strdup("Black");
         cur_theme->lighting=TRUE;
-        cur_theme->piece_tex_spin_speed=0;
         cur_theme->selector.colour[0]=1.0;
         cur_theme->selector.colour[1]=1.0;
         cur_theme->selector.colour[2]=1.0;
@@ -150,23 +149,6 @@ void theme_add_theme( char *xmlfile, option_t *option )
             }
         }
 
-        node = mxmlFindElement(theme, theme, "lighting", NULL, NULL, MXML_DESCEND);
-        if (node)
-        {
-            node = mxmlWalkNext(node, node, MXML_DESCEND);
-
-            if (node && node->type == MXML_OPAQUE)
-                if ( !strcmp( node->value.opaque, "off" ) )
-                    cur_theme->lighting=FALSE;
-        }
-
-        node = mxmlFindElement(theme, theme, "tex_spin", NULL, NULL, MXML_DESCEND);
-        if (node)
-        {
-            node = mxmlWalkNext(node, node, MXML_DESCEND);
-
-            cur_theme->piece_tex_spin_speed=atoi(node->value.opaque);
-        }
         DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style );
         option_add_value(option, cur_theme->name, cur_theme);
     }
