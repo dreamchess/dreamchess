@@ -29,8 +29,8 @@
         </selector>
     </theme>
     <theme>
-        <name>Classic Flat</name>
-        <style>default</style>
+        <name>Figurine</name>
+        <style>flat</style>
         <pieces>figurine</pieces>
         <board>flat</board>
         <lighting>off</lighting>

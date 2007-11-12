@@ -207,7 +207,7 @@ static float piece_moving_ypos;
 static void setup_view()
 {
     glLoadIdentity();
-    gluLookAt(0, 0, 12.0f, 0, 0.5f, 0, 0, 0, 1);
+    glTranslatef(0, -0.5f, -12.0f);
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
 }
@@ -1030,16 +1030,16 @@ static void draw_board_center(float r, float g, float b, float a)
 
     glBegin(GL_QUADS);
     glColor4f(r, g, b, a);
-    glTexCoord2f(tc, tc);
+    glTexCoord2f(tc, 1 - tc);
     glNormal3f(0, 0, 1);
     glVertex3f(-4, -4, 0);
-    glTexCoord2f(1 - tc, tc);
-    glNormal3f(0, 0, 1);
-    glVertex3f(4, -4, 0);
     glTexCoord2f(1 - tc, 1 - tc);
     glNormal3f(0, 0, 1);
+    glVertex3f(4, -4, 0);
+    glTexCoord2f(1 - tc, tc);
+    glNormal3f(0, 0, 1);
     glVertex3f(4, 4, 0);
-    glTexCoord2f(tc, 1 - tc);
+    glTexCoord2f(tc, tc);
     glNormal3f(0, 0, 1);
     glVertex3f(-4, 4, 0);
     glEnd();
