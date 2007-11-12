@@ -167,7 +167,6 @@ void resize_window( int width, int height )
 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    /*gluPerspective(45.0f, (GLfloat)width/(GLfloat)height, 0.1f, 100.0f);*/
     glOrtho(0, 640, 0, 480, -1, 1);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();

@@ -161,7 +161,7 @@ static data_col_t textures;
 static data_col_t meshes;
 
 #define SEL_BOUNCE_AMP 0.25f
-#define SEL_HEIGHT 0.1f
+#define SEL_HEIGHT 0.003f
 static theme_selector_t sel;
 static texture_t sel_tex;
 
@@ -819,6 +819,9 @@ static void draw_pieces(board_t *board, int flip)
             {
                 setup_view();
 
+                if (!is_2d && flip)
+                    glScalef(1.0f, 1.0f, -1.0f);
+
                 if ( (i*8+j) == piece_moving_dest )
                 {
                     if ( piece_moving_dest_xpos > piece_moving_source_xpos )
@@ -854,14 +857,14 @@ static void draw_pieces(board_t *board, int flip)
                     }
                     if (is_2d)
                         glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
-                                     piece_moving_ypos, 0.04);
+                                     piece_moving_ypos, 0.002);
                     else
                         glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
-                                     piece_moving_ypos, 0.02);
+                                     piece_moving_ypos, 0.001);
 
                 }
                 else
-                    glTranslatef(-3.5f + j, -3.5f + i, 0.02);
+                    glTranslatef(-3.5f + j, -3.5f + i, 0.001);
 
                 if (is_2d)
                 {
@@ -873,12 +876,6 @@ static void draw_pieces(board_t *board, int flip)
                 {
                     glRotatef(180, 0, 0, 1);
                 }*/
-
-                if (!is_2d && flip) {
-                    glScalef(1.0f, 1.0f, -1.0f);
-                    /* Make sure flipped piece does note extend above the board */
-                    glTranslatef(0, 0, 0.03f);
-                }
 
                 if ( i * 8 + j == selected )
                 {
@@ -950,7 +947,7 @@ void draw_selector(float alpha)
 
     setup_view();
 
-    glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
+    glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0);
     glRotatef(spin_offset, 0, 0, 1);
 
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f * alpha);
@@ -969,7 +966,7 @@ void draw_selector(float alpha)
     glVertex3f(-sel.size/2, -sel.size/2, SEL_HEIGHT);
     glEnd();
 
-    glTranslatef(0, 0, bounce_offset + 0.01f);
+    glTranslatef(0, 0, bounce_offset);
 
     glColor4f(sel.colour[0], sel.colour[1], sel.colour[2], sel.colour[3] * alpha);
     glBegin(GL_QUADS);
