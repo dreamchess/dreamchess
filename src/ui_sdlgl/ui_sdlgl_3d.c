@@ -869,10 +869,10 @@ static void draw_pieces(board_t *board, int flip)
 
                     glRotatef(-steps * 90.0f, 0, 0, 1);
                 }
-                else if (k < 12 && IS_BLACK(k))
+/*                else if (k < 12 && IS_BLACK(k))
                 {
                     glRotatef(180, 0, 0, 1);
-                }
+                }*/
 
                 if (!is_2d && flip) {
                     glScalef(1.0f, 1.0f, -1.0f);
@@ -960,13 +960,13 @@ void draw_selector(float alpha)
 
     glBegin(GL_QUADS);
     glTexCoord2f(0,0);
-    glVertex3f(-sel.size, sel.size, SEL_HEIGHT);
+    glVertex3f(-sel.size/2, sel.size/2, SEL_HEIGHT);
     glTexCoord2f(1,0);
-    glVertex3f(sel.size, sel.size, SEL_HEIGHT);
+    glVertex3f(sel.size/2, sel.size/2, SEL_HEIGHT);
     glTexCoord2f(1,1);
-    glVertex3f(sel.size, -sel.size, SEL_HEIGHT);
+    glVertex3f(sel.size/2, -sel.size/2, SEL_HEIGHT);
     glTexCoord2f(0,1);
-    glVertex3f(-sel.size, -sel.size, SEL_HEIGHT);
+    glVertex3f(-sel.size/2, -sel.size/2, SEL_HEIGHT);
     glEnd();
 
     glTranslatef(0, 0, bounce_offset + 0.01f);
@@ -974,13 +974,13 @@ void draw_selector(float alpha)
     glColor4f(sel.colour[0], sel.colour[1], sel.colour[2], sel.colour[3] * alpha);
     glBegin(GL_QUADS);
     glTexCoord2f(0,0);
-    glVertex3f(-sel.size, sel.size, SEL_HEIGHT);
+    glVertex3f(-sel.size/2, sel.size/2, SEL_HEIGHT);
     glTexCoord2f(1,0);
-    glVertex3f(sel.size, sel.size, SEL_HEIGHT);
+    glVertex3f(sel.size/2, sel.size/2, SEL_HEIGHT);
     glTexCoord2f(1,1);
-    glVertex3f(sel.size, -sel.size, SEL_HEIGHT);
+    glVertex3f(sel.size/2, -sel.size/2, SEL_HEIGHT);
     glTexCoord2f(0,1);
-    glVertex3f(-sel.size, -sel.size, SEL_HEIGHT);
+    glVertex3f(-sel.size/2, -sel.size/2, SEL_HEIGHT);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
