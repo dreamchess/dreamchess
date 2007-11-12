@@ -82,10 +82,10 @@ void theme_add_theme( char *xmlfile, option_t *option )
         cur_theme->piece_tex_spin_speed=0;
         cur_theme->selector.colour[0]=1.0;
         cur_theme->selector.colour[1]=1.0;
-        cur_theme->selector.colour[2]=0.0;
-        cur_theme->selector.colour[3]=0.25;  
+        cur_theme->selector.colour[2]=1.0;
+        cur_theme->selector.colour[3]=1.0;  
         cur_theme->selector.spinspeed=0;
-        cur_theme->selector.size=0.5;
+        cur_theme->selector.size=1;
         cur_theme->selector.bouncespeed=0;
 
         load_opaque(theme, "name", &cur_theme->name);
