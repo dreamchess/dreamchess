@@ -204,6 +204,14 @@ static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
 
+static void setup_view()
+{
+    glLoadIdentity();
+    gluLookAt(0, 0, 12.0f, 0, 0.5f, 0, 0, 0, 1);
+    glRotatef(x_rotation, 1, 0, 0);
+    glRotatef(z_rotation, 0, 0, 1);
+}
+
 int get_piece_moving_done()
 {
     return piece_moving_done;
@@ -792,7 +800,7 @@ static int moving_piece_render;
 static int moving_piece_model;
 static int moving_piece_grab;
 
-static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
+static void draw_pieces(board_t *board, int flip)
 {
     int i,j,k;
     float moved=0;
@@ -809,10 +817,7 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         {
             if ((k = board->square[(0/*flip_board*/ ? 63 - (i*8+j) : i*8+j)]) != NONE)
             {
-                glLoadIdentity();
-                glTranslatef(0, -0.5f, -12.0f );
-                glRotatef(rot_x, 1, 0, 0);
-                glRotatef(rot_z, 0, 0, 1);                 
+                setup_view();
 
                 if ( (i*8+j) == piece_moving_dest )
                 {
@@ -914,13 +919,9 @@ static void draw_pieces(board_t *board, float rot_x, float rot_z, int flip)
         }
 }
 
-static void draw_board(float rot_x, float rot_z, int blend)
+static void draw_board(int blend)
 {
-    glLoadIdentity();
-    glTranslatef(0, -0.5f, -12.0f );
-    glRotatef(rot_x, 1, 0, 0);
-    glRotatef(rot_z, 0, 0, 1);
-
+    setup_view();
     model_render(&board, 1.0f, FALSE);
 }
 
@@ -947,10 +948,8 @@ void draw_selector(float alpha)
         spin_offset = phase * 360;
     }
 
-    glLoadIdentity();
-    glTranslatef(0, -0.5, -12.0);
-    glRotatef(x_rotation, 1, 0, 0);
-    glRotatef(z_rotation, 0, 0, 1);
+    setup_view();
+
     glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0.01f);
     glRotatef(spin_offset, 0, 0, 1);
 
@@ -995,10 +994,7 @@ int find_square(int x, int y, float fd)
     GLdouble modelview[16];
     GLdouble projection[16];
 
-    glLoadIdentity();
-    glTranslatef(0, -0.5f, -12.0f );
-    glRotatef(x_rotation, 1, 0, 0);
-    glRotatef(z_rotation, 0, 0, 1);
+    setup_view();
 
     glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
@@ -1027,10 +1023,7 @@ static void draw_board_center(float r, float g, float b, float a)
     mcolor[3] = a;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
-    glLoadIdentity();
-    glTranslatef(0, -0.5f, -12.0f );
-    glRotatef(x_rotation, 1, 0, 0);
-    glRotatef(z_rotation, 0, 0, 1);
+    setup_view();
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, board.texture->id);
@@ -1067,10 +1060,7 @@ static void setup_stencil()
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
     glEnable(GL_STENCIL_TEST);
 
-    glLoadIdentity();
-    glTranslatef(0, -0.5f, -12.0f );
-    glRotatef(x_rotation, 1, 0, 0);
-    glRotatef(z_rotation, 0, 0, 1);
+    setup_view();
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, board.texture->id);
@@ -1105,16 +1095,16 @@ void render_scene_3d(board_t *board, int reflections)
     if (reflections) {
         setup_stencil();
         glCullFace(GL_FRONT);
-        draw_pieces(board, x_rotation, z_rotation, 1);
+        draw_pieces(board, 1);
         glDisable(GL_STENCIL_TEST);
         glCullFace(GL_BACK);
         draw_board_center(1.0f, 1.0f, 1.0f, 0.8f);
-        draw_board(x_rotation, z_rotation, 0);
-        draw_pieces(board, x_rotation, z_rotation, 0);
+        draw_board(0);
+        draw_pieces(board, 0);
     } else {
         draw_board_center(0.75f, 0.75f, 0.75f, 1.0f);
-        draw_board(x_rotation, z_rotation, 0);
-        draw_pieces(board, x_rotation, z_rotation, 0);
+        draw_board(0);
+        draw_pieces(board, 0);
     }
     glDisable(GL_CULL_FACE);
     glDisable(GL_LIGHTING);
@@ -1215,14 +1205,14 @@ void reset_3d()
     }
     else
     {
-        x_rotation = -45.0f;
+        x_rotation = -30.0f;
         z_rotation = 0.0f;
 
 	// Create light components
 	GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
 	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat position[] = { 10.0f, -10.0f, 15.0f, 1.0f };
+	GLfloat position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
 	  	 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);

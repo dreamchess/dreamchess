@@ -111,25 +111,13 @@ int power_of_two(int input)
     return value;
 }
 
-void set_perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
-{
-    GLdouble xmin, xmax, ymin, ymax;
-
-    ymax = zNear * tan(fovy * DC_PI / 360.0);
-    ymin = -ymax;
-    xmin = ymin * aspect;
-    xmax = ymax * aspect;
-
-    glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
-}
-
 void go_3d(int width, int height)
 {
     glViewport( 0, 0, width, height );
 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    set_perspective(45.0f, 640.0f/480.0f, 0.1f, 100.0f);
+    gluPerspective(45.0f, 640.0f/480.0f, 1.0f, 100.0f);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
