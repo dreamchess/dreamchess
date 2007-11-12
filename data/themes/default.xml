@@ -8,13 +8,6 @@
         <selector bouncespeed="1.2"></selector>
     </theme>
     <theme>
-        <name>Classic Marble</name>
-        <style>default</style>
-        <pieces>classicbw</pieces>
-        <board>classic</board>
-        <selector bouncespeed="1.2"></selector>
-    </theme>
-    <theme>
         <name>Figurine</name>
         <style>flat</style>
         <pieces>figurine</pieces>
