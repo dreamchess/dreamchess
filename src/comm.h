@@ -21,10 +21,10 @@
 #ifndef COMM_H
 #define COMM_H
 
-void comm_init(char *engine);
+int comm_init(char *engine);
 /* Initializes the I/O library for communication with an xboard engine.
 ** Parameters: (char *) engine: Path to engine to communicate with.
-** Returns   : (void)
+** Returns   : 1, on error. 0, otherwise.
 */
 
 void comm_exit();

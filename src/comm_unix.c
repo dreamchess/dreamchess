@@ -31,9 +31,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "debug.h"
 #include "pipe_unix.h"
 
-void comm_init(char *engine)
+int comm_init(char *engine)
 {
     char *argv[2];
     int to_child[2], from_child[2];
@@ -78,9 +79,10 @@ void comm_init(char *engine)
         execvp(engine, argv);
 
         /* Execute failed. */
-        perror(engine);
-        exit(1);
+        DBG_ERROR("failed to exec '%s'", engine);
+        return 1;
     }
+    return 0;
 }
 
 void comm_exit()

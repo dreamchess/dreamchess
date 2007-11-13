@@ -31,8 +31,9 @@
 #include "main_sdlthd.h"
 #include "pipe_mem.h"
 
-void comm_init(char *engine)
+int comm_init(char *engine)
 {
+    return 0;
 }
 
 void comm_exit()

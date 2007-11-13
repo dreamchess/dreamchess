@@ -30,7 +30,7 @@
 #include "pipe_win32.h"
 #include "debug.h"
 
-void comm_init(char *engine)
+int comm_init(char *engine)
 {
     HANDLE to_child_rd, to_child_wr, to_child_wr_dup, from_child_rd,
         from_child_wr, from_child_rd_dup, h_stdout;
@@ -57,7 +57,7 @@ void comm_init(char *engine)
     if (!CreatePipe(&from_child_rd, &from_child_wr, &sa_attr, 0))
     {
         DBG_ERROR("failed to create stdout pipe");
-        exit(1);
+        return 1;
     }
 
     /* Make a non-inheritable copy of the read handle and close the original
@@ -69,7 +69,7 @@ void comm_init(char *engine)
         DUPLICATE_SAME_ACCESS))
     {
         DBG_ERROR("failed to duplicate read handle");
-        exit(1);
+        return 1;
     }
     CloseHandle(from_child_rd);
 
@@ -78,7 +78,7 @@ void comm_init(char *engine)
     if (! CreatePipe(&to_child_rd, &to_child_wr, &sa_attr, 0))
     {
         DBG_ERROR("failed to create stdin pipe");
-        exit(1);
+        return 1;
     }
 
     /* Make a non-inheritable copy of the write handle and close the original
@@ -90,7 +90,7 @@ void comm_init(char *engine)
         DUPLICATE_SAME_ACCESS))
     {
         DBG_ERROR("failed to duplicate write handle");
-        exit(1);
+        return 1;
     }
     CloseHandle(to_child_wr); 
 
@@ -109,7 +109,7 @@ void comm_init(char *engine)
         NULL, NULL, &start_info, &proc_info))
     {
         DBG_ERROR("failed to create child process");
-        exit(1);
+        return 1;
     }
 
     /* Close unneeded handles. */
@@ -117,6 +117,7 @@ void comm_init(char *engine)
     CloseHandle(proc_info.hThread);
 
     pipe_win32_init(from_child_rd_dup, to_child_wr_dup);
+    return 0;
 }
 
 void comm_exit()

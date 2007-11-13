@@ -571,7 +571,9 @@ int dreamchess(void *data)
 
         ch_userdir();
         option = config_get_option("1st_engine");
-        comm_init(option->string);
+
+        if (comm_init(option->string))
+            exit(1);
         comm_send("xboard\n");
 
         comm_send("new\n");

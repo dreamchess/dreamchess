@@ -92,7 +92,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     option_t *option;
 
     vbox = gg_vbox_create(0);
-    vbox2 = gg_vbox_create(0);
+    vbox2 = gg_vbox_create(2);
 
     widget = gg_label_create("Theme:");
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
@@ -112,7 +112,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
 
     hbox = gg_hbox_create(20);
     gg_container_append(GG_CONTAINER(hbox), vbox2);
-    vbox2 = gg_vbox_create(0);
+    vbox2 = gg_vbox_create(2);
 
     option = config_get_option("theme");
     widget = gg_option_create();
