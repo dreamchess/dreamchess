@@ -204,10 +204,6 @@ void generate_text_chars()
             c.v2 = (ypos + c.height) / (float) tex_height;
             c.id = texture.id;
 
-            /* FIXME Hack for higher resolutions */
-            c.width /= 2;
-            c.height /= 2;
-
             xpos++;
 
             text_characters[i*16+j] = c;
