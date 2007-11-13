@@ -286,10 +286,10 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         /* FIXME */
         rect_d.x += 2;
         rect_d.y -= 2;
-        if ( colour->r != 0.0f && colour->g != 0.0f && colour->b != 0.0f  )
+
+        /* FIXME  Magic alpha value to turn off shadow */
+        if ( colour->a != 2.0f)
             gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-        else
-            gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_blackshad);
         rect_d.x -= 2;
         rect_d.y += 2;
 

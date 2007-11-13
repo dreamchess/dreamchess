@@ -211,7 +211,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
             {
                 gg_colour_t col_green = {0.5, 0.6, 0.5, 1.0};
                 gg_colour_t col_yellow = {0.8, 0.7, 0.4, 1.0};
-                gg_colour_t *front, *back;
+                gg_colour_t front, *back;
                 int square = get_saved_board(saveload_selected)->square[i * 8 + j];
 
                 sprintf(temp, "%c", xmlsquaretofont(square));
@@ -220,16 +220,19 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
                 gg_align_set_alignment(GG_ALIGN(widget), 0.5, 0.5);
 
                 if (COLOUR(square) == WHITE)
-                    front = &col_white;
+                    front = col_white;
                 else
-                    front = get_col(COL_BLACK);
+                    front = *get_col(COL_BLACK);
 
                 if ((i + j) % 2 == 0)
                     back = &col_green;
                 else
                     back = &col_yellow;
 
-                gg_label_set_colour(GG_LABEL(widget), front, back);
+                /* FIXME Hack to turn off shadow */
+                front.a = 2.0f;
+
+                gg_label_set_colour(GG_LABEL(widget), &front, back);
                 gg_container_append(GG_CONTAINER(hboxtemp), widget);
             }
             gg_container_append(GG_CONTAINER(board_box), hboxtemp);

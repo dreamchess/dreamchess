@@ -190,6 +190,8 @@ void generate_text_chars()
     for (i = 0; i < 16; i++ )
     {
         int xpos = 0;
+
+        /* One pixel extra spacing */
         for (j = 0; j < 16; j++ )
         {
             texture_t c;
@@ -198,11 +200,18 @@ void generate_text_chars()
             c.u1 = xpos / (float) tex_width;
             c.v1 = ypos / (float) tex_height;
             xpos += width[i*16+j];
-            c.u2 = xpos / (float) tex_width;
+            c.u2 = (float) xpos / tex_width;
             c.v2 = (ypos + c.height) / (float) tex_height;
             c.id = texture.id;
+
+            /* FIXME Hack for higher resolutions */
+            c.width /= 2;
+            c.height /= 2;
+
+            xpos++;
+
             text_characters[i*16+j] = c;
         }
-        ypos += texture.height / 16;
+        ypos += texture.height / 16 + 1;
     }
 }
