@@ -114,10 +114,12 @@ int ch_userdir()
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifndef __APPLE__
 int ch_datadir()
 {
     return chdir(DATADIR);
 }
+#endif
 
 int ch_userdir()
 {

@@ -318,6 +318,8 @@ AC_C_VOLATILE
 AC_CONFIG_FILES([Makefile
 		desktop/Makefile
 		doc/Makefile
+		DreamChess.xcodeproj/Makefile
+		English.lproj/Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
@@ -332,6 +334,7 @@ AC_CONFIG_FILES([Makefile
 		src/include/minizip/Makefile
 		src/ui_sdlgl/Makefile
 		src/dreamer/Makefile
+		src/macosx/Makefile
 		src/gamegui_dialogs/Makefile])
 AC_OUTPUT
 
