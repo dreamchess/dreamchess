@@ -34,8 +34,6 @@
 
 static sound_t sounds[AUDIO_SOUNDS] = 
 {
-	{AUDIO_MENU_MOVE, "menu1.wav"},
-	{AUDIO_MENU_CHANGE, "menu2.wav"},
 	{AUDIO_MOVE, "move1.wav"}
 };
 

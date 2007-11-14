@@ -21,8 +21,6 @@
 #include "gamegui/queue.h"
 
 enum {
-	AUDIO_MENU_MOVE,
-	AUDIO_MENU_CHANGE,
 	AUDIO_MOVE,
 	AUDIO_SOUNDS /* Must be last */
 };
