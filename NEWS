@@ -1,4 +1,4 @@
-*** 2007-??-?? - DreamChess v0.2.0 ***
+*** 2007-11-17 - DreamChess v0.2.0 ***
 
 Over a year has passed since the first release, and we are now happy to
 present DreamChess v0.2.0. DreamChess is a 3D chess game for Windows, Mac OS X
@@ -38,8 +38,8 @@ A moderately strong chess engine is included: Dreamer. However, should this
 engine be too weak for you, then you can use any other XBoard-compatible
 chess engine, including the popular Crafty and GNU Chess.
 
-Other features include on-screen move lists using SAN notation, undo
-functionality, and savegames in PGN format.
+Other features include music, sound effects, on-screen move lists using SAN
+notation, undo functionality, and savegames in PGN format.
 
 The DreamChess team currently consists of only a handful of people. We could
 use help in many areas, such as programming, graphics, sound and testing. If

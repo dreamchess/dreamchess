@@ -65,6 +65,8 @@ libpng (http://www.libpng.org/pub/png/libpng.html)
 
 zlib (http://www.zlib.net/)
 
+Mini-XML (http://minixml.org/)
+
 SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/), licensed under the GNU
 Lesser General Public License (see doc/lesser.txt). Source code will be
 provided on request (see AUTHORS for contact information).
