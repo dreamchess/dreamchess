@@ -54,8 +54,10 @@ void pipe_win32_send(char *m)
     }
 }
 
-char *pipe_win32_poll()
+char *pipe_win32_poll(int *error)
 {
+    *error = 0;
+
     /* Repeat until no more data is available, or a full message has been
     ** received.
     */
@@ -75,7 +77,8 @@ char *pipe_win32_poll()
         {
             /* Error reading pipe. */
             fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
-            exit(-1);
+            *error = 1;
+            return NULL;
         }
 
         if (bytes > 0)
@@ -85,14 +88,16 @@ char *pipe_win32_poll()
             {
                 /* Error reading pipe. */
                 fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
-                exit(-1);
+                *error = 1;
+                return NULL;
             }
 
             if (bytes == 0)
             {
                 /* Received EOF. */
                 fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
-                exit(-1);
+                *error = 1;
+                return NULL;
             }
 
             buf[len + bytes] = '\0';

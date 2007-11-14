@@ -30,6 +30,9 @@
 #include "pipe_win32.h"
 #include "debug.h"
 
+static int init_ok = 0;
+static HANDLE hProcess;
+
 int comm_init(char *engine)
 {
     HANDLE to_child_rd, to_child_wr, to_child_wr_dup, from_child_rd,
@@ -57,7 +60,7 @@ int comm_init(char *engine)
     if (!CreatePipe(&from_child_rd, &from_child_wr, &sa_attr, 0))
     {
         DBG_ERROR("failed to create stdout pipe");
-        return 1;
+        exit(1);
     }
 
     /* Make a non-inheritable copy of the read handle and close the original
@@ -69,7 +72,7 @@ int comm_init(char *engine)
         DUPLICATE_SAME_ACCESS))
     {
         DBG_ERROR("failed to duplicate read handle");
-        return 1;
+        exit(1);
     }
     CloseHandle(from_child_rd);
 
@@ -78,7 +81,7 @@ int comm_init(char *engine)
     if (! CreatePipe(&to_child_rd, &to_child_wr, &sa_attr, 0))
     {
         DBG_ERROR("failed to create stdin pipe");
-        return 1;
+        exit(1);
     }
 
     /* Make a non-inheritable copy of the write handle and close the original
@@ -90,7 +93,7 @@ int comm_init(char *engine)
         DUPLICATE_SAME_ACCESS))
     {
         DBG_ERROR("failed to duplicate write handle");
-        return 1;
+        exit(1);
     }
     CloseHandle(to_child_wr); 
 
@@ -109,30 +112,50 @@ int comm_init(char *engine)
         NULL, NULL, &start_info, &proc_info))
     {
         DBG_ERROR("failed to create child process");
+        init_ok = 0;
         return 1;
     }
 
-    /* Close unneeded handles. */
-    CloseHandle(proc_info.hProcess);
+    hProcess = proc_info.hProcess;
+
+    /* Close unneeded handle. */
     CloseHandle(proc_info.hThread);
 
     pipe_win32_init(from_child_rd_dup, to_child_wr_dup);
+    init_ok = 1;
     return 0;
 }
 
 void comm_exit()
 {
-    pipe_win32_exit();
+    if (init_ok) {
+        int status;
+        DBG_LOG("waiting for engine to exit");
+
+        if (WaitForSingleObject(hProcess, INFINITE) != WAIT_FAILED) {
+            DBG_LOG("engine exitted succesfully");
+            CloseHandle(hProcess);
+        } else {
+            DBG_ERROR("error while waiting for engine to quit");
+            exit(1);
+        }
+
+        pipe_win32_exit();
+    }
 }
 
 void comm_send_str(char *str)
 {
-    pipe_win32_send(str);
+    if (init_ok)
+        pipe_win32_send(str);
 }
 
 char *comm_poll()
 {
-    return pipe_win32_poll();
+    if (init_ok)
+        return pipe_win32_poll();
+
+    return NULL;
 }
 
 #endif /* COMM_PIPE_WIN32 */

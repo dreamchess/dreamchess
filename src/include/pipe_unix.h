@@ -34,13 +34,13 @@ void pipe_unix_exit();
 ** Returns   : (void)
 */
 
-void pipe_unix_send(char *m);
+void pipe_unix_send(const char *m);
 /* Sends a message through the I/O library.
 ** Parameters: (char *) m: Message to be sent.
 ** Returns   : (void)
 */
 
-char *pipe_unix_poll();
+char *pipe_unix_poll(int *error);
 /* Polls the I/O library for input.
 ** Parameters: (void)
 ** Returns   : (char *), Message that was read from the input file

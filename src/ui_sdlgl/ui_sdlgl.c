@@ -49,10 +49,11 @@ static int screen_fs=0;
 static int screen_ms=0;
 static int reflections=1;
 static int mode_set_failed=0;
+static int engine_error_shown;
 
 static void music_callback(char *title, char *artist, char *album)
 {
-    printf("Now playing: %s - %s\n", artist, title);
+    DBG_LOG("now playing: %s - %s", artist, title);
 }
 
 int get_screen_width()
@@ -246,6 +247,7 @@ static config_t *do_menu(int *pgn)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    engine_error_shown = 0;
     set_loading=FALSE;
     draw_credits(1);
     open_title_root_dialog();
@@ -682,6 +684,14 @@ static void poll_move()
     }
 
     input = get_move();
+
+    /* FIXME */
+    if (!engine_error_shown && game_get_engine_error())
+    {
+        gg_dialog_open(dialog_engine_error_create());
+        engine_error_shown = 1;
+        return;
+    }
 
     if (!game_want_move())
     {

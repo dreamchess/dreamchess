@@ -54,7 +54,13 @@ void e_comm_send_str(char *str)
 
 char *e_comm_poll()
 {
-    return pipe_unix_poll();
+    int error;
+    char *retval = pipe_unix_poll(&error);
+
+    if (error)
+        exit(1);
+
+    return retval;
 }
 
 #endif /* COMM_PIPE_UNIX */

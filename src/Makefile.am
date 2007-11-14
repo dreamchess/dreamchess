@@ -13,7 +13,7 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	comm_win32.c credits.c theme.c options.c pgn_parser.y pgn_scanner.l \
 	system_config.c
 
-dreamchess_LDADD = @WIN32_RC@ libs/libsan.a audio/libaudio.a @UI_LIBS@ \
+dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
 	libs/gamegui/libgamegui.a -lmxml @DREAMCHESS_LIBS@ @SDL_LIBS@
 
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \

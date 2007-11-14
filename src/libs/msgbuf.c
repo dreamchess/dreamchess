@@ -89,4 +89,6 @@ void msgbuf_exit()
 {
     if (msg)
         free(msg);
+
+    msg = NULL;
 }

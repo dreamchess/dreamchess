@@ -51,3 +51,24 @@ void show_message_dialog( char *message )
 {
     gg_dialog_open(dialog_message_create(message));
 }
+
+gg_dialog_t *dialog_engine_error_create()
+{
+    gg_widget_t *dialog;
+    gg_widget_t *widget;
+
+    gg_widget_t *vbox = gg_vbox_create(0);
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create("A fatal error has occured while"));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create("communicating with the chess engine."));
+    gg_container_append(GG_CONTAINER(vbox), gg_label_create("Please check your settings."));
+    widget = gg_action_create_with_label("OK", 0.5f, 0.5f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        dialog_close_cb, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_ingame_style());
+
+    return GG_DIALOG(dialog);
+}
+

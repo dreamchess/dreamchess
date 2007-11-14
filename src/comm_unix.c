@@ -29,10 +29,22 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
+#include "comm.h"
 #include "debug.h"
 #include "pipe_unix.h"
+#include "dreamchess.h"
+
+static int init_ok = 0;
+
+void sigpipe_handler(int number)
+{
+    pipe_unix_exit();
+    init_ok = 0;
+    game_set_engine_error(1);
+}
 
 int comm_init(char *engine)
 {
@@ -50,6 +62,7 @@ int comm_init(char *engine)
 
     if (pid)
     {
+        struct sigaction sig = {};
         /* We're the parent. */
 
         /* Close read fd of pipe to child. */
@@ -59,6 +72,10 @@ int comm_init(char *engine)
 
         /* Setup read fd of pipe from child as input, write fd of pipe to child as output. */
         pipe_unix_init(from_child[0], to_child[1]);
+
+        /* Install SIGPIPE handler */
+        sig.sa_handler = sigpipe_handler;
+        sigaction(SIGPIPE, &sig, NULL);
     }
     else
     {
@@ -80,24 +97,45 @@ int comm_init(char *engine)
 
         /* Execute failed. */
         DBG_ERROR("failed to exec '%s'", engine);
-        return 1;
+        exit(1);
     }
+    init_ok = 1;
     return 0;
 }
 
 void comm_exit()
 {
-    pipe_unix_exit();
+    if (init_ok) {
+        int status;
+        DBG_LOG("waiting for engine to exit");
+
+        wait(&status);
+
+        DBG_LOG("engine exitted with status %i", status);
+
+        pipe_unix_exit();
+    }
 }
 
-void comm_send_str(char *str)
+void comm_send_str(const char *str)
 {
-    pipe_unix_send(str);
+    if (init_ok)
+        pipe_unix_send(str);
 }
 
 char *comm_poll()
 {
-    return pipe_unix_poll();
+    if (init_ok) {
+        int error;
+        char *retval = pipe_unix_poll(&error);
+
+        if (!error)
+            return retval;
+
+        sigpipe_handler(0);
+    }
+
+    return NULL;
 }
 
 #endif /* COMM_PIPE_UNIX */

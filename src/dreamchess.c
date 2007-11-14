@@ -70,6 +70,7 @@ static config_t *config;
 static move_list_t san_list, fan_list, fullalg_list;
 static history_t *history;
 static int in_game;
+static int engine_error;
 
 static void move_list_play(move_list_t *list, char *move)
 {
@@ -197,6 +198,16 @@ int game_save( int slot )
     }
 
     return retval;
+}
+
+void game_set_engine_error(int err)
+{
+    engine_error = err;
+}
+
+int game_get_engine_error()
+{
+    return engine_error;
 }
 
 static int do_move(move_t *move, int ui_update)
@@ -572,8 +583,8 @@ int dreamchess(void *data)
         ch_userdir();
         option = config_get_option("1st_engine");
 
-        if (comm_init(option->string))
-            exit(1);
+        game_set_engine_error(comm_init(option->string));
+
         comm_send("xboard\n");
 
         comm_send("new\n");
@@ -581,15 +592,16 @@ int dreamchess(void *data)
 
         comm_send("sd %i\n", config->cpu_level);
         comm_send("depth %i\n", config->cpu_level);
+
         if (config->difficulty == 0)
-            comm_send("noquiesce\n");
+	    comm_send("noquiesce\n");
 
         if (config->player[WHITE] == PLAYER_UI
-                && config->player[BLACK] == PLAYER_UI)
-            comm_send("force\n");
+	    && config->player[BLACK] == PLAYER_UI)
+	    comm_send("force\n");
 
         if (config->player[WHITE] == PLAYER_ENGINE)
-            comm_send("go\n");
+	    comm_send("go\n");
 
         in_game = 1;
         board_setup(&board);

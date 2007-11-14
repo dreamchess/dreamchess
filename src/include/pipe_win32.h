@@ -40,7 +40,7 @@ void pipe_win32_send(char *m);
 ** Returns   : (void)
 */
 
-char *pipe_win32_poll();
+char *pipe_win32_poll(int *error);
 /* Polls the I/O library for input.
 ** Parameters: (void)
 ** Returns   : (char *), Message that was read from the input handle

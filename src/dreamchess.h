@@ -55,6 +55,8 @@ void game_get_move_list(char ***list, int *total, int *view);
 int game_save( int slot );
 int game_load( int slot );
 void game_make_move_str(char *move_str, int ui_update);
+int game_get_engine_error();
+void game_set_engine_error(int err);
 
 int set_resolution(int init);
 void toggle_fullscreen();

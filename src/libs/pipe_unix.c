@@ -46,15 +46,17 @@ void pipe_unix_exit()
     msgbuf_exit();
 }
 
-void pipe_unix_send(char *m)
+void pipe_unix_send(const char *m)
 {
     write(fd_out, m, strlen(m));
 }
 
-char *pipe_unix_poll()
+char *pipe_unix_poll(int *error)
 {
     FD_ZERO(&in_set);
     FD_SET(fd_in, &in_set);
+
+    *error = 0;
 
     /* Repeat until no more data is available, or a full message has been
     ** received.
@@ -78,15 +80,20 @@ char *pipe_unix_poll()
 
             if (bytes < 0)
             {
+                if (errno == EINTR)
+                    continue;
+
                 fprintf(stderr, "%s, L%d: %s\n", __FILE__, __LINE__,
                         strerror(errno));
-                exit(-1);
+                *error = 1;
+                break;
             }
             else if (bytes == 0)
             {
                 /* Received EOF. */
                 fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
-                exit(-1);
+                *error = 1;
+                break;
             }
             else
                 buf[len + bytes] = '\0';

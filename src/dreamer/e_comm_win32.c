@@ -57,7 +57,13 @@ void e_comm_send_str(const char *str)
 
 char *e_comm_poll()
 {
-    return pipe_win32_poll();
+    int error;
+    char *retval = pipe_win32_poll(&error);
+
+    if (error)
+        exit(1);
+
+    return retval;
 }
 
 #endif /* COMM_PIPE_WIN32 */
