@@ -34,7 +34,7 @@ void pipe_win32_exit();
 ** Returns   : (void)
 */
 
-void pipe_win32_send(char *m);
+void pipe_win32_send(const char *m);
 /* Sends a message through the I/O library.
 ** Parameters: (char *) m: Message to be sent.
 ** Returns   : (void)

@@ -41,7 +41,7 @@ void pipe_win32_exit()
     msgbuf_exit();
 }
 
-void pipe_win32_send(char *m)
+void pipe_win32_send(const char *m)
 {
     DWORD written;
 

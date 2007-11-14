@@ -29,6 +29,7 @@
 
 #include "pipe_win32.h"
 #include "debug.h"
+#include "dreamchess.h"
 
 static int init_ok = 0;
 static HANDLE hProcess;
@@ -39,11 +40,9 @@ int comm_init(char *engine)
         from_child_wr, from_child_rd_dup, h_stdout;
 
     SECURITY_ATTRIBUTES sa_attr;
-    BOOL fSuccess;
 
     PROCESS_INFORMATION proc_info;
     STARTUPINFO start_info;
-    BOOL bFuncRetn = FALSE;
 
     /* Make pipe handles inherited. */
 
@@ -129,7 +128,6 @@ int comm_init(char *engine)
 void comm_exit()
 {
     if (init_ok) {
-        int status;
         DBG_LOG("waiting for engine to exit");
 
         if (WaitForSingleObject(hProcess, INFINITE) != WAIT_FAILED) {
@@ -152,8 +150,25 @@ void comm_send_str(char *str)
 
 char *comm_poll()
 {
-    if (init_ok)
-        return pipe_win32_poll();
+    if (init_ok) {
+        DWORD exit;
+        int error;
+
+        GetExitCodeProcess(hProcess, &exit);
+
+        if (exit == STILL_ACTIVE)
+        {
+            char *retval = pipe_win32_poll(&error);
+            if (!error)
+                return retval;
+        } else {
+            DBG_ERROR("engine process has terminated");
+        }
+
+        pipe_win32_exit();
+        init_ok = 0;
+        game_set_engine_error(1);
+    }
 
     return NULL;
 }
