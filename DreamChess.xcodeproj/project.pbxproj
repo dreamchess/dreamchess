@@ -82,16 +82,6 @@
 		2A26A4A40AD4B5890019E424 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A26A4A10AD4B5890019E424 /* ioapi.h */; };
 		2A26A4A50AD4B5890019E424 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A26A4A20AD4B5890019E424 /* unzip.h */; };
 		2A26A4A60AD4B5890019E424 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A26A4A30AD4B5890019E424 /* zip.h */; };
-		2A26A4B70AD4B5CA0019E424 /* mxml-attr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4AE0AD4B5CA0019E424 /* mxml-attr.c */; };
-		2A26A4B80AD4B5CA0019E424 /* mxml-entity.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4AF0AD4B5CA0019E424 /* mxml-entity.c */; };
-		2A26A4B90AD4B5CA0019E424 /* mxml-file.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B00AD4B5CA0019E424 /* mxml-file.c */; };
-		2A26A4BA0AD4B5CA0019E424 /* mxml-index.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B10AD4B5CA0019E424 /* mxml-index.c */; };
-		2A26A4BB0AD4B5CA0019E424 /* mxml-node.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B20AD4B5CA0019E424 /* mxml-node.c */; };
-		2A26A4BC0AD4B5CA0019E424 /* mxml-private.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B30AD4B5CA0019E424 /* mxml-private.c */; };
-		2A26A4BD0AD4B5CA0019E424 /* mxml-search.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B40AD4B5CA0019E424 /* mxml-search.c */; };
-		2A26A4BE0AD4B5CA0019E424 /* mxml-set.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B50AD4B5CA0019E424 /* mxml-set.c */; };
-		2A26A4BF0AD4B5CA0019E424 /* mxml-string.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4B60AD4B5CA0019E424 /* mxml-string.c */; };
-		2A26A4CC0AD4B6020019E424 /* mxml.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A26A4CB0AD4B6020019E424 /* mxml.h */; };
 		2A26A4E40AD4B62E0019E424 /* board.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4CD0AD4B62E0019E424 /* board.c */; };
 		2A26A4E50AD4B62E0019E424 /* board.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 2A26A4CE0AD4B62E0019E424 /* board.h */; };
 		2A26A4E60AD4B62E0019E424 /* comm_sdlthd.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A4CF0AD4B62E0019E424 /* comm_sdlthd.c */; };
@@ -131,15 +121,11 @@
 		2A26A52E0AD4B6800019E424 /* draw_shape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5120AD4B6800019E424 /* draw_shape.c */; };
 		2A26A52F0AD4B6800019E424 /* gamegui_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5130AD4B6800019E424 /* gamegui_driver.c */; };
 		2A26A5300AD4B6800019E424 /* get_move.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5140AD4B6800019E424 /* get_move.c */; };
-		2A26A5310AD4B6800019E424 /* ingame_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5150AD4B6800019E424 /* ingame_dialog.c */; };
 		2A26A5320AD4B6800019E424 /* ingame_ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5160AD4B6800019E424 /* ingame_ui.c */; };
 		2A26A5330AD4B6800019E424 /* load_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5170AD4B6800019E424 /* load_data.c */; };
-		2A26A5340AD4B6800019E424 /* message_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5180AD4B6800019E424 /* message_dialog.c */; };
 		2A26A5350AD4B6800019E424 /* promote_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5190AD4B6800019E424 /* promote_dialog.c */; };
-		2A26A5360AD4B6800019E424 /* quit_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51A0AD4B6800019E424 /* quit_dialog.c */; };
 		2A26A5370AD4B6800019E424 /* saveload_dc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51B0AD4B6800019E424 /* saveload_dc.c */; };
 		2A26A5380AD4B6800019E424 /* saveload_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51C0AD4B6800019E424 /* saveload_dialog.c */; };
-		2A26A5390AD4B6800019E424 /* system_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51D0AD4B6800019E424 /* system_dialog.c */; };
 		2A26A53A0AD4B6800019E424 /* system.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51E0AD4B6800019E424 /* system.c */; };
 		2A26A53B0AD4B6800019E424 /* text.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A51F0AD4B6800019E424 /* text.c */; };
 		2A26A53C0AD4B6800019E424 /* texture.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A26A5200AD4B6800019E424 /* texture.c */; };
@@ -171,6 +157,19 @@
 		2A2806730AD567D300FBB3D9 /* themes in Resources */ = {isa = PBXBuildFile; fileRef = 2A2806660AD567D300FBB3D9 /* themes */; };
 		2A2807A90AD58BA000FBB3D9 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2A2807A80AD58BA000FBB3D9 /* icon.icns */; };
 		2A2807D20AD58BC100FBB3D9 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 2A26A59A0AD4B9E50019E424 /* SDL_image.framework */; };
+		2AFB10240CEBF89100B55D3B /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10220CEBF89100B55D3B /* matrix.c */; };
+		2AFB10280CEBF8AC00B55D3B /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10250CEBF8AC00B55D3B /* options.c */; };
+		2AFB10290CEBF8AC00B55D3B /* system_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10260CEBF8AC00B55D3B /* system_config.c */; };
+		2AFB102A0CEBF8AC00B55D3B /* theme.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10270CEBF8AC00B55D3B /* theme.c */; };
+		2AFB10350CEBF9DE00B55D3B /* configuration.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB102E0CEBF9DE00B55D3B /* configuration.c */; };
+		2AFB10360CEBF9DE00B55D3B /* ingame_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB102F0CEBF9DE00B55D3B /* ingame_dialog.c */; };
+		2AFB10370CEBF9DE00B55D3B /* message_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10300CEBF9DE00B55D3B /* message_dialog.c */; };
+		2AFB10380CEBF9DE00B55D3B /* quit_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10310CEBF9DE00B55D3B /* quit_dialog.c */; };
+		2AFB10390CEBF9DE00B55D3B /* resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10320CEBF9DE00B55D3B /* resolution.c */; };
+		2AFB103B0CEBF9DE00B55D3B /* system_dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10340CEBF9DE00B55D3B /* system_dialog.c */; };
+		2AFB10410CEBFAB000B55D3B /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB103E0CEBFAB000B55D3B /* playlist.c */; };
+		2AFB10420CEBFAB000B55D3B /* sdlmixer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10400CEBFAB000B55D3B /* sdlmixer.c */; };
+		2AFB10450CEBFADE00B55D3B /* signal.c in Sources */ = {isa = PBXBuildFile; fileRef = 2AFB10440CEBFADE00B55D3B /* signal.c */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -196,13 +195,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2A26A4310AD4B4E40019E424;
 			remoteInfo = gamegui;
-		};
-		2A26A5710AD4B88D0019E424 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2A26A4AC0AD4B5AF0019E424;
-			remoteInfo = mxml;
 		};
 		2A26A5730AD4B89C0019E424 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -335,17 +327,6 @@
 		2A26A4A10AD4B5890019E424 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = src/include/minizip/ioapi.h; sourceTree = "<group>"; };
 		2A26A4A20AD4B5890019E424 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = src/include/minizip/unzip.h; sourceTree = "<group>"; };
 		2A26A4A30AD4B5890019E424 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zip.h; path = src/include/minizip/zip.h; sourceTree = "<group>"; };
-		2A26A4AD0AD4B5AF0019E424 /* libmxml.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmxml.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2A26A4AE0AD4B5CA0019E424 /* mxml-attr.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-attr.c"; path = "src/libs/mxml/mxml-attr.c"; sourceTree = "<group>"; };
-		2A26A4AF0AD4B5CA0019E424 /* mxml-entity.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-entity.c"; path = "src/libs/mxml/mxml-entity.c"; sourceTree = "<group>"; };
-		2A26A4B00AD4B5CA0019E424 /* mxml-file.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-file.c"; path = "src/libs/mxml/mxml-file.c"; sourceTree = "<group>"; };
-		2A26A4B10AD4B5CA0019E424 /* mxml-index.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-index.c"; path = "src/libs/mxml/mxml-index.c"; sourceTree = "<group>"; };
-		2A26A4B20AD4B5CA0019E424 /* mxml-node.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-node.c"; path = "src/libs/mxml/mxml-node.c"; sourceTree = "<group>"; };
-		2A26A4B30AD4B5CA0019E424 /* mxml-private.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-private.c"; path = "src/libs/mxml/mxml-private.c"; sourceTree = "<group>"; };
-		2A26A4B40AD4B5CA0019E424 /* mxml-search.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-search.c"; path = "src/libs/mxml/mxml-search.c"; sourceTree = "<group>"; };
-		2A26A4B50AD4B5CA0019E424 /* mxml-set.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-set.c"; path = "src/libs/mxml/mxml-set.c"; sourceTree = "<group>"; };
-		2A26A4B60AD4B5CA0019E424 /* mxml-string.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "mxml-string.c"; path = "src/libs/mxml/mxml-string.c"; sourceTree = "<group>"; };
-		2A26A4CB0AD4B6020019E424 /* mxml.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mxml.h; path = src/include/mxml.h; sourceTree = "<group>"; };
 		2A26A4CD0AD4B62E0019E424 /* board.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = board.c; path = src/board.c; sourceTree = "<group>"; };
 		2A26A4CE0AD4B62E0019E424 /* board.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = board.h; path = src/board.h; sourceTree = "<group>"; };
 		2A26A4CF0AD4B62E0019E424 /* comm_sdlthd.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = comm_sdlthd.c; path = src/comm_sdlthd.c; sourceTree = "<group>"; };
@@ -385,15 +366,11 @@
 		2A26A5120AD4B6800019E424 /* draw_shape.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = draw_shape.c; path = src/ui_sdlgl/draw_shape.c; sourceTree = "<group>"; };
 		2A26A5130AD4B6800019E424 /* gamegui_driver.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gamegui_driver.c; path = src/ui_sdlgl/gamegui_driver.c; sourceTree = "<group>"; };
 		2A26A5140AD4B6800019E424 /* get_move.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = get_move.c; path = src/ui_sdlgl/get_move.c; sourceTree = "<group>"; };
-		2A26A5150AD4B6800019E424 /* ingame_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ingame_dialog.c; path = src/ui_sdlgl/ingame_dialog.c; sourceTree = "<group>"; };
 		2A26A5160AD4B6800019E424 /* ingame_ui.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ingame_ui.c; path = src/ui_sdlgl/ingame_ui.c; sourceTree = "<group>"; };
 		2A26A5170AD4B6800019E424 /* load_data.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_data.c; path = src/ui_sdlgl/load_data.c; sourceTree = "<group>"; };
-		2A26A5180AD4B6800019E424 /* message_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = message_dialog.c; path = src/ui_sdlgl/message_dialog.c; sourceTree = "<group>"; };
 		2A26A5190AD4B6800019E424 /* promote_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = promote_dialog.c; path = src/ui_sdlgl/promote_dialog.c; sourceTree = "<group>"; };
-		2A26A51A0AD4B6800019E424 /* quit_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = quit_dialog.c; path = src/ui_sdlgl/quit_dialog.c; sourceTree = "<group>"; };
 		2A26A51B0AD4B6800019E424 /* saveload_dc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = saveload_dc.c; path = src/ui_sdlgl/saveload_dc.c; sourceTree = "<group>"; };
 		2A26A51C0AD4B6800019E424 /* saveload_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = saveload_dialog.c; path = src/ui_sdlgl/saveload_dialog.c; sourceTree = "<group>"; };
-		2A26A51D0AD4B6800019E424 /* system_dialog.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = system_dialog.c; path = src/ui_sdlgl/system_dialog.c; sourceTree = "<group>"; };
 		2A26A51E0AD4B6800019E424 /* system.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = system.c; path = src/ui_sdlgl/system.c; sourceTree = "<group>"; };
 		2A26A51F0AD4B6800019E424 /* text.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = text.c; path = src/ui_sdlgl/text.c; sourceTree = "<group>"; };
 		2A26A5200AD4B6800019E424 /* texture.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = texture.c; path = src/ui_sdlgl/texture.c; sourceTree = "<group>"; };
@@ -422,6 +399,21 @@
 		2A28064C0AD567D300FBB3D9 /* styles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = styles; path = data/styles; sourceTree = "<group>"; };
 		2A2806660AD567D300FBB3D9 /* themes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = themes; path = data/themes; sourceTree = "<group>"; };
 		2A2807A80AD58BA000FBB3D9 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = data/icon.icns; sourceTree = "<group>"; };
+		2AFB10220CEBF89100B55D3B /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = matrix.c; path = src/ui_sdlgl/matrix.c; sourceTree = "<group>"; };
+		2AFB10230CEBF89100B55D3B /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = matrix.h; path = src/ui_sdlgl/matrix.h; sourceTree = "<group>"; };
+		2AFB10250CEBF8AC00B55D3B /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = options.c; path = src/options.c; sourceTree = "<group>"; };
+		2AFB10260CEBF8AC00B55D3B /* system_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = system_config.c; path = src/system_config.c; sourceTree = "<group>"; };
+		2AFB10270CEBF8AC00B55D3B /* theme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = theme.c; path = src/theme.c; sourceTree = "<group>"; };
+		2AFB102E0CEBF9DE00B55D3B /* configuration.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = configuration.c; path = src/gamegui_dialogs/configuration.c; sourceTree = "<group>"; };
+		2AFB102F0CEBF9DE00B55D3B /* ingame_dialog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ingame_dialog.c; path = src/gamegui_dialogs/ingame_dialog.c; sourceTree = "<group>"; };
+		2AFB10300CEBF9DE00B55D3B /* message_dialog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = message_dialog.c; path = src/gamegui_dialogs/message_dialog.c; sourceTree = "<group>"; };
+		2AFB10310CEBF9DE00B55D3B /* quit_dialog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quit_dialog.c; path = src/gamegui_dialogs/quit_dialog.c; sourceTree = "<group>"; };
+		2AFB10320CEBF9DE00B55D3B /* resolution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resolution.c; path = src/gamegui_dialogs/resolution.c; sourceTree = "<group>"; };
+		2AFB10340CEBF9DE00B55D3B /* system_dialog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = system_dialog.c; path = src/gamegui_dialogs/system_dialog.c; sourceTree = "<group>"; };
+		2AFB103E0CEBFAB000B55D3B /* playlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = playlist.c; path = src/audio/playlist.c; sourceTree = "<group>"; };
+		2AFB103F0CEBFAB000B55D3B /* playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playlist.h; path = src/audio/playlist.h; sourceTree = "<group>"; };
+		2AFB10400CEBFAB000B55D3B /* sdlmixer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sdlmixer.c; path = src/audio/sdlmixer.c; sourceTree = "<group>"; };
+		2AFB10440CEBFADE00B55D3B /* signal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = signal.c; path = src/libs/gamegui/signal.c; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* DreamChess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DreamChess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -449,13 +441,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2A26A4950AD4B5550019E424 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2A26A4AB0AD4B5AF0019E424 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -519,7 +504,6 @@
 				2A26A4190AD4B1740019E424 /* genchessmoves */,
 				2A26A4320AD4B4E40019E424 /* libgamegui.a */,
 				2A26A4970AD4B5550019E424 /* libminizip.a */,
-				2A26A4AD0AD4B5AF0019E424 /* libmxml.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -527,6 +511,21 @@
 		29B97314FDCFA39411CA2CEA /* DreamChess */ = {
 			isa = PBXGroup;
 			children = (
+				2AFB10440CEBFADE00B55D3B /* signal.c */,
+				2AFB103E0CEBFAB000B55D3B /* playlist.c */,
+				2AFB103F0CEBFAB000B55D3B /* playlist.h */,
+				2AFB10400CEBFAB000B55D3B /* sdlmixer.c */,
+				2AFB102E0CEBF9DE00B55D3B /* configuration.c */,
+				2AFB102F0CEBF9DE00B55D3B /* ingame_dialog.c */,
+				2AFB10300CEBF9DE00B55D3B /* message_dialog.c */,
+				2AFB10310CEBF9DE00B55D3B /* quit_dialog.c */,
+				2AFB10320CEBF9DE00B55D3B /* resolution.c */,
+				2AFB10340CEBF9DE00B55D3B /* system_dialog.c */,
+				2AFB10250CEBF8AC00B55D3B /* options.c */,
+				2AFB10260CEBF8AC00B55D3B /* system_config.c */,
+				2AFB10270CEBF8AC00B55D3B /* theme.c */,
+				2AFB10220CEBF89100B55D3B /* matrix.c */,
+				2AFB10230CEBF89100B55D3B /* matrix.h */,
 				2A2807A80AD58BA000FBB3D9 /* icon.icns */,
 				2A2805E80AD567D200FBB3D9 /* boards */,
 				2A2805FA0AD567D200FBB3D9 /* font.png */,
@@ -548,15 +547,11 @@
 				2A26A5120AD4B6800019E424 /* draw_shape.c */,
 				2A26A5130AD4B6800019E424 /* gamegui_driver.c */,
 				2A26A5140AD4B6800019E424 /* get_move.c */,
-				2A26A5150AD4B6800019E424 /* ingame_dialog.c */,
 				2A26A5160AD4B6800019E424 /* ingame_ui.c */,
 				2A26A5170AD4B6800019E424 /* load_data.c */,
-				2A26A5180AD4B6800019E424 /* message_dialog.c */,
 				2A26A5190AD4B6800019E424 /* promote_dialog.c */,
-				2A26A51A0AD4B6800019E424 /* quit_dialog.c */,
 				2A26A51B0AD4B6800019E424 /* saveload_dc.c */,
 				2A26A51C0AD4B6800019E424 /* saveload_dialog.c */,
-				2A26A51D0AD4B6800019E424 /* system_dialog.c */,
 				2A26A51E0AD4B6800019E424 /* system.c */,
 				2A26A51F0AD4B6800019E424 /* text.c */,
 				2A26A5200AD4B6800019E424 /* texture.c */,
@@ -603,16 +598,6 @@
 				2A26A4E10AD4B62E0019E424 /* pgn_scanner.c */,
 				2A26A4E20AD4B62E0019E424 /* ui.c */,
 				2A26A4E30AD4B62E0019E424 /* ui.h */,
-				2A26A4CB0AD4B6020019E424 /* mxml.h */,
-				2A26A4AE0AD4B5CA0019E424 /* mxml-attr.c */,
-				2A26A4AF0AD4B5CA0019E424 /* mxml-entity.c */,
-				2A26A4B00AD4B5CA0019E424 /* mxml-file.c */,
-				2A26A4B10AD4B5CA0019E424 /* mxml-index.c */,
-				2A26A4B20AD4B5CA0019E424 /* mxml-node.c */,
-				2A26A4B30AD4B5CA0019E424 /* mxml-private.c */,
-				2A26A4B40AD4B5CA0019E424 /* mxml-search.c */,
-				2A26A4B50AD4B5CA0019E424 /* mxml-set.c */,
-				2A26A4B60AD4B5CA0019E424 /* mxml-string.c */,
 				2A26A4A10AD4B5890019E424 /* ioapi.h */,
 				2A26A4A20AD4B5890019E424 /* unzip.h */,
 				2A26A4A30AD4B5890019E424 /* zip.h */,
@@ -781,14 +766,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2A26A4A90AD4B5AF0019E424 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2A26A4CC0AD4B6020019E424 /* mxml.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -861,23 +838,6 @@
 			productReference = 2A26A4970AD4B5550019E424 /* libminizip.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		2A26A4AC0AD4B5AF0019E424 /* mxml */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2A26A4C00AD4B5CA0019E424 /* Build configuration list for PBXNativeTarget "mxml" */;
-			buildPhases = (
-				2A26A4A90AD4B5AF0019E424 /* Headers */,
-				2A26A4AA0AD4B5AF0019E424 /* Sources */,
-				2A26A4AB0AD4B5AF0019E424 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = mxml;
-			productName = mxml;
-			productReference = 2A26A4AD0AD4B5AF0019E424 /* libmxml.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		8D1107260486CEB800E47090 /* DreamChess */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "DreamChess" */;
@@ -895,7 +855,6 @@
 				2A26A56C0AD4B88D0019E424 /* PBXTargetDependency */,
 				2A26A56E0AD4B88D0019E424 /* PBXTargetDependency */,
 				2A26A5700AD4B88D0019E424 /* PBXTargetDependency */,
-				2A26A5720AD4B88D0019E424 /* PBXTargetDependency */,
 			);
 			name = DreamChess;
 			productInstallPath = "$(HOME)/Applications";
@@ -909,16 +868,17 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DreamChess" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* DreamChess */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* DreamChess */,
 				2A26A4180AD4B1740019E424 /* genchessmoves */,
 				2A26A3D40AD4B0E30019E424 /* dreamer */,
 				2A26A4960AD4B5550019E424 /* minizip */,
 				2A26A4310AD4B4E40019E424 /* gamegui */,
-				2A26A4AC0AD4B5AF0019E424 /* mxml */,
 			);
 		};
 /* End PBXProject section */
@@ -1047,6 +1007,7 @@
 				2A26A4580AD4B5000019E424 /* vbox.c in Sources */,
 				2A26A4590AD4B5000019E424 /* viewport.c in Sources */,
 				2A26A45A0AD4B5000019E424 /* widget.c in Sources */,
+				2AFB10450CEBFADE00B55D3B /* signal.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,22 +1018,6 @@
 				2A26A49B0AD4B5720019E424 /* ioapi.c in Sources */,
 				2A26A49C0AD4B5720019E424 /* unzip.c in Sources */,
 				2A26A49D0AD4B5720019E424 /* zip.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2A26A4AA0AD4B5AF0019E424 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2A26A4B70AD4B5CA0019E424 /* mxml-attr.c in Sources */,
-				2A26A4B80AD4B5CA0019E424 /* mxml-entity.c in Sources */,
-				2A26A4B90AD4B5CA0019E424 /* mxml-file.c in Sources */,
-				2A26A4BA0AD4B5CA0019E424 /* mxml-index.c in Sources */,
-				2A26A4BB0AD4B5CA0019E424 /* mxml-node.c in Sources */,
-				2A26A4BC0AD4B5CA0019E424 /* mxml-private.c in Sources */,
-				2A26A4BD0AD4B5CA0019E424 /* mxml-search.c in Sources */,
-				2A26A4BE0AD4B5CA0019E424 /* mxml-set.c in Sources */,
-				2A26A4BF0AD4B5CA0019E424 /* mxml-string.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1100,15 +1045,11 @@
 				2A26A52E0AD4B6800019E424 /* draw_shape.c in Sources */,
 				2A26A52F0AD4B6800019E424 /* gamegui_driver.c in Sources */,
 				2A26A5300AD4B6800019E424 /* get_move.c in Sources */,
-				2A26A5310AD4B6800019E424 /* ingame_dialog.c in Sources */,
 				2A26A5320AD4B6800019E424 /* ingame_ui.c in Sources */,
 				2A26A5330AD4B6800019E424 /* load_data.c in Sources */,
-				2A26A5340AD4B6800019E424 /* message_dialog.c in Sources */,
 				2A26A5350AD4B6800019E424 /* promote_dialog.c in Sources */,
-				2A26A5360AD4B6800019E424 /* quit_dialog.c in Sources */,
 				2A26A5370AD4B6800019E424 /* saveload_dc.c in Sources */,
 				2A26A5380AD4B6800019E424 /* saveload_dialog.c in Sources */,
-				2A26A5390AD4B6800019E424 /* system_dialog.c in Sources */,
 				2A26A53A0AD4B6800019E424 /* system.c in Sources */,
 				2A26A53B0AD4B6800019E424 /* text.c in Sources */,
 				2A26A53C0AD4B6800019E424 /* texture.c in Sources */,
@@ -1124,6 +1065,18 @@
 				2A26A5540AD4B71C0019E424 /* pipe_unix.c in Sources */,
 				2A26A5580AD4B7300019E424 /* msgbuf.c in Sources */,
 				2A26A55A0AD4B7300019E424 /* san_parse.c in Sources */,
+				2AFB10240CEBF89100B55D3B /* matrix.c in Sources */,
+				2AFB10280CEBF8AC00B55D3B /* options.c in Sources */,
+				2AFB10290CEBF8AC00B55D3B /* system_config.c in Sources */,
+				2AFB102A0CEBF8AC00B55D3B /* theme.c in Sources */,
+				2AFB10350CEBF9DE00B55D3B /* configuration.c in Sources */,
+				2AFB10360CEBF9DE00B55D3B /* ingame_dialog.c in Sources */,
+				2AFB10370CEBF9DE00B55D3B /* message_dialog.c in Sources */,
+				2AFB10380CEBF9DE00B55D3B /* quit_dialog.c in Sources */,
+				2AFB10390CEBF9DE00B55D3B /* resolution.c in Sources */,
+				2AFB103B0CEBF9DE00B55D3B /* system_dialog.c in Sources */,
+				2AFB10410CEBFAB000B55D3B /* playlist.c in Sources */,
+				2AFB10420CEBFAB000B55D3B /* sdlmixer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1144,11 +1097,6 @@
 			isa = PBXTargetDependency;
 			target = 2A26A4310AD4B4E40019E424 /* gamegui */;
 			targetProxy = 2A26A56F0AD4B88D0019E424 /* PBXContainerItemProxy */;
-		};
-		2A26A5720AD4B88D0019E424 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2A26A4AC0AD4B5AF0019E424 /* mxml */;
-			targetProxy = 2A26A5710AD4B88D0019E424 /* PBXContainerItemProxy */;
 		};
 		2A26A5740AD4B89C0019E424 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1261,6 +1209,7 @@
 					src/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				PREBINDING = NO;
 				PRODUCT_NAME = gamegui;
 				ZERO_LINK = YES;
@@ -1285,6 +1234,7 @@
 					src/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				PREBINDING = NO;
 				PRODUCT_NAME = gamegui;
 				ZERO_LINK = NO;
@@ -1345,58 +1295,6 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = minizip;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		2A26A4C10AD4B5CA0019E424 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					"$(HEADER_SEARCH_PATHS)",
-					src/include,
-					src/macosx,
-				);
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = mxml;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		2A26A4C20AD4B5CA0019E424 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					"$(HEADER_SEARCH_PATHS)",
-					src/include,
-					src/macosx,
-				);
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = mxml;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1475,6 +1373,10 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
@@ -1487,14 +1389,22 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				OTHER_LDFLAGS = "-lmxml";
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = /usr/local/include;
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
@@ -1507,8 +1417,12 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					"$(HEADER_SEARCH_PATHS)",
 				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				OTHER_LDFLAGS = "-lmxml";
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = /usr/local/include;
 			};
 			name = Release;
 		};
@@ -1547,15 +1461,6 @@
 			buildConfigurations = (
 				2A26A49F0AD4B5720019E424 /* Debug */,
 				2A26A4A00AD4B5720019E424 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2A26A4C00AD4B5CA0019E424 /* Build configuration list for PBXNativeTarget "mxml" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2A26A4C10AD4B5CA0019E424 /* Debug */,
-				2A26A4C20AD4B5CA0019E424 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

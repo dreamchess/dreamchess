@@ -84,13 +84,13 @@
 #define PACKAGE_TARNAME "dreamchess"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.1.0"
+#define PACKAGE_VERSION "0.2.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.1.0"
+#define VERSION "0.2.0"
 
 /* Define to 1 if the sdl user interface driver should be compiled. */
 /* #undef WITH_UI_SDL */
