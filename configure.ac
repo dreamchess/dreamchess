@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.2.0])
+AC_INIT([dreamchess],[0.3.0-SVN])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
@@ -201,6 +201,16 @@ AC_CHECK_LIB([SDL_mixer], [Mix_OpenAudio],
 	[${SDL_LIBS}]
 	)
 
+AC_CHECK_SDL_HEADER([SDL_net.h], [have_sdl_net_h="yes"],
+	[have_sdl_net_h="no"]
+	)
+
+AC_CHECK_LIB([SDL_net], [SDLNet_Init],
+	[have_sdl_net="yes" SDL_NET_LIBS="-lSDL_net"],
+	[have_sdl_net="no"],
+	[${SDL_LIBS}]
+	)
+
 if test x"$have_sdl_mixer_h" = xyes -a \
 	x"$have_sdl" = xyes -a \
 	x"$have_sdl_mixer" = xyes; then supported_mixer_sdl="yes"
@@ -215,6 +225,20 @@ else
 	with_mixer_sdl="yes"
 fi
 
+if test x"$have_sdl_net_h" = xyes -a \
+	x"$have_sdl" = xyes -a \
+	x"$have_sdl_net" = xyes; then supported_net_sdl="yes"
+else supported_net_sdl="no"
+fi
+
+if test x"$supported_net_sdl" = xno; then
+	with_net_sdl="no"
+elif test x"$with_sdl" = xno; then
+	with_net_sdl="no"
+else
+	with_net_sdl="yes"
+fi
+
 AC_DEFUN([AC_PRINT_LIB],
 	if test x"$2" = xyes; then
 		echo "$1|  yes ($3)"
@@ -224,7 +248,7 @@ AC_DEFUN([AC_PRINT_LIB],
 	)
 
 if test x"$with_ui_sdlgl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_MIXER_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
+	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
 	AC_SUBST([UI_LIBS],"ui_sdlgl/libui_sdlgl.a gamegui_dialogs/libgamegui_dialogs.a")
 	AC_DEFINE([WITH_UI_SDLGL], [1], [Define to 1 if the sdlgl user interface driver should be compiled.])
 elif test x"$with_ui_sdl" = xyes; then
@@ -238,7 +262,12 @@ if test x"$with_mixer_sdl" = xyes; then
 	AC_DEFINE([WITH_MIXER_SDL], [1], [Define to 1 to enable music and sound effects through SDL_mixer.])
 fi
 
-if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$enable_linked_engine" != xyes; then
+if test x"$with_net_sdl" = xyes; then
+	SDL_LIBS="${SDL_NET_LIBS} ${SDL_LIBS}"
+	AC_DEFINE([WITH_NET_SDL], [1], [Define to 1 to enable networking through SDL_net.])
+fi
+
+if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$with_net_sdl" = xno -a x"$enable_linked_engine" != xyes; then
 	SDL_CFLAGS=""
 	SDL_LIBS=""
 fi
@@ -374,6 +403,22 @@ cat <<_ACEOF
 
 Supported:        $supported_mixer_sdl
 Build:            $with_mixer_sdl
+
+Networking requirements:
+
+sdl
+---
+
+  Requirement  | Found
+------------------------
+"SDL_net.h"    |  $have_sdl_net_h
+_ACEOF
+AC_PRINT_LIB([libSDL_net     ], [$have_sdl_net], [$SDL_NET_LIBS])
+
+cat <<_ACEOF
+
+Supported:        $supported_net_sdl
+Build:            $with_net_sdl
 
 You can now run \`make'.
 
