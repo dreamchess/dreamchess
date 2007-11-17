@@ -1146,8 +1146,8 @@ void reset_3d()
         z_rotation = 0.0f;
 
 	// Create light components
-	GLfloat ambientLight[] = { 0.35f, 0.35f, 0.35f, 1.0f };
-	GLfloat diffuseLight[] = { 0.65f, 0.65f, 0.65f, 1.0f };
+	GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
+	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
 	  	 
