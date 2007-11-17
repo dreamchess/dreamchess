@@ -580,16 +580,20 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-void model_render(model_t *model, float alpha)
+void model_render(model_t *model, int specular, float alpha)
 {
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
     texture_t *texture = model->texture;
 
     mcolor[3] = alpha;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    if (specular)
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    else
+        glMaterialfv(GL_FRONT, GL_SPECULAR, nospecReflection);
     glMateriali(GL_FRONT, GL_SHININESS, 128);
 
     glEnable(GL_TEXTURE_2D);
@@ -838,7 +842,7 @@ static void draw_pieces(board_t *board, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f));
+                    model_render(&model[k], 1, (i * 8 + j == selected ? 0.5f : 1.0f));
             }
         }
 
@@ -846,20 +850,20 @@ static void draw_pieces(board_t *board, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], 0.5f);
+            model_render(&model[selected_piece_model], 1, 0.5f);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], 1.0f);
+            model_render(&model[moving_piece_model], 1, 1.0f);
         }
 }
 
 static void draw_board(int blend)
 {
     setup_view();
-    model_render(&board, 1.0f);
+    model_render(&board, 0, 1.0f);
 }
 
 void draw_selector(float alpha)
