@@ -842,7 +842,7 @@ static void draw_pieces(board_t *board, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], 1, (i * 8 + j == selected ? 0.5f : 1.0f));
+                    model_render(&model[k], !is_2d, (i * 8 + j == selected ? 0.5f : 1.0f));
             }
         }
 
@@ -850,13 +850,13 @@ static void draw_pieces(board_t *board, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], 1, 0.5f);
+            model_render(&model[selected_piece_model], !is_2d, 0.5f);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], 1, 1.0f);
+            model_render(&model[moving_piece_model], !is_2d, 1.0f);
         }
 }
 
@@ -1033,7 +1033,7 @@ void render_scene_3d(board_t *board, int reflections)
     glEnable(GL_LIGHTING);
 
     glEnable(GL_CULL_FACE);
-    if (reflections) {
+    if (!is_2d && reflections) {
         setup_stencil();
         glCullFace(GL_FRONT);
         draw_pieces(board, 1);
@@ -1130,39 +1130,42 @@ void select_piece(int square)
 void reset_3d()
 {
     float mcolor[] = { 1.0f, 1.0f, 1.0f };
+    float position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
 
     selected = -1;
     selector = 0;
     selector_hide_time = 0;
 
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
     if (is_2d)
     {
+	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
         x_rotation = 0.0f;
         z_rotation = 0.0f;
 
-	// Create light components
-	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	/* Create light components */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     }
     else
     {
-        x_rotation = -30.0f;
-        z_rotation = 0.0f;
-
-	// Create light components
+	/* Create light components */
 	GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
 	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
+
+        x_rotation = -30.0f;
+        z_rotation = 0.0f;
 	  	 
-	// Assign created components to GL_LIGHT0
+	/* Assign created components to GL_LIGHT0 */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
     }
 
-    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+    /* White specular highlights */
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
     glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
 
     glEnable(GL_LIGHT0);
