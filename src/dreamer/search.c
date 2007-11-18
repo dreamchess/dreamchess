@@ -31,11 +31,14 @@
 #include "hashing.h"
 #include "dreamer.h"
 
+/* #define DEBUG */
+
 extern int moves_made;
 int abort_search;
 int node_trigger;
-move_t *prev_best_move;
+move_t prev_best_move;
 int prev_best_score;
+int have_move;
 
 int
 alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta);
@@ -45,7 +48,7 @@ is_check(board_t *board);
 
 void poll_abort()
 {
-    if (!prev_best_move)
+    if (!have_move)
         return;
 
     if (check_abort())
@@ -302,9 +305,9 @@ find_best_move(board_t *board, int depth)
     int castle_flags = board->castle_flags;
     int fifty_moves = board->fifty_moves;
     node_trigger = 10000;
-    prev_best_move = NULL;
     prev_best_score = ALPHABETA_MIN;
     abort_search = 0;
+    have_move = 0;
 
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
@@ -342,15 +345,22 @@ find_best_move(board_t *board, int depth)
 
         if (abort_search)
         {
-            best_move = prev_best_move;
+            best_move = &prev_best_move;
             best_score = prev_best_score;
             break;
         }
 
-        prev_best_move = best_move;
+        have_move = 1;
+
+        prev_best_move = *best_move;
         prev_best_score = best_score;
-        /*e_comm_send("Best move at depth %i: %i-%i..\n", cur_depth, prev_best_move->source,
-                    prev_best_move->destination);*/
+#ifdef DEBUG
+        {
+            char *str = coord_move_str(&prev_best_move);
+            e_comm_send("Best move at depth %i: %s\n", cur_depth + 1, str);
+            free(str);
+        }
+#endif
     }
 
     if (best_score <= ALPHABETA_MIN)

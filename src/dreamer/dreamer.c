@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
 
 #include "dreamer.h"
 #include "board.h"
@@ -56,9 +58,6 @@
 
 #else
 
-#include <sys/time.h>
-#include <sys/types.h>
-
 void drm_sleep(unsigned long usec)
 {
     struct timeval tv;
@@ -70,6 +69,7 @@ void drm_sleep(unsigned long usec)
 
 #endif
 
+static int start_time;
 static state_t state;
 int moves_made;
 
@@ -175,7 +175,12 @@ void check_game_end(state_t *state)
 
 int check_abort()
 {
-    char *s = e_comm_poll();
+    char *s;
+
+    if (get_time() >= state.move_now_time)
+        return 1;
+
+    s = e_comm_poll();
     if (!s)
         return 0;
     return command_check_abort(&state, s);
@@ -214,17 +219,51 @@ void undo_move(state_t *state)
     repetition_remove();
 }
 
+static void set_start_time()
+{
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+
+    start_time = tv.tv_sec;
+}
+
+static int set_move_now_time()
+{
+    if (state.engine_time - state.time.inc > 0)
+        state.move_now_time = get_time() + (state.engine_time - state.time.inc) / 30 + state.time.inc;
+    else
+        state.move_now_time = 0;
+}
+
+int get_time()
+{
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+
+    tv.tv_sec -= start_time;
+
+    return tv.tv_sec * 100 + tv.tv_usec / 10000;
+}
+
 int engine()
 {
     e_comm_init();
     move_init();
     board_init();
     init_hash();
+    set_start_time();
 
+    setup_board(&state.board);
     state.mode = MODE_IDLE;
     state.flags = 0;
     state.undo_data = 0;
     state.moves = 0;
+    state.time.mps = 40;
+    state.time.base = 5;
+    state.time.inc = 0;
+    state.done = 0;
     set_option(OPTION_QUIESCE, 1);
 
     while (state.mode != MODE_QUIT)
@@ -237,6 +276,7 @@ int engine()
         {
             move_t move;
             state.flags = 0;
+            set_move_now_time();
             move = find_best_move(&state.board, state.depth);
             if (state.flags & FLAG_NEW_GAME)
                 command_handle(&state, "new");

@@ -205,6 +205,52 @@ static int coord_usermove(state_t *state, char *command)
     }
 }
 
+static int parse_time_control(state_t *state, char *s)
+{
+    struct time_control t;
+    char *end;
+    char *semi;
+
+    errno = 0;
+    t.mps = strtol(s, &end, 10);
+
+    if (errno || *end != ' ')
+        return 1;
+
+    semi = strchr(end + 1, ':');
+
+    if (semi) {
+        *semi = ' ';
+        t.base = strtol(end + 1, &end, 10) * 60 * 100;
+        *semi = ':';
+
+        if (errno || end != semi)
+            return 1;
+
+        t.base += strtol(end + 1, &end, 10) * 100;
+
+        if (errno || *end != ' ')
+            return 1;
+    } else {
+        t.base = strtol(end + 1, &end, 10) * 60 * 100;
+
+        if (errno || *end != ' ')
+            return 1;
+    }
+
+    t.inc = strtol(end + 1, &end, 10) * 100;
+
+    if (errno || *end != 0)
+        return 1;
+
+    /* Time control with both mps and inc is invalid */
+    if (t.mps != 0 && t.inc != 0)
+        return 1;
+
+    state->time = t;
+    return 0;
+}
+
 void command_handle(state_t *state, char *command)
 {
     if (!strcmp(command, "xboard"))
@@ -226,6 +272,40 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
+    if (!strncmp(command, "level ", 6))
+    {
+        if (parse_time_control(state, command + 6))
+            BADPARAM(command);
+
+        return;
+    }
+
+    if (!strncmp(command, "time ", 5))
+    {
+        int time;
+        char *end;
+        errno = 0;
+        time = strtol(command + 5, &end, 10);
+        if (errno || *end != 0)
+            BADPARAM(command);
+        else
+            state->engine_time = time;
+        return;
+    }
+
+    if (!strncmp(command, "otim ", 5))
+    {
+        int time;
+        char *end;
+        errno = 0;
+        time = strtol(command + 5, &end, 10);
+        if (errno || *end != 0)
+            BADPARAM(command);
+        else
+            state->opponent_time = time;
+        return;
+    }
+
     if (!strncmp(command, "accepted ", 9))
     {
         if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done"))
@@ -241,7 +321,7 @@ void command_handle(state_t *state, char *command)
         forget_history();
         clear_table();
         repetition_init(&state->board);
-        state->depth = 1;
+        state->depth = 30;
         state->mode = MODE_BLACK;
         state->done = 0;
         set_option(OPTION_QUIESCE, 1);

@@ -41,6 +41,13 @@ typedef struct
 }
 undo_data_t;
 
+struct time_control
+{
+    int mps;
+    int base;
+    int inc;
+};
+
 typedef struct state
 {
     int done;
@@ -51,6 +58,10 @@ typedef struct state
     undo_data_t *undo_data;
     int moves;
     int options;
+    struct time_control time;
+    int engine_time;
+    int opponent_time;
+    int move_now_time;
 }
 state_t;
 
@@ -71,5 +82,6 @@ void undo_move(state_t *state);
 int check_abort();
 int get_option(int option);
 void set_option(int option, int value);
+int get_time();
 
 #endif /* STATE_H */
