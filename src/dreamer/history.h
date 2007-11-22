@@ -24,7 +24,7 @@
 #include "board.h"
 
 void
-sort_moves(move_t moves[], int total_moves, int side);
+sort_moves(move_t moves[], int total_moves, int side, move_t *best_move);
 
 void
 add_count(move_t *move, int side);

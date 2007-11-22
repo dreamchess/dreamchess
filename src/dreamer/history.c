@@ -28,11 +28,12 @@
 
 static int history[2][64][64];
 static int current_side;
+static move_t *best_move;
 
 static int
 move_compare(move_t *move1, move_t *move2)
 {
-    if (history[current_side][move1->source][move1->destination]
+    if ((best_move && !memcmp(move1, best_move, sizeof(move_t))) || history[current_side][move1->source][move1->destination]
             > history[current_side][move2->source][move2->destination])
         return -1;
     else
@@ -40,8 +41,9 @@ move_compare(move_t *move1, move_t *move2)
 }
 
 void
-sort_moves(move_t moves[], int total_moves, int side)
+sort_moves(move_t moves[], int total_moves, int side, move_t *move)
 {
+    best_move = NULL;//move;
     current_side = side;
     qsort(moves, total_moves, sizeof(move_t), (int (*)(const void *, const void *)) move_compare);
 }

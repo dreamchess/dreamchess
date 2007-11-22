@@ -32,6 +32,8 @@
 #define FLAG_IGNORE_MOVE 1<<0
 #define FLAG_NEW_GAME 1<<1
 
+#define MAX_DEPTH 30
+
 typedef struct
 {
     bitboard_t en_passant;

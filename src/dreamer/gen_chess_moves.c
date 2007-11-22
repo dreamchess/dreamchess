@@ -18,32 +18,30 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
+#include <stdlib.h>
 
-#define CHS_FILENAME_C "move_data.c"
+static int knight_moves[8][2] = {{-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}};
+static int king_moves[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
+static int white_pawn_captures[2][2] = {{-1, 1}, {1, 1}};
+static int black_pawn_captures[2][2] = {{-1, -1}, {1, -1}};
+static int rook_moves[4][2] = {{0, -1}, {-1, 0}, {1, 0}, {0, 1}};
+static int bishop_moves[4][2] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+static int queen_moves[8][2] = {{0, -1}, {-1, 0}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
 
-int knight_moves[8][2] = {{-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}};
-int king_moves[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
-int white_pawn_captures[2][2] = {{-1, 1}, {1, 1}};
-int black_pawn_captures[2][2] = {{-1, -1}, {1, -1}};
-int rook_moves[4][2] = {{0, -1}, {-1, 0}, {1, 0}, {0, 1}};
-int bishop_moves[4][2] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
-int queen_moves[8][2] = {{0, -1}, {-1, 0}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
-
-int
+static int
 is_valid(int x, int y)
 {
 	return (x >= 0 && x <= 7 && y >= 0 && y <= 7);
 }
 
-#define generate_moves_single(FUNCNAME, TABLE_FUNCTION, MOVES, SIZE) \
-void \
-FUNCNAME(FILE *f) \
+#define generate_moves_single(FUNCNAME, MOVES, SIZE) \
+int ** \
+FUNCNAME() \
 { \
 	int x, y, i; \
 \
-	fprintf(f, "int **\n" TABLE_FUNCTION "()\n{\n\tint **move_table;\n\n"); \
-	fprintf(f, "\tmove_table = malloc(64 * sizeof(int *));\n\n"); \
+	int **move_table; \
+	move_table = malloc(64 * sizeof(int *)); \
 	for (y = 0; y < 8; y++) \
 		for (x = 0; x < 8; x++) { \
 			int count = 0; \
@@ -53,33 +51,32 @@ FUNCNAME(FILE *f) \
 			for (i = 0; i < SIZE; i++) \
 				if (is_valid(x + MOVES[i][0], y + MOVES[i][1])) count++; \
 \
-			fprintf(f, "\tmove_table[%i] = malloc(%i * sizeof(int));\n", source, count + 1); \
+			move_table[source] = malloc((count + 1) * sizeof(int)); \
 \
 			/* Store number of moves in first element of array. */ \
-			fprintf(f, "\tmove_table[%i][0] = %i;\n", source, count); \
+			move_table[source][0] = count; \
 \
 			/* Print moves. */ \
 			count = 1; \
 			for (i = 0; i < SIZE; i++) { \
 				if (is_valid(x + MOVES[i][0], y + MOVES[i][1])) { \
 					int dest = source + MOVES[i][1] * 8 + MOVES[i][0]; \
-					fprintf(f, "\tmove_table[%i][%i] = %i;\n", \
-						source, count, dest); \
+					move_table[source][count] = dest; \
 					count++; \
 				} \
 			} \
 		} \
-	fprintf(f, "\n\treturn move_table;\n}\n\n"); \
+	return move_table; \
 }
 
-#define generate_moves_ray(FUNCNAME, TABLE_FUNCTION, MOVES, SIZE) \
-void \
-FUNCNAME(FILE *f) \
+#define generate_moves_ray(FUNCNAME, MOVES, SIZE) \
+int *** \
+FUNCNAME() \
 { \
 	int x, y, i; \
 \
-	fprintf(f, "int ***\n" TABLE_FUNCTION "()\n{\n\tint ***move_table;\n\n"); \
-	fprintf(f, "\tmove_table = malloc(64 * sizeof(int **));\n\n"); \
+	int ***move_table; \
+	move_table = malloc(64 * sizeof(int **)); \
 	for (y = 0; y < 8; y++) \
 		for (x = 0; x < 8; x++) { \
 			int rays = 0; \
@@ -90,7 +87,7 @@ FUNCNAME(FILE *f) \
 			for (i = 0; i < SIZE; i++) \
 				if (is_valid(x + MOVES[i][0], y + MOVES[i][1])) rays++; \
 \
-			fprintf(f, "\tmove_table[%i] = malloc(%i * sizeof(int *));\n", source, rays + 1); \
+			move_table[source] = malloc((rays + 1) * sizeof(int *)); \
 \
 			for (i = 0; i < SIZE; i++) { \
 				int raylen = 0; \
@@ -110,10 +107,10 @@ FUNCNAME(FILE *f) \
 				/* If this ray has length 0, skip it. */ \
 				if (!raylen) continue; \
 \
-				fprintf(f, "\tmove_table[%i][%i] = malloc(%i * sizeof(int));\n", source, curray, raylen + 1); \
+				move_table[source][curray] = malloc((raylen + 1) * sizeof(int)); \
 \
 				/* Store ray length in element 0 of the ray. */ \
-				fprintf(f, "\tmove_table[%i][%i][0] = %i;\n", source, curray, raylen); \
+				move_table[source][curray][0] = raylen; \
 \
 				xinc = MOVES[i][0]; \
 				yinc = MOVES[i][1]; \
@@ -121,7 +118,7 @@ FUNCNAME(FILE *f) \
 				/* Print ray elements. */ \
 				while (is_valid(x + xinc, y + yinc)) { \
 					int dest = source + yinc * 8 + xinc; \
-					fprintf(f, "\tmove_table[%i][%i][%i] = %i;\n", source, curray, curraypos, dest); \
+					move_table[source][curray][curraypos] = dest; \
 					curraypos++; \
 					xinc += MOVES[i][0]; \
 					yinc += MOVES[i][1]; \
@@ -131,37 +128,16 @@ FUNCNAME(FILE *f) \
 			} \
 \
 			/* Add a NULL pointer as sentinel. */ \
-			fprintf(f, "\tmove_table[%i][%i] = NULL;\n", source, rays); \
+			move_table[source][rays] = NULL; \
 		} \
-	fprintf(f, "\n\treturn move_table;\n}\n\n"); \
+	return move_table; \
 }
 
-generate_moves_single(generate_knight_moves, "all_knight_moves", knight_moves, 8)
-generate_moves_single(generate_king_moves, "all_king_moves", king_moves, 8)
-generate_moves_single(generate_white_pawn_captures, "all_white_pawn_capture_moves", white_pawn_captures, 2);
-generate_moves_single(generate_black_pawn_captures, "all_black_pawn_capture_moves", black_pawn_captures, 2);
-generate_moves_ray(generate_rook_moves, "all_rook_moves", rook_moves, 4)
-generate_moves_ray(generate_bishop_moves, "all_bishop_moves", bishop_moves, 4)
-generate_moves_ray(generate_queen_moves, "all_queen_moves", queen_moves, 8)
+generate_moves_single(all_knight_moves, knight_moves, 8)
+generate_moves_single(all_king_moves, king_moves, 8)
+generate_moves_single(all_white_pawn_capture_moves, white_pawn_captures, 2);
+generate_moves_single(all_black_pawn_capture_moves, black_pawn_captures, 2);
+generate_moves_ray(all_rook_moves, rook_moves, 4)
+generate_moves_ray(all_bishop_moves, bishop_moves, 4)
+generate_moves_ray(all_queen_moves, queen_moves, 8)
 
-int
-main()
-{
-	FILE *f;
-	f = fopen(CHS_FILENAME_C, "w");
-	if (!f) {
-		printf("Error opening file '%s'.\n", CHS_FILENAME_C);
-		return 1;
-	}
-	fprintf(f, "#include <stdlib.h>\n\n");
-	generate_knight_moves(f);
-	generate_king_moves(f);
-	generate_bishop_moves(f);
-	generate_rook_moves(f);
-	generate_queen_moves(f);
-	generate_white_pawn_captures(f);
-	generate_black_pawn_captures(f);
-	fclose(f);
-
-	return 0;
-}

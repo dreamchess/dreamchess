@@ -34,11 +34,26 @@
 #define PROMOTION_MOVE_BISHOP 128
 #define PROMOTION_MOVE_ROOK 256
 #define PROMOTION_MOVE_QUEEN 512
-#define THREEFOLD_REPETITION_MOVE 1024
-#define FIFTY_MOVES_MOVE 2048
+#define NO_MOVE 4096
 
 #define MOVE_NO_PROMOTION_MASK 63
 #define MOVE_PROMOTION_MASK 960
+
+/* New move type */
+
+#define MOVE_TYPE_MASK 0x3ff
+#define MOVE_TYPE_SHIFT 0
+#define MOVE_SOURCE_MASK 0xfc00
+#define MOVE_SOURCE_SHIFT 10
+#define MOVE_DEST_MASK 0x3f0000
+#define MOVE_DEST_SHIFT 16
+#define MOVE_CAPTURED_MASK 0x3c00000
+#define MOVE_CAPTURED_SHIFT 22
+#define MOVE_PIECE_MASK 0x3c000000
+#define MOVE_PIECE_SHIFT 26
+
+#define MOVE_GET(M, P) (((M) & MOVE_##P##_MASK) >>  MOVE_##P##_SHIFT)
+#define MOVE_SET(M, P, V) ((M) = ((M) & ~MOVE_##P##_MASK) | ((V) << MOVE_##P##_SHIFT))
 
 void
 move_init();

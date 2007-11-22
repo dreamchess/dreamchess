@@ -30,10 +30,10 @@
 
 void
 store_board(board_t *board, int eval, int eval_type, int depth, int ply,
-            int time_stamp);
+            int time_stamp, move_t *best_move);
 
 int
-lookup_board(board_t *board, int depth, int ply, int *eval);
+lookup_board(board_t *board, int depth, int ply, int *eval, move_t **best_move);
 
 void
 clear_table();

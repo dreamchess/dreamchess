@@ -321,7 +321,7 @@ void command_handle(state_t *state, char *command)
         forget_history();
         clear_table();
         repetition_init(&state->board);
-        state->depth = 30;
+        state->depth = MAX_DEPTH;
         state->mode = MODE_BLACK;
         state->done = 0;
         set_option(OPTION_QUIESCE, 1);

@@ -83,6 +83,7 @@ int my_turn(state_t *state)
 
 int is_check(board_t *board)
 {
+    /* FIXME */
     move_t moves[28*16];
     board->current_player = OPPONENT(board->current_player);
     if (compute_legal_moves(board, moves) < 0)

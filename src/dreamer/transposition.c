@@ -24,8 +24,15 @@
 #include "hashing.h"
 #include "transposition.h"
 #include "search.h"
+#include "move.h"
 
 #define ENTRIES (1 << 17)
+/* #define DEBUG */
+
+#ifdef DEBUG
+int queries;
+int hits;
+#endif
 
 typedef struct entry
 {
@@ -34,6 +41,7 @@ typedef struct entry
     int depth;
     long long hash_key;
     int time_stamp;
+    move_t move;
 }
 entry_t;
 
@@ -41,7 +49,7 @@ entry_t table[ENTRIES];
 
 void
 store_board(board_t *board, int eval, int eval_type, int depth, int ply,
-            int time_stamp)
+            int time_stamp, move_t *move)
 {
     int index = board->hash_key & (ENTRIES - 1);
 
@@ -60,18 +68,33 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
     table[index].eval_type = eval_type;
     table[index].depth = depth;
     table[index].time_stamp = time_stamp;
+    if (move)
+        table[index].move = *move;
+    else
+        table[index].move.type = NO_MOVE;
 }
 
 int
-lookup_board(board_t *board, int depth, int ply, int *eval)
+lookup_board(board_t *board, int depth, int ply, int *eval, move_t **move)
 {
     int index = board->hash_key & (ENTRIES - 1);
 
+    *move = NULL;
+
+#ifdef DEBUG
+    if (queries > 0 && queries % 100000 == 0) e_comm_send("TT hit rate:: %.2f%%\n", hits / (float) queries * 100);
+    queries++;
+#endif
     if (table[index].eval_type == EVAL_NONE)
         return EVAL_NONE;
 
     if (table[index].hash_key != board->hash_key)
         return EVAL_NONE;
+#ifdef DEBUG
+    hits++;
+#endif
+    if (!(table[index].move.type & NO_MOVE))
+        *move = &table[index].move;
 
     if (table[index].depth < depth)
         return EVAL_NONE;
