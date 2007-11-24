@@ -27,6 +27,7 @@
 #define EVAL_LOWERBOUND 1
 #define EVAL_ACCURATE 2
 #define EVAL_UPPERBOUND 3
+#define EVAL_PV 4
 
 void
 store_board(board_t *board, int eval, int eval_type, int depth, int ply,

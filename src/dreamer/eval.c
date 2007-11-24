@@ -596,3 +596,4 @@ board_eval_complete(board_t *board, int side, int alpha, int beta)
     else
         return eval1 - eval2;
 }
+

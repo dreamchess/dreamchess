@@ -58,7 +58,7 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
 {
     int index = board->hash_key & (ENTRIES - 1);
 
-    if (table[index].eval_type && (table[index].depth > depth) &&
+    if (table[index].eval_type && eval_type != EVAL_PV && (table[index].depth > depth) &&
             (table[index].time_stamp >= time_stamp))
         return;
 
@@ -101,7 +101,7 @@ lookup_board(board_t *board, int depth, int ply, int *eval, move_t **move)
     if (!(table[index].move.type & NO_MOVE))
         *move = &table[index].move;
 
-    if (table[index].depth < depth)
+    if (table[index].depth < depth || table[index].eval_type == EVAL_PV)
         return EVAL_NONE;
 
     *eval = table[index].eval;

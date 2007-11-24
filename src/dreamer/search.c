@@ -86,6 +86,24 @@ static void pv_print(state_t *state, int depth, int score)
     e_comm_send("\n");
 }
 
+static void pv_store_ht(board_t *board, int index)
+{
+    long long en_passant = board->en_passant;
+    int castle_flags = board->castle_flags;
+    int fifty_moves = board->fifty_moves;
+
+    if (index == pv_len[0])
+        return;
+
+char *s = coord_move_str(&pv[0][index]);
+e_comm_send("Storing %s for %llx\n", s, board->hash_key);
+free(s);
+    store_board(board, 0, EVAL_PV, 0, 0, 0, &pv[0][index]);
+    execute_move(board, &pv[0][index]);
+    pv_store_ht(board, index + 1);
+    unmake_move(board, &pv[0][index], en_passant, castle_flags, fifty_moves);
+}
+
 int
 alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, int side);
 
@@ -342,9 +360,15 @@ find_best_move(state_t *state)
         int eval;
         move_t *tt_move;
         best_score = ALPHABETA_MIN;
+
         lookup_board(board, 0, 0, &eval, &tt_move);
+if (tt_move) { char *s = coord_move_str(tt_move);
+e_comm_send("Best move for %llx: %s\n", board->hash_key, s);
+free(s);
+} else e_comm_send("No best move found for %llx\n", board->hash_key);
         total_moves = compute_legal_moves(board, moves);
         sort_moves(moves, total_moves, board->current_player, tt_move);
+
         /* e_comm_send("------------------\n"); */
         for (move_nr = 0; move_nr < total_moves; move_nr++)
         {
@@ -402,33 +426,40 @@ find_best_move(state_t *state)
             free(str);
         }
 #endif
-    }
 
-    if (best_score == ALPHABETA_ILLEGAL)
-    {
-        /* There are no legal moves. We're either checkmated or
-        ** stalemated.
-        */
-        move_t move;
+        if (best_score == ALPHABETA_ILLEGAL)
+        {
+            /* There are no legal moves. We're either checkmated or
+            ** stalemated.
+            */
+            move_t move;
 
-        /* If the opponent can capture the king that means we're
-        ** checkmated.
-        */
-        board->current_player = OPPONENT(board->current_player);
-        if (compute_legal_moves(board, moves) < 0)
-        {
-            /* We're checkmated. */
-            move.type = RESIGN_MOVE;
+            /* If the opponent can capture the king that means we're
+            ** checkmated.
+            */
             board->current_player = OPPONENT(board->current_player);
-            return move;
+            if (compute_legal_moves(board, moves) < 0)
+            {
+                /* We're checkmated. */
+                move.type = RESIGN_MOVE;
+                board->current_player = OPPONENT(board->current_player);
+                return move;
+            }
+            else
+            {
+                /* We're stalemated. */
+                move.type = STALEMATE_MOVE;
+                board->current_player = OPPONENT(board->current_player);
+                return move;
+            }
         }
-        else
-        {
-            /* We're stalemated. */
-            move.type = STALEMATE_MOVE;
-            board->current_player = OPPONENT(board->current_player);
-            return move;
-        }
+
+        pv_store_ht(board, 0);
+        lookup_board(board, 0, 0, &eval, &tt_move);
+if (tt_move) { char *s = coord_move_str(tt_move);
+e_comm_send("Best move for %llx: %s\n", board->hash_key, s);
+free(s);
+} else e_comm_send("No best move found for %llx\n", board->hash_key);
     }
 
     return *best_move;
