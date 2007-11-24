@@ -21,7 +21,7 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-#include "board.h"
+#include "dreamer.h"
 
 #define ALPHABETA_MIN -30000
 #define ALPHABETA_MAX 30000
@@ -33,6 +33,6 @@
 #define MIN_NODE 1
 
 move_t
-find_best_move(board_t *board, int depth);
+find_best_move(state_t *state);
 
 #endif /* SEARCH_H */

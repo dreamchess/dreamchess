@@ -75,6 +75,7 @@ int my_turn(state_t *state);
 #define STATE_STALEMATE 3
 
 #define OPTION_QUIESCE 0
+#define OPTION_POST 1
 
 int check_game_state(board_t *board);
 void check_game_end(state_t *state);

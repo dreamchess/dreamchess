@@ -518,20 +518,16 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 }
 
 int
-board_eval_material(board_t *board)
+board_eval_material(board_t *board, int side)
 {
-    int side;
-    int opponent;
     int mat_total;
 
     if (board->material_value[SIDE_BLACK] ==
             board->material_value[SIDE_WHITE])
         return 0;
 
-    side = board->current_player;
-    opponent = OPPONENT(side);
-    mat_total = board->material_value[side] +
-                board->material_value[opponent];
+    mat_total = board->material_value[SIDE_WHITE] +
+                board->material_value[SIDE_BLACK];
 
     if (board->material_value[SIDE_BLACK] >
             board->material_value[SIDE_WHITE])
@@ -541,9 +537,11 @@ board_eval_material(board_t *board)
         int val = (2400 < mat_diff? 2400 : mat_diff) +
                   (mat_diff * (12000 - mat_total) *
                    board->num_pawns[SIDE_BLACK])
-                  / (6400 * (board->num_pawns[SIDE_BLACK ] + 1 ) );
-
-        return -val;
+                  / (6400 * (board->num_pawns[SIDE_BLACK ] + 1 ));
+        if (side == SIDE_BLACK)
+            return val;
+        else
+            return -val;
     }
     else
     {
@@ -553,41 +551,48 @@ board_eval_material(board_t *board)
                   (mat_diff * (12000 - mat_total) *
                    board->num_pawns[SIDE_WHITE])
                   / (6400 * (board->num_pawns[SIDE_WHITE] + 1 ));
-
-        return val;
+        if (side == SIDE_WHITE)
+            return val;
+        else
+            return -val;
     }
 }
 
 int
-board_eval_quick(board_t *board)
+board_eval_quick(board_t *board, int side)
 {
-    if (board->current_player == SIDE_WHITE)
-        return board_eval_material(board);
+    int eval = board_eval_material(board, side);
+    if (board->current_player == side)
+        return eval;
     else
-        return -board_eval_material(board);
+        return -eval;
 }
 
 int
-board_eval_complete(board_t *board)
+board_eval_complete(board_t *board, int side, int alpha, int beta)
 {
-    eval_data_t eval_data_white;
-    eval_data_t eval_data_black;
-    int score;
-    analyze_pawn_structure(board, &eval_data_white, SIDE_WHITE);
-    analyze_pawn_structure(board, &eval_data_black, SIDE_BLACK);
-    score = board_eval_material(board) +
-            eval_pawn_structure(board, &eval_data_white, SIDE_WHITE) +
-            eval_bad_bishops(board, &eval_data_white, SIDE_WHITE) +
-            eval_development(board, SIDE_WHITE) +
-            eval_rook_bonus(board, &eval_data_white, SIDE_WHITE) +
-            eval_king_tropism(board, SIDE_WHITE) -
-            eval_pawn_structure(board, &eval_data_black, SIDE_BLACK) -
-            eval_bad_bishops(board, &eval_data_black, SIDE_BLACK) -
-            eval_development(board, SIDE_BLACK) -
-            eval_rook_bonus(board, &eval_data_black, SIDE_BLACK) -
-            eval_king_tropism(board, SIDE_BLACK);
-    if (board->current_player == SIDE_WHITE)
-        return score;
+    eval_data_t eval_data;
+    int eval2;
+    int eval1 = board_eval_material(board, side);
+
+    if (board->current_player != side)
+        eval1 = -eval1;
+#if 0
+    if (eval1 - 200 >= beta)
+        return beta;
+
+    if (eval1 + 200 <= alpha)
+        return alpha;
+#endif
+    analyze_pawn_structure(board, &eval_data, side);
+    eval2 = eval_pawn_structure(board, &eval_data, side) +
+            eval_bad_bishops(board, &eval_data, side) +
+            eval_development(board, side) +
+            eval_rook_bonus(board, &eval_data, side) +
+            eval_king_tropism(board, side);
+
+    if (board->current_player == side)
+        return eval1 + eval2;
     else
-        return -score;
+        return eval1 - eval2;
 }

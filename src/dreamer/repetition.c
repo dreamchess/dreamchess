@@ -82,7 +82,7 @@ int is_repetition(board_t *board, int ply)
     /* We won't go out of bounds here because of the 50-move rule. */
     cur_list->position[cur_head] = board->hash_key;
 
-    if (cur_head < 8)
+    if (cur_head < 4)
         return 0;
 
     /* We only check for two occurrences to prevent transposition table
@@ -93,6 +93,13 @@ int is_repetition(board_t *board, int ply)
             return 1;
 
     return 0;
+}
+
+void p_rep()
+{
+int i;
+for (i = 0; i < cur_list->head; i++) e_comm_send("%i %llx\n", i, cur_list->position[i]);
+e_comm_send("\n");
 }
 
 int is_draw(board_t *board)

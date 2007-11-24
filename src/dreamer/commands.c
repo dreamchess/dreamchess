@@ -28,6 +28,8 @@
 #include "history.h"
 #include "repetition.h"
 #include "transposition.h"
+#include "config.h"
+#include "svn_version.h"
 
 static int is_check(board_t *board)
 {
@@ -251,8 +253,28 @@ static int parse_time_control(state_t *state, char *s)
     return 0;
 }
 
+static int command_always(state_t *state, char *command)
+{
+    if (!strcmp(command, "post"))
+    {
+        set_option(OPTION_POST, 1);
+        return 1;
+    }
+
+    if (!strcmp(command, "nopost"))
+    {
+        set_option(OPTION_POST, 0);
+        return 1;
+    }
+
+    return 0;
+}
+
 void command_handle(state_t *state, char *command)
 {
+    if (command_always(state, command))
+        return;
+
     if (!strcmp(command, "xboard"))
     {
         /* xboard mode is default. */
@@ -268,7 +290,9 @@ void command_handle(state_t *state, char *command)
         if (errno || (*endptr != 0))
              BADPARAM(command);
 
-        e_comm_send("feature setboard=1 done=1\n");
+        e_comm_send("feature setboard=1\n");
+        e_comm_send("feature myname=\"Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\"\n");
+        e_comm_send("feature done=1\n");
         return;
     }
 
@@ -495,20 +519,23 @@ int command_check_abort(state_t *state, char *command)
 {
     if (!strcmp(command, "?"))
         return 1;
-    else if (!strcmp(command, "new"))
+
+    if (command_always(state, command))
+        return 0;
+
+    if (!strcmp(command, "new"))
     {
         state->flags = FLAG_NEW_GAME | FLAG_IGNORE_MOVE;
         return 1;
     }
-    else if (!strcmp(command, "quit") || !strcmp(command, "force"))
+
+    if (!strcmp(command, "quit") || !strcmp(command, "force"))
     {
         state->flags = FLAG_IGNORE_MOVE;
         command_handle(state, command);
         return 1;
     }
-    else
-    {
-        NOT_NOW(command);
-        return 0;
-    }
+
+    NOT_NOW(command);
+    return 0;
 }

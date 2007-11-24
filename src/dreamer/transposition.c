@@ -19,6 +19,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "board.h"
 #include "hashing.h"
@@ -26,13 +27,17 @@
 #include "search.h"
 #include "move.h"
 
-#define ENTRIES (1 << 17)
 /* #define DEBUG */
+
+#define ENTRIES (1 << power_of_two)
+int power_of_two;
 
 #ifdef DEBUG
 int queries;
 int hits;
 #endif
+
+int collisions;
 
 typedef struct entry
 {
@@ -45,7 +50,7 @@ typedef struct entry
 }
 entry_t;
 
-entry_t table[ENTRIES];
+entry_t *table;
 
 void
 store_board(board_t *board, int eval, int eval_type, int depth, int ply,
@@ -118,4 +123,34 @@ clear_table()
     {
         table[i].eval_type = EVAL_NONE;
     }
+}
+
+void transposition_init(int megabytes)
+{
+    int i = 0;
+    int x = 2;
+
+    int max_entries = megabytes * 1024768 / sizeof(entry_t);
+
+    while (x <= max_entries) {
+        x *= 2;
+        i++;
+    }
+
+    x /= 2;
+    power_of_two = i;
+
+    printf("Hash table size: %i MB\n", x * sizeof(entry_t) / 1024768);
+    table = malloc(x * sizeof(entry_t));
+
+    if (!table)
+    {
+         fprintf(stderr, "Failed to allocate memory for hash table\n");
+         exit(1);
+    }
+}
+
+void transposition_exit()
+{
+    free(table);
 }

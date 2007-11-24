@@ -33,6 +33,7 @@
 #include "commands.h"
 #include "repetition.h"
 #include "transposition.h"
+#include "svn_version.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -71,7 +72,6 @@ void drm_sleep(unsigned long usec)
 
 static int start_time;
 static state_t state;
-int moves_made;
 
 int my_turn(state_t *state)
 {
@@ -229,7 +229,7 @@ static void set_start_time()
     start_time = tv.tv_sec;
 }
 
-static int set_move_now_time()
+static void set_move_now_time()
 {
     if (state.engine_time - state.time.inc > 0)
         state.move_now_time = get_time() + (state.engine_time - state.time.inc) / 30 + state.time.inc;
@@ -250,10 +250,12 @@ int get_time()
 
 int engine()
 {
+    printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
     e_comm_init();
     move_init();
     board_init();
     init_hash();
+    transposition_init(128);
     set_start_time();
 
     setup_board(&state.board);
@@ -278,7 +280,7 @@ int engine()
             move_t move;
             state.flags = 0;
             set_move_now_time();
-            move = find_best_move(&state.board, state.depth);
+            move = find_best_move(&state);
             if (state.flags & FLAG_NEW_GAME)
                 command_handle(&state, "new");
             else if (!(state.flags & FLAG_IGNORE_MOVE))
@@ -292,5 +294,7 @@ int engine()
         }
         free(s);
     }
+
+    transposition_exit();
     return 0;
 }

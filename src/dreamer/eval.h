@@ -36,9 +36,9 @@ typedef struct eval_data
 } eval_data_t;
 
 int
-board_eval_quick(board_t *board);
+board_eval_quick(board_t *board, int side);
 
 int
-board_eval_complete(board_t *board);
+board_eval_complete(board_t *board, int side, int alpha, int beta);
 
 #endif /* EVAL_H */
