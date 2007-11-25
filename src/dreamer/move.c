@@ -77,12 +77,7 @@ FUNCNAME(board_t *board, move_t *move) \
 					/* If we are capturing a king, previous board position was illegal. */ \
 					if (piece == KING + OPPONENT(PLAYER)) return -1; \
 \
-					move->piece = PIECE + PLAYER; \
-					move->source = source; \
-					move->destination = dest; \
-					move->type = CAPTURE_MOVE; \
-					move->captured_piece = piece; \
-					move++; \
+					*move++ = MOVE(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece); \
 					move_count++; \
 \
 					/* Break off the ray. */ \
@@ -91,11 +86,7 @@ FUNCNAME(board_t *board, move_t *move) \
 				else \
 				{ \
 					/* Normal move. */ \
-					move->piece = PIECE + PLAYER; \
-					move->source = source; \
-					move->destination = dest; \
-					move->type = NORMAL_MOVE; \
-					move++; \
+					*move++ = MOVE(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0); \
 					move_count++; \
 				} \
 \
@@ -148,22 +139,13 @@ FUNCNAME(board_t *board, move_t *move) \
 				/* If we are capturing a king, previous board position was illegal. */ \
 				if (piece == KING + OPPONENT(PLAYER)) return -1; \
 \
-				move->piece = PIECE + PLAYER; \
-				move->source = source; \
-				move->destination = dest; \
-				move->type = CAPTURE_MOVE; \
-				move->captured_piece = piece; \
-				move++; \
+				*move++ = MOVE(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece); \
 				move_count++; \
 			} \
 			else \
 			{ \
 				/* Normal move. */ \
-				move->piece = PIECE + PLAYER; \
-				move->source = source; \
-				move->destination = dest; \
-				move->type = NORMAL_MOVE; \
-				move++; \
+				*move++ = MOVE(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0); \
 				move_count++; \
 			} \
 \
@@ -204,11 +186,7 @@ FUNCNAME(board_t *board, move_t *move) \
 			if (TEST1) \
 			{ \
 				/* Normal move. */ \
-				move->type = NORMAL_MOVE; \
-				move->piece = PAWN + PLAYER; \
-				move->source = source; \
-				move->destination = dest; \
-				move++; \
+				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0); \
 				move_count++; \
 \
 				if (TEST2) \
@@ -217,11 +195,7 @@ FUNCNAME(board_t *board, move_t *move) \
 					if (!(bitboard_all & square_bit[dest])) \
 					{ \
 						/* Double push. */ \
-						move->type = NORMAL_MOVE; \
-						move->piece = PAWN + PLAYER; \
-						move->source = source; \
-						move->destination = dest; \
-						move++; \
+						*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0); \
 						move_count++; \
 					} \
 				} \
@@ -229,30 +203,10 @@ FUNCNAME(board_t *board, move_t *move) \
 			else \
 			{ \
 				/* Pawn promotion. */ \
-				move->type = NORMAL_MOVE | PROMOTION_MOVE_QUEEN; \
-				move->source = source; \
-				move->destination = dest; \
-				move->piece = PAWN + PLAYER; \
-				move++; \
-\
-				move->type = NORMAL_MOVE | PROMOTION_MOVE_ROOK; \
-				move->source = source; \
-				move->destination = dest; \
-				move->piece = PAWN + PLAYER; \
-				move++; \
-\
-				move->type = NORMAL_MOVE | PROMOTION_MOVE_BISHOP; \
-				move->source = source; \
-				move->destination = dest; \
-				move->piece = PAWN + PLAYER; \
-				move++; \
-\
-				move->type = NORMAL_MOVE | PROMOTION_MOVE_KNIGHT; \
-				move->source = source; \
-				move->destination = dest; \
-				move->piece = PAWN + PLAYER; \
-				move++; \
-\
+				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_QUEEN, 0); \
+				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_ROOK, 0); \
+				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_BISHOP, 0); \
+				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_KNIGHT, 0); \
 				move_count += 4; \
 			} \
 		} \
@@ -272,58 +226,23 @@ FUNCNAME(board_t *board, move_t *move) \
 				if (piece == KING + OPPONENT(PLAYER)) return -1; \
 \
 				/* The move is legal. */ \
-				move->piece = PAWN + PLAYER; \
-				move->source = source; \
-				move->destination = dest; \
-				move->type = CAPTURE_MOVE; \
-\
-				if (!(TEST1)) \
+				if (TEST1) \
 				{ \
-					/* Promotion move. */ \
-					move->type |= PROMOTION_MOVE_KNIGHT; \
-				} \
-\
-				move->captured_piece = piece; \
-				move++; \
-				move_count++; \
-\
-				/* Handle the rest of the promotion moves. */ \
-				if (!(TEST1)) \
-				{ \
-					move->piece = PAWN + PLAYER; \
-					move->source = source; \
-					move->destination = dest; \
-					move->type = CAPTURE_MOVE | PROMOTION_MOVE_ROOK; \
-					move->captured_piece = piece; \
-					move++; \
-\
-					move->piece = PAWN + PLAYER; \
-					move->source = source; \
-					move->destination = dest; \
-					move->type = CAPTURE_MOVE | PROMOTION_MOVE_BISHOP; \
-					move->captured_piece = piece; \
-					move++; \
-\
-					move->piece = PAWN + PLAYER; \
-					move->source = source; \
-					move->destination = dest; \
-					move->type = CAPTURE_MOVE | PROMOTION_MOVE_QUEEN; \
-					move->captured_piece = piece; \
-					move++; \
-\
-					move_count += 3; \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE, piece); \
+					move_count++; \
+				} else { \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_QUEEN, piece); \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_ROOK, piece); \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_BISHOP, piece); \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_KNIGHT, piece); \
+					move_count += 4; \
 				} \
 			} \
 			else \
 				if (board->en_passant & square_bit[dest]) \
 				{ \
 					/* En passant capture. */ \
-					move->type = CAPTURE_MOVE_EN_PASSENT; \
-					move->source = source; \
-					move->destination = dest; \
-					move->piece = PAWN + PLAYER; \
-					move->captured_piece = PAWN + OPPONENT(PLAYER); \
-					move++; \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSENT, PAWN + OPPONENT(PLAYER)); \
 					move_count++; \
 				} \
 		} \
@@ -370,11 +289,7 @@ add_white_castle_moves(board_t *board, move_t *move)
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_KINGSIDE)))
 	{
-		move->type = CASTLING_MOVE_KINGSIDE;
-		move->piece = WHITE_KING;
-		move->source = SQUARE_E1;
-		move->destination = SQUARE_G1;
-		move++;
+		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_G1, CASTLING_MOVE_KINGSIDE, 0); \
 		move_count++;
 	}
 
@@ -383,11 +298,7 @@ add_white_castle_moves(board_t *board, move_t *move)
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_QUEENSIDE)))
 	{
-		move->type = CASTLING_MOVE_QUEENSIDE;
-		move->piece = WHITE_KING;
-		move->source = SQUARE_E1;
-		move->destination = SQUARE_C1;
-		move++;
+		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_C1, CASTLING_MOVE_QUEENSIDE, 0); \
 		move_count++;
 	}
 
@@ -404,11 +315,7 @@ add_black_castle_moves(board_t *board, move_t *move)
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_KINGSIDE)))
 	{
-		move->type = CASTLING_MOVE_KINGSIDE;
-		move->piece = BLACK_KING;
-		move->source = SQUARE_E8;
-		move->destination = SQUARE_G8;
-		move++;
+		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_G8, CASTLING_MOVE_KINGSIDE, 0); \
 		move_count++;
 	}
 
@@ -417,11 +324,7 @@ add_black_castle_moves(board_t *board, move_t *move)
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_QUEENSIDE)))
 	{
-		move->type = CASTLING_MOVE_QUEENSIDE;
-		move->piece = BLACK_KING;
-		move->source = SQUARE_E8;
-		move->destination = SQUARE_C8;
-		move++;
+		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_C8, CASTLING_MOVE_QUEENSIDE, 0); \
 		move_count++;
 	}
 

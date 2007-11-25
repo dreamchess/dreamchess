@@ -54,7 +54,7 @@ entry_t *table;
 
 void
 store_board(board_t *board, int eval, int eval_type, int depth, int ply,
-            int time_stamp, move_t *move)
+            int time_stamp, move_t move)
 {
     int index = board->hash_key & (ENTRIES - 1);
 
@@ -73,18 +73,13 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
     table[index].eval_type = eval_type;
     table[index].depth = depth;
     table[index].time_stamp = time_stamp;
-    if (move)
-        table[index].move = *move;
-    else
-        table[index].move.type = NO_MOVE;
+    table[index].move = move;
 }
 
 int
-lookup_board(board_t *board, int depth, int ply, int *eval, move_t **move)
+lookup_board(board_t *board, int depth, int ply, int *eval, move_t *move)
 {
     int index = board->hash_key & (ENTRIES - 1);
-
-    *move = NULL;
 
 #ifdef DEBUG
     if (queries > 0 && queries % 100000 == 0) e_comm_send("TT hit rate:: %.2f%%\n", hits / (float) queries * 100);
@@ -98,8 +93,7 @@ lookup_board(board_t *board, int depth, int ply, int *eval, move_t **move)
 #ifdef DEBUG
     hits++;
 #endif
-    if (!(table[index].move.type & NO_MOVE))
-        *move = &table[index].move;
+    *move = table[index].move;
 
     if (table[index].depth < depth || table[index].eval_type == EVAL_PV)
         return EVAL_NONE;

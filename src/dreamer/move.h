@@ -54,6 +54,10 @@
 
 #define MOVE_GET(M, P) (((M) & MOVE_##P##_MASK) >>  MOVE_##P##_SHIFT)
 #define MOVE_SET(M, P, V) ((M) = ((M) & ~MOVE_##P##_MASK) | ((V) << MOVE_##P##_SHIFT))
+#define MOVE(PIECE, SOURCE, DEST, TYPE, CAPTURED) \
+    (((PIECE) << MOVE_PIECE_SHIFT) | ((SOURCE) << MOVE_SOURCE_SHIFT) \
+    | ((DEST) << MOVE_DEST_SHIFT) | ((TYPE) << MOVE_TYPE_SHIFT) \
+    | ((CAPTURED) << MOVE_CAPTURED_SHIFT))
 
 void
 move_init();

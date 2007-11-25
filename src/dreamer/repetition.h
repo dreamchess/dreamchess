@@ -34,7 +34,7 @@ void repetition_init();
 
 void repetition_exit();
 
-void repetition_add(board_t *board, move_t *move);
+void repetition_add(board_t *board, move_t move);
 
 void repetition_remove();
 

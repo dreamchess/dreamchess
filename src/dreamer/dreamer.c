@@ -109,17 +109,17 @@ int check_game_state(board_t *board)
         int castle_flags = board->castle_flags;
         int fifty_moves = board->fifty_moves;
 
-        execute_move(board, &moves[move_nr]);
+        execute_move(board, moves[move_nr]);
         board->current_player = OPPONENT(board->current_player);
         if (!is_check(board))
         {
             mate = STATE_NORMAL;
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
             break;
         }
         board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+        unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
     if (!is_check(board) && (mate == STATE_MATE))
@@ -187,7 +187,7 @@ int check_abort()
     return command_check_abort(&state, s);
 }
 
-void do_move(state_t *state, move_t *move)
+void do_move(state_t *state, move_t move)
 {
     state->moves++;
     state->undo_data = realloc(state->undo_data,
@@ -199,7 +199,7 @@ void do_move(state_t *state, move_t *move)
     state->undo_data[state->moves - 1].fifty_moves =
         state->board.fifty_moves;
     state->undo_data[state->moves - 1].move =
-        *move;
+        move;
     execute_move(&state->board, move);
     repetition_add(&state->board, move);
 }
@@ -212,7 +212,7 @@ void undo_move(state_t *state)
     state->moves--;
 
     unmake_move(&state->board,
-                &state->undo_data[state->moves].move,
+                state->undo_data[state->moves].move,
                 state->undo_data[state->moves].en_passant,
                 state->undo_data[state->moves].castle_flags,
                 state->undo_data[state->moves].fifty_moves);
@@ -285,8 +285,8 @@ int engine()
                 command_handle(&state, "new");
             else if (!(state.flags & FLAG_IGNORE_MOVE))
             {
-                char *str = coord_move_str(&move);
-                do_move(&state, &move);
+                char *str = coord_move_str(move);
+                do_move(&state, move);
                 e_comm_send("move %s\n", str);
                 free(str);
                 check_game_end(&state);

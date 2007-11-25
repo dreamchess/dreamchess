@@ -328,20 +328,8 @@ int find_white_piece(board_t *board, int square)
     return NONE;
 }
 
-static int convert_move(move_t *move)
+void execute_move(board_t *board, move_t move)
 {
-    int m = move->type;
-    MOVE_SET(m, SOURCE, move->source);
-    MOVE_SET(m, DEST, move->destination);
-    MOVE_SET(m, CAPTURED, move->captured_piece);
-    MOVE_SET(m, PIECE, move->piece);
-    return m;
-}
-
-void execute_move(board_t *board, move_t *move_old)
-{
-    int move = convert_move(move_old);
-
     if (board->current_player)
     {
         /* Black is the side to move. Remove white phantom kings from the
@@ -629,12 +617,11 @@ void execute_move(board_t *board, move_t *move_old)
     board->hash_key ^= black_to_move;
 }
 
-void unmake_move(board_t *board, move_t *move_old, bitboard_t
+void unmake_move(board_t *board, move_t move, bitboard_t
                  old_en_passant,                int
                  old_castle_flags, int old_fifty_moves)
 {
     int castle_diff;
-    int move = convert_move(move_old);
 
     /* Switch players. */
     board->current_player = OPPONENT(board->current_player);

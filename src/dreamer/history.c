@@ -30,21 +30,21 @@ static int history[2][64][64];
 static int current_side;
 
 static int
-move_compare(move_t *move1, move_t *move2)
+move_compare(move_t move1, move_t move2)
 {
-    if (history[current_side][move1->source][move1->destination]
-            > history[current_side][move2->source][move2->destination])
+    if (history[current_side][MOVE_GET(move1, SOURCE)][MOVE_GET(move1, DEST)]
+            > history[current_side][MOVE_GET(move2, SOURCE)][MOVE_GET(move2, DEST)])
         return -1;
     else
         return 1;
 }
 
-static void best_first(move_t moves[], int total_moves, move_t *move)
+static void best_first(move_t moves[], int total_moves, move_t move)
 {
     int i;
 
     for (i = 0; i < total_moves; i++)
-        if (moves[i].source == move->source && moves[i].destination == move->destination)
+        if (move == moves[i])
         {
             move_t swap = moves[0];
             moves[0] = moves[i];
@@ -54,18 +54,18 @@ static void best_first(move_t moves[], int total_moves, move_t *move)
 }
 
 void
-sort_moves(move_t moves[], int total_moves, int side, move_t *move)
+sort_moves(move_t moves[], int total_moves, int side, move_t move)
 {
     current_side = side;
-    if (move)
+    if (move != NO_MOVE)
         best_first(moves, total_moves, move);
     qsort(moves + 1, total_moves - 1, sizeof(move_t), (int (*)(const void *, const void *)) move_compare);
 }
 
 void
-add_count(move_t *move, int side)
+add_count(move_t move, int side)
 {
-    history[side][move->source][move->destination]++;
+    history[side][MOVE_GET(move, SOURCE)][MOVE_GET(move, DEST)]++;
 }
 
 void

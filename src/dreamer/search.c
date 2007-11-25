@@ -53,9 +53,9 @@ static inline void pv_term(int ply)
     pv_len[ply] = 0;
 }
 
-static inline void pv_copy(int ply, move_t *move)
+static inline void pv_copy(int ply, move_t move)
 {
-    pv[ply][0] = *move;
+    pv[ply][0] = move;
     memcpy(&pv[ply][1], &pv[ply + 1][0], pv_len[ply + 1] * sizeof(move_t));
     pv_len[ply] = pv_len[ply + 1] + 1;
 }
@@ -63,9 +63,9 @@ static inline void pv_copy(int ply, move_t *move)
 static void pv_print(state_t *state, int depth, int score)
 {
     int i = 0;
-    e_comm_send("%3i %7i %i %i", depth, score, 0, get_time() - start_time, total_nodes);
+    e_comm_send("%3i %7i %i %i", depth, score, total_nodes, get_time() - start_time, total_nodes);
     if (state->board.current_player == SIDE_BLACK) {
-        char *s = coord_move_str(&pv[0][0]);
+        char *s = coord_move_str(pv[0][0]);
         e_comm_send(" %2d. ... %s", state->moves / 2 + 1, s);
         i = 1;
         free(s);
@@ -74,12 +74,12 @@ static void pv_print(state_t *state, int depth, int score)
     {
         if (i == pv_len[0])
             break;
-        char *s = coord_move_str(&pv[0][i++]);
+        char *s = coord_move_str(pv[0][i++]);
         e_comm_send(" %2d. %s", (state->moves + i) / 2 + 1, s);
         free(s);
         if (i == pv_len[0])
             break;
-        s = coord_move_str(&pv[0][i++]);
+        s = coord_move_str(pv[0][i++]);
         e_comm_send(" %s", s);
         free(s);
     }
@@ -95,13 +95,10 @@ static void pv_store_ht(board_t *board, int index)
     if (index == pv_len[0])
         return;
 
-char *s = coord_move_str(&pv[0][index]);
-e_comm_send("Storing %s for %llx\n", s, board->hash_key);
-free(s);
-    store_board(board, 0, EVAL_PV, 0, 0, 0, &pv[0][index]);
-    execute_move(board, &pv[0][index]);
+    store_board(board, 0, EVAL_PV, 0, 0, 0, pv[0][index]);
+    execute_move(board, pv[0][index]);
     pv_store_ht(board, index + 1);
-    unmake_move(board, &pv[0][index], en_passant, castle_flags, fifty_moves);
+    unmake_move(board, pv[0][index], en_passant, castle_flags, fifty_moves);
 }
 
 int
@@ -146,7 +143,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
     if ((total_moves = compute_legal_moves(board, moves)) < 0)
         return ALPHABETA_ILLEGAL;
 
-    sort_moves(moves, total_moves, board->current_player, NULL);
+    sort_moves(moves, total_moves, board->current_player, NO_MOVE);
 
     eval = board_eval_complete(board, side, alpha, beta);
 
@@ -162,19 +159,16 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 
     for (move_nr = 0; move_nr < total_moves; move_nr++)
     {
-        if ((moves[move_nr].type == CAPTURE_MOVE) ||
-                (moves[move_nr].type == CAPTURE_MOVE_EN_PASSENT) ||
-                (moves[move_nr].type & MOVE_PROMOTION_MASK))
+        if (moves[move_nr] & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT | MOVE_PROMOTION_MASK))
         {
-
-            execute_move(board, &moves[move_nr]);
+            execute_move(board, moves[move_nr]);
             eval = -quiescence(board, ply + 1, check & (board->current_player? 1 : 2), -beta, -alpha, side);
-            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
             if (eval == -ALPHABETA_ILLEGAL)
                 continue;
             if (eval >= beta)
             {
-                add_count(&moves[move_nr], board->current_player);
+                add_count(moves[move_nr], board->current_player);
                 return beta;
             }
             if (eval > alpha)
@@ -224,7 +218,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
     long long en_passant;
     int castle_flags;
     int fifty_moves;
-    move_t *best_move;
+    move_t best_move;
 
     if ((total_nodes++) % 10000 == 0)
         poll_abort();
@@ -249,8 +243,8 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
 
         return 0;
     }
-
-    switch (lookup_board(board, depth, ply, &eval, &best_move))
+/*
+    switch (*/lookup_board(board, depth, ply, &eval, &best_move)/*)
     {
     case EVAL_ACCURATE:
         pv_term(ply);
@@ -262,7 +256,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
     case EVAL_UPPERBOUND:
         if (eval <= alpha)
             return alpha;
-    }
+    }*/;
 
     if (depth == 0) {
         pv_term(ply);
@@ -284,24 +278,24 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
     for (move_nr = 0; move_nr < total_moves; move_nr++)
     {
         int score;
-        execute_move(board, &moves[move_nr]);
+        execute_move(board, moves[move_nr]);
         score = -alpha_beta(board, depth - 1, ply + 1, check, -beta, -alpha, side);
-        unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+        unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
         if (abort_search)
             return 0;
         if (score == -ALPHABETA_ILLEGAL)
             continue;
         if (score >= beta) {
                 store_board(board, score, EVAL_LOWERBOUND, depth, ply,
-                            0 /* FIXME moves_made */, &moves[move_nr]);
-                add_count(&moves[move_nr], board->current_player);
+                            0 /* FIXME moves_made */, moves[move_nr]);
+                add_count(moves[move_nr], board->current_player);
                 return beta;
         }
         if (score > best_move_score) {
             if (score > alpha) {
                 eval_type = EVAL_ACCURATE;
                 alpha = score;
-                pv_copy(ply, &moves[move_nr]);
+                pv_copy(ply, moves[move_nr]);
             }
             best_move_score = score;
             best_move_index = move_nr;
@@ -330,9 +324,22 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
         }
     }
 
-    store_board(board, alpha, eval_type, depth, ply, 0 /* FIXME moves_made */, &moves[best_move_index]);
+    store_board(board, alpha, eval_type, depth, ply, 0 /* FIXME moves_made */, moves[best_move_index]);
     return alpha;
 }
+
+#if 0
+141067 <second:   1    -100 4 0  8. ... d8e8
+141067 <second:   1     -93 17 0  8. ... e6e5
+141067 <second:   1     -92 74 0  8. ... c6b4
+141067 <second:   1     -89 107 0  8. ... a8c8
+141067 <second:   2     -89 217 0  8. ... a8c8  9. g2g4
+141067 <second:   3     -88 3551 3  8. ... a8c8  9. g2g4 c6b4
+141067 <second:   3     -86 6677 6  8. ... d8e8  9. f2f4 a8d8
+141180 <second:   4     -86 25180 22  8. ... d8e8  9. f2f4 a8d8 10. g2g4
+146628 <second:   4     -76 649684 567  8. ... c6a5  9. b5e2 c7c5 10. d4c5
+148899 <second: move g8h8
+#endif
 
 move_t
 find_best_move(state_t *state)
@@ -340,7 +347,7 @@ find_best_move(state_t *state)
     int depth = state->depth;
     board_t *board = &state->board;
     move_t moves[28*16];
-    move_t *best_move;
+    move_t best_move;
     int total_moves;
     int move_nr;
     int cur_depth;
@@ -358,14 +365,11 @@ find_best_move(state_t *state)
     {
         int alpha = ALPHABETA_MIN;
         int eval;
-        move_t *tt_move;
+        move_t tt_move;
         best_score = ALPHABETA_MIN;
 
         lookup_board(board, 0, 0, &eval, &tt_move);
-if (tt_move) { char *s = coord_move_str(tt_move);
-e_comm_send("Best move for %llx: %s\n", board->hash_key, s);
-free(s);
-} else e_comm_send("No best move found for %llx\n", board->hash_key);
+
         total_moves = compute_legal_moves(board, moves);
         sort_moves(moves, total_moves, board->current_player, tt_move);
 
@@ -373,59 +377,44 @@ free(s);
         for (move_nr = 0; move_nr < total_moves; move_nr++)
         {
             int score;
-            /* e_comm_send("Examining move %c%c-%c%c..\n", moves[move_nr].source % 8 + 'a',
-                moves[move_nr].source / 8 + '1', moves[move_nr].destination % 8 + 'a',
-                moves[move_nr].destination / 8 + '1'); */
-            execute_move(board, &moves[move_nr]);
+            char *s = coord_move_str(moves[move_nr]);
+            /* e_comm_send("Examining move %s..\n", s); */
+            free(s);
+            execute_move(board, moves[move_nr]);
             score = -alpha_beta(board, cur_depth, 1, 3, ALPHABETA_MIN, -alpha, OPPONENT(board->current_player));
-            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
             /* e_comm_send("Move scored %i\n", score); */
-            if (abort_search) {
+            if (abort_search)
                 break;
-            }
             if (score == -ALPHABETA_ILLEGAL)
                 continue;
             if (score > alpha)
                 alpha = score;
             if (score > best_score)
             {
-                best_move = &moves[move_nr];
+                best_move = moves[move_nr];
                 best_score = score;
-                pv_copy(0, &moves[move_nr]);
+                pv_copy(0, moves[move_nr]);
                 if (get_option(OPTION_POST))
                     pv_print(state, cur_depth + 1, best_score);
             }
         }
 
-        /* If we found a mate in 'cur_depth' we can stop the search */
-        if (best_score == ALPHABETA_MAX - cur_depth - 1) {
-            e_comm_send("Found a mate in %i :)\n", cur_depth / 2 + 1);
-            break;
-        }
-
-        if (best_score == ALPHABETA_MIN + cur_depth + 2) {
-            e_comm_send("Opponent has a mate in %i :(\n", cur_depth / 2 + 1);
-            break;
-        }
-
         if (abort_search)
         {
-            best_move = &prev_best_move;
+            best_move = prev_best_move;
             best_score = prev_best_score;
             break;
         }
 
-        have_move = 1;
-
-        prev_best_move = *best_move;
-        prev_best_score = best_score;
-#ifdef DEBUG
-        {
-            char *str = coord_move_str(&prev_best_move);
-            e_comm_send("Best move at depth %i: %s\n", cur_depth + 1, str);
-            free(str);
+        /* If we found a mate in 'cur_depth' we can stop the search */
+        if (best_score == ALPHABETA_MAX - cur_depth - 1) {
+            break;
         }
-#endif
+
+        if (best_score < ALPHABETA_MIN + depth) {
+            break;
+        }
 
         if (best_score == ALPHABETA_ILLEGAL)
         {
@@ -441,26 +430,33 @@ free(s);
             if (compute_legal_moves(board, moves) < 0)
             {
                 /* We're checkmated. */
-                move.type = RESIGN_MOVE;
+                move = RESIGN_MOVE;
                 board->current_player = OPPONENT(board->current_player);
                 return move;
             }
             else
             {
                 /* We're stalemated. */
-                move.type = STALEMATE_MOVE;
+                move = STALEMATE_MOVE;
                 board->current_player = OPPONENT(board->current_player);
                 return move;
             }
         }
 
+        have_move = 1;
+if (best_move != pv[0][0]) exit(1);
+        prev_best_move = best_move;
+        prev_best_score = best_score;
+#ifdef DEBUG
+        {
+            char *str = coord_move_str(&prev_best_move);
+            e_comm_send("Best move at depth %i: %s\n", cur_depth + 1, str);
+            free(str);
+        }
+#endif
+
         pv_store_ht(board, 0);
-        lookup_board(board, 0, 0, &eval, &tt_move);
-if (tt_move) { char *s = coord_move_str(tt_move);
-e_comm_send("Best move for %llx: %s\n", board->hash_key, s);
-free(s);
-} else e_comm_send("No best move found for %llx\n", board->hash_key);
     }
 
-    return *best_move;
+    return best_move;
 }

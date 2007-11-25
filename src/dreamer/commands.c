@@ -72,13 +72,13 @@ static int is_coord_move(char *ms)
     return 1;
 }
 
-static move_t *get_coord_move(board_t *board, char *ms)
+static move_t get_coord_move(board_t *board, char *ms)
 {
     int source, dest;
     move_t moves[28*16];
     int total_moves;
     int move_nr;
-    move_t *move = malloc(sizeof(move_t));
+    move_t move;
 
     source = (ms[0] - 'a') + 8 * (ms[1] - '1');
     dest = (ms[2] - 'a') + 8 * (ms[3] - '1');
@@ -89,74 +89,70 @@ static move_t *get_coord_move(board_t *board, char *ms)
     move_nr = 0;
     while (move_nr < total_moves)
     {
-        if ((moves[move_nr].source == source) && (moves[move_nr].destination
-                ==
-                dest))
+        if ((MOVE_GET(moves[move_nr], SOURCE) == source) && (MOVE_GET(moves[move_nr], DEST) == dest))
         {
             bitboard_t en_passant = board->en_passant;
             int castle_flags = board->castle_flags;
             int fifty_moves = board->fifty_moves;
 
             /* Move found. */
-            execute_move(board, &moves[move_nr]);
+            execute_move(board, moves[move_nr]);
             board->current_player = OPPONENT(board->current_player);
             if (!is_check(board))
             {
-                *move = moves[move_nr];
+                move = moves[move_nr];
                 board->current_player = OPPONENT(board->current_player);
-                unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+                unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
                 break;
             }
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, &moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
         }
         move_nr++;
     }
     if (move_nr < total_moves)
     {
-        if (move->type & MOVE_PROMOTION_MASK)
+        if (move & MOVE_PROMOTION_MASK)
         {
             /* Set correct promotion piece. */
-            move->type &= ~MOVE_PROMOTION_MASK;
+            move &= ~MOVE_PROMOTION_MASK;
             if (strlen(ms) == 5)
                 switch(ms[4])
                 {
                 case 'q':
-                    move->type |= PROMOTION_MOVE_QUEEN;
+                    move |= PROMOTION_MOVE_QUEEN;
                     break;
                 case 'r':
-                    move->type |= PROMOTION_MOVE_ROOK;
+                    move |= PROMOTION_MOVE_ROOK;
                     break;
                 case 'n':
-                    move->type |= PROMOTION_MOVE_KNIGHT;
+                    move |= PROMOTION_MOVE_KNIGHT;
                     break;
                 case 'b':
-                    move->type |= PROMOTION_MOVE_BISHOP;
+                    move |= PROMOTION_MOVE_BISHOP;
                 }
             else
             {
                 /* No promotion piece specified. */
-                free(move);
-                return NULL;
+                return NO_MOVE;
             }
             return move;
         }
         if (strlen(ms) == 4)
             return move;
     }
-    free(move);
-    return NULL;
+    return NO_MOVE;
 }
 
-char *coord_move_str(move_t *move)
+char *coord_move_str(move_t move)
 {
     char *ret = malloc(6);
     ret[5] = '\0';
-    ret[0] = 'a' + move->source % 8;
-    ret[1] = '1' + move->source / 8;
-    ret[2] = 'a' + move->destination % 8;
-    ret[3] = '1' + move->destination / 8;
-    switch (move->type & MOVE_PROMOTION_MASK)
+    ret[0] = 'a' + MOVE_GET(move, SOURCE) % 8;
+    ret[1] = '1' + MOVE_GET(move, SOURCE) / 8;
+    ret[2] = 'a' + MOVE_GET(move, DEST) % 8;
+    ret[3] = '1' + MOVE_GET(move, DEST) / 8;
+    switch (move & MOVE_PROMOTION_MASK)
     {
     case PROMOTION_MOVE_QUEEN:
         ret[4] = 'q';
@@ -187,7 +183,7 @@ static void error(char *type, char *command)
 
 static int coord_usermove(state_t *state, char *command)
 {
-    move_t *move;
+    move_t move;
     if (my_turn(state))
     {
         NOT_NOW(command);

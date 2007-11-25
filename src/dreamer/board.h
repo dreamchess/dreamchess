@@ -207,6 +207,8 @@ typedef struct board
 }
 board_t;
 
+typedef int move_t;
+#if 0
 /* Structure describing a move on the board. */
 typedef struct move
 {
@@ -226,7 +228,7 @@ typedef struct move
     int destination;
 }
 move_t;
-
+#endif
 extern bitboard_t square_bit[64];
 
 extern board_t chess_board;
@@ -275,19 +277,19 @@ setup_board(board_t *board);
 */
 
 void
-execute_move(board_t *board, move_t *move);
+execute_move(board_t *board, move_t move);
 /* Makes a move on a board.
 ** Parameters: (board_t *) board: Board to make the move on.
-**             (move_t *) move: The move to make.
+**             (move_t) move: The move to make.
 ** Returns   : (void)
 */
 
 void
-unmake_move(board_t *board, move_t *move, bitboard_t old_en_passant,
+unmake_move(board_t *board, move_t move, bitboard_t old_en_passant,
             int old_castle_flags, int old_fifty_moves);
 /* Unmakes a move on a board.
 ** Parameters: (board_t *) board: Board to unmake the move on.
-**             (move_t *) move: The move to unmake.
+**             (move_t) move: The move to unmake.
 **             (bitboard_t) old_en_passant: The en-passant flags before the
 **                 last move.
 **             (int) old_castle_flags: The castling flags before the last
