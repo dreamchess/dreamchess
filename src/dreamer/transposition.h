@@ -34,12 +34,13 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
             int time_stamp, move_t best_move);
 
 int
-lookup_board(board_t *board, int depth, int ply, int *eval, move_t *best_move);
+lookup_board(board_t *board, int depth, int ply, int *eval);
 
 void
 clear_table();
 
 void transposition_init(int megabytes);
 void transposition_exit();
+move_t lookup_best_move(board_t *board);
 
 #endif /* TRANSPOSITION_H */

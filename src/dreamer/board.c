@@ -328,6 +328,13 @@ int find_white_piece(board_t *board, int square)
     return NONE;
 }
 
+void switch_player(board_t *board)
+{
+    /* Switch players. */
+    board->current_player = OPPONENT(board->current_player);
+    board->hash_key ^= black_to_move;
+}
+
 void execute_move(board_t *board, move_t move)
 {
     if (board->current_player)

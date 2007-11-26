@@ -86,5 +86,6 @@ int check_abort();
 int get_option(int option);
 void set_option(int option, int value);
 int get_time();
+int is_check(board_t *board, int ply);
 
 #endif /* STATE_H */

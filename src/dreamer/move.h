@@ -22,6 +22,7 @@
 #define MOVE_H
 
 #include "board.h"
+#include "dreamer.h"
 
 #define NORMAL_MOVE 0
 #define CAPTURE_MOVE 1
@@ -59,6 +60,10 @@
     | ((DEST) << MOVE_DEST_SHIFT) | ((TYPE) << MOVE_TYPE_SHIFT) \
     | ((CAPTURED) << MOVE_CAPTURED_SHIFT))
 
+extern move_t moves[(MAX_DEPTH + 1) * 256];
+extern int moves_start[MAX_DEPTH + 2];
+extern int moves_cur[MAX_DEPTH + 1];
+
 void
 move_init();
 
@@ -66,6 +71,9 @@ void
 move_exit();
 
 int
-compute_legal_moves(board_t *board, move_t *move);
+compute_legal_moves(board_t *board, int ply);
+
+move_t
+move_next(board_t *board, int ply);
 
 #endif /* MOVE_H */

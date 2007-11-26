@@ -27,7 +27,7 @@
 #include "search.h"
 #include "move.h"
 
-/* #define DEBUG */
+#define DEBUG
 
 #define ENTRIES (1 << power_of_two)
 int power_of_two;
@@ -58,9 +58,9 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
 {
     int index = board->hash_key & (ENTRIES - 1);
 
-    if (table[index].eval_type && eval_type != EVAL_PV && (table[index].depth > depth) &&
+/*    if (table[index].eval_type && eval_type != EVAL_PV && (table[index].depth > depth) &&
             (table[index].time_stamp >= time_stamp))
-        return;
+        return;*/
 
     /* Make mate-in-n values relative to board that's to be stored */
     if (eval < ALPHABETA_MIN + 1000)
@@ -77,12 +77,12 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
 }
 
 int
-lookup_board(board_t *board, int depth, int ply, int *eval, move_t *move)
+lookup_board(board_t *board, int depth, int ply, int *eval)
 {
     int index = board->hash_key & (ENTRIES - 1);
 
 #ifdef DEBUG
-    if (queries > 0 && queries % 100000 == 0) e_comm_send("TT hit rate:: %.2f%%\n", hits / (float) queries * 100);
+    if (queries == 100000) {e_comm_send("TT hit rate:: %.2f%%\n", hits / (float) queries * 100); queries = 0; hits = 0;}
     queries++;
 #endif
     if (table[index].eval_type == EVAL_NONE)
@@ -93,7 +93,6 @@ lookup_board(board_t *board, int depth, int ply, int *eval, move_t *move)
 #ifdef DEBUG
     hits++;
 #endif
-    *move = table[index].move;
 
     if (table[index].depth < depth || table[index].eval_type == EVAL_PV)
         return EVAL_NONE;
@@ -107,6 +106,17 @@ lookup_board(board_t *board, int depth, int ply, int *eval, move_t *move)
         *eval -= ply;
 
     return table[index].eval_type;
+}
+
+move_t
+lookup_best_move(board_t *board)
+{
+    int index = board->hash_key & (ENTRIES - 1);
+
+    if (table[index].eval_type == EVAL_NONE)
+        return NO_MOVE;
+
+    return table[index].move;
 }
 
 void

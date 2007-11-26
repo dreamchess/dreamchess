@@ -95,13 +95,6 @@ int is_repetition(board_t *board, int ply)
     return 0;
 }
 
-void p_rep()
-{
-int i;
-for (i = 0; i < cur_list->head; i++) e_comm_send("%i %llx\n", i, cur_list->position[i]);
-e_comm_send("\n");
-}
-
 int is_draw(board_t *board)
 {
     int i;

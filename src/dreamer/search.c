@@ -105,7 +105,7 @@ int
 alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, int side);
 
 int
-is_check(board_t *board);
+is_check(board_t *board, int ply);
 
 void poll_abort()
 {
@@ -119,13 +119,11 @@ void poll_abort()
 int
 quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 {
-    move_t moves[28*16];
-    int total_moves;
-    int move_nr;
     int eval;
     bitboard_t en_passant;
     int castle_flags;
     int fifty_moves;
+    move_t move;
 
     if ((total_nodes++) % 10000 == 0)
         poll_abort();
@@ -135,17 +133,18 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 
     if (is_repetition(board, ply - 1))
         return 0;
-
-    if ((check & (board->current_player? 2 : 1)) && is_check(board))
+/*
+    if ((check & (board->current_player? 2 : 1)) && is_check(board, ply))
         return alpha_beta(board, 1, ply, board->current_player? 2 : 1, alpha, beta, side);
-
+*/
     /* Needed to catch illegal moves at sd 1 */
-    if ((total_moves = compute_legal_moves(board, moves)) < 0)
+    if (compute_legal_moves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
 
-    sort_moves(moves, total_moves, board->current_player, NO_MOVE);
-
     eval = board_eval_complete(board, side, alpha, beta);
+
+    if (ply == MAX_DEPTH - 1)
+        return eval;
 
     if (!get_option(OPTION_QUIESCE) || eval >= beta)
         return eval;
@@ -157,18 +156,18 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    for (move_nr = 0; move_nr < total_moves; move_nr++)
+    while ((move = move_next(board, ply)) != NO_MOVE)
     {
-        if (moves[move_nr] & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT | MOVE_PROMOTION_MASK))
+        if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT | MOVE_PROMOTION_MASK))
         {
-            execute_move(board, moves[move_nr]);
+            execute_move(board, move);
             eval = -quiescence(board, ply + 1, check & (board->current_player? 1 : 2), -beta, -alpha, side);
-            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             if (eval == -ALPHABETA_ILLEGAL)
                 continue;
             if (eval >= beta)
             {
-                add_count(moves[move_nr], board->current_player);
+                add_count(move, board->current_player);
                 return beta;
             }
             if (eval > alpha)
@@ -186,7 +185,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
         ** checkmated.
         */
         board->current_player = OPPONENT(board->current_player);
-        if (compute_legal_moves(board, moves) < 0)
+        if (compute_legal_moves(board, ply) < 0)
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
@@ -209,16 +208,14 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 int
 alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, int side)
 {
-    move_t moves[28*16];
-    int total_moves;
-    int move_nr;
     int eval;
-    int best_move_index, best_move_score;
+    int best_move_score;
     int eval_type = EVAL_UPPERBOUND;
     long long en_passant;
     int castle_flags;
     int fifty_moves;
     move_t best_move;
+    move_t move;
 
     if ((total_nodes++) % 10000 == 0)
         poll_abort();
@@ -233,18 +230,18 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
 
     if (board->fifty_moves == 100)
     {
-        if (compute_legal_moves(board, moves) < 0)
+        if (compute_legal_moves(board, ply) < 0)
             return ALPHABETA_ILLEGAL;
 
         pv_term(ply);
 
-        if (is_check(board))
+        if (is_check(board, ply))
             return ALPHABETA_MIN + ply;
 
         return 0;
     }
-/*
-    switch (*/lookup_board(board, depth, ply, &eval, &best_move)/*)
+
+    switch (lookup_board(board, depth, ply, &eval))
     {
     case EVAL_ACCURATE:
         pv_term(ply);
@@ -256,58 +253,56 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
     case EVAL_UPPERBOUND:
         if (eval <= alpha)
             return alpha;
-    }*/;
+    }
 
-    if (depth == 0) {
+    if (depth == 0 || ply == MAX_DEPTH - 1) {
         pv_term(ply);
         return quiescence(board, ply, check, alpha, beta, side);
     }
 
-    if ((total_moves = compute_legal_moves(board, moves)) < 0)
+    if (compute_legal_moves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
 
-    sort_moves(moves, total_moves, board->current_player, best_move);
-
-    best_move_index = -1;
+    best_move = NO_MOVE;
     best_move_score = ALPHABETA_ILLEGAL;
 
     en_passant = board->en_passant;
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    for (move_nr = 0; move_nr < total_moves; move_nr++)
+    while ((move = move_next(board, ply)) != NO_MOVE)
     {
         int score;
-        execute_move(board, moves[move_nr]);
+        execute_move(board, move);
         score = -alpha_beta(board, depth - 1, ply + 1, check, -beta, -alpha, side);
-        unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
         if (abort_search)
             return 0;
         if (score == -ALPHABETA_ILLEGAL)
             continue;
         if (score >= beta) {
-                store_board(board, score, EVAL_LOWERBOUND, depth, ply,
-                            0 /* FIXME moves_made */, moves[move_nr]);
-                add_count(moves[move_nr], board->current_player);
+                store_board(board, beta, EVAL_LOWERBOUND, depth, ply,
+                            0 /* FIXME moves_made */, move);
+                add_count(move, board->current_player);
                 return beta;
         }
         if (score > best_move_score) {
             if (score > alpha) {
                 eval_type = EVAL_ACCURATE;
                 alpha = score;
-                pv_copy(ply, moves[move_nr]);
+                pv_copy(ply, move);
             }
             best_move_score = score;
-            best_move_index = move_nr;
+            best_move = move;
         }
     }
 
-    if (best_move_index == -1)
+    if (best_move == NO_MOVE)
     {
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
         */
-        if (is_check(board))
+        if (is_check(board, ply))
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
@@ -324,37 +319,23 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
         }
     }
 
-    store_board(board, alpha, eval_type, depth, ply, 0 /* FIXME moves_made */, moves[best_move_index]);
+    store_board(board, alpha, eval_type, depth, ply, 0 /* FIXME moves_made */, best_move);
+
     return alpha;
 }
-
-#if 0
-141067 <second:   1    -100 4 0  8. ... d8e8
-141067 <second:   1     -93 17 0  8. ... e6e5
-141067 <second:   1     -92 74 0  8. ... c6b4
-141067 <second:   1     -89 107 0  8. ... a8c8
-141067 <second:   2     -89 217 0  8. ... a8c8  9. g2g4
-141067 <second:   3     -88 3551 3  8. ... a8c8  9. g2g4 c6b4
-141067 <second:   3     -86 6677 6  8. ... d8e8  9. f2f4 a8d8
-141180 <second:   4     -86 25180 22  8. ... d8e8  9. f2f4 a8d8 10. g2g4
-146628 <second:   4     -76 649684 567  8. ... c6a5  9. b5e2 c7c5 10. d4c5
-148899 <second: move g8h8
-#endif
 
 move_t
 find_best_move(state_t *state)
 {
     int depth = state->depth;
     board_t *board = &state->board;
-    move_t moves[28*16];
     move_t best_move;
-    int total_moves;
-    int move_nr;
     int cur_depth;
     int best_score;
     long long en_passant = board->en_passant;
     int castle_flags = board->castle_flags;
     int fifty_moves = board->fifty_moves;
+
     total_nodes = 0;
     start_time = get_time();
     prev_best_score = ALPHABETA_ILLEGAL;
@@ -365,24 +346,21 @@ find_best_move(state_t *state)
     {
         int alpha = ALPHABETA_MIN;
         int eval;
-        move_t tt_move;
+	move_t move;
         best_score = ALPHABETA_MIN;
 
-        lookup_board(board, 0, 0, &eval, &tt_move);
-
-        total_moves = compute_legal_moves(board, moves);
-        sort_moves(moves, total_moves, board->current_player, tt_move);
+        compute_legal_moves(board, 0);
 
         /* e_comm_send("------------------\n"); */
-        for (move_nr = 0; move_nr < total_moves; move_nr++)
+        while ((move = move_next(board, 0)) != NO_MOVE)
         {
             int score;
-            char *s = coord_move_str(moves[move_nr]);
-            /* e_comm_send("Examining move %s..\n", s); */
-            free(s);
-            execute_move(board, moves[move_nr]);
+            /* char *s = coord_move_str(move);
+            e_comm_send("Examining move %s..\n", s);
+            free(s); */
+            execute_move(board, move);
             score = -alpha_beta(board, cur_depth, 1, 3, ALPHABETA_MIN, -alpha, OPPONENT(board->current_player));
-            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             /* e_comm_send("Move scored %i\n", score); */
             if (abort_search)
                 break;
@@ -392,9 +370,9 @@ find_best_move(state_t *state)
                 alpha = score;
             if (score > best_score)
             {
-                best_move = moves[move_nr];
+                best_move = move;
                 best_score = score;
-                pv_copy(0, moves[move_nr]);
+                pv_copy(0, move);
                 if (get_option(OPTION_POST))
                     pv_print(state, cur_depth + 1, best_score);
             }
@@ -407,12 +385,12 @@ find_best_move(state_t *state)
             break;
         }
 
-        /* If we found a mate in 'cur_depth' we can stop the search */
-        if (best_score == ALPHABETA_MAX - cur_depth - 1) {
+        /* If we found a mate we stop the search */
+        if (best_score > ALPHABETA_MAX - 100) {
             break;
         }
 
-        if (best_score < ALPHABETA_MIN + depth) {
+        if (best_score < ALPHABETA_MIN + 100) {
             break;
         }
 
@@ -421,13 +399,12 @@ find_best_move(state_t *state)
             /* There are no legal moves. We're either checkmated or
             ** stalemated.
             */
-            move_t move;
 
             /* If the opponent can capture the king that means we're
             ** checkmated.
             */
             board->current_player = OPPONENT(board->current_player);
-            if (compute_legal_moves(board, moves) < 0)
+            if (compute_legal_moves(board, 0) < 0)
             {
                 /* We're checkmated. */
                 move = RESIGN_MOVE;
@@ -444,7 +421,7 @@ find_best_move(state_t *state)
         }
 
         have_move = 1;
-if (best_move != pv[0][0]) exit(1);
+
         prev_best_move = best_move;
         prev_best_score = best_score;
 #ifdef DEBUG

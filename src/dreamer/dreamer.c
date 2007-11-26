@@ -81,12 +81,12 @@ int my_turn(state_t *state)
                 (state->board.current_player == SIDE_BLACK)));
 }
 
-int is_check(board_t *board)
+int is_check(board_t *board, int ply)
 {
     /* FIXME */
-    move_t moves[28*16];
+    ply++;
     board->current_player = OPPONENT(board->current_player);
-    if (compute_legal_moves(board, moves) < 0)
+    if (compute_legal_moves(board, ply) < 0)
     {
         /* We're in check. */
         board->current_player = OPPONENT(board->current_player);
@@ -98,33 +98,32 @@ int is_check(board_t *board)
 
 int check_game_state(board_t *board)
 {
+    move_t move;
     int mate = STATE_MATE;
-    move_t moves[28*16];
-    int total_moves;
-    int move_nr;
-    total_moves = compute_legal_moves(board, moves);
-    for (move_nr = 0; move_nr < total_moves; move_nr++)
+    compute_legal_moves(board, 0);
+
+    while ((move = move_next(board, 0)) != NO_MOVE)
     {
         bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;
         int fifty_moves = board->fifty_moves;
 
-        execute_move(board, moves[move_nr]);
+        execute_move(board, move);
         board->current_player = OPPONENT(board->current_player);
-        if (!is_check(board))
+        if (!is_check(board, 0))
         {
             mate = STATE_NORMAL;
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             break;
         }
         board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
-    if (!is_check(board) && (mate == STATE_MATE))
+    if (!is_check(board, 0) && (mate == STATE_MATE))
         mate = STATE_STALEMATE;
-    if (is_check(board) && (mate == STATE_NORMAL))
+    if (is_check(board, 0) && (mate == STATE_NORMAL))
         mate = STATE_CHECK;
     return mate;
 }
@@ -231,8 +230,17 @@ static void set_start_time()
 
 static void set_move_now_time()
 {
-    if (state.engine_time - state.time.inc > 0)
-        state.move_now_time = get_time() + (state.engine_time - state.time.inc) / 30 + state.time.inc;
+    int safe_time = state.engine_time - 1000;
+
+    if (safe_time > 0)
+    {
+        if (state.time.mps == 0)
+            state.move_now_time = get_time() + safe_time / 30 + state.time.inc;
+        else {
+            int moves_left = state.time.mps - (state.moves / 2) % state.time.mps;
+            state.move_now_time = get_time() + safe_time / moves_left + state.time.inc;
+        }
+    }
     else
         state.move_now_time = 0;
 }

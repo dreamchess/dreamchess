@@ -24,12 +24,18 @@
 #include "board.h"
 
 void
-sort_moves(move_t moves[], int total_moves, int side, move_t best_move);
+sort_moves(int ply, int side, move_t best_move);
+
+void
+sort_next(int ply, int side);
 
 void
 add_count(move_t move, int side);
 
 void
 forget_history();
+
+void
+best_first(int ply, move_t move);
 
 #endif /* HISTORY_H */

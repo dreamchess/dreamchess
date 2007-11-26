@@ -23,7 +23,10 @@
 
 #include "board.h"
 #include "move.h"
+#include "transposition.h"
 #include "move_data.h"
+#include "dreamer.h"
+#include "history.h"
 
 /* Global move tables. */
 int ***rook_moves;
@@ -34,13 +37,17 @@ int **king_moves;
 int **white_pawn_capture_moves;
 int **black_pawn_capture_moves;
 
+/* Global move list. Add 1 for in_check function */
+move_t moves[(MAX_DEPTH + 1) * 256];
+int moves_start[MAX_DEPTH + 2];
+int moves_cur[MAX_DEPTH + 1];
+
 #define add_moves_ray(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-int \
+move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PIECE + PLAYER]; \
-	int move_count = 0; \
 \
 	/* Look for the pieces, starting at player's side of the board. */ \
 	for (LOOP) \
@@ -48,7 +55,7 @@ FUNCNAME(board_t *board, move_t *move) \
 		int **ray; \
 \
 		/* If no more pieces of this type are found, we're done. */ \
-		if (!bitboard) return move_count; \
+		if (!bitboard) return move; \
 \
 		/* If no piece of this type is at this square, continue searching. */ \
 		if (!(bitboard & square_bit[source])) continue; \
@@ -75,10 +82,9 @@ FUNCNAME(board_t *board, move_t *move) \
 					int piece = OPPONENT_FIND(board, dest); \
 \
 					/* If we are capturing a king, previous board position was illegal. */ \
-					if (piece == KING + OPPONENT(PLAYER)) return -1; \
+					if (piece == KING + OPPONENT(PLAYER)) return NULL; \
 \
 					*move++ = MOVE(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece); \
-					move_count++; \
 \
 					/* Break off the ray. */ \
 					break; \
@@ -87,7 +93,6 @@ FUNCNAME(board_t *board, move_t *move) \
 				{ \
 					/* Normal move. */ \
 					*move++ = MOVE(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0); \
-					move_count++; \
 				} \
 \
 			} \
@@ -97,16 +102,15 @@ FUNCNAME(board_t *board, move_t *move) \
 		bitboard ^= square_bit[source]; \
 	} \
 \
-	return move_count; \
+	return move; \
 }
 
 #define add_moves_single(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-int \
+move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PIECE + PLAYER]; \
-	int move_count = 0; \
 \
 	/* Look for the pieces, starting at player's side of the board. */ \
 	for (LOOP) \
@@ -115,7 +119,7 @@ FUNCNAME(board_t *board, move_t *move) \
 		int elm; \
 \
 		/* If no more pieces of this type are found, we're done. */ \
-		if (!bitboard) return move_count; \
+		if (!bitboard) return move; \
 \
 		/* If no piece of this type is at this square, continue searching. */ \
 		if (!(bitboard & square_bit[source])) continue; \
@@ -137,16 +141,14 @@ FUNCNAME(board_t *board, move_t *move) \
 				int piece = OPPONENT_FIND(board, dest); \
 \
 				/* If we are capturing a king, previous board position was illegal. */ \
-				if (piece == KING + OPPONENT(PLAYER)) return -1; \
+				if (piece == KING + OPPONENT(PLAYER)) return NULL; \
 \
 				*move++ = MOVE(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece); \
-				move_count++; \
 			} \
 			else \
 			{ \
 				/* Normal move. */ \
 				*move++ = MOVE(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0); \
-				move_count++; \
 			} \
 \
 		} \
@@ -155,18 +157,17 @@ FUNCNAME(board_t *board, move_t *move) \
 		bitboard ^= square_bit[source]; \
 	} \
 \
-	return move_count; \
+	return move; \
 }
 
 #define add_pawn_moves(FUNCNAME, MOVES, INC, TEST1, TEST2, PLAYER, OPPONENT_FIND, LOOP) \
-int \
+move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PAWN + PLAYER]; \
 	bitboard_t bitboard_all = board->bitboard[WHITE_ALL] | \
 		board->bitboard[BLACK_ALL]; \
-	int move_count = 0; \
 \
 	for (LOOP) \
 	{ \
@@ -174,7 +175,7 @@ FUNCNAME(board_t *board, move_t *move) \
 		int elm; \
 \
 		if (!bitboard) \
-			return move_count; \
+			return move; \
 \
 		if (!(bitboard & square_bit[source])) \
 			continue; \
@@ -187,7 +188,6 @@ FUNCNAME(board_t *board, move_t *move) \
 			{ \
 				/* Normal move. */ \
 				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0); \
-				move_count++; \
 \
 				if (TEST2) \
 				{ \
@@ -196,7 +196,6 @@ FUNCNAME(board_t *board, move_t *move) \
 					{ \
 						/* Double push. */ \
 						*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0); \
-						move_count++; \
 					} \
 				} \
 			} \
@@ -207,7 +206,6 @@ FUNCNAME(board_t *board, move_t *move) \
 				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_ROOK, 0); \
 				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_BISHOP, 0); \
 				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_KNIGHT, 0); \
-				move_count += 4; \
 			} \
 		} \
 \
@@ -223,19 +221,17 @@ FUNCNAME(board_t *board, move_t *move) \
 				piece = OPPONENT_FIND(board, dest); \
 \
 				/* If we are capturing a king, previous board position was illegal. */ \
-				if (piece == KING + OPPONENT(PLAYER)) return -1; \
+				if (piece == KING + OPPONENT(PLAYER)) return NULL; \
 \
 				/* The move is legal. */ \
 				if (TEST1) \
 				{ \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE, piece); \
-					move_count++; \
 				} else { \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_QUEEN, piece); \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_ROOK, piece); \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_BISHOP, piece); \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_KNIGHT, piece); \
-					move_count += 4; \
 				} \
 			} \
 			else \
@@ -243,7 +239,6 @@ FUNCNAME(board_t *board, move_t *move) \
 				{ \
 					/* En passant capture. */ \
 					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSENT, PAWN + OPPONENT(PLAYER)); \
-					move_count++; \
 				} \
 		} \
 \
@@ -251,7 +246,7 @@ FUNCNAME(board_t *board, move_t *move) \
 		bitboard ^= square_bit[source]; \
 	} \
 \
-	return move_count; \
+	return move; \
 }
 
 add_moves_ray(add_black_rook_moves, rook_moves, ROOK, SIDE_BLACK,
@@ -279,18 +274,15 @@ add_pawn_moves(add_white_pawn_moves, white_pawn_capture_moves, +8, dest <= 55, !
 add_pawn_moves(add_black_pawn_moves, black_pawn_capture_moves, -8, dest >= 8, source >= 48,
 	SIDE_BLACK, find_white_piece, source = 55; source >= 8; source--)
 
-int
+move_t *
 add_white_castle_moves(board_t *board, move_t *move)
 {
-	int move_count = 0;
-
 	/* Kingside castle. Check for empty squares. */
 	if ((board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_KINGSIDE)))
 	{
 		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_G1, CASTLING_MOVE_KINGSIDE, 0); \
-		move_count++;
 	}
 
 	/* Queenside castle. Check for empty squares. */
@@ -299,24 +291,20 @@ add_white_castle_moves(board_t *board, move_t *move)
 		WHITE_EMPTY_QUEENSIDE)))
 	{
 		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_C1, CASTLING_MOVE_QUEENSIDE, 0); \
-		move_count++;
 	}
 
-	return move_count;
+	return move;
 }
 
-int
+move_t *
 add_black_castle_moves(board_t *board, move_t *move)
 {
-	int move_count = 0;
-
 	/* Kingside castle. Check for empty squares. */
 	if ((board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_KINGSIDE)))
 	{
 		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_G8, CASTLING_MOVE_KINGSIDE, 0); \
-		move_count++;
 	}
 
 	/* Queenside castle. Check for empty squares. */
@@ -325,90 +313,71 @@ add_black_castle_moves(board_t *board, move_t *move)
 		BLACK_EMPTY_QUEENSIDE)))
 	{
 		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_C8, CASTLING_MOVE_QUEENSIDE, 0); \
-		move_count++;
 	}
 
-	return move_count;
+	return move;
 }
 
 int
-compute_legal_moves(board_t *board, move_t *move)
+compute_legal_moves(board_t *board, int ply)
 {
-	int total_moves;
-	int moves;
+	move_t *move = &moves[moves_start[ply]];
 
 	if (board->current_player == SIDE_WHITE)
 	{
-		moves = add_white_castle_moves(board, move);
-		move += moves;
-		total_moves = moves;
+		move = add_white_castle_moves(board, move);
 
-		if ((moves = add_white_king_moves(board, move)) < 0)
+		if (!(move = add_white_king_moves(board, move))
+			|| !(move = add_white_queen_moves(board, move))
+			|| !(move = add_white_rook_moves(board, move))
+			|| !(move = add_white_bishop_moves(board, move))
+			|| !(move = add_white_knight_moves(board, move))
+			|| !(move = add_white_pawn_moves(board, move)))
 			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_white_queen_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_white_rook_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_white_bishop_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_white_knight_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_white_pawn_moves(board, move)) < 0)
-			return -1;
-		total_moves += moves;
 	}
 	else
 	{
-        moves = add_black_castle_moves(board, move);
-		move += moves;
-		total_moves = moves;
+		move = add_black_castle_moves(board, move);
 
-		if ((moves = add_black_king_moves(board, move)) < 0)
+		if (!(move = add_black_king_moves(board, move))
+			|| !(move = add_black_queen_moves(board, move))
+			|| !(move = add_black_rook_moves(board, move))
+			|| !(move = add_black_bishop_moves(board, move))
+			|| !(move = add_black_knight_moves(board, move))
+			|| !(move = add_black_pawn_moves(board, move)))
 			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_black_queen_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_black_rook_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_black_bishop_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_black_knight_moves(board, move)) < 0)
-			return -1;
-		move += moves;
-		total_moves += moves;
-
-		if ((moves = add_black_pawn_moves(board, move)) < 0)
-			return -1;
-		total_moves += moves;
 	}
 
-	return total_moves;
+	moves_start[ply + 1] = moves_start[ply] + move - &moves[moves_start[ply]];
+	moves_cur[ply] = moves_start[ply];
+	return 0;
+}
+
+move_t move_next(board_t *board, int ply)
+{
+	if (moves_cur[ply] == moves_start[ply + 1])
+		return NO_MOVE;
+
+	if (moves_cur[ply] == moves_start[ply]) {
+		move_t move = lookup_best_move(board);
+
+		if (move != NO_MOVE)
+			best_first(ply, move);
+	} else
+		sort_next(ply, board->current_player);
+
+	return moves[moves_cur[ply]++];
+}
+
+void list_moves(int ply)
+{
+    int i;
+    for (i = moves_start[ply]; i < moves_start[ply + 1]; i++)
+    {
+        char *s = coord_move_str(moves[i]);
+        e_comm_send("%i %s\n", i, s);
+        free(s);
+    }
 }
 
 void

@@ -31,20 +31,6 @@
 #include "config.h"
 #include "svn_version.h"
 
-static int is_check(board_t *board)
-{
-    move_t moves[28*16];
-    board->current_player = OPPONENT(board->current_player);
-    if (compute_legal_moves(board, moves) < 0)
-    {
-        /* We're in check. */
-        board->current_player = OPPONENT(board->current_player);
-        return 1;
-    }
-    board->current_player = OPPONENT(board->current_player);
-    return 0;
-}
-
 static int is_coord_move(char *ms)
 {
     int len = strlen(ms);
@@ -75,42 +61,36 @@ static int is_coord_move(char *ms)
 static move_t get_coord_move(board_t *board, char *ms)
 {
     int source, dest;
-    move_t moves[28*16];
-    int total_moves;
-    int move_nr;
     move_t move;
 
     source = (ms[0] - 'a') + 8 * (ms[1] - '1');
     dest = (ms[2] - 'a') + 8 * (ms[3] - '1');
 
-    total_moves = compute_legal_moves(board, moves);
+    compute_legal_moves(board, 0);
 
     /* Look for move in list. */
-    move_nr = 0;
-    while (move_nr < total_moves)
+    while ((move = move_next(board, 0)) != NO_MOVE)
     {
-        if ((MOVE_GET(moves[move_nr], SOURCE) == source) && (MOVE_GET(moves[move_nr], DEST) == dest))
+        if ((MOVE_GET(move, SOURCE) == source) && (MOVE_GET(move, DEST) == dest))
         {
             bitboard_t en_passant = board->en_passant;
             int castle_flags = board->castle_flags;
             int fifty_moves = board->fifty_moves;
 
             /* Move found. */
-            execute_move(board, moves[move_nr]);
+            execute_move(board, move);
             board->current_player = OPPONENT(board->current_player);
-            if (!is_check(board))
+            if (!is_check(board, 0))
             {
-                move = moves[move_nr];
                 board->current_player = OPPONENT(board->current_player);
-                unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+                unmake_move(board, move, en_passant, castle_flags, fifty_moves);
                 break;
             }
             board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, moves[move_nr], en_passant, castle_flags, fifty_moves);
+            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
         }
-        move_nr++;
     }
-    if (move_nr < total_moves)
+    if (move != NO_MOVE)
     {
         if (move & MOVE_PROMOTION_MASK)
         {
