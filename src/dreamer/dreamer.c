@@ -177,7 +177,7 @@ int check_abort()
 {
     char *s;
 
-    if (get_time() >= state.move_now_time)
+    if (!(state.flags & FLAG_PONDER) && (get_time() >= state.move_now_time))
         return 1;
 
     s = e_comm_poll();
@@ -256,6 +256,15 @@ int get_time()
     return tv.tv_sec * 100 + tv.tv_usec / 10000;
 }
 
+void send_move(state_t *state, move_t move)
+{
+    char *str = coord_move_str(move);
+    do_move(state, move);
+    e_comm_send("move %s\n", str);
+    free(str);
+    check_game_end(state);
+}
+
 int engine()
 {
     printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
@@ -275,32 +284,71 @@ int engine()
     state.time.base = 5;
     state.time.inc = 0;
     state.done = 0;
+    state.hint = NO_MOVE;
     set_option(OPTION_QUIESCE, 1);
+    set_option(OPTION_PONDER, 0);
+    set_option(OPTION_POST, 0);
 
     while (state.mode != MODE_QUIT)
     {
         char *s;
-        while(!(s = e_comm_poll()))
+        move_t move;
+
+        s = e_comm_poll();
+
+        if (!s)
             drm_sleep(10);
-        command_handle(&state, s);
-        if (!state.done && my_turn(&state))
+        else
         {
-            move_t move;
-            state.flags = 0;
-            set_move_now_time();
-            move = find_best_move(&state);
-            if (state.flags & FLAG_NEW_GAME)
-                command_handle(&state, "new");
-            else if (!(state.flags & FLAG_IGNORE_MOVE))
+            command_handle(&state, s);
+            free(s);
+        }
+
+        if (state.mode != MODE_IDLE && state.mode != MODE_FORCE && !state.done)
+        {
+            if (my_turn(&state))
             {
-                char *str = coord_move_str(move);
-                do_move(&state, move);
-                e_comm_send("move %s\n", str);
-                free(str);
-                check_game_end(&state);
+                state.flags = 0;
+                set_move_now_time();
+                move = find_best_move(&state);
+                if (state.flags & FLAG_NEW_GAME)
+                    command_handle(&state, "new");
+                else if (move != NO_MOVE)
+                {
+                    send_move(&state, move);
+                    if (get_option(OPTION_PONDER))
+                        state.flags |= FLAG_PONDER;
+                }
+            }
+            else if (state.flags & FLAG_PONDER)
+            {
+                set_move_now_time();
+                move = ponder(&state);
+                if (state.flags & FLAG_NEW_GAME)
+                    command_handle(&state, "new");
+                else if (!my_turn(&state))
+                {
+                    if (move != NO_MOVE) {
+                        /* We are done pondering, but opponent hasn't moved yet. */
+                        state.ponder_my_move = move;
+                        state.flags = 0;
+                    }
+                    else
+                    {
+                        /* Opponent made an illegal move, continue pondering. */
+                        if (get_option(OPTION_PONDER))
+                            state.flags |= FLAG_PONDER;
+                    }
+                }
+                else if (move != NO_MOVE)
+                {
+                    /* Opponent made the expected move. */
+                    send_move(&state, move);
+                    if (get_option(OPTION_PONDER))
+                        state.flags |= FLAG_PONDER;
+                }
             }
         }
-        free(s);
     }
 
     transposition_exit();

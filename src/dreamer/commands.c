@@ -30,6 +30,7 @@
 #include "transposition.h"
 #include "config.h"
 #include "svn_version.h"
+#include "search.h"
 
 static int is_coord_move(char *ms)
 {
@@ -161,7 +162,7 @@ static void error(char *type, char *command)
 #define UNKNOWN(c) error("unknown command", c)
 #define BADPARAM(c) error("invalid or missing parameter(s)", c)
 
-static int coord_usermove(state_t *state, char *command)
+int coord_usermove(state_t *state, char *command)
 {
     move_t move;
     if (my_turn(state))
@@ -170,7 +171,7 @@ static int coord_usermove(state_t *state, char *command)
         return 1;
     }
     move = get_coord_move(&state->board, command);
-    if (!move)
+    if (move == NO_MOVE)
     {
         e_comm_send("Illegal move: %s\n", command);
         return 1;
@@ -243,6 +244,48 @@ static int command_always(state_t *state, char *command)
         return 1;
     }
 
+    if (!strcmp(command, "hint"))
+    {
+        move_t move = state->ponder_opp_move;
+
+        if (move == NO_MOVE)
+            move = state->hint;
+
+        if (move != NO_MOVE)
+        {
+            char *str = coord_move_str(state->hint);
+            e_comm_send("Hint: %s\n", str);
+            free(str);
+        }
+        return 1;
+    }
+
+    if (!strncmp(command, "time ", 5))
+    {
+        int time;
+        char *end;
+        errno = 0;
+        time = strtol(command + 5, &end, 10);
+        if (errno || *end != 0)
+            BADPARAM(command);
+        else
+            state->engine_time = time;
+        return 1;
+    }
+
+    if (!strncmp(command, "otim ", 5))
+    {
+        int time;
+        char *end;
+        errno = 0;
+        time = strtol(command + 5, &end, 10);
+        if (errno || *end != 0)
+            BADPARAM(command);
+        else
+            state->opponent_time = time;
+        return 1;
+    }
+
     return 0;
 }
 
@@ -280,32 +323,6 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
-    if (!strncmp(command, "time ", 5))
-    {
-        int time;
-        char *end;
-        errno = 0;
-        time = strtol(command + 5, &end, 10);
-        if (errno || *end != 0)
-            BADPARAM(command);
-        else
-            state->engine_time = time;
-        return;
-    }
-
-    if (!strncmp(command, "otim ", 5))
-    {
-        int time;
-        char *end;
-        errno = 0;
-        time = strtol(command + 5, &end, 10);
-        if (errno || *end != 0)
-            BADPARAM(command);
-        else
-            state->opponent_time = time;
-        return;
-    }
-
     if (!strncmp(command, "accepted ", 9))
     {
         if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done"))
@@ -320,11 +337,15 @@ void command_handle(state_t *state, char *command)
         setup_board(&state->board);
         forget_history();
         clear_table();
+        pv_clear();
         repetition_init(&state->board);
+        state->flags = 0;
         state->depth = MAX_DEPTH;
         state->mode = MODE_BLACK;
         state->done = 0;
-        set_option(OPTION_QUIESCE, 1);
+        state->hint = NO_MOVE;
+        state->ponder_opp_move = NO_MOVE;
+        state->ponder_my_move = NO_MOVE;
         return;
     }
 
@@ -471,9 +492,24 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
-    if (!strncmp(command, "noquiesce", 9))
+    if (!strcmp(command, "noquiesce"))
     {
         set_option(OPTION_QUIESCE, 0);
+        return;
+    }
+
+    if (!strcmp(command, "easy"))
+    {
+        set_option(OPTION_PONDER, 0);
+        state->ponder_my_move = NO_MOVE;
+        return;
+    }
+
+    if (!strcmp(command, "hard"))
+    {
+        set_option(OPTION_PONDER, 1);
+        if (state->moves != 0)
+            state->flags |= FLAG_PONDER;
         return;
     }
 
@@ -485,6 +521,22 @@ void command_handle(state_t *state, char *command)
                 state->mode = (state->board.current_player == SIDE_WHITE?
                                MODE_WHITE : MODE_BLACK);
         }
+
+        if (state->ponder_my_move != NO_MOVE) {
+
+            /* We already have a possible answer to this move from pondering. */
+            char *str = coord_move_str(state->ponder_opp_move);
+
+            if (!strcmp(command, str))
+            {
+                /* User made the expected move. */
+                send_move(state, state->ponder_my_move);
+            }
+
+            state->ponder_my_move = NO_MOVE;
+            free(str);
+        }
+
         return;
     }
 
@@ -494,7 +546,10 @@ void command_handle(state_t *state, char *command)
 int command_check_abort(state_t *state, char *command)
 {
     if (!strcmp(command, "?"))
-        return 1;
+    {
+        if (my_turn(state))
+            return 1;
+    }
 
     if (command_always(state, command))
         return 0;
@@ -510,6 +565,37 @@ int command_check_abort(state_t *state, char *command)
         state->flags = FLAG_IGNORE_MOVE;
         command_handle(state, command);
         return 1;
+    }
+
+    if (!strcmp(command, "easy"))
+    {
+        if (state->flags & FLAG_PONDER)
+        {
+            state->flags = FLAG_IGNORE_MOVE;
+            state->ponder_buf[0] = 0;
+        }
+        command_handle(state, command);
+        return 1;
+    }
+
+    if ((state->flags & FLAG_PONDER) && is_coord_move(command))
+    {
+        char *str = coord_move_str(state->ponder_opp_move);
+        if (!strcmp(command, str))
+        {
+            /* User made the expected move. */
+            state->flags = 0;
+            free(str);
+            return 0;
+        }
+        else
+        {
+            /* User made a different move, abort and restart search. */
+            state->flags = FLAG_IGNORE_MOVE;
+            strncpy(state->ponder_buf, command, 6);
+            free(str);
+            return 1;
+        }
     }
 
     NOT_NOW(command);

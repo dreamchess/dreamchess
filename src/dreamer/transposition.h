@@ -37,6 +37,9 @@ int
 lookup_board(board_t *board, int depth, int ply, int *eval);
 
 void
+set_best_move(board_t *board, move_t move);
+
+void
 clear_table();
 
 void transposition_init(int megabytes);

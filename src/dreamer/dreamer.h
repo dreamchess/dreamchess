@@ -29,8 +29,10 @@
 #define MODE_FORCE 3
 #define MODE_QUIT 4
 
-#define FLAG_IGNORE_MOVE 1<<0
-#define FLAG_NEW_GAME 1<<1
+#define FLAG_IGNORE_MOVE (1<<0)
+#define FLAG_NEW_GAME (1<<1)
+#define FLAG_PONDER (1<<2)
+#define FLAG_DELAY_MOVE (1<<2)
 
 #define MAX_DEPTH 30
 
@@ -64,6 +66,10 @@ typedef struct state
     int engine_time;
     int opponent_time;
     int move_now_time;
+    move_t hint;
+    char ponder_buf[6];
+    move_t ponder_opp_move;
+    move_t ponder_my_move;
 }
 state_t;
 
@@ -76,6 +82,7 @@ int my_turn(state_t *state);
 
 #define OPTION_QUIESCE 0
 #define OPTION_POST 1
+#define OPTION_PONDER 2
 
 int check_game_state(board_t *board);
 void check_game_end(state_t *state);
@@ -87,5 +94,6 @@ int get_option(int option);
 void set_option(int option, int value);
 int get_time();
 int is_check(board_t *board, int ply);
+void send_move(state_t *state, move_t move);
 
 #endif /* STATE_H */

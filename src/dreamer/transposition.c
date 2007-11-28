@@ -27,7 +27,7 @@
 #include "search.h"
 #include "move.h"
 
-#define DEBUG
+/* #define DEBUG */
 
 #define ENTRIES (1 << power_of_two)
 int power_of_two;
@@ -58,9 +58,10 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
 {
     int index = board->hash_key & (ENTRIES - 1);
 
-/*    if (table[index].eval_type && eval_type != EVAL_PV && (table[index].depth > depth) &&
-            (table[index].time_stamp >= time_stamp))
-        return;*/
+    if ((table[index].eval_type != EVAL_NONE) && (table[index].hash_key == board->hash_key)
+            && (table[index].depth > depth))
+        /* Do not overwrite entries for this board at greater depth. */
+        return;
 
     /* Make mate-in-n values relative to board that's to be stored */
     if (eval < ALPHABETA_MIN + 1000)
@@ -74,6 +75,17 @@ store_board(board_t *board, int eval, int eval_type, int depth, int ply,
     table[index].depth = depth;
     table[index].time_stamp = time_stamp;
     table[index].move = move;
+}
+
+void
+set_best_move(board_t *board, move_t move)
+{
+    int index = board->hash_key & (ENTRIES - 1);
+
+    if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
+        store_board(board, 0, EVAL_PV, 0, 0, 0, move);
+    else
+        table[index].move = move;
 }
 
 int
@@ -113,7 +125,7 @@ lookup_best_move(board_t *board)
 {
     int index = board->hash_key & (ENTRIES - 1);
 
-    if (table[index].eval_type == EVAL_NONE)
+    if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
         return NO_MOVE;
 
     return table[index].move;

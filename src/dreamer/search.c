@@ -32,14 +32,12 @@
 #include "hashing.h"
 #include "dreamer.h"
 #include "e_comm.h"
+#include "commands.h"
 
 /* #define DEBUG */
 
 extern int moves_made;
 int abort_search;
-move_t prev_best_move;
-int prev_best_score;
-int have_move;
 
 static int total_nodes;
 static int start_time;
@@ -47,6 +45,40 @@ static int start_time;
 /* Principal variation */
 move_t pv[MAX_DEPTH][MAX_DEPTH];
 int pv_len[MAX_DEPTH];
+
+void
+print_board(board_t *board)
+/* Temporary! */
+{
+	long long i,j;
+	int k;
+	for (i = 7; i >= 0; i--) {
+		printf("%lli", i+1);
+		for (j = 0; j < 8; j++) {
+			char c;
+			int fcol, bcol;
+			c = ' ';
+			fcol = 1;
+			for (k = 0; k < NR_BITBOARDS; k++) {
+				if (board->bitboard[k] & square_bit[i * 8 + j]) {
+					switch (k & PIECE_MASK) {
+						case PAWN: c = 'I'; break;
+						case ROOK: c = 'X'; break;
+						case KNIGHT: c = '7'; break;
+						case BISHOP: c = 'l'; break;
+						case QUEEN: c = 'Y'; break;
+						case KING: c = 'K';
+					}
+					if (PIECE_IS_WHITE(k)) fcol = 7;
+				}
+			}
+			bcol = (((i % 2) + j) % 2? 7 : 0);
+			printf("\e[1;%i;%im%c\e[0m", fcol + 30, bcol + 40, c);
+		}
+		printf("\n");
+	}
+	printf(" ABCDEFGH\n");
+}
 
 static inline void pv_term(int ply)
 {
@@ -63,6 +95,10 @@ static inline void pv_copy(int ply, move_t move)
 static void pv_print(state_t *state, int depth, int score)
 {
     int i = 0;
+
+    if (state->mode == MODE_BLACK)
+        score = -score;
+
     e_comm_send("%3i %7i %i %i", depth, score, total_nodes, get_time() - start_time, total_nodes);
     if (state->board.current_player == SIDE_BLACK) {
         char *s = coord_move_str(pv[0][0]);
@@ -86,6 +122,11 @@ static void pv_print(state_t *state, int depth, int score)
     e_comm_send("\n");
 }
 
+void pv_clear()
+{
+    pv_term(0);
+}
+
 static void pv_store_ht(board_t *board, int index)
 {
     long long en_passant = board->en_passant;
@@ -95,7 +136,7 @@ static void pv_store_ht(board_t *board, int index)
     if (index == pv_len[0])
         return;
 
-    store_board(board, 0, EVAL_PV, 0, 0, 0, pv[0][index]);
+    set_best_move(board, pv[0][index]);
     execute_move(board, pv[0][index]);
     pv_store_ht(board, index + 1);
     unmake_move(board, pv[0][index], en_passant, castle_flags, fifty_moves);
@@ -109,7 +150,7 @@ is_check(board_t *board, int ply);
 
 void poll_abort()
 {
-    if (!have_move)
+    if (pv_len[0] == 0)
         return;
 
     if (check_abort())
@@ -133,10 +174,11 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 
     if (is_repetition(board, ply - 1))
         return 0;
-/*
-    if ((check & (board->current_player? 2 : 1)) && is_check(board, ply))
+
+    /* Hack, use ply - 1 as for ply no moves have been generated yet. */
+    if ((check & (board->current_player? 2 : 1)) && is_check(board, ply - 1))
         return alpha_beta(board, 1, ply, board->current_player? 2 : 1, alpha, beta, side);
-*/
+
     /* Needed to catch illegal moves at sd 1 */
     if (compute_legal_moves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
@@ -338,14 +380,12 @@ find_best_move(state_t *state)
 
     total_nodes = 0;
     start_time = get_time();
-    prev_best_score = ALPHABETA_ILLEGAL;
     abort_search = 0;
-    have_move = 0;
+    pv_len[0] = 0;
 
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
         int alpha = ALPHABETA_MIN;
-        int eval;
 	move_t move;
         best_score = ALPHABETA_MIN;
 
@@ -363,7 +403,11 @@ find_best_move(state_t *state)
             unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             /* e_comm_send("Move scored %i\n", score); */
             if (abort_search)
+            {
+                if (state->flags & FLAG_IGNORE_MOVE)
+                    return NO_MOVE;
                 break;
+            }
             if (score == -ALPHABETA_ILLEGAL)
                 continue;
             if (score > alpha)
@@ -376,13 +420,6 @@ find_best_move(state_t *state)
                 if (get_option(OPTION_POST))
                     pv_print(state, cur_depth + 1, best_score);
             }
-        }
-
-        if (abort_search)
-        {
-            best_move = prev_best_move;
-            best_score = prev_best_score;
-            break;
         }
 
         /* If we found a mate we stop the search */
@@ -420,10 +457,6 @@ find_best_move(state_t *state)
             }
         }
 
-        have_move = 1;
-
-        prev_best_move = best_move;
-        prev_best_score = best_score;
 #ifdef DEBUG
         {
             char *str = coord_move_str(&prev_best_move);
@@ -433,7 +466,56 @@ find_best_move(state_t *state)
 #endif
 
         pv_store_ht(board, 0);
+
+        if (abort_search)
+            break;
+    }
+
+    if (pv_len[0] > 1)
+        state->hint = pv[0][1];
+    else
+    {
+        /* Try to get hint move from hash table. */
+        execute_move(board, best_move);
+        state->hint = lookup_best_move(board);
+        unmake_move(board, best_move, en_passant, castle_flags, fifty_moves);
     }
 
     return best_move;
+}
+
+move_t
+ponder(state_t *state)
+{
+	move_t move;
+
+	if (state->hint == NO_MOVE)
+		return NO_MOVE;
+
+	state->ponder_buf[0] = 0;
+	state->ponder_opp_move = state->hint;
+	do_move(state, state->ponder_opp_move);
+        state->flags = FLAG_DELAY_MOVE;
+
+        command_handle(state, "hint");
+	move = find_best_move(state);
+
+	if (state->mode == MODE_QUIT || (state->flags & FLAG_NEW_GAME))
+		return NO_MOVE;
+
+	if (move == NO_MOVE)
+        {
+		/* Player did not play the move we expected. */
+		undo_move(state);
+		if (state->ponder_buf[0] != 0)
+			coord_usermove(state, state->ponder_buf);
+		return NO_MOVE;
+        }
+        else if (state->flags & FLAG_DELAY_MOVE)
+        {
+                /* Opponent hasn't moved yet. */
+ 		undo_move(state);
+        }
+
+	return move;
 }

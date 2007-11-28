@@ -35,4 +35,10 @@
 move_t
 find_best_move(state_t *state);
 
+void
+pv_clear();
+
+move_t
+ponder(state_t *state);
+
 #endif /* SEARCH_H */
