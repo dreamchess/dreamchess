@@ -51,7 +51,7 @@ void repetition_exit()
 
 void repetition_add(board_t *board, move_t move)
 {
-    if (!(move & NORMAL_MOVE) || ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN))
+    if ((MOVE_GET(move, TYPE) != NORMAL_MOVE) || ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN))
     {
         hist_idx++;
         hist = realloc(hist, sizeof(rep_list_t) * (hist_idx + 1));
