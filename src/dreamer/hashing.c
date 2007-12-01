@@ -21,17 +21,11 @@
 #include "board.h"
 #include "hashing.h"
 
-long long random_seed_64;
+long long random_seed_64 = 1;
 long long pieces_hash[12][64];
 long long castle_hash[4];
 long long ep_hash[64];
 long long black_to_move;
-
-void
-random_init_64(long long seed)
-{
-    random_seed_64 = seed;
-}
 
 long long
 random_rand_64()

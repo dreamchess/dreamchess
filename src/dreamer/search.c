@@ -53,7 +53,7 @@ print_board(board_t *board)
 	long long i,j;
 	int k;
 	for (i = 7; i >= 0; i--) {
-		printf("%lli", i+1);
+		e_comm_send("%lli", i+1);
 		for (j = 0; j < 8; j++) {
 			char c;
 			int fcol, bcol;
@@ -73,11 +73,11 @@ print_board(board_t *board)
 				}
 			}
 			bcol = (((i % 2) + j) % 2? 7 : 0);
-			printf("\e[1;%i;%im%c\e[0m", fcol + 30, bcol + 40, c);
+			e_comm_send("\e[1;%i;%im%c\e[0m", fcol + 30, bcol + 40, c);
 		}
-		printf("\n");
+		e_comm_send("\n");
 	}
-	printf(" ABCDEFGH\n");
+	e_comm_send(" ABCDEFGH\n");
 }
 
 static inline void pv_term(int ply)
@@ -143,7 +143,7 @@ static void pv_store_ht(board_t *board, int index)
 }
 
 int
-alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, int side);
+alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side);
 
 int
 is_check(board_t *board, int ply);
@@ -158,7 +158,7 @@ void poll_abort()
 }
 
 int
-quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
+quiescence(board_t *board, int ply, int alpha, int beta, int side)
 {
     int eval;
     bitboard_t en_passant;
@@ -174,10 +174,6 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 
     if (is_repetition(board, ply - 1))
         return 0;
-
-    /* Hack, use ply - 1 as for ply no moves have been generated yet. */
-    if ((check & (board->current_player? 2 : 1)) && is_check(board, ply - 1))
-        return alpha_beta(board, 1, ply, board->current_player? 2 : 1, alpha, beta, side);
 
     /* Needed to catch illegal moves at sd 1 */
     if (compute_legal_moves(board, ply) < 0)
@@ -203,7 +199,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
         if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT | MOVE_PROMOTION_MASK))
         {
             execute_move(board, move);
-            eval = -quiescence(board, ply + 1, check & (board->current_player? 1 : 2), -beta, -alpha, side);
+            eval = -quiescence(board, ply + 1, -beta, -alpha, side);
             unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             if (eval == -ALPHABETA_ILLEGAL)
                 continue;
@@ -248,7 +244,7 @@ quiescence(board_t *board, int ply, int check, int alpha, int beta, int side)
 }
 
 int
-alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, int side)
+alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
 {
     int eval;
     int best_move_score;
@@ -299,7 +295,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
 
     if (depth == 0 || ply == MAX_DEPTH - 1) {
         pv_term(ply);
-        return quiescence(board, ply, check, alpha, beta, side);
+        return quiescence(board, ply, alpha, beta, side);
     }
 
     if (compute_legal_moves(board, ply) < 0)
@@ -316,7 +312,7 @@ alpha_beta(board_t *board, int depth, int ply, int check, int alpha, int beta, i
     {
         int score;
         execute_move(board, move);
-        score = -alpha_beta(board, depth - 1, ply + 1, check, -beta, -alpha, side);
+        score = -alpha_beta(board, depth - 1, ply + 1, -beta, -alpha, side);
         unmake_move(board, move, en_passant, castle_flags, fifty_moves);
         if (abort_search)
             return 0;
@@ -399,7 +395,7 @@ find_best_move(state_t *state)
             e_comm_send("Examining move %s..\n", s);
             free(s); */
             execute_move(board, move);
-            score = -alpha_beta(board, cur_depth, 1, 3, ALPHABETA_MIN, -alpha, OPPONENT(board->current_player));
+            score = -alpha_beta(board, cur_depth, 1, ALPHABETA_MIN, -alpha, OPPONENT(board->current_player));
             unmake_move(board, move, en_passant, castle_flags, fifty_moves);
             /* e_comm_send("Move scored %i\n", score); */
             if (abort_search)
