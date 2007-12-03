@@ -79,7 +79,7 @@ static int convert_piece(int san_piece)
     }
 }
 
-static move_t get_san_move(board_t *board, san_move_t *san)
+static move_t get_san_move(board_t *board, int ply, san_move_t *san)
 {
     int source, dest;
     move_t move;
@@ -107,10 +107,10 @@ static move_t get_san_move(board_t *board, san_move_t *san)
     else
         piece = convert_piece(san->piece) + board->current_player;
 
-    compute_legal_moves(board, 0);
+    compute_legal_moves(board, ply);
 
     /* Look for move in list. */
-    while ((move = move_next(board, 0)) != NO_MOVE)
+    while ((move = move_next(board, ply)) != NO_MOVE)
     {
         int move_piece;
 
@@ -155,7 +155,7 @@ static move_t get_san_move(board_t *board, san_move_t *san)
 
         execute_move(board, move);
         board->current_player = OPPONENT(board->current_player);
-        if (!is_check(board, 0))
+        if (!is_check(board, ply))
         {
             found++;
             found_move = move;
@@ -171,7 +171,7 @@ static move_t get_san_move(board_t *board, san_move_t *san)
     return found_move;
 }
 
-static move_t get_coord_move(board_t *board, char *ms)
+static move_t get_coord_move(board_t *board, int ply, char *ms)
 {
     int source, dest;
     move_t move;
@@ -179,10 +179,10 @@ static move_t get_coord_move(board_t *board, char *ms)
     source = (ms[0] - 'a') + 8 * (ms[1] - '1');
     dest = (ms[2] - 'a') + 8 * (ms[3] - '1');
 
-    compute_legal_moves(board, 0);
+    compute_legal_moves(board, ply);
 
     /* Look for move in list. */
-    while ((move = move_next(board, 0)) != NO_MOVE)
+    while ((move = move_next(board, ply)) != NO_MOVE)
     {
         if ((MOVE_GET(move, SOURCE) == source) && (MOVE_GET(move, DEST) == dest))
         {
@@ -193,7 +193,7 @@ static move_t get_coord_move(board_t *board, char *ms)
             /* Move found. */
             execute_move(board, move);
             board->current_player = OPPONENT(board->current_player);
-            if (!is_check(board, 0))
+            if (!is_check(board, ply))
             {
                 board->current_player = OPPONENT(board->current_player);
                 unmake_move(board, move, en_passant, castle_flags, fifty_moves);
@@ -379,7 +379,7 @@ static int command_always(state_t *state, char *command)
     return 0;
 }
 
-int parse_move(board_t *board, char *command, move_t *move)
+int parse_move(board_t *board, int ply, char *command, move_t *move)
 {
     san_move_t *san;
 
@@ -387,13 +387,13 @@ int parse_move(board_t *board, char *command, move_t *move)
 
     if (san)
     {
-        *move = get_san_move(board, san);
+        *move = get_san_move(board, ply, san);
         free(san);
         return 0;
     }
     else if (is_coord_move(command))
     {
-        *move = get_coord_move(board, command);
+        *move = get_coord_move(board, ply, command);
         return 0;
     }
 
@@ -404,7 +404,7 @@ int command_usermove(state_t *state, char *command)
 {
     move_t move;
 
-    if (!parse_move(&state->board, command, &move))
+    if (!parse_move(&state->board, 0, command, &move))
     {
         if (move == NO_MOVE) {
             e_comm_send("Illegal move: %s\n", command);
@@ -675,7 +675,7 @@ void command_handle(state_t *state, char *command)
     UNKNOWN(command);
 }
 
-int command_check_abort(state_t *state, char *command)
+int command_check_abort(state_t *state, int ply, char *command)
 {
     if (!strcmp(command, "?"))
     {
@@ -714,7 +714,7 @@ int command_check_abort(state_t *state, char *command)
     {
         move_t move;
 
-        if (!parse_move(&state->root_board, command, &move))
+        if (!parse_move(&state->root_board, ply, command, &move))
         {
             if (move == NO_MOVE) {
                 e_comm_send("Illegal move: %s\n", command);

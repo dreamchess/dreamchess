@@ -90,7 +90,7 @@ void check_game_end(state_t *state);
 char *coord_move_str(move_t move);
 void do_move(state_t *state, move_t move);
 void undo_move(state_t *state);
-int check_abort();
+int check_abort(int ply);
 int get_option(int option);
 void set_option(int option, int value);
 int get_time();

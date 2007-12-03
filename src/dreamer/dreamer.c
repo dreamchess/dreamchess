@@ -173,7 +173,7 @@ void check_game_end(state_t *state)
 
 }
 
-int check_abort()
+int check_abort(int ply)
 {
     char *s;
 
@@ -183,7 +183,7 @@ int check_abort()
     s = e_comm_poll();
     if (!s)
         return 0;
-    return command_check_abort(&state, s);
+    return command_check_abort(&state, ply, s);
 }
 
 void do_move(state_t *state, move_t move)

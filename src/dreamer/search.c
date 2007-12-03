@@ -148,12 +148,12 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side);
 int
 is_check(board_t *board, int ply);
 
-void poll_abort()
+void poll_abort(int ply)
 {
     if (pv_len[0] == 0)
         return;
 
-    if (check_abort())
+    if (check_abort(ply))
         abort_search = 1;
 }
 
@@ -167,7 +167,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
     move_t move;
 
     if ((total_nodes++) % 10000 == 0)
-        poll_abort();
+        poll_abort(ply);
 
     if (abort_search)
         return 0;
@@ -256,7 +256,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     move_t move;
 
     if ((total_nodes++) % 10000 == 0)
-        poll_abort();
+        poll_abort(ply);
 
     if (abort_search)
         return 0;
@@ -418,8 +418,8 @@ find_best_move(state_t *state)
             }
         }
 
-        /* If we found a mate we stop the search */
-        if (best_score > ALPHABETA_MAX - 100) {
+        /* If we found a mate in 'ply' we stop the search */
+        if (best_score == ALPHABETA_MAX - cur_depth) {
             break;
         }
 
