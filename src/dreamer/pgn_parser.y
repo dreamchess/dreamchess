@@ -30,7 +30,7 @@
 %token GAMETERM
 
 %{
-/* #include "dreamchess.h" */
+#include "move.h"
 
 extern char *yystring;
 
@@ -43,6 +43,10 @@ int yyerror(const char *s);
 input                    : pgn_game
 ;
 
+pgn_database             : pgn_database pgn_game
+                         | empty
+;
+
 pgn_game                 : tag_section movetext_section
 ;
 
@@ -53,10 +57,10 @@ tag_section              : tag_pair tag_section
 tag_pair                 : '[' tag_name tag_value ']'
 ;
 
-tag_name                 : SYMBOL {/*printf("Tag name: %s\n", yylval.yycharp);*/}
+tag_name                 : SYMBOL
 ;
 
-tag_value                : STRING {/*printf("Tag value: %s\n", yylval.yycharp);*/}
+tag_value                : STRING
 ;
 
 movetext_section         : element_sequence game_termination

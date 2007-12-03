@@ -301,6 +301,4 @@ unmake_move(board_t *board, move_t move, bitboard_t old_en_passant,
 
 int setup_board_fen(board_t *board, char *fen);
 
-void switch_player(board_t *board);
-
 #endif /* BOARD_H */

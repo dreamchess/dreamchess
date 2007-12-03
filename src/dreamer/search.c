@@ -196,7 +196,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
 
     while ((move = move_next(board, ply)) != NO_MOVE)
     {
-        if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT | MOVE_PROMOTION_MASK))
+        if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT | MOVE_PROMOTION_MASK))
         {
             execute_move(board, move);
             eval = -quiescence(board, ply + 1, -beta, -alpha, side);
@@ -488,7 +488,8 @@ ponder(state_t *state)
 	if (state->hint == NO_MOVE)
 		return NO_MOVE;
 
-	state->ponder_buf[0] = 0;
+        state->root_board = state->board;
+	state->ponder_actual_move = NO_MOVE;
 	state->ponder_opp_move = state->hint;
 	do_move(state, state->ponder_opp_move);
         state->flags = FLAG_DELAY_MOVE;
@@ -501,13 +502,19 @@ ponder(state_t *state)
 
 	if (move == NO_MOVE)
         {
-		/* Player did not play the move we expected. */
+		/* Player did not play the move we expected */
+		/* or pondering was switched off. */
 		undo_move(state);
-		if (state->ponder_buf[0] != 0)
-			coord_usermove(state, state->ponder_buf);
+                if (state->ponder_actual_move != NO_MOVE)
+                {
+                    do_move(state, state->ponder_actual_move);
+                    check_game_end(state);
+                }
+
 		return NO_MOVE;
         }
-        else if (state->flags & FLAG_DELAY_MOVE)
+
+        if (state->flags & FLAG_DELAY_MOVE)
         {
                 /* Opponent hasn't moved yet. */
  		undo_move(state);

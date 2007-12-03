@@ -18,18 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
+#ifndef MAKEBOOK_H
+#define MAKEBOOK_H
 
-#include "svn_version.h"
-#include "config.h"
+void makebook(char *pgnfile, char *binfile);
 
-int engine();
-
-int main(int argc, char **argv)
-{
-    printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
-
-//    makebook("/home/walter/tmp/GM2001.pgn", NULL);
-//    return 0;
-    return engine();
-}
+#endif

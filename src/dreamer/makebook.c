@@ -20,16 +20,8 @@
 
 #include <stdio.h>
 
-#include "svn_version.h"
-#include "config.h"
-
-int engine();
-
-int main(int argc, char **argv)
+void makebook(char *pgnfile, char *binfile)
 {
-    printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
-
-//    makebook("/home/walter/tmp/GM2001.pgn", NULL);
-//    return 0;
-    return engine();
+    pgn_parse_file("/home/walter/tmp/GM2001.pgn");
+    return;
 }

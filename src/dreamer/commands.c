@@ -31,6 +31,7 @@
 #include "config.h"
 #include "svn_version.h"
 #include "search.h"
+#include "san.h"
 
 static int is_coord_move(char *ms)
 {
@@ -57,6 +58,117 @@ static int is_coord_move(char *ms)
         }
 
     return 1;
+}
+
+static int convert_piece(int san_piece)
+{
+    switch (san_piece)
+    {
+    case SAN_KING:
+        return KING;
+    case SAN_QUEEN:
+        return QUEEN;
+    case SAN_ROOK:
+        return ROOK;
+    case SAN_KNIGHT:
+        return KNIGHT;
+    case SAN_BISHOP:
+        return BISHOP;
+    case SAN_PAWN:
+        return PAWN;
+    }
+}
+
+static move_t get_san_move(board_t *board, san_move_t *san)
+{
+    int source, dest;
+    move_t move;
+    int piece;
+    bitboard_t en_passant = board->en_passant;
+    int castle_flags = board->castle_flags;
+    int fifty_moves = board->fifty_moves;
+    int found = 0;
+    move_t found_move;
+
+    if (san->type == SAN_QUEENSIDE_CASTLE)
+    {
+        san->source_file = 4;
+        san->source_rank = (board->current_player == SIDE_WHITE ? 0 : 7);
+        san->destination = (board->current_player == SIDE_WHITE ? 2 : 58);
+        piece = KING + board->current_player;
+    }
+    else if (san->type == SAN_KINGSIDE_CASTLE)
+    {
+        san->source_file = 4;
+        san->source_rank = (board->current_player == SIDE_WHITE ? 0 : 7);
+        san->destination = (board->current_player == SIDE_WHITE ? 6 : 62);
+        piece = KING + board->current_player;
+    }
+    else
+        piece = convert_piece(san->piece) + board->current_player;
+
+    compute_legal_moves(board, 0);
+
+    /* Look for move in list. */
+    while ((move = move_next(board, 0)) != NO_MOVE)
+    {
+        int move_piece;
+
+        if (MOVE_GET(move, DEST) != san->destination)
+            continue;
+
+        if (board->current_player == SIDE_WHITE)
+            move_piece = find_white_piece(board, MOVE_GET(move, SOURCE));
+        else
+            move_piece = find_black_piece(board, MOVE_GET(move, SOURCE));
+
+        if (move_piece != piece)
+            continue;
+
+        if (san->source_file != SAN_NOT_SPECIFIED)
+            if (san->source_file != MOVE_GET(move, SOURCE) % 8)
+                continue;
+
+        if (san->source_rank != SAN_NOT_SPECIFIED)
+            if (san->source_rank != MOVE_GET(move, SOURCE) / 8)
+                continue;
+
+        if (san->type == SAN_CAPTURE)
+        {
+            /* TODO verify en passant capture? */
+            if (!(move & (CAPTURE_MOVE_EN_PASSANT | CAPTURE_MOVE)))
+                    continue;
+        }
+
+        if ((move & PROMOTION_MOVE_QUEEN) && (san->promotion_piece != SAN_QUEEN))
+            continue;
+        if ((move & PROMOTION_MOVE_ROOK) && (san->promotion_piece != SAN_ROOK))
+            continue;
+        if ((move & PROMOTION_MOVE_BISHOP) && (san->promotion_piece != SAN_BISHOP))
+            continue;
+        if ((move & PROMOTION_MOVE_KNIGHT) && (san->promotion_piece != SAN_KNIGHT))
+            continue;
+        if (!(move & MOVE_PROMOTION_MASK) && (san->promotion_piece != SAN_NOT_SPECIFIED))
+            continue;
+
+        /* TODO verify check and checkmate flags? */
+
+        execute_move(board, move);
+        board->current_player = OPPONENT(board->current_player);
+        if (!is_check(board, 0))
+        {
+            found++;
+            found_move = move;
+        }
+ 
+        board->current_player = OPPONENT(board->current_player);
+        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+    }
+
+    if (found != 1)
+        return NO_MOVE;
+
+    return found_move;
 }
 
 static move_t get_coord_move(board_t *board, char *ms)
@@ -161,28 +273,6 @@ static void error(char *type, char *command)
 #define NOT_NOW(c) error("command not legal now", c)
 #define UNKNOWN(c) error("unknown command", c)
 #define BADPARAM(c) error("invalid or missing parameter(s)", c)
-
-int coord_usermove(state_t *state, char *command)
-{
-    move_t move;
-    if (my_turn(state))
-    {
-        NOT_NOW(command);
-        return 1;
-    }
-    move = get_coord_move(&state->board, command);
-    if (move == NO_MOVE)
-    {
-        e_comm_send("Illegal move: %s\n", command);
-        return 1;
-    }
-    else
-    {
-        do_move(state, move);
-        check_game_end(state);
-        return 0;
-    }
-}
 
 static int parse_time_control(state_t *state, char *s)
 {
@@ -289,8 +379,73 @@ static int command_always(state_t *state, char *command)
     return 0;
 }
 
+int parse_move(board_t *board, char *command, move_t *move)
+{
+    san_move_t *san;
+
+    san = san_parse(command);
+
+    if (san)
+    {
+        *move = get_san_move(board, san);
+        free(san);
+        return 0;
+    }
+    else if (is_coord_move(command))
+    {
+        *move = get_coord_move(board, command);
+        return 0;
+    }
+
+    return 1;
+}
+
+int command_usermove(state_t *state, char *command)
+{
+    move_t move;
+
+    if (!parse_move(&state->board, command, &move))
+    {
+        if (move == NO_MOVE) {
+            e_comm_send("Illegal move: %s\n", command);
+            return 0;
+        }
+
+        if (my_turn(state))
+        {
+            NOT_NOW(command);
+            return 0;
+        }
+
+        do_move(state, move);
+        check_game_end(state);
+
+        if (state->mode == MODE_IDLE)
+            state->mode = (state->board.current_player == SIDE_WHITE?
+                           MODE_WHITE : MODE_BLACK);
+
+        if (state->ponder_my_move != NO_MOVE) {
+            /* We already have a possible answer to this move from pondering. */
+            if (move == state->ponder_opp_move)
+            {
+                /* User made the expected move. */
+                send_move(state, state->ponder_my_move);
+            }
+
+            state->ponder_my_move = NO_MOVE;
+        }
+
+        return 0;
+    }
+
+    return 1;
+}
+
 void command_handle(state_t *state, char *command)
 {
+    san_move_t *san;
+    move_t move = NO_MOVE;
+
     if (command_always(state, command))
         return;
 
@@ -310,6 +465,7 @@ void command_handle(state_t *state, char *command)
              BADPARAM(command);
 
         e_comm_send("feature setboard=1\n");
+        e_comm_send("feature san=1\n");
         e_comm_send("feature myname=\"Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\"\n");
         e_comm_send("feature done=1\n");
         return;
@@ -513,32 +669,8 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
-    if (is_coord_move(command))
-    {
-        if (!coord_usermove(state, command))
-        {
-            if (state->mode == MODE_IDLE)
-                state->mode = (state->board.current_player == SIDE_WHITE?
-                               MODE_WHITE : MODE_BLACK);
-        }
-
-        if (state->ponder_my_move != NO_MOVE) {
-
-            /* We already have a possible answer to this move from pondering. */
-            char *str = coord_move_str(state->ponder_opp_move);
-
-            if (!strcmp(command, str))
-            {
-                /* User made the expected move. */
-                send_move(state, state->ponder_my_move);
-            }
-
-            state->ponder_my_move = NO_MOVE;
-            free(str);
-        }
-
+    if (!command_usermove(state, command))
         return;
-    }
 
     UNKNOWN(command);
 }
@@ -572,29 +704,36 @@ int command_check_abort(state_t *state, char *command)
         if (state->flags & FLAG_PONDER)
         {
             state->flags = FLAG_IGNORE_MOVE;
-            state->ponder_buf[0] = 0;
+            state->ponder_actual_move = NO_MOVE;
         }
         command_handle(state, command);
         return 1;
     }
 
-    if ((state->flags & FLAG_PONDER) && is_coord_move(command))
+    if (state->flags & FLAG_PONDER)
     {
-        char *str = coord_move_str(state->ponder_opp_move);
-        if (!strcmp(command, str))
+        move_t move;
+
+        if (!parse_move(&state->root_board, command, &move))
         {
-            /* User made the expected move. */
-            state->flags = 0;
-            free(str);
-            return 0;
-        }
-        else
-        {
-            /* User made a different move, abort and restart search. */
-            state->flags = FLAG_IGNORE_MOVE;
-            strncpy(state->ponder_buf, command, 6);
-            free(str);
-            return 1;
+            if (move == NO_MOVE) {
+                e_comm_send("Illegal move: %s\n", command);
+                return 0;
+            }
+
+            if (move == state->ponder_opp_move)
+            {
+                /* User made the expected move. */
+                state->flags = 0;
+                return 0;
+            }
+            else
+            {
+                /* User made a different move, abort and restart search. */
+                state->flags = FLAG_IGNORE_MOVE;
+                state->ponder_actual_move = move;
+                return 1;
+            }
         }
     }
 

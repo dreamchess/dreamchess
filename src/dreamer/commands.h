@@ -25,6 +25,6 @@
 
 void command_handle(state_t *state, char *command);
 int command_check_abort(state_t *state, char *command);
-int coord_usermove(state_t *state, char *command);
+int command_usermove(state_t *state, char *command);
 
 #endif /* COMMANDS_H */

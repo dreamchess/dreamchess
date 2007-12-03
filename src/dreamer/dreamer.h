@@ -59,6 +59,7 @@ typedef struct state
     int flags;
     int depth;
     board_t board;
+    board_t root_board;
     undo_data_t *undo_data;
     int moves;
     int options;
@@ -67,9 +68,9 @@ typedef struct state
     int opponent_time;
     int move_now_time;
     move_t hint;
-    char ponder_buf[6];
     move_t ponder_opp_move;
     move_t ponder_my_move;
+    move_t ponder_actual_move;
 }
 state_t;
 

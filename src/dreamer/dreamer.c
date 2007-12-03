@@ -267,7 +267,6 @@ void send_move(state_t *state, move_t move)
 
 int engine()
 {
-    printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
     e_comm_init();
     move_init();
     board_init();
@@ -310,7 +309,9 @@ int engine()
             {
                 state.flags = 0;
                 set_move_now_time();
+
                 move = find_best_move(&state);
+
                 if (state.flags & FLAG_NEW_GAME)
                     command_handle(&state, "new");
                 else if (move != NO_MOVE)
@@ -323,7 +324,9 @@ int engine()
             else if (state.flags & FLAG_PONDER)
             {
                 set_move_now_time();
+
                 move = ponder(&state);
+
                 if (state.flags & FLAG_NEW_GAME)
                     command_handle(&state, "new");
                 else if (!my_turn(&state))

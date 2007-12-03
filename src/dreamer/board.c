@@ -328,13 +328,6 @@ int find_white_piece(board_t *board, int square)
     return NONE;
 }
 
-void switch_player(board_t *board)
-{
-    /* Switch players. */
-    board->current_player = OPPONENT(board->current_player);
-    board->hash_key ^= black_to_move;
-}
-
 void execute_move(board_t *board, move_t move)
 {
     if (board->current_player)
@@ -396,7 +389,7 @@ void execute_move(board_t *board, move_t move)
         board->fifty_moves = 0;
         break;
 
-    case CAPTURE_MOVE_EN_PASSENT:
+    case CAPTURE_MOVE_EN_PASSANT:
         remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
 
         /* Remove the captured pawn. */
@@ -667,7 +660,7 @@ void unmake_move(board_t *board, move_t move, bitboard_t
         add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
         break;
 
-    case CAPTURE_MOVE_EN_PASSENT:
+    case CAPTURE_MOVE_EN_PASSANT:
         remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
         add_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1? 8 : -8),
                   MOVE_GET(move, CAPTURED));

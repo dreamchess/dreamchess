@@ -238,7 +238,7 @@ FUNCNAME(board_t *board, move_t *move) \
 				if (board->en_passant & square_bit[dest]) \
 				{ \
 					/* En passant capture. */ \
-					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSENT, PAWN + OPPONENT(PLAYER)); \
+					*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSANT, PAWN + OPPONENT(PLAYER)); \
 				} \
 		} \
 \

@@ -33,10 +33,10 @@ static inline int
 move_compare(move_t move1, move_t move2, int current_side)
 {
 
-    if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT)))
+    if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
         return -1;
 
-    if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSENT)))
+    if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
         return 1;
 
     if (history[current_side][MOVE_GET(move1, SOURCE)][MOVE_GET(move1, DEST)]
