@@ -84,7 +84,6 @@ int my_turn(state_t *state)
 int is_check(board_t *board, int ply)
 {
     /* FIXME */
-    ply++;
     board->current_player = OPPONENT(board->current_player);
     if (compute_legal_moves(board, ply) < 0)
     {
@@ -96,13 +95,13 @@ int is_check(board_t *board, int ply)
     return 0;
 }
 
-int check_game_state(board_t *board)
+int check_game_state(board_t *board, int ply)
 {
     move_t move;
     int mate = STATE_MATE;
-    compute_legal_moves(board, 0);
+    compute_legal_moves(board, ply);
 
-    while ((move = move_next(board, 0)) != NO_MOVE)
+    while ((move = move_next(board, ply)) != NO_MOVE)
     {
         bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;
@@ -110,7 +109,7 @@ int check_game_state(board_t *board)
 
         execute_move(board, move);
         board->current_player = OPPONENT(board->current_player);
-        if (!is_check(board, 0))
+        if (!is_check(board, ply + 1))
         {
             mate = STATE_NORMAL;
             board->current_player = OPPONENT(board->current_player);
@@ -121,9 +120,9 @@ int check_game_state(board_t *board)
         unmake_move(board, move, en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
-    if (!is_check(board, 0) && (mate == STATE_MATE))
+    if (!is_check(board, ply) && (mate == STATE_MATE))
         mate = STATE_STALEMATE;
-    if (is_check(board, 0) && (mate == STATE_NORMAL))
+    if (is_check(board, ply) && (mate == STATE_NORMAL))
         mate = STATE_CHECK;
     return mate;
 }
@@ -142,7 +141,7 @@ void set_option(int option, int value)
 void check_game_end(state_t *state)
 {
     board_t *board = &state->board;
-    int res = check_game_state(board);
+    int res = check_game_state(board, 0);
 
     switch (res)
     {

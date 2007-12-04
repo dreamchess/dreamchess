@@ -92,33 +92,40 @@ static inline void pv_copy(int ply, move_t move)
     pv_len[ply] = pv_len[ply + 1] + 1;
 }
 
+static void pv_print_move(state_t *state, int index)
+{
+    long long en_passant = state->board.en_passant;
+    int castle_flags = state->board.castle_flags;
+    int fifty_moves = state->board.fifty_moves;
+    char *s;
+
+    if (index == pv_len[0])
+        return;
+
+    if ((state->moves + index) % 2 == 0)
+        e_comm_send(" %2d.", (state->moves + index) / 2 + 1);
+
+    /* Ply 0 is used by find_best_move(). */
+    s = san_move_str(&state->board, 1, pv[0][index]);
+    e_comm_send(" %s", s);
+    free(s);
+
+    execute_move(&state->board, pv[0][index]);
+    pv_print_move(state, index + 1);
+    unmake_move(&state->board, pv[0][index], en_passant, castle_flags, fifty_moves);
+}
+
 static void pv_print(state_t *state, int depth, int score)
 {
-    int i = 0;
-
     if (state->mode == MODE_BLACK)
         score = -score;
 
     e_comm_send("%3i %7i %i %i", depth, score, total_nodes, get_time() - start_time, total_nodes);
-    if (state->board.current_player == SIDE_BLACK) {
-        char *s = coord_move_str(pv[0][0]);
-        e_comm_send(" %2d. ... %s", state->moves / 2 + 1, s);
-        i = 1;
-        free(s);
-    }
-    while (1)
-    {
-        if (i == pv_len[0])
-            break;
-        char *s = coord_move_str(pv[0][i++]);
-        e_comm_send(" %2d. %s", (state->moves + i) / 2 + 1, s);
-        free(s);
-        if (i == pv_len[0])
-            break;
-        s = coord_move_str(pv[0][i++]);
-        e_comm_send(" %s", s);
-        free(s);
-    }
+    if (state->board.current_player == SIDE_BLACK)
+        e_comm_send(" %2d. ...", state->moves / 2 + 1);
+
+    pv_print_move(state, 0);
+
     e_comm_send("\n");
 }
 
@@ -273,9 +280,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
 
         pv_term(ply);
 
-        if (is_check(board, ply))
-            return ALPHABETA_MIN + ply;
-
+        /* FIXME, check for mate */
         return 0;
     }
 

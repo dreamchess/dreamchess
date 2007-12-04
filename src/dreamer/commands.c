@@ -79,6 +79,25 @@ static int convert_piece(int san_piece)
     }
 }
 
+static int san_piece(int piece)
+{
+    switch (piece)
+    {
+    case KING:
+        return SAN_KING;
+    case QUEEN:
+        return SAN_QUEEN;
+    case ROOK:
+        return SAN_ROOK;
+    case KNIGHT:
+        return SAN_KNIGHT;
+    case BISHOP:
+        return SAN_BISHOP;
+    case PAWN:
+        return SAN_PAWN;
+    }
+}
+
 static move_t get_san_move(board_t *board, int ply, san_move_t *san)
 {
     int source, dest;
@@ -155,7 +174,7 @@ static move_t get_san_move(board_t *board, int ply, san_move_t *san)
 
         execute_move(board, move);
         board->current_player = OPPONENT(board->current_player);
-        if (!is_check(board, ply))
+        if (!is_check(board, ply + 1))
         {
             found++;
             found_move = move;
@@ -193,7 +212,7 @@ static move_t get_coord_move(board_t *board, int ply, char *ms)
             /* Move found. */
             execute_move(board, move);
             board->current_player = OPPONENT(board->current_player);
-            if (!is_check(board, ply))
+            if (!is_check(board, ply + 1))
             {
                 board->current_player = OPPONENT(board->current_player);
                 unmake_move(board, move, en_passant, castle_flags, fifty_moves);
@@ -265,6 +284,103 @@ char *coord_move_str(move_t move)
     return ret;
 }
 
+char *san_move_str(board_t *board, int ply, move_t move)
+{
+    san_move_t san_move;
+    int state;
+    int move_piece;
+    bitboard_t en_passant = board->en_passant;
+    int castle_flags = board->castle_flags;
+    int fifty_moves = board->fifty_moves;
+
+    execute_move(board, move);
+    state = check_game_state(board, ply);
+    unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+
+    switch (state)
+    {
+    case STATE_CHECK:
+        san_move.state = SAN_STATE_CHECK;
+        break;
+    case STATE_MATE:
+        san_move.state = SAN_STATE_CHECKMATE;
+        break;
+    default:
+        san_move.state = SAN_STATE_NORMAL;
+    }
+
+    switch (MOVE_GET(move, TYPE))
+    {
+    case CASTLING_MOVE_QUEENSIDE:
+        san_move.type = SAN_QUEENSIDE_CASTLE;
+        return san_string(&san_move);
+    case CASTLING_MOVE_KINGSIDE:
+        san_move.type = SAN_KINGSIDE_CASTLE;
+        return san_string(&san_move);
+    case CAPTURE_MOVE:
+    case CAPTURE_MOVE_EN_PASSANT:
+        san_move.type = SAN_CAPTURE;
+        break;
+    default:
+        san_move.type = SAN_NORMAL;
+    }
+
+    if (board->current_player == SIDE_WHITE)
+        move_piece = find_white_piece(board, MOVE_GET(move, SOURCE)) & PIECE_MASK;
+    else
+        move_piece = find_black_piece(board, MOVE_GET(move, SOURCE)) & PIECE_MASK;
+
+    san_move.piece = san_piece(move_piece);
+
+    if (MOVE_GET(move, TYPE) & MOVE_PROMOTION_MASK)
+        san_move.promotion_piece = san_piece(MOVE_GET(move, CAPTURED) & PIECE_MASK);
+    else
+        san_move.promotion_piece = SAN_NOT_SPECIFIED;
+
+    san_move.source_file = SAN_NOT_SPECIFIED;
+    san_move.source_rank = SAN_NOT_SPECIFIED;
+    san_move.destination = MOVE_GET(move, DEST);
+
+    if (san_move.piece == SAN_PAWN)
+    {
+        if (MOVE_GET(move, SOURCE) % 8 != MOVE_GET(move, DEST) % 8)
+            san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+    }
+    else
+    {
+        move_t u_move;
+        u_move = get_san_move(board, ply, &san_move);
+
+        if (u_move == NO_MOVE)
+        {
+            san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+            u_move = get_san_move(board, ply, &san_move);
+            if (u_move == NO_MOVE)
+            {
+                san_move.source_file = SAN_NOT_SPECIFIED;
+                san_move.source_rank = MOVE_GET(move, SOURCE) / 8;
+                u_move = get_san_move(board, ply, &san_move);
+                if (u_move == NO_MOVE)
+                {
+                    san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+                    u_move = get_san_move(board, ply, &san_move);
+                    if (!u_move)
+                    {
+                        char *move_s = coord_move_str(move);
+
+                        e_comm_send("failed to convert move %s to SAN notation", move_s);
+
+                        free(move_s);
+                        return NULL;
+                    }
+                }
+            }
+        }
+    }
+
+    return san_string(&san_move);
+}
+
 static void error(char *type, char *command)
 {
     e_comm_send("Error (%s): %s\n", type, command);
@@ -331,22 +447,6 @@ static int command_always(state_t *state, char *command)
     if (!strcmp(command, "nopost"))
     {
         set_option(OPTION_POST, 0);
-        return 1;
-    }
-
-    if (!strcmp(command, "hint"))
-    {
-        move_t move = state->ponder_opp_move;
-
-        if (move == NO_MOVE)
-            move = state->hint;
-
-        if (move != NO_MOVE)
-        {
-            char *str = coord_move_str(state->hint);
-            e_comm_send("Hint: %s\n", str);
-            free(str);
-        }
         return 1;
     }
 
@@ -669,6 +769,17 @@ void command_handle(state_t *state, char *command)
         return;
     }
 
+    if (!strcmp(command, "hint"))
+    {
+        if (state->hint != NO_MOVE)
+        {
+            char *str = coord_move_str(state->hint);
+            e_comm_send("Hint: %s\n", str);
+            free(str);
+        }
+        return;
+    }
+
     if (!command_usermove(state, command))
         return;
 
@@ -708,6 +819,17 @@ int command_check_abort(state_t *state, int ply, char *command)
         }
         command_handle(state, command);
         return 1;
+    }
+
+    if (!strcmp(command, "hint"))
+    {
+        if (state->flags & FLAG_PONDER)
+        {
+            char *str = coord_move_str(state->ponder_opp_move);
+            e_comm_send("Hint: %s\n", str);
+            free(str);
+            return 0;
+        }
     }
 
     if (state->flags & FLAG_PONDER)

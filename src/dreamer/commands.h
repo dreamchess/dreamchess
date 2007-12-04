@@ -27,4 +27,7 @@ void command_handle(state_t *state, char *command);
 int command_check_abort(state_t *state, int ply, char *command);
 int command_usermove(state_t *state, char *command);
 
+char *san_move_str(board_t *board, int ply, move_t move);
+char *coord_move_str(move_t move);
+
 #endif /* COMMANDS_H */
