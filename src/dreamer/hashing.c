@@ -21,17 +21,17 @@
 #include "board.h"
 #include "hashing.h"
 
-long long random_seed_64 = 1;
-long long pieces_hash[12][64];
-long long castle_hash[4];
-long long ep_hash[64];
-long long black_to_move;
+unsigned long long random_seed_64 = 1;
+unsigned long long pieces_hash[12][64];
+unsigned long long castle_hash[4];
+unsigned long long ep_hash[64];
+unsigned long long black_to_move;
 
-long long
+unsigned long long
 random_rand_64()
 {
-    const long long mul_64 = 8LL * 893636665409536LL - 3LL;
-    const long long add_64 = 4354685564936845319LL;
+    const unsigned long long mul_64 = 8LL * 893636665409536LL - 3LL;
+    const unsigned long long add_64 = 4354685564936845319LL;
 
     random_seed_64 = random_seed_64 * mul_64 + add_64;
     return random_seed_64;
@@ -51,13 +51,13 @@ init_hash()
     black_to_move = random_rand_64();
 }
 
-long long
+unsigned long long
 hash_key(board_t *board)
 {
     int piece;
     int square;
     int i;
-    long long hash = 0;
+    unsigned long long hash = 0;
     bitboard_t bitboard;
     for (piece = 0; piece < ALL; piece++)
     {

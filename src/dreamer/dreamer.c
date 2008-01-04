@@ -267,10 +267,6 @@ void send_move(state_t *state, move_t move)
 int engine()
 {
     e_comm_init();
-    move_init();
-    board_init();
-    init_hash();
-    transposition_init(128);
     set_start_time();
 
     setup_board(&state.board);

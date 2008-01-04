@@ -30,7 +30,9 @@
 %token GAMETERM
 
 %{
-#include "move.h"
+#include <stdio.h>
+
+#include "makebook.h"
 
 extern char *yystring;
 
@@ -40,7 +42,7 @@ int yyerror(const char *s);
 
 %%
 
-input                    : pgn_game
+input                    : pgn_database
 ;
 
 pgn_database             : pgn_database pgn_game
@@ -79,10 +81,10 @@ element                  : move_number_indication
 recursive_variation      : '(' element_sequence ')'
 ;
 
-game_termination         : GAMETERM
+game_termination         : GAMETERM {makebook_reset();}
 ;
 
-san_move                 : SYMBOL {printf("Found move: %s\n", yylval.yycharp);}
+san_move                 : SYMBOL {makebook_move(yylval.yycharp);}
 ;
 
 move_number_indication   : INTEGER periods
@@ -102,6 +104,6 @@ empty                    :
 
 int yyerror(const char *s)
 {
-    printf("Error: %s\n", s);
+    fprintf(stderr, "Error: %s\n", s);
     return 1;
 }

@@ -44,7 +44,7 @@ typedef struct entry
     int eval_type;
     int eval;
     int depth;
-    long long hash_key;
+    unsigned long long hash_key;
     int time_stamp;
     move_t move;
 }

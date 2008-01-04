@@ -21,6 +21,13 @@
 #ifndef MAKEBOOK_H
 #define MAKEBOOK_H
 
+#define MAKEBOOK_KNIGHT 0
+#define MAKEBOOK_BISHOP 1
+#define MAKEBOOK_ROOK 2
+#define MAKEBOOK_QUEEN 3
+
+#define MAKEBOOK_LAST (1 << 15)
+
 void makebook(char *pgnfile, char *binfile);
 
 #endif

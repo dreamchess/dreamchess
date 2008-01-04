@@ -23,22 +23,22 @@
 
 #include "board.h"
 
-extern long long random_seed_64;
-extern long long pieces_hash[12][64];
-extern long long castle_hash[4];
-extern long long ep_hash[64];
-extern long long black_to_move;
+extern unsigned long long random_seed_64;
+extern unsigned long long pieces_hash[12][64];
+extern unsigned long long castle_hash[4];
+extern unsigned long long ep_hash[64];
+extern unsigned long long black_to_move;
 
 void
-random_init_64(long long seed);
+random_init_64(unsigned long long seed);
 
-long long
+unsigned long long
 random_rand_64();
 
 void
 init_hash();
 
-long long
+unsigned long long
 hash_key(board_t *board);
 
 #endif /* HASHING_H */

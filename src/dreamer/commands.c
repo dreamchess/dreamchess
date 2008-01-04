@@ -565,7 +565,6 @@ void command_handle(state_t *state, char *command)
              BADPARAM(command);
 
         e_comm_send("feature setboard=1\n");
-        e_comm_send("feature san=1\n");
         e_comm_send("feature myname=\"Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\"\n");
         e_comm_send("feature done=1\n");
         return;
@@ -581,7 +580,8 @@ void command_handle(state_t *state, char *command)
 
     if (!strncmp(command, "accepted ", 9))
     {
-        if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done"))
+        if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done")
+            || !strcmp(command + 9, "myname"))
             return;
 
         BADPARAM(command);

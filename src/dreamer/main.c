@@ -27,9 +27,14 @@ int engine();
 
 int main(int argc, char **argv)
 {
-    printf("Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
+    fprintf(stderr, "Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
 
-//    makebook("/home/walter/tmp/GM2001.pgn", NULL);
-//    return 0;
+    board_init();
+    init_hash();
+    move_init();
+    transposition_init(128);
+
+    /* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
+
     return engine();
 }

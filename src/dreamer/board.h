@@ -174,7 +174,7 @@
 #define NONE 12
 
 /* 64-bit bitboard. Bit 0 = A1, bit 1 = A2 etc. */
-typedef long long bitboard_t;
+typedef unsigned long long bitboard_t;
 
 /* Struct describing the current state of the board. */
 typedef struct board
