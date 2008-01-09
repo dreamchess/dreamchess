@@ -72,7 +72,7 @@
 #define SCREEN_BPP     16
 
 /** Desired frames per second. */
-#define FPS 9999
+#define FPS 60
 
 /* Speed that text types, characters per second. */
 #define STRING_TYPE_SPEED 20

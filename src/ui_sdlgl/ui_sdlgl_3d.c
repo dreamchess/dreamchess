@@ -580,16 +580,20 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-void model_render(model_t *model, float alpha)
+void model_render(model_t *model, int specular, float alpha)
 {
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
     texture_t *texture = model->texture;
 
     mcolor[3] = alpha;
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    if (specular)
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    else
+        glMaterialfv(GL_FRONT, GL_SPECULAR, nospecReflection);
     glMateriali(GL_FRONT, GL_SHININESS, 128);
 
     glEnable(GL_TEXTURE_2D);
@@ -838,7 +842,7 @@ static void draw_pieces(board_t *board, int flip)
                     moving_piece_grab=FALSE;          
 
                 if ( !selected_piece_grab && !moving_piece_grab )
-                    model_render(&model[k], (i * 8 + j == selected ? 0.5f : 1.0f));
+                    model_render(&model[k], !is_2d, (i * 8 + j == selected ? 0.5f : 1.0f));
             }
         }
 
@@ -846,20 +850,20 @@ static void draw_pieces(board_t *board, int flip)
         if ( selected_piece_render )
         {
             glPopMatrix();
-            model_render(&model[selected_piece_model], 0.5f);
+            model_render(&model[selected_piece_model], !is_2d, 0.5f);
         }
 
         if ( moving_piece_render )
         {
             glPopMatrix();
-            model_render(&model[moving_piece_model], 1.0f);
+            model_render(&model[moving_piece_model], !is_2d, 1.0f);
         }
 }
 
 static void draw_board(int blend)
 {
     setup_view();
-    model_render(&board, 1.0f);
+    model_render(&board, 0, 1.0f);
 }
 
 void draw_selector(float alpha)
@@ -1029,7 +1033,7 @@ void render_scene_3d(board_t *board, int reflections)
     glEnable(GL_LIGHTING);
 
     glEnable(GL_CULL_FACE);
-    if (reflections) {
+    if (!is_2d && reflections) {
         setup_stencil();
         glCullFace(GL_FRONT);
         draw_pieces(board, 1);
@@ -1126,38 +1130,42 @@ void select_piece(int square)
 void reset_3d()
 {
     float mcolor[] = { 1.0f, 1.0f, 1.0f };
+    float position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
 
     selected = -1;
     selector = 0;
     selector_hide_time = 0;
 
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
     if (is_2d)
     {
+	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
         x_rotation = 0.0f;
         z_rotation = 0.0f;
 
-	// Create light components
-	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	/* Create light components */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     }
     else
     {
-        x_rotation = -30.0f;
-        z_rotation = 0.0f;
-
-	// Create light components
+	/* Create light components */
 	GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
 	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
+
+        x_rotation = -30.0f;
+        z_rotation = 0.0f;
 	  	 
-	// Assign created components to GL_LIGHT0
+	/* Assign created components to GL_LIGHT0 */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
     }
 
+    /* White specular highlights */
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
     glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
 
     glEnable(GL_LIGHT0);
