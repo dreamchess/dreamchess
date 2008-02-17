@@ -321,13 +321,21 @@ if test x"$CC" = xkos-cc; then
 	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
 fi
 
+AC_CHECK_LIB(pthread, pthread_create, [have_pthread="yes" PTHREAD_LIBS="-lpthread"], [have_pthread="no"])
 AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])])
-AC_CHECK_LIB(mxml, mxmlLoadFile, [], [AC_MSG_ERROR([Cannot find Mini-XML library.])])
+AC_CHECK_LIB(mxml, mxmlLoadFile, [MXML_LIBS="-lmxml"], [AC_MSG_ERROR([Cannot find Mini-XML library.])], [${PTHREAD_LIBS}])
+if test x"$have_pthread" = xyes; then
+	AC_NEEDS(mxml, pthread, mxmlLoadFile,
+		[MXML_LIBS="${MXML_LIBS} ${PTHREAD_LIBS}"],
+		[], []
+		)
+fi
 
 AM_CONDITIONAL(BEOS_RC, test x"$beos_rc" = x"yes")
 AC_SUBST(DREAMCHESS_LIBS)
 AC_SUBST(DREAMER_LIBS)
 AC_SUBST(MINIZIP_LIB)
+AC_SUBST(MXML_LIBS)
 
 if test "$host_os" != "mingw32"; then
 	AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
