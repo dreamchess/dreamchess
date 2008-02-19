@@ -40,14 +40,6 @@
 #include "ui_sdlgl_3d.h"
 #include "theme.h"
 
-typedef struct coord3
-{
-    float x;
-    float y;
-    float z;
-}
-coord3_t;
-
 typedef struct coord3d
 {
     GLdouble x;

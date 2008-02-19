@@ -20,60 +20,201 @@
 
 #include "ui_sdlgl.h"
 
-void draw_name_dialog( float xpos, float ypos, char* name, int left, int white )
+void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high );
+void draw_capture_list( coord3_t offset, gg_colour_t *col);
+
+void draw_health_bar( coord3_t position, coord3_t size, int white )
 {
-    float width, height;
-    int namew, nameh;
+    int health;
+    float bar_len;
 
-    gg_system_get_string_size(name, &namew, &nameh );
-
-    width=100;
-    height=30;
-
-    /* draw avatar */
-    if ( white == 1 )
+    if ( white )
     {
-        draw_texture( get_white_piece(GUI_PIECE_AVATAR), xpos-45+2, ypos-50-2, 100, 100, 1.0f, get_col(COL_BLACK));
-        draw_texture( get_white_piece(GUI_PIECE_AVATAR), xpos-45, ypos-50, 100, 100, 1.0f, get_col(COL_WHITE));
+        health = 36-((get_board()->captured[WHITE_PAWN])+
+            (get_board()->captured[WHITE_ROOK]*5)+(get_board()->captured[WHITE_BISHOP]*3)+
+            (get_board()->captured[WHITE_KNIGHT]*3)+(get_board()->captured[WHITE_QUEEN]*9));
     }
     else
     {
-        draw_texture( get_black_piece(GUI_PIECE_AVATAR), xpos+45+2, ypos-50-2, 100, 100, 1.0f, get_col(COL_BLACK));
-        draw_texture( get_black_piece(GUI_PIECE_AVATAR), xpos+45, ypos-50, 100, 100, 1.0f, get_col(COL_WHITE));
+        health = 36-((get_board()->captured[BLACK_PAWN])+
+            (get_board()->captured[BLACK_ROOK]*5)+(get_board()->captured[BLACK_BISHOP]*3)+
+            (get_board()->captured[BLACK_KNIGHT]*3)+(get_board()->captured[BLACK_QUEEN]*9));
     }
 
-  /*  printf( "!text: %f\n", xpos-10 );
-    printf( "text: %f\n", xpos+10+width-(namew) );*/
+    if ( health > 36 )
+        health=36;
+    if ( health < 2 )
+        health=2;
 
-    /* Draw the text stuff */
-    if (!left) /* UGLY */
+    gg_colour_t top_left_col={0.59f,0.60f,0.86f,1.0f};
+    gg_colour_t bottom_left_col={0.19f,0.20f,0.46f,1.0f};
+    gg_colour_t top_right_col={0.79f,0.80f,1.0f,1.0f};
+    gg_colour_t bottom_right_col={0.59f,0.60f,0.86f,1.0f};
+
+    bar_len=(size.x)*((float)health/36.0f);
+
+    if ( white )
     {
-        text_draw_string( xpos-10, ypos-12, name, 1, get_col(COL_WHITE));
-
-        if ( get_game_stalemate() == TRUE )
-            text_draw_string_bouncy( xpos-10-80, ypos-12, "Tied!", 1, get_col(COL_WHITE));
-        else if ( get_black_in_checkmate() == TRUE )
-            text_draw_string_bouncy( xpos-10-80, ypos-12, "Checkmate!", 1, get_col(COL_RED));
-        else if ( get_black_in_check() == TRUE )
-            text_draw_string_bouncy( xpos-10-80, ypos-12, "Check!", 1, get_col(COL_RED));
-
-
-        if ( get_white_in_checkmate() == TRUE )
-            text_draw_string_bouncy( xpos-10-80, ypos-12, "Victory!", 1, get_col(COL_WHITE));
+        draw_rect_fill( position.x, position.y, bar_len, size.y, get_col(COL_WHITE));
+        draw_rect_fill_gradient( position.x+1, position.y+1, bar_len-2, size.y-2,
+            &bottom_left_col, &bottom_right_col, &top_left_col, &top_right_col);
     }
     else
     {
-        text_draw_string( xpos+10+width-(namew), ypos-12, name, 1, get_col(COL_WHITE));
+        draw_rect_fill( position.x+(size.x-bar_len), position.y, bar_len, size.y, get_col(COL_WHITE));
+        draw_rect_fill_gradient( position.x+1+(size.x-bar_len), position.y+1, bar_len-2, size.y-2,
+            &bottom_right_col, &bottom_left_col, &top_right_col, &top_left_col);
+    }
+}
 
+void draw_player_status( coord3_t offset, int white )
+{
+    if (white) /* UGLY */
+    {
         if ( get_game_stalemate() == TRUE )
-            text_draw_string_bouncy( xpos+10+width+5, ypos-12, "Tied!", 1, get_col(COL_WHITE));
+            text_draw_string_bouncy( offset.x, offset.y, "Tied!", 1, get_col(COL_WHITE));
         else if ( get_white_in_checkmate() == TRUE )
-            text_draw_string_bouncy( xpos+10+width+5, ypos-12, "Checkmate!", 1, get_col(COL_RED));
+            text_draw_string_bouncy( offset.x, offset.y, "Checkmate!", 1, get_col(COL_RED));
         else if ( get_white_in_check() == TRUE )
-            text_draw_string_bouncy( xpos+10+width+5, ypos-12, "Check!", 1, get_col(COL_RED));
+            text_draw_string_bouncy( offset.x, offset.y, "Check!", 1, get_col(COL_RED));
+
 
         if ( get_black_in_checkmate() == TRUE )
-            text_draw_string_bouncy( xpos+10+width+5, ypos-12, "Victory!", 1, get_col(COL_WHITE));
+            text_draw_string_bouncy( offset.x, offset.y, "Victory!", 1, get_col(COL_WHITE));
+    }
+    else
+    {
+        int namew, nameh;
+
+        if ( get_game_stalemate() == TRUE )
+        {
+            gg_system_get_string_size("Tied!", &namew, &nameh );
+            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Tied!", 1, get_col(COL_WHITE));
+        }
+        else if ( get_black_in_checkmate() == TRUE )
+        {
+            gg_system_get_string_size("Checkmate!", &namew, &nameh );
+            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Checkmate!", 1, get_col(COL_RED));
+        }
+        else if ( get_black_in_check() == TRUE )
+        {
+            gg_system_get_string_size("Check!", &namew, &nameh );
+            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Check!", 1, get_col(COL_RED));
+        }
+        if ( get_white_in_checkmate() == TRUE )
+        {
+            gg_system_get_string_size("Victory!", &namew, &nameh );
+            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Victory!", 1, get_col(COL_WHITE));
+        }
+    }
+}
+
+void draw_ui_elements()
+{
+    int namew, nameh;
+
+    /* Enable/disable elements, set positions/sizes. */
+    int avatars=TRUE;
+    coord3_t avatar_size={100,100};
+    coord3_t avatar_offset={0,480-avatar_size.y};
+
+    int shadows=TRUE;
+    coord3_t shadow_offset={2,2};
+
+    int names=TRUE;
+    char *white_name, *black_name;
+    coord3_t name_offset={100,480-60};
+    coord3_t white_name_size, black_name_size;
+
+    int clocks=TRUE;
+    char *white_clock, *black_clock;
+    coord3_t clock_offset={300,480-60};
+    coord3_t white_clock_size, black_clock_size;
+
+    int health_bars=TRUE;
+    coord3_t health_bar_offset={100,480-40};
+    coord3_t health_bar_size={200,15};
+
+    int move_lists=TRUE;
+    coord3_t move_list_offset={30,350};
+
+    int capture_lists=TRUE;
+    coord3_t capture_list_offset={60,180};
+
+    int player_status=TRUE;
+    coord3_t player_status_offset={25,480-80};
+
+    /* Get name sizes, string */
+    white_name=get_white_name();
+    gg_system_get_string_size(white_name, &namew, &nameh );
+    white_name_size.x=namew; white_name_size.y=nameh;
+    black_name=get_black_name();
+    gg_system_get_string_size(black_name, &namew, &nameh );
+    black_name_size.x=namew; black_name_size.y=nameh;
+
+    /* Get clock sizes, string */
+    white_clock="00:00";
+    gg_system_get_string_size(white_clock, &namew, &nameh );
+    white_clock_size.x=namew; white_clock_size.y=nameh;
+
+    black_clock="00:00";
+    gg_system_get_string_size(black_clock, &namew, &nameh );
+    black_clock_size.x=namew; black_clock_size.y=nameh;
+
+    /* Draw the avatars. */
+    if ( avatars )
+    {
+        if ( shadows )
+        {
+            draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x+shadow_offset.x, 
+                avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
+
+            draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x+shadow_offset.x, 
+                avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
+        }
+        draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x, avatar_offset.y, avatar_size.x, avatar_size.y,
+            1.0f, get_col(COL_WHITE));
+
+        draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x-avatar_offset.x, avatar_offset.y, 
+            avatar_size.x, avatar_size.y, 1.0f, get_col(COL_WHITE));
+    }
+
+    /* Draw the names */
+    if ( names )
+    {
+        text_draw_string( name_offset.x, name_offset.y, white_name, 1, get_col(COL_WHITE));
+        text_draw_string( 640-black_name_size.x-name_offset.x, name_offset.y, black_name, 1, get_col(COL_WHITE));
+    }
+
+    /* Draw the clocks */
+    if ( clocks )
+    {
+        text_draw_string( clock_offset.x-white_clock_size.x, clock_offset.y, white_clock, 1, get_col(COL_WHITE));
+        text_draw_string( 640-clock_offset.x, clock_offset.y, black_clock, 1, get_col(COL_WHITE));
+    }
+
+    /* Draw the health bars. */
+    if ( health_bars )
+    {
+        coord3_t black;
+        draw_health_bar( health_bar_offset, health_bar_size, TRUE );
+
+        black=health_bar_offset;
+        black.x=640-black.x-health_bar_size.x;
+        draw_health_bar( black, health_bar_size, FALSE );
+    }   
+
+    /* Draw the move lists. */
+    if ( move_lists )
+        draw_move_lists( move_list_offset, get_col(COL_WHITE), get_col(COL_YELLOW));
+
+    if ( capture_lists )
+        draw_capture_list( capture_list_offset, get_col(COL_WHITE));
+
+    if ( player_status )
+    {
+        draw_player_status( player_status_offset, TRUE );
+        draw_player_status( player_status_offset, FALSE );
     }
 }
 
@@ -92,16 +233,13 @@ void draw_backdrop()
  *  @param col_normal Text colour for move list.
  *  @param col_high Text colour for highlighting the last move.
  */
-void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
+void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high )
 {
     char **list;
     int entries, view, i;
     int y;
     int last_white, last_black;
-    float x_white = 30;
-    float y_white = 350;
-    float x_black = 610;
-    float y_black = 350;
+
     gg_colour_t col_normal2=*col_normal;
     gg_colour_t col_high2=*col_normal;
 
@@ -118,23 +256,23 @@ void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
         last_white = view - 1;
     }
 
-    y = y_white;
+    y = offset.y;
     for (i = last_white; i >= 0 && i >= last_white - 8; i -= 2)
     {
         char s[11];
         if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
             exit(1);
         if (i != view)
-            text_draw_string( x_white+5, y-5, s, 1, &col_normal2);
+            text_draw_string( offset.x+5, y-5, s, 1, &col_normal2);
         else
-            text_draw_string( x_white+5, y-5, s, 1, &col_high2);
+            text_draw_string( offset.x+5, y-5, s, 1, &col_high2);
         y -= text_height();
         col_normal2.a-=0.15f;
         col_high2.a-=0.15f;
     }
     col_normal2=*col_normal;
     col_high2=*col_normal;
-    y = y_black;
+    y = offset.y;
     if (IS_BLACK(get_board()->turn))
     {
         y -= text_height();
@@ -144,166 +282,25 @@ void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high )
     for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(get_board()->turn) ? 6 : 8); i -= 2)
     {
         if (i != view)
-            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_normal2);
+            text_draw_string_right( 640-offset.x-5, y-5, list[i], 1, &col_normal2);
         else
-            text_draw_string_right( x_black-5, y-5, list[i], 1, &col_high2);
+            text_draw_string_right( 640-offset.x-5, y-5, list[i], 1, &col_high2);
         y -= text_height();
         col_normal2.a-=0.15f;
         col_high2.a-=0.15f;
     }
 }
 
-/* Draw .. health bars? */
-void draw_health_bars()
-{
-    float white_health_percent;
-    float black_health_percent;
-    int black_health;
-    int white_health;
-    int leftx, rightx, bary, barw, barh;
-    gg_colour_t left_col, right_col;
-    int white_max=0, black_max=0;
-    int i;
-
-    /* This function really stinks, and will be fixed ;) .... eventually */
-    /* Full health = 39 */
-    /* pawn  1, knight 3, bishop 3, rook 5, queen 9 */
-
-    for ( i=0; i<64; i++ )
-    {
-        switch ( get_board()->square[i] )
-        {
-            case WHITE_PAWN:
-                white_max+=1; break;
-            case WHITE_BISHOP:
-                white_max+=3; break;
-            case WHITE_KNIGHT:
-                white_max+=3; break;
-            case WHITE_ROOK:
-                white_max+=5; break;
-            case WHITE_QUEEN:
-                white_max+=9; break;
-
-            case BLACK_PAWN:
-                black_max+=1; break;
-            case BLACK_BISHOP:
-                black_max+=3; break;
-            case BLACK_KNIGHT:
-                black_max+=3; break;
-            case BLACK_ROOK:
-                black_max+=5; break;
-            case BLACK_QUEEN:
-                black_max+=9; break;
-        }
-    }
-
-    white_health = ((get_board()->captured[WHITE_PAWN])+
-                        (get_board()->captured[WHITE_ROOK]*5)+(get_board()->captured[WHITE_BISHOP]*3)+
-                        (get_board()->captured[WHITE_KNIGHT]*3)+(get_board()->captured[WHITE_QUEEN]*9));
-    black_health = ((get_board()->captured[BLACK_PAWN])+
-                        (get_board()->captured[BLACK_ROOK]*5)+(get_board()->captured[BLACK_BISHOP]*3)+
-                        (get_board()->captured[BLACK_KNIGHT]*3)+(get_board()->captured[BLACK_QUEEN]*9));
-
-    white_max+=white_health;
-    black_max+=black_health;
-
-    white_health = white_max - white_health;
-    black_health = black_max - black_health;
-
-    /*printf( "White health is %i\n", white_max );
-    printf( "Black health is %i\n", black_max );*/
-
-    white_health_percent=(float)white_health/white_max;
-    black_health_percent=(float)black_health/black_max;
-
-    /* Draw da bar? */
-    bary=440; barw=192; barh=15;
-    leftx=100; rightx=639-100-barw;
-
-    /* Set bar colours.. */
-    left_col.b=0.0f; left_col.a=1.0f;
-    right_col=left_col;
-
-    /* Draw white.. */
-    if ( white_health_percent > 0.80 )
-    {
-        right_col.r=0.59f;
-        right_col.g=0.60f;
-        right_col.b=0.86f;
-    }
-    else if ( white_health_percent > 0.60 )
-    {
-        right_col.r=1.0f;
-        right_col.g=1.0f;
-        right_col.b=0.0f;
-    }
-    else if ( white_health_percent > 0.40 )
-    {
-        right_col.r=1.0f;
-        right_col.g=0.5f;
-        right_col.b=0.0f;
-    }
-    else if ( white_health_percent > 0.20 )
-    {
-        right_col.r=1.0f;
-        right_col.g=0.0f;
-        right_col.b=0.0f;
-    }
-
-    left_col.r=right_col.r-0.4f;
-    left_col.g=right_col.g-0.4f;
-    left_col.b=right_col.b-0.4f;
-
-    draw_rect_fill( leftx-2, bary-2, barw*white_health_percent+4, barh+4, get_col(COL_WHITE));
-    draw_rect_fill_gradient( leftx, bary, barw*white_health_percent, barh,
-        &left_col, &right_col, &left_col, &right_col);
-
-    /* Draw black.. */
-    if ( black_health_percent > 0.80 )
-    {
-        right_col.r=0.59f;
-        right_col.g=0.60f;
-        right_col.b=0.86f;
-    }
-    else if ( black_health_percent > 0.60 )
-    {
-        right_col.r=1.0f;
-        right_col.g=1.0f;
-        right_col.b=0.0f;
-    }
-    else if ( black_health_percent > 0.40 )
-    {
-        right_col.r=1.0f;
-        right_col.g=0.5f;
-        right_col.b=0.0f;
-    }
-    else if ( black_health_percent > 0.20 )
-    {
-        right_col.r=1.0f;
-        right_col.g=0.0f;
-        right_col.b=0.0f;
-    }
-
-    left_col.r=right_col.r-0.4f;
-    left_col.g=right_col.g-0.4f;
-    left_col.b=right_col.b-0.4f;
-
-    draw_rect_fill( 639-100-2-(int)(barw*black_health_percent), bary-2, barw*black_health_percent+4, 
-        barh+4, get_col(COL_WHITE));
-    draw_rect_fill_gradient( 639-100-(int)(barw*black_health_percent), bary, 
-        barw*black_health_percent, barh, &right_col, &left_col, &right_col, &left_col);
-}
-
 /** @brief Renders the list of captured pieces for both sides.
  *
  *  @param col The text colour to use.
  */
-void draw_capture_list(gg_colour_t *col)
+void draw_capture_list( coord3_t offset, gg_colour_t *col)
 {
-    float x_white = 60;
+    /*float x_white = 60;
     float y_white = 180;
     float x_black = 580;
-    float y_black = 180;
+    float y_black = 180;*/
     int i;
 
     for (i = 9; i > 0; i -= 2)
@@ -313,19 +310,19 @@ void draw_capture_list(gg_colour_t *col)
         {*/
             if (snprintf(s, 4, "%i", get_board()->captured[i]) >= 4)
                 exit(1);
-            text_draw_string( x_white, y_white, s, 1, col);
-            draw_texture( get_black_piece(i/2), x_white-24, y_white, 24,
+            text_draw_string( offset.x, offset.y, s, 1, col);
+            draw_texture( get_black_piece(i/2), offset.x-24, offset.y, 24,
                           24, 1.0f, get_col(COL_WHITE) );
        /* }*/
-        y_white -= 28; /*get_text_character('a')->height;*/
+        //offset.y -= 28; /*get_text_character('a')->height;*/
         /*if (get_board()->captured[i - 1] != 0)
         {*/
             if (snprintf(s, 4, "%i", get_board()->captured[i - 1]) >= 4)
                 exit(1);
-            text_draw_string_right( x_black, y_black, s, 1, col);
-            draw_texture( get_white_piece((i-1)/2), x_black, y_black, 24,
+            text_draw_string_right( 640-offset.x, offset.y, s, 1, col);
+            draw_texture( get_white_piece((i-1)/2), 640-offset.x, offset.y, 24,
                           24, 1.0f, get_col(COL_WHITE) );
        /* }*/
-        y_black -= 28; /*get_text_character('a')->height;*/
+        offset.y -= 28; /*get_text_character('a')->height;*/
     }
 }

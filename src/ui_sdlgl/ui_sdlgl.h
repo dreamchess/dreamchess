@@ -196,8 +196,6 @@ int draw_sonic_fade( int inout );
 
 /* ingame_ui.c */
 void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
-void draw_move_list( gg_colour_t *col_normal, gg_colour_t *col_high );
-void draw_capture_list(gg_colour_t *col);
 void draw_health_bars();
 void draw_backdrop();
 

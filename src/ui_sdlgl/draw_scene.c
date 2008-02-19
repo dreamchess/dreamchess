@@ -55,13 +55,11 @@ void draw_scene( board_t *b, int reflections )
     resize_window(get_screen_width(), get_screen_height());
 
     glPushMatrix();
-    draw_name_dialog( 50, 430, get_white_name(), TRUE, 1 );
-    draw_name_dialog( 490, 430, get_black_name(), FALSE, 0 );
-    /*draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(20, 375, 75, 10), 8);
-    draw_border(get_ingame_style()->border.image, NULL, 0, gg_rect(545, 375, 75, 10), 8);*/
-    draw_health_bars();
-    draw_move_list(get_col(COL_WHITE), get_col(COL_YELLOW));
-    draw_capture_list(get_col(COL_WHITE));
+
+    draw_ui_elements();
+
+    //draw_move_list(get_col(COL_WHITE), get_col(COL_YELLOW));
+    //draw_capture_list(get_col(COL_WHITE));
 
     clock_minutes=(((SDL_GetTicks()-get_turn_counter())/1000)/60);
     clock_seconds=((SDL_GetTicks()-get_turn_counter())/1000)-(clock_minutes*60);

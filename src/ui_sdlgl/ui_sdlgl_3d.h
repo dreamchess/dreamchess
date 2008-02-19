@@ -18,10 +18,21 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef __SDLGL_3D_H
+#define __SDLGL_3D_H
+
 #define SELECTOR_UP 0
 #define SELECTOR_DOWN 1
 #define SELECTOR_LEFT 2
 #define SELECTOR_RIGHT 3
+
+typedef struct coord3
+{
+    float x;
+    float y;
+    float z;
+}
+coord3_t;
 
 void move_camera(float x, float z);
 void render_scene_3d(board_t *board, int reflections);
@@ -33,4 +44,6 @@ void loadmodels(char *filename);
 void load_board(char *dcm_name, char *texture_name);
 int find_square(int x, int y, float fd);
 void freemodels();
+
+#endif
 
