@@ -581,7 +581,7 @@ int dreamchess(void *data)
             break;
 
         ch_userdir();
-        option = config_get_option("1st_engine");
+        option = config_get_option("first_engine");
 
         game_set_engine_error(comm_init(option->string));
 
