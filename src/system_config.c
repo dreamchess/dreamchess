@@ -97,7 +97,7 @@ void config_init()
 	option_add_value(option, "6x", NULL);
 	option_add_value(option, "8x", NULL);
 
-	option = option_group_add_string(config, "1st_engine");
+	option = option_group_add_string(config, "first_engine");
 	option->string = strdup("dreamer");
 
 	option = option_group_add_option(config, "game_mode");

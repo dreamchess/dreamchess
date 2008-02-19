@@ -31,7 +31,7 @@ static gg_widget_t *entry;
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    option_t *option = config_get_option("1st_engine");
+    option_t *option = config_get_option("first_engine");
     free(option->string);
     option->string = strdup(gg_entry_get_text(GG_ENTRY(entry)));
     config_save();
@@ -120,7 +120,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent)
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_theme, NULL);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
-    option = config_get_option("1st_engine");
+    option = config_get_option("first_engine");
     entry = gg_entry_create(100);
     gg_entry_set_text(GG_ENTRY(entry), option->string);
     gg_container_append(GG_CONTAINER(vbox2), entry);

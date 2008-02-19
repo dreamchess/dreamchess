@@ -41,7 +41,9 @@ static char *remove_spaces(const char *str)
 
 static const char *whitespace_cb(mxml_node_t *node, int where)
 {
-	if (!strcmp(node->value.element.name, "?xml version=\"1.0\"?") && (where == MXML_WS_AFTER_OPEN))
+	if ((!strcmp(node->value.element.name, "?xml version=\"1.0\"?")
+            || !strcmp(node->value.element.name, "options"))
+               && (where == MXML_WS_AFTER_OPEN))
 		return "\n";
 
 	if (where == MXML_WS_AFTER_CLOSE)
@@ -95,10 +97,11 @@ option_t *option_group_add_string(option_group_t *group, char *name)
 
 static mxml_node_t *option_group_save(option_group_t *group)
 {
-	mxml_node_t *xml;
+	mxml_node_t *xml, *root;
 	option_t *option;
 
-	xml = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
+	root = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
+	xml = mxmlNewElement(root, "options");
 
 	TAILQ_FOREACH(option, &group->options, entries) {
 		mxml_node_t *data;
@@ -112,7 +115,7 @@ static mxml_node_t *option_group_save(option_group_t *group)
                         mxmlNewText(data, 0, option->string);
 	}
 
-	return xml;
+	return root;
 }
 
 int option_group_save_xml(option_group_t *group)
@@ -195,6 +198,7 @@ int option_group_load_xml(option_group_t *group)
 {
 	FILE *f;
 	mxml_node_t *tree;
+	mxml_node_t *node;
 	char *filename;
 
 	filename = malloc(strlen(group->name) + 4 + 1);
@@ -215,6 +219,11 @@ int option_group_load_xml(option_group_t *group)
 		DBG_ERROR("failed to parse '%s'", filename);
 		return -1;
 	}
+
+	node = mxmlFindElement(tree, tree, "options", NULL, NULL, MXML_DESCEND);
+
+	if (!node)
+		node = tree;
 
         option_group_load(group, tree);
 

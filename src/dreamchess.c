@@ -517,7 +517,7 @@ static void set_cl_options(cl_options_t *cl_options)
         option_t *option;
 
 	if (cl_options->engine) {
-	    option = config_get_option("1st_engine");
+	    option = config_get_option("first_engine");
 	    option_string_set_text(option, cl_options->engine);
 	}
 
