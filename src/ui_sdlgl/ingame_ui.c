@@ -68,8 +68,6 @@ void transition_update()
         else 
             transition.x=trans_amount;
     }
-
-    printf( "F: %f\n", transition.x );
 }
 
 void draw_health_bar( coord3_t position, coord3_t size, int white )
