@@ -91,49 +91,11 @@ static int time_time_changed(gg_widget_t *widget, gg_widget_t *emitter, void *da
         option_select_value_by_index(option, nr);
 
 	if (nr == size - 1) {
-		//container->enabled = 1;
 		entry1->enabled = 1;
 		label1->enabled = 1;
 	} else {
-		//container->enabled = 0;
 		entry1->enabled = 0;
 		label1->enabled = 0;
-	}
-
-        return 1;
-}
-
-static int time_moves_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-	int nr = gg_option_get_selected(GG_OPTION(widget));
-	int size = gg_container_get_size(GG_CONTAINER(widget));
-        option_t *option = config_get_option("time_moves");
-
-        option_select_value_by_index(option, nr);
-
-    if (nr == 0 )
-    {
-        label3->enabled=1;
-        entry3->enabled=1;   
-        time_increment->enabled=1;
-        label4->enabled=1;
-    }
-    else
-    {
-        label3->enabled=0;
-        entry3->enabled=0; 
-        time_increment->enabled=0;
-        label4->enabled=0;
-    }
-
-	if (nr == size - 1) {
-		//container->enabled = 1;
-		entry2->enabled = 1;
-		label2->enabled = 1;
-	} else {
-		//container->enabled = 0;
-		entry2->enabled = 0;
-		label2->enabled = 0;
 	}
 
         return 1;
@@ -151,16 +113,52 @@ static int time_increment_changed(gg_widget_t *widget, gg_widget_t *emitter, voi
         option_select_value_by_index(option, nr);
 
     if (nr == size - 1) {
-	    //container->enabled = 1;
 	    entry3->enabled = 1;
 		label3->enabled = 1;
 	} else {
-	    //container->enabled = 0;
 	    entry3->enabled = 0;
 	    label3->enabled = 0;
 	}
 
     return 1;
+}
+
+static int time_moves_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+	int nr = gg_option_get_selected(GG_OPTION(widget));
+	int size = gg_container_get_size(GG_CONTAINER(widget));
+    option_t *option = config_get_option("time_moves");
+
+    option_select_value_by_index(option, nr);
+
+    if (nr == 0 )
+    {
+        label3->enabled=1;
+        entry3->enabled=1;   
+        time_increment->enabled=1;
+        label4->enabled=1;
+
+        time_increment_changed(time_increment, NULL, NULL, NULL);
+    }
+    else
+    {
+        label3->enabled=0;
+        entry3->enabled=0; 
+        time_increment->enabled=0;
+        label4->enabled=0;
+
+        GG_OPTION(time_increment)->sel=0;
+    }
+
+	if (nr == size - 1) {
+		entry2->enabled = 1;
+		label2->enabled = 1;
+	} else {
+		entry2->enabled = 0;
+		label2->enabled = 0;
+	}
+
+        return 1;
 }
 
 gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
@@ -262,7 +260,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
 
     time_moves_changed(time_moves, NULL, NULL, NULL);
     time_time_changed(time_time, NULL, NULL, NULL);
-   // time_increment_changed(time_increment, NULL, NULL, NULL);
+    time_increment_changed(time_increment, NULL, NULL, NULL);
 
     return GG_DIALOG(dialog);
 }

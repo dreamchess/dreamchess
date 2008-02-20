@@ -76,33 +76,34 @@ void config_init()
 
 	option = option_group_add_option(config, "time_moves");
     option_add_value(option, "Whole game", NULL);
-    option_add_value(option, "40", NULL);
-    option_add_value(option, "30", NULL);
-    option_add_value(option, "20", NULL);
     option_add_value(option, "10", NULL);
+    option_add_value(option, "20", NULL);
+    option_add_value(option, "30", NULL);
+    option_add_value(option, "40", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_moves");
 	option->value = 40;
 
 	option = option_group_add_option(config, "time_time");
-    option_add_value(option, "120", NULL);
-    option_add_value(option, "60", NULL);
-    option_add_value(option, "30", NULL);
     option_add_value(option, "20", NULL);
+    option_add_value(option, "30", NULL);
+    option_add_value(option, "60", NULL);
+    option_add_value(option, "120", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_time");
 	option->value = 60;
 
 	option = option_group_add_option(config, "time_increment");
-    option_add_value(option, "60", NULL);
-    option_add_value(option, "30", NULL);
+    option_add_value(option, "0", NULL);
     option_add_value(option, "10", NULL);
+    option_add_value(option, "30", NULL);
+    option_add_value(option, "60", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_increment");
-	option->value = 60;
+	option->value = 0;
 
 	option = option_group_add_option(config, "resolution");
 	add_resolution(option, 640, 480);
