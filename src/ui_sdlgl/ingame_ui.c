@@ -47,20 +47,29 @@ void reset_transition( int in )
 
 void transition_update()
 {
+    float ticks=SDL_GetTicks();
+
     if ( trans_in  )
     {
         if ( transition.x < 0 )
-            transition.x+=((SDL_GetTicks()-transition_start_pos)/transition_speed);
+        {
+            if (transition.x+((ticks-transition_start_pos)/transition_speed) > 0 )
+                transition.x=0;
+            else
+                transition.x+=((ticks-transition_start_pos)/transition_speed);
+        }
         else 
             transition.x=0;
     }
     else
     {
         if ( transition.x > trans_amount )
-            transition.x-=((SDL_GetTicks()-transition_start_pos)/transition_speed);
+            transition.x-=((ticks-transition_start_pos)/transition_speed);
         else 
             transition.x=trans_amount;
     }
+
+    printf( "F: %f\n", transition.x );
 }
 
 void draw_health_bar( coord3_t position, coord3_t size, int white )
