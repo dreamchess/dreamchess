@@ -94,6 +94,8 @@ void draw_scene( board_t *b, int reflections )
 	#endif /* __BEOS__ */
     #endif /* _arch_dreamcast */
 
+
+    transition_update();
     /* Draw it to the screen */
     gl_swap();
 }

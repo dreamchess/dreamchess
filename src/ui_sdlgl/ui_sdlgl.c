@@ -342,6 +342,9 @@ static config_t *do_menu(int *pgn)
             }
 
             reset_3d();
+
+            reset_transition(TRUE);
+
             *pgn = pgn_slot;
             if (pgn_slot >= 0)
                 config = *get_config_save(pgn_slot);
@@ -679,6 +682,7 @@ static void poll_move()
     {
         DBG_LOG("returning to title menu");
         set_fading_out(TRUE);
+        reset_transition(FALSE);
         set_fade_start(gg_system_get_ticks());
         quit_to_menu=FALSE;
     }

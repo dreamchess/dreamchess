@@ -23,6 +23,46 @@
 void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high );
 void draw_capture_list( coord3_t offset, gg_colour_t *col);
 
+coord3_t transition;
+float transition_speed=50;
+float transition_start_pos;
+float trans_amount=-300;
+int trans_in;
+
+void reset_transition( int in )
+{
+    if ( in )
+    {
+        transition_start_pos=SDL_GetTicks();
+        transition.x=trans_amount;
+        trans_in=TRUE;
+    }
+    else
+    {
+        transition_start_pos=SDL_GetTicks();
+        transition.x=0;
+        trans_in=FALSE;
+    }
+}
+
+void transition_update()
+{
+    if ( trans_in  )
+    {
+        if ( transition.x < 0 )
+            transition.x+=((SDL_GetTicks()-transition_start_pos)/transition_speed);
+        else 
+            transition.x=0;
+    }
+    else
+    {
+        if ( transition.x > trans_amount )
+            transition.x-=((SDL_GetTicks()-transition_start_pos)/transition_speed);
+        else 
+            transition.x=trans_amount;
+    }
+}
+
 void draw_health_bar( coord3_t position, coord3_t size, int white )
 {
     int health;
@@ -116,33 +156,34 @@ void draw_ui_elements()
     /* Enable/disable elements, set positions/sizes. */
     int avatars=TRUE;
     coord3_t avatar_size={100,100};
-    coord3_t avatar_offset={0,480-avatar_size.y};
+    coord3_t avatar_offset={0+transition.x,480-avatar_size.y};
 
     int shadows=TRUE;
     coord3_t shadow_offset={2,2};
 
     int names=TRUE;
     char *white_name, *black_name;
-    coord3_t name_offset={100,480-60};
+    coord3_t name_offset={100+transition.x,480-60};
     coord3_t white_name_size, black_name_size;
 
     int clocks=TRUE;
     char *white_clock, *black_clock;
-    coord3_t clock_offset={300,480-60};
+    coord3_t clock_offset={300+transition.x,480-60};
     coord3_t white_clock_size, black_clock_size;
 
     int health_bars=TRUE;
-    coord3_t health_bar_offset={100,480-40};
+    coord3_t health_bar_offset={100+transition.x,480-40};
     coord3_t health_bar_size={200,15};
 
     int move_lists=TRUE;
-    coord3_t move_list_offset={30,350};
+    coord3_t move_list_offset={30+transition.x,350};
 
     int capture_lists=TRUE;
-    coord3_t capture_list_offset={60,180};
+    coord3_t capture_list_offset={60+transition.x,180};
 
     int player_status=TRUE;
-    coord3_t player_status_offset={25,480-80};
+    coord3_t player_status_offset={25+transition.x,480-80};
+
 
     /* Get name sizes, string */
     white_name=get_white_name();
@@ -169,7 +210,7 @@ void draw_ui_elements()
             draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x+shadow_offset.x, 
                 avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
 
-            draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x+shadow_offset.x, 
+            draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x-avatar_offset.x+shadow_offset.x, 
                 avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
         }
         draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x, avatar_offset.y, avatar_size.x, avatar_size.y,
