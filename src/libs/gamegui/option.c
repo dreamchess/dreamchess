@@ -66,7 +66,9 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
         return;
     if (option->sel > 0)
     {
-        if (focus != GG_FOCUS_NONE)
+    	if (!widget->enabled)
+            gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_grey, 0, 0);
+        else if (focus != GG_FOCUS_NONE)
             gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_texthighlight, 1, 0);
         else
             gg_system_draw_string(OPTION_ARROW_LEFT, x, yy, &col_text, 0, 0);
@@ -77,12 +79,15 @@ void gg_option_render(gg_widget_t *widget, int x, int y, int focus)
     xx = x + border_l;
 
     child = gg_container_get_child(GG_CONTAINER(widget), option->sel);
+    child->enabled=widget->enabled;
     child->render(child, xx, y, focus);
     xx = x + option->width_a - border_r;
 
     if (option->sel < gg_container_get_size(GG_CONTAINER(widget)) - 1)
     {
-        if (focus != GG_FOCUS_NONE)
+    	if (!widget->enabled)
+            gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_grey, 0, 0);
+        else if (focus != GG_FOCUS_NONE)
             gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_texthighlight, 1, 0);
         else
             gg_system_draw_string(OPTION_ARROW_RIGHT, xx, yy, &col_text, 0, 0);

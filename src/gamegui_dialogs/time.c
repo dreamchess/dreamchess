@@ -24,7 +24,7 @@
 #include "gamegui_dialogs.h"
 #include "system_config.h"
 
-static gg_widget_t *entry1, *entry2, *entry3, *label1, *label2, *label3, *container;
+static gg_widget_t *entry1, *entry2, *entry3, *label1, *label2, *label3, *label4, *time_increment;
 static int old_ms;
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
@@ -111,6 +111,21 @@ static int time_moves_changed(gg_widget_t *widget, gg_widget_t *emitter, void *d
 
         option_select_value_by_index(option, nr);
 
+    if (nr == 0 )
+    {
+        label3->enabled=1;
+        entry3->enabled=1;   
+        time_increment->enabled=1;
+        label4->enabled=1;
+    }
+    else
+    {
+        label3->enabled=0;
+        entry3->enabled=0; 
+        time_increment->enabled=0;
+        label4->enabled=0;
+    }
+
 	if (nr == size - 1) {
 		//container->enabled = 1;
 		entry2->enabled = 1;
@@ -126,23 +141,26 @@ static int time_moves_changed(gg_widget_t *widget, gg_widget_t *emitter, void *d
 
 static int time_increment_changed(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
+    if ( time_increment->enabled == 0 )
+        return 1;
+
 	int nr = gg_option_get_selected(GG_OPTION(widget));
 	int size = gg_container_get_size(GG_CONTAINER(widget));
         option_t *option = config_get_option("time_increment");
 
         option_select_value_by_index(option, nr);
 
-	if (nr == size - 1) {
-		//container->enabled = 1;
-		entry3->enabled = 1;
+    if (nr == size - 1) {
+	    //container->enabled = 1;
+	    entry3->enabled = 1;
 		label3->enabled = 1;
 	} else {
-		//container->enabled = 0;
-		entry3->enabled = 0;
-		label3->enabled = 0;
+	    //container->enabled = 0;
+	    entry3->enabled = 0;
+	    label3->enabled = 0;
 	}
 
-        return 1;
+    return 1;
 }
 
 gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
@@ -151,7 +169,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
     gg_widget_t *vbox, *vbox2, *hbox;
     gg_widget_t *widget;
     option_t *option;
-    gg_widget_t *time_moves, *time_time, *time_increment;
+    gg_widget_t *time_moves, *time_time;
     char val[5];
 
     vbox = gg_vbox_create(0);
@@ -173,9 +191,9 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(label1), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label1);
 
-    widget = gg_label_create("Increments(secs):");
-    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
+    label4 = gg_label_create("Increments(secs):");
+    gg_align_set_alignment(GG_ALIGN(label4), 0.0f, 0.0f);
+    gg_container_append(GG_CONTAINER(vbox2), label4);
 
     label3 = gg_label_create("Custom:");
     gg_align_set_alignment(GG_ALIGN(label3), 0.0f, 0.0f);
@@ -244,7 +262,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
 
     time_moves_changed(time_moves, NULL, NULL, NULL);
     time_time_changed(time_time, NULL, NULL, NULL);
-    time_increment_changed(time_time, NULL, NULL, NULL);
+   // time_increment_changed(time_increment, NULL, NULL, NULL);
 
     return GG_DIALOG(dialog);
 }
