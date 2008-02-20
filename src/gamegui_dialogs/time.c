@@ -165,7 +165,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(label2), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label2);
 
-    widget = gg_label_create("Time:");
+    widget = gg_label_create("Time(mins):");
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
@@ -173,7 +173,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
     gg_align_set_alignment(GG_ALIGN(label1), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), label1);
 
-    widget = gg_label_create("Increments:");
+    widget = gg_label_create("Increments(secs):");
     gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
@@ -247,69 +247,4 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
     time_increment_changed(time_time, NULL, NULL, NULL);
 
     return GG_DIALOG(dialog);
-/*
-
-    gg_widget_t *vbox, *vbox2, *hbox;
-    gg_widget_t *widget;
-    gg_widget_t *resolution;
-    option_t *option;
-    char val[5];
-    char *old_config;
-
-    old_config = config_backup();
-
-    vbox = gg_vbox_create(0);
-    vbox2 = gg_vbox_create(0);
-
-    widget = gg_label_create("Moves:");
-    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-
-    label2 = gg_label_create("Custom:");
-    gg_align_set_alignment(GG_ALIGN(label2), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label2);
-
-    widget = gg_label_create("Time:");
-    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-
-    label1 = gg_label_create("Custom:");
-    gg_align_set_alignment(GG_ALIGN(label1), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label1);
-
-    widget = gg_label_create("Increments:");
-    gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), widget);
-
-    label3 = gg_label_create("Custom:");
-    gg_align_set_alignment(GG_ALIGN(label3), 0.0f, 0.0f);
-    gg_container_append(GG_CONTAINER(vbox2), label3);
-
-    hbox = gg_hbox_create(20);
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    vbox2 = gg_vbox_create(0);
-
-    option = config_get_option("time_moves");
-    resolution = gg_option_create();
-    create_option_values(GG_OPTION(resolution), option);
-    gg_widget_subscribe_signal_name(resolution, resolution->id, "option_changed", resolution_changed, NULL);
-    gg_container_append(GG_CONTAINER(vbox2), resolution);
-
-    option = config_get_option("custom_time_moves");
-    val[0] = 0;
-    snprintf(val, 5, "%d", option->value);
-    container = gg_hbox_create(0);
-    entry1 = gg_entry_create(60);
-    gg_entry_set_text(GG_ENTRY(entry1), val);
-    gg_container_append(GG_CONTAINER(container), entry1);
-    gg_container_append(GG_CONTAINER(vbox2), container);
-
-    gg_container_append(GG_CONTAINER(hbox), vbox2);
-    gg_container_append(GG_CONTAINER(vbox), hbox);
-
-
-
-
-
-    resolution_changed(resolution, NULL, NULL, NULL);*/
 }
