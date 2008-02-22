@@ -196,12 +196,12 @@ static void setup_view()
 {
     glLoadIdentity();
 
+    /* Transition */
+    glTranslatef(0,0,-get_ui_trans_pos()/20);
+
     glTranslatef(0, -0.5f, -12.0f);    
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
-
-    /* Transition */
-    glTranslatef(0,get_ui_trans_pos()/20,0);
 }
 
 int get_piece_moving_done()
