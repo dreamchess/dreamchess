@@ -195,9 +195,13 @@ static float piece_moving_ypos;
 static void setup_view()
 {
     glLoadIdentity();
-    glTranslatef(0, -0.5f, -12.0f);
+
+    glTranslatef(0, -0.5f, -12.0f);    
     glRotatef(x_rotation, 1, 0, 0);
     glRotatef(z_rotation, 0, 0, 1);
+
+    /* Transition */
+    glTranslatef(0,get_ui_trans_pos()/20,0);
 }
 
 int get_piece_moving_done()
@@ -1022,10 +1026,13 @@ void render_scene_3d(board_t *board, int reflections)
 {
   int ticks = SDL_GetTicks();
 
+     //
+
     glEnable(GL_LIGHTING);
 
     glEnable(GL_CULL_FACE);
     if (!is_2d && reflections) {
+
         setup_stencil();
         glCullFace(GL_FRONT);
         draw_pieces(board, 1);
@@ -1034,10 +1041,14 @@ void render_scene_3d(board_t *board, int reflections)
         draw_board_center(1.0f, 1.0f, 1.0f, 0.8f);
         draw_board(0);
         draw_pieces(board, 0);
+
     } else {
+      glPushMatrix();
+        glTranslatef( 5.0f, 5.0, 5.0f );
         draw_board_center(0.75f, 0.75f, 0.75f, 1.0f);
         draw_board(0);
         draw_pieces(board, 0);
+      glPopMatrix();
     }
     glDisable(GL_CULL_FACE);
     glDisable(GL_LIGHTING);

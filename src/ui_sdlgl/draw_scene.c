@@ -37,6 +37,8 @@ void draw_scene( board_t *b, int reflections )
     int clock_seconds=0;
     int clock_minutes=0;
 
+    transition_update();
+
     gg_dialog_cleanup();
 
     glDisable(GL_BLEND);
@@ -94,8 +96,6 @@ void draw_scene( board_t *b, int reflections )
 	#endif /* __BEOS__ */
     #endif /* _arch_dreamcast */
 
-
-    transition_update();
     /* Draw it to the screen */
     gl_swap();
 }

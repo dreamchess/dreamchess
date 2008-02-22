@@ -193,6 +193,7 @@ int get_move();
 int get_fading_out();
 int draw_fade( int inout );
 int draw_sonic_fade( int inout );
+float get_ui_trans_pos();
 
 /* ingame_ui.c */
 void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );

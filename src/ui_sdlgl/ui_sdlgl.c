@@ -339,11 +339,10 @@ static config_t *do_menu(int *pgn)
                 load_theme(theme);
                 sprintf(get_white_name(),"%s", theme->white_name);
                 sprintf(get_black_name(),"%s", theme->black_name);
+                reset_transition(TRUE);
             }
 
             reset_3d();
-
-            reset_transition(TRUE);
 
             *pgn = pgn_slot;
             if (pgn_slot >= 0)
