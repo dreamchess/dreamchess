@@ -25,6 +25,8 @@
 #include <gamegui/dialog.h>
 #include <gamegui/clipping.h>
 
+void gg_dialog_destroy2(gg_widget_t *widget);
+
 /** Titlebar size factor relative to text height */
 #define GG_DIALOG_TITLE_FACT 1.25
 
@@ -227,6 +229,47 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &col_white);
 }
 
+float dialog_transition_x;
+float dialog_transition_y;
+float dialog_transition_speed=200;
+float dialog_transition_start_pos;
+float dialog_trans_amount=320;
+int dialog_trans_in;
+int dialog_trans_reset;
+int dialog_in_trans;
+
+void dialog_reset_transition( int in )
+{
+    dialog_trans_in=in;
+    dialog_trans_reset=1;
+    dialog_in_trans=1;
+}
+
+float dialog_get_transition()
+{
+    float ticks=SDL_GetTicks();
+
+    if ( dialog_trans_reset )
+    {
+        dialog_transition_start_pos=SDL_GetTicks();
+        dialog_trans_reset=0;
+    }
+
+    float dialog_transition=((ticks-dialog_transition_start_pos)/dialog_transition_speed);
+
+    if ( dialog_transition > 1.0f )
+    {
+        dialog_transition = 1.0f;
+        dialog_in_trans=0;
+    }
+
+    if ( dialog_trans_in )
+        return dialog_transition;
+    else
+        return 1.0f-dialog_transition;
+  
+}
+
 /** @brief Renders a dialog.
  *
  *  Renders a dialog in a specific style and at a specific position.
@@ -250,8 +293,8 @@ void gg_dialog_render(gg_dialog_t *dialog)
 
     gg_dialog_get_screen_pos(dialog, &xmin, &ymin);
 
-    xmax = xmin + dialog->width;
-    ymax = ymin + dialog->height;
+    xmax = (xmin + dialog->width);
+    ymax = (ymin + dialog->height);
 
     /* Draw the 'fade' */
     gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
@@ -269,6 +312,10 @@ void gg_dialog_render(gg_dialog_t *dialog)
     area.height = ymax - ymin;
 
     active = gg_dialog_get_active() == dialog;
+
+    if ( dialog_in_trans )
+        area.height*=dialog_get_transition();
+
     draw_border(style->border.image, dialog->title, active, area, size);
 
     xmin += style->hor_pad;
@@ -276,7 +323,10 @@ void gg_dialog_render(gg_dialog_t *dialog)
     ymin += style->vert_pad;
     ymax -= style->vert_pad;
 
-    child->render(child, xmin, ymin, active);
+    if ( !dialog_in_trans )
+        child->render(child, xmin, ymin, active);
+
+    dialog_get_transition();
 }
 
 int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
@@ -440,6 +490,8 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
     child->set_size(child, dialog->width, dialog->height);
 
     gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
+
+    dialog_reset_transition(1);
 }
 
 /** @brief Creates a dialog.

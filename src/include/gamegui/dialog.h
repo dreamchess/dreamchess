@@ -65,7 +65,7 @@
     gg_dialog_style_t style;                                                 \
                                                                              \
     /** Title bar text, or NULL for no title bar. */                         \
-    char *title;
+    char *title;                                                             
 
 /** Dialog flags */
 #define GG_DIALOG_MODAL (1 << 0)
