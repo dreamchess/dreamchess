@@ -5,11 +5,12 @@ AC_PREREQ(2.56)
 AC_INIT([dreamchess],[0.2.1-SVN])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
 AC_CHECK_PROGS(YACC, 'bison -y', [${am_missing_run} bison -y])

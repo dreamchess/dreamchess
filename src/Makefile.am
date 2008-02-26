@@ -9,7 +9,7 @@ BUILT_SOURCES = pgn_parser.h
 AM_YFLAGS = -d
 
 dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
-	debug.c dreamchess.c fen.c main.c main_sdlthd.c dir.c comm.c \
+	debug.c dreamchess.c fen.c main.cpp main_sdlthd.c dir.c comm.c \
 	comm_win32.c credits.c theme.c options.c pgn_parser.y pgn_scanner.l \
 	system_config.c
 

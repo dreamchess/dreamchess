@@ -26,7 +26,9 @@
 
 #include <stdio.h>
 
+extern "C" {
 #include "dreamchess.h"
+}
 
 int main(int argc, char **argv)
 {
