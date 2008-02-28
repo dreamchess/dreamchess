@@ -1,4 +1,4 @@
-SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio macosx
+SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio macosx ui
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef
