@@ -37,7 +37,7 @@ void scene::render()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
-    glTranslatef( 0.0f, 0.0f, -6.0f );
+    glTranslatef( 0.0f, 0.0f, -12.0f );
 
     /* Step through the list and render them alls! */
     for ( int i=0; i<entities.size();i++ )

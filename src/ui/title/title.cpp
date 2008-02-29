@@ -22,23 +22,18 @@
 #include "screen.h"
 #include "scene.h"
 #include "input.h"
+#include "model.h"
 
-class title_screen
-{
-    public:
-        title_screen();
-        ~title_screen();
-        void loop();
-};
+#include "title.h"
 
 title_screen::title_screen()
 {
-    std::cout << "Starting title screen!" << std::endl;
+    std::cout << "Starting title screen." << std::endl;
 }
 
 title_screen::~title_screen()
 {
-    std::cout << "Exiting title screen!" << std::endl;
+    std::cout << "Cleaning up title screen." << std::endl;
 }
 
 void title_screen::loop()
@@ -51,8 +46,8 @@ void title_screen::loop()
     input.add( (new keyboard_event("CONSTANT", SDLK_2, FALSE)) );
 
     scene scn;
-    //scn.add( (new dcm("test")) );
-    //scn.add( (new dcm("test")) );
+    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/knight.dcm")) );
+    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm")) );
 
     while ( !input.get_input("QUIT") )
     {
