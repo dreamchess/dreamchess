@@ -27,10 +27,10 @@ class input_event
 class keyboard_event: public input_event
 {
     public:
-        keyboard_event( std::string t, char c, bool ot );
+        keyboard_event( std::string t, int c, bool ot );
         void update();
     private:
-        char key;
+        int key;
         bool one_time;
         bool wait_for_release;
 };

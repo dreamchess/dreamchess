@@ -42,8 +42,10 @@ void title_screen::loop()
 
     input_layer input;
     input.add( (new keyboard_event("QUIT", SDLK_ESCAPE, TRUE)) );
-    input.add( (new keyboard_event("ONE_TIME", SDLK_1, TRUE)) );
-    input.add( (new keyboard_event("CONSTANT", SDLK_2, FALSE)) );
+    input.add( (new keyboard_event("UP", SDLK_UP, FALSE)) );
+    input.add( (new keyboard_event("DOWN", SDLK_DOWN, FALSE)) );
+    input.add( (new keyboard_event("LEFT", SDLK_LEFT, FALSE)) );
+    input.add( (new keyboard_event("RIGHT", SDLK_RIGHT, FALSE)) );
 
     scene scn;
     scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/knight.dcm",
@@ -55,10 +57,14 @@ void title_screen::loop()
     {
         input.update();
 
-        if ( input.get_input("ONE_TIME") )
-            std::cout << "One time!" << std::endl;
-        if ( input.get_input("CONSTANT") )
-            std::cout << "Constant!" << std::endl;
+        if ( input.get_input("UP") )
+            scn.cam.ypos+=0.01;
+        if ( input.get_input("DOWN") )
+            scn.cam.ypos-=0.01;
+        if ( input.get_input("LEFT") )
+            scn.cam.zpos+=0.01;
+        if ( input.get_input("RIGHT") )
+            scn.cam.zpos-=0.01;
 
         scn.render();
         scn.update();

@@ -39,8 +39,9 @@ int main(int argc, char **argv)
     arg.argc = argc;
     arg.argv = argv;
 
-    title_screen title;
-    title.loop();
+    title_screen *title = new title_screen;
+    title->loop();
+    delete title;
 
     return dreamchess(&arg);
 }

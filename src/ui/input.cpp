@@ -50,7 +50,7 @@ void input_layer::clear()
     inputs.clear();
 }
 
-keyboard_event::keyboard_event( std::string t, char c, bool ot ): input_event(t) 
+keyboard_event::keyboard_event( std::string t, int c, bool ot ): input_event(t) 
 {
     key=c;
     one_time=ot;

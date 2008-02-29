@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "entity.h"
+#include "camera.h"
 
 class scene
 {
@@ -13,6 +14,7 @@ class scene
         void add(entity *ent);
         void clear();
         void list();
+        camera cam;
     private:
         std::vector<entity*> entities; 
 };
