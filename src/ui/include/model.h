@@ -2,16 +2,17 @@
 #include <string>
 #include "entity.h"
 #include "mesh.h"
+#include "texture.h"
 
 class model: public entity
 {
     public:
-        model(char *name);
+        model(char *msh2, char *tx2);
         void render();
         void update();
     private:
         mesh *msh;
-        //texture *tx;
+        texture *tx;
         GLfloat alpha;
         int specular;
 };

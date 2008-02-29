@@ -46,8 +46,10 @@ void title_screen::loop()
     input.add( (new keyboard_event("CONSTANT", SDLK_2, FALSE)) );
 
     scene scn;
-    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/knight.dcm")) );
-    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm")) );
+    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/knight.dcm",
+        "/usr/local/share/dreamchess/pieces/classic/white.png" )) );
+    scn.add( (new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm",
+        "/usr/local/share/dreamchess/pieces/classic/white.png")) );
 
     while ( !input.get_input("QUIT") )
     {

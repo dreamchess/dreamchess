@@ -160,8 +160,6 @@ mesh_t *dcm_load(char *filename)
     }
 
     fclose(f);
-
-    printf( "Whoa.\n" );
     
     return msh;
 }

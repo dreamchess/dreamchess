@@ -1,11 +1,12 @@
 
 #include "model.h"
 
-model::model(char *name)
+model::model(char *msh2, char *tx2)
 {
-    msh = new mesh(name);
+    msh = new mesh(msh2);
+    tx = new texture(tx2);
     alpha=1.0f;
-    specular=1;
+    specular=0;
 }
 
 void model::render()
@@ -13,7 +14,6 @@ void model::render()
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
-    //texture_t *texture = model->texture;
 
     glPushMatrix();
         glScalef(xscale, yscale, zscale);
@@ -21,7 +21,7 @@ void model::render()
         glRotatef( yrot, 1, 1, 0 );
         glRotatef( zrot, 0, 0, 1 );
 
-        glColor4f(1.0f,0.0f,0.0f,1.0f);
+        glColor4f(1.0f,1.0f,1.0f,1.0f);
 
         mcolor[3] = alpha;
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
@@ -32,10 +32,10 @@ void model::render()
             glMaterialfv(GL_FRONT, GL_SPECULAR, nospecReflection);
         glMateriali(GL_FRONT, GL_SHININESS, 128);
 
-        //glEnable(GL_TEXTURE_2D);
-        //glBindTexture(GL_TEXTURE_2D, texture->id);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
         glCallList(msh->mesh_data->list);
-        //glDisable(GL_TEXTURE_2D); 
+        glDisable(GL_TEXTURE_2D); 
     glPopMatrix();              
 }
 
