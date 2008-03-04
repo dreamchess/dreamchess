@@ -38,13 +38,15 @@ void scene::render()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
 
+    // Camera!
+    glRotatef( cam.xrot, 1.0f, 0.0f, 0.0f );
+    glRotatef( cam.yrot, 0.0f, 1.0f, 0.0f );
+    glRotatef( cam.zrot, 0.0f, 0.0f, 1.0f );
     glTranslatef( -cam.xpos, -cam.ypos, -cam.zpos );
 
     /* Step through the list and render them alls! */
     for ( int i=0; i<entities.size();i++ )
-    {
-        entities[i]->render();
-    }          
+        entities[i]->render();            
 }
 
 void scene::list()

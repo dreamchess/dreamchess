@@ -1,4 +1,7 @@
 
+#ifndef __TEXTURE_H_
+#define __TEXTURE_H_
+
 typedef struct
 {
     /** OpenGL Texture ID. */
@@ -31,3 +34,5 @@ class texture
         ~texture();
         texture_t texture_data;
 };
+
+#endif

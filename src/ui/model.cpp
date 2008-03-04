@@ -16,9 +16,10 @@ void model::render()
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
 
     glPushMatrix();
+        glTranslatef( xpos, ypos, zpos );
         glScalef(xscale, yscale, zscale);
         glRotatef( xrot, 1, 0, 0 );
-        glRotatef( yrot, 1, 1, 0 );
+        glRotatef( yrot, 0, 1, 0 );
         glRotatef( zrot, 0, 0, 1 );
 
         glColor4f(1.0f,1.0f,1.0f,1.0f);
@@ -41,5 +42,5 @@ void model::render()
 
 void model::update()
 {
-    xrot+=0.1f;
+    //yrot+=0.1f;
 }
