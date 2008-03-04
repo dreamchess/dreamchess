@@ -3,7 +3,7 @@
 
 light::light()
 {
-    
+    type="light";
 }
 
 void light::render()

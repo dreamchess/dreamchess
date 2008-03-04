@@ -7,4 +7,5 @@ class light: public entity
         light();
         void render();
         void update();
+        
 };

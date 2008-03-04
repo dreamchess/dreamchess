@@ -25,32 +25,6 @@ entity::entity()
     xpos=ypos=zpos=0.0f;
     xrot=yrot=zrot=0.0f;
     xscale=yscale=zscale=1.0f;
-    name="Test";
-}
-
-entity::entity( float x, float y, float z )
-{
-    xpos=x; ypos=y; zpos=z;
-    xrot=yrot=zrot=0.0f;
-    xscale=yscale=zscale=1.0f;
-    name="Test";
-}
-
-entity::entity( float x, float y, float z, 
-    float xr, float yr, float zr )
-{
-    xpos=x; ypos=y; zpos=z;
-    xrot=xr; yrot=yr; zrot=zr;
-    xscale=yscale=zscale=1.0f;
-    name="Test";
-}
-
-entity::entity( float x, float y, float z, 
-    float xr, float yr, float zr,
-    float xs, float ys, float zs )
-{
-    xpos=x; ypos=y; zpos=z;
-    xrot=xr; yrot=yr; zrot=zr;
-    xscale=xs; yscale=ys; zscale=zs;
-    name="Test";
+    type="entity";
+    name="entity";
 }

@@ -6,7 +6,7 @@ model::model(char *msh2, char *tx2)
     msh = new mesh(msh2);
     tx = new texture(tx2);
     alpha=1.0f;
-    specular=0;
+    specular=1;
 }
 
 void model::render()
@@ -16,6 +16,9 @@ void model::render()
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };
 
     glPushMatrix();
+
+        glEnable(GL_LIGHTING);
+
         glTranslatef( xpos, ypos, zpos );
         glScalef(xscale, yscale, zscale);
         glRotatef( xrot, 1, 0, 0 );
@@ -36,7 +39,10 @@ void model::render()
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
         glCallList(msh->mesh_data->list);
-        glDisable(GL_TEXTURE_2D); 
+        glDisable(GL_TEXTURE_2D);
+
+        glDisable(GL_LIGHTING);
+ 
     glPopMatrix();              
 }
 

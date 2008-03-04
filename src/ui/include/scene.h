@@ -14,7 +14,9 @@ class scene
         void add(entity *ent);
         void clear();
         void list();
-        camera cam;
+        int count_type(std::string type);
+        int find_type(std::string type, int index);
+        camera *active_cam;
     private:
         std::vector<entity*> entities; 
 };

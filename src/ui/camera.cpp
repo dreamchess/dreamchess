@@ -3,7 +3,7 @@
 
 camera::camera()
 {
-    
+    type="camera";
 }
 
 void camera::render()

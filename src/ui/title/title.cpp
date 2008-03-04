@@ -24,6 +24,8 @@
 #include "input.h"
 #include "model.h"
 #include "box.h"
+#include "camera.h"
+#include "light.h"
 
 #include "title.h"
 
@@ -76,7 +78,7 @@ void title_screen::loop()
 
     e = new model("/usr/local/share/dreamchess/pieces/classic/bishop.dcm",
         "/usr/local/share/dreamchess/pieces/classic/white.png" );
-    e->xpos=-0.5f; e->ypos=1.5f;
+    e->xpos=-0.5f; e->ypos=1.5f; e->zrot=90.0f;
     scn.add(e); // White bishop
 
     e = new model("/usr/local/share/dreamchess/pieces/classic/rook.dcm",
@@ -91,8 +93,17 @@ void title_screen::loop()
     scn.add(e); // Black king
 
     //Position Camera...
-    scn.cam.xpos=5.919f; scn.cam.ypos=-1.160f; scn.cam.zpos=1.299f;
-    scn.cam.xrot=-90.0f; scn.cam.yrot=0.0f; scn.cam.zrot=-52.286f;
+    e = new camera();
+    e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
+    e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
+    scn.add(e); // Camera
+
+    scn.active_cam=(camera*)e;
+
+    e = new light();
+    e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
+    e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
+    scn.add(e); // Light
 
     while ( !input.get_input("QUIT") )
     {
@@ -100,36 +111,36 @@ void title_screen::loop()
 
         if ( input.get_input("INFO") )
             printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f)\n", 
-                scn.cam.xpos, scn.cam.ypos, scn.cam.zpos, 
-                scn.cam.xrot, scn.cam.yrot, scn.cam.zrot );
+                scn.active_cam->xpos, scn.active_cam->ypos, scn.active_cam->zpos, 
+                scn.active_cam->xrot, scn.active_cam->yrot, scn.active_cam->zrot );
 
         if ( input.get_input("UP") )
-            scn.cam.ypos+=0.01;
+            scn.active_cam->ypos+=0.01;
         if ( input.get_input("DOWN") )
-            scn.cam.ypos-=0.01;
+            scn.active_cam->ypos-=0.01;
         if ( input.get_input("LEFT") )
-            scn.cam.xpos+=0.01;
+            scn.active_cam->xpos+=0.01;
         if ( input.get_input("RIGHT") )
-            scn.cam.xpos-=0.01;
+            scn.active_cam->xpos-=0.01;
         if ( input.get_input("ZOOMIN") )
-            scn.cam.zpos-=0.01;
+            scn.active_cam->zpos-=0.01;
         if ( input.get_input("ZOOMOUT") )
-            scn.cam.zpos+=0.01;
+            scn.active_cam->zpos+=0.01;
 
         if ( input.get_input("ROTX") )
-            scn.cam.xrot+=0.01;
+            scn.active_cam->xrot+=0.01;
         if ( input.get_input("ROTXN") )
-            scn.cam.xrot-=0.01;
+            scn.active_cam->xrot-=0.01;
 
         if ( input.get_input("ROTY") )
-            scn.cam.yrot+=0.01;
+            scn.active_cam->yrot+=0.01;
         if ( input.get_input("ROTYN") )
-            scn.cam.yrot-=0.01;
+            scn.active_cam->yrot-=0.01;
 
         if ( input.get_input("ROTZ") )
-            scn.cam.zrot+=0.01;
+            scn.active_cam->zrot+=0.01;
         if ( input.get_input("ROTZN") )
-            scn.cam.zrot-=0.01;
+            scn.active_cam->zrot-=0.01;
 
         scn.render();
         scn.update();
