@@ -1,4 +1,7 @@
 
+#ifndef __MODEL_H
+#define __MODEL_H
+
 #include <string>
 #include "entity.h"
 #include "mesh.h"
@@ -17,3 +20,4 @@ class model: public entity
         int specular;
 };
 
+#endif

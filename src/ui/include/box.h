@@ -1,4 +1,7 @@
 
+#ifndef __BOX_H
+#define __BOX_H
+
 #include "entity.h"
 #include "texture.h"
 
@@ -11,3 +14,5 @@ class box: public entity
     private:
         texture *tx;    
 };
+
+#endif

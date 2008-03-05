@@ -26,6 +26,7 @@
 #include "box.h"
 #include "camera.h"
 #include "light.h"
+#include "chess_board.h"
 
 #include "title.h"
 
@@ -61,14 +62,13 @@ void title_screen::loop()
     input.add( (new keyboard_event("ROTYN", SDLK_s, FALSE)) );
     input.add( (new keyboard_event("ROTZN", SDLK_x, FALSE)) );
 
-    input.add( (new keyboard_event("INFO", SDLK_i, FALSE)) );
+    input.add( (new keyboard_event("INFO", SDLK_i, TRUE)) );
 
     scene scn;
 
-    // Board... edge and middle...
-    scn.add( (new model("/usr/local/share/dreamchess/boards/classic/board.dcm",
+    // Board... 
+    scn.add( (new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
         "/usr/local/share/dreamchess/boards/classic/board.png" )) );
-    scn.add( (new box(8,8,"/usr/local/share/dreamchess/boards/classic/board.png" )) );
 
     // Various pieces...
     e = new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm",
@@ -93,12 +93,13 @@ void title_screen::loop()
     scn.add(e); // Black king
 
     //Position Camera...
-    e = new camera();
-    e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
-    e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
-    scn.add(e); // Camera
+    camera *c = new title_camera();
+    c->xpos=1.919f; c->ypos=-1.160f; c->zpos=1.299f;
+    c->xrot=-90.0f; c->yrot=0.0f; c->zrot=-52.286f;
+    c->target=scn.entities[2];
+    scn.add(c); // Camera
 
-    scn.active_cam=(camera*)e;
+    scn.active_cam=c; // Set the camera.
 
     e = new light();
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;

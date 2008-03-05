@@ -10,7 +10,8 @@ class camera: public entity
     public:
         camera();
         void render();
-        void update();
+        virtual void update();
+        entity *target;
 };
 
 #endif

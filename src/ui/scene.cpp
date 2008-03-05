@@ -65,11 +65,8 @@ void scene::render()
         glEnable(GL_LIGHT0);  
     }
 
-    // Camera!
-    glRotatef( active_cam->xrot, 1.0f, 0.0f, 0.0f );
-    glRotatef( active_cam->yrot, 0.0f, 1.0f, 0.0f );
-    glRotatef( active_cam->zrot, 0.0f, 0.0f, 1.0f );
-    glTranslatef( -active_cam->xpos, -active_cam->ypos, -active_cam->zpos );
+    // Camera! 
+    active_cam->render();
 
     /* Step through the list and render them alls! */
     for ( int i=0; i<entities.size();i++ )

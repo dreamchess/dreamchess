@@ -1,4 +1,7 @@
 
+#ifndef __MESH_H
+#define __MESH_H
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "SDL/SDL.h"
@@ -48,3 +51,5 @@ class mesh
         std::string name;
         mesh_t *mesh_data;
 };
+
+#endif
