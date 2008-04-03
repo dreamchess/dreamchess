@@ -18,29 +18,40 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#ifndef GAMEGUI_EDIT_H
+#define GAMEGUI_EDIT_H
 
 #include <gamegui/system.h>
-#include <gamegui/action.h>
-#include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
-#include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
-#include <gamegui/bin.h>
-#include <gamegui/dialog.h>
-#include <gamegui/image.h>
-#include <gamegui/select.h>
-#include <gamegui/seperatorh.h>
-#include <gamegui/seperatorv.h>
 #include <gamegui/widget.h>
-#include <gamegui/frame.h>
-#include <gamegui/viewport.h>
-#include <gamegui/edit.h>
 
-#endif /* GAMEGUI_H */
+#define EDIT_SPACING 2
+
+#define GG_EDIT(W) GG_CHECK_CAST(W, gg_edit_get_class_id(), gg_edit_t)
+
+#define GG_EDIT_DATA \
+    GG_WIDGET_DATA \
+    char **text; \
+    int lines; \
+    int display_pos;
+
+/** Text entry widget state. */
+typedef struct w_edit
+{
+    GG_EDIT_DATA
+}
+gg_edit_t;
+
+gg_class_id gg_edit_get_class_id();
+
+void gg_edit_render(gg_widget_t *widget, int x, int y, int focus);
+
+int gg_edit_input(gg_widget_t *widget, gg_event_t event);
+
+void gg_edit_init(gg_edit_t *edit, int width, int height);
+
+gg_widget_t *gg_edit_create(int width, int height);
+
+int gg_edit_add_line(gg_edit_t *edit, char *text);
+
+#endif /* GAMEGUI_EDIT_H */
+

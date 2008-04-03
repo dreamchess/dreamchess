@@ -18,29 +18,37 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#include <stdlib.h>
+#include <string.h>
 
-#include <gamegui/system.h>
-#include <gamegui/action.h>
-#include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
-#include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
-#include <gamegui/bin.h>
-#include <gamegui/dialog.h>
-#include <gamegui/image.h>
-#include <gamegui/select.h>
-#include <gamegui/seperatorh.h>
-#include <gamegui/seperatorv.h>
-#include <gamegui/widget.h>
-#include <gamegui/frame.h>
-#include <gamegui/viewport.h>
-#include <gamegui/edit.h>
+#include "dreamchess.h"
+#include "gamegui_dialogs.h"
+#include "options.h"
+#include "system_config.h"
+#include "audio.h"
 
-#endif /* GAMEGUI_H */
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_dialog_close();
+    return 1;
+}
+
+gg_dialog_t *dialog_chat_create(gg_dialog_t *parent)
+{
+    gg_widget_t *dialog;
+    gg_widget_t *vbox;
+    gg_widget_t *widget;
+
+    vbox = gg_vbox_create(0);
+
+    widget = gg_edit_create(500, 300);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_entry_create(500);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
+    gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+
+    return GG_DIALOG(dialog);
+}

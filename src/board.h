@@ -88,6 +88,12 @@ typedef struct board
 }
 board_t;
 
+typedef struct time_control
+{
+    
+}
+time_control_t;
+
 typedef struct move
 {
     /* Source and destination squares. */
