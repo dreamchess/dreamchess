@@ -67,7 +67,8 @@ enum gg_event_key
     GG_KEY_DOWN,
     GG_KEY_LEFT,
     GG_KEY_HOME,
-    GG_KEY_END
+    GG_KEY_END,
+    GG_KEY_ENTER
 };
 
 typedef struct gg_event

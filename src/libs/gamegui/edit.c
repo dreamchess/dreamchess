@@ -54,9 +54,10 @@ static int string_width(char *s, int n)
 
 void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 {
-    gg_edit_t *entry = GG_EDIT(widget);
+    gg_edit_t *edit = GG_EDIT(widget);
     gg_rect_t rect;
     gg_colour_t *colour;
+    struct gg_edit_line *line;
 
     switch (focus)
     {
@@ -75,19 +76,21 @@ void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 	if (!widget->enabled)
 		colour = &col_grey;
 	
-    gg_system_draw_rect(x, y, entry->width_a, entry->height_a, colour);
+    gg_system_draw_rect(x, y, edit->width_a, edit->height_a, colour);
 
     x += EDIT_SPACING;
     y += EDIT_SPACING;
 
     rect.x = x;
     rect.y = y;
-    rect.width = entry->width_a - 2 * EDIT_SPACING;
-    rect.height = entry->height_a - 2 * EDIT_SPACING;
+    rect.width = edit->width_a - 2 * EDIT_SPACING;
+    rect.height = edit->height_a - 2 * EDIT_SPACING;
     gg_clipping_adjust(&rect);
 
-    gg_system_draw_string("HEY" /*entry->text*/, x/* - entry->display_pos*/, y, colour,
-                          0, 0);
+    TAILQ_FOREACH(line, &edit->lines, entries) {
+        gg_system_draw_string(line->text, x, y, colour, 0, 0);
+        y += edit->line_height;
+    }
 
     gg_clipping_undo();
 }
@@ -97,6 +100,13 @@ int gg_edit_input(gg_widget_t * widget, gg_event_t event)
     return 1;
 }
 
+void gg_edit_append(gg_edit_t *edit, char *text)
+{
+    struct gg_edit_line *line = malloc(sizeof(struct gg_edit_line));
+    line->text = strdup(text);
+    TAILQ_INSERT_TAIL(&edit->lines, line, entries);
+}
+
 void gg_edit_init(gg_edit_t * edit, int width, int height)
 {
     gg_widget_init((gg_widget_t *) edit);
@@ -104,11 +114,13 @@ void gg_edit_init(gg_edit_t * edit, int width, int height)
     edit->render = gg_edit_render;
     edit->input = gg_edit_input;
     edit->id = gg_edit_get_class_id();
-    edit->text = NULL;
+    TAILQ_INIT(&edit->lines);
     edit->enabled = 1;
     edit->width = width + EDIT_SPACING * 2;
     edit->height = height + EDIT_SPACING * 2;
     edit->display_pos = 0;
+    gg_system_get_string_size("W", NULL, &edit->line_height);
+    edit->line_height += EDIT_LINE_SPACING;
 }
 
 gg_widget_t *gg_edit_create(int width, int height)

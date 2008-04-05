@@ -33,19 +33,29 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
     return 1;
 }
 
+static int add_text(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_edit_append((gg_edit_t *) extra_data, gg_entry_get_text(GG_ENTRY(widget)));
+    gg_entry_set_text(GG_ENTRY(widget), "");
+    return 1;
+}
+
 gg_dialog_t *dialog_chat_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
     gg_widget_t *widget;
+    gg_widget_t *edit;
 
     vbox = gg_vbox_create(0);
 
-    widget = gg_edit_create(500, 300);
-    gg_container_append(GG_CONTAINER(vbox), widget);
+    edit = gg_edit_create(500, 300);
+    gg_container_append(GG_CONTAINER(vbox), edit);
 
     widget = gg_entry_create(500);
     gg_container_append(GG_CONTAINER(vbox), widget);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+        add_text, edit);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());

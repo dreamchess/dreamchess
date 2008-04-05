@@ -34,7 +34,8 @@
     char text[ENTRY_MAX_LEN + 1]; \
     int max_len; \
     int cursor_pos; \
-    int display_pos;
+    int display_pos; \
+    gg_signal_t action_pressed;
 
 /** Text entry widget state. */
 typedef struct w_entry

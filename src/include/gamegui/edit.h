@@ -23,16 +23,24 @@
 
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
+#include <gamegui/queue.h>
 
 #define EDIT_SPACING 2
+#define EDIT_LINE_SPACING 2
 
 #define GG_EDIT(W) GG_CHECK_CAST(W, gg_edit_get_class_id(), gg_edit_t)
 
+struct gg_edit_line {
+	TAILQ_ENTRY(gg_edit_line_s) entries;
+	char *text;
+};
+
 #define GG_EDIT_DATA \
     GG_WIDGET_DATA \
-    char **text; \
-    int lines; \
-    int display_pos;
+    TAILQ_HEAD(lines_head, gg_edit_line) lines; \
+    int lines_nr; \
+    int display_pos; \
+    int line_height;
 
 /** Text entry widget state. */
 typedef struct w_edit

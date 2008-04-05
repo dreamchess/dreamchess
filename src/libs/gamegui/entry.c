@@ -153,6 +153,10 @@ int gg_entry_input(gg_widget_t * widget, gg_event_t event)
                     entry->text[i - 1] = entry->text[i];
             }
         }
+        else if (event.key == GG_KEY_ACTION)
+        {
+            gg_widget_emit_signal(widget, widget, entry->action_pressed, NULL);
+        }
         else
         {
             if ((event.key > 0) && (event.key <= 255))
@@ -222,6 +226,9 @@ void gg_entry_init(gg_entry_t * entry, int width)
     entry->width = width + ENTRY_SPACING * 2;
     entry->height += ENTRY_SPACING * 2;
     entry->display_pos = 0;
+    entry->action_pressed = gg_signal_lookup(entry->id, "action_pressed");
+    if (entry->action_pressed == -1)
+        entry->action_pressed = gg_signal_register(entry->id, "action_pressed");
 }
 
 char *gg_entry_get_text(gg_entry_t *entry)
@@ -235,6 +242,7 @@ int gg_entry_set_text(gg_entry_t *entry, char *text)
         return 1;
 
     strcpy(entry->text, text);
+    entry->cursor_pos = 0;
     return 0;
 }
 
