@@ -3,13 +3,14 @@
 
 title_camera::title_camera()
 {
-    mod=0.03;
+    direction=1.0;
+    speed=0.001;
 }
 
 void title_camera::update()
 {
     if ( ypos > 8 || ypos < -6)
-        mod=-mod;
+        direction=-direction;
 
-    ypos+=mod;
+    ypos+=direction*speed;
 }

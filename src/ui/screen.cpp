@@ -24,8 +24,19 @@
 
 #include "screen.h"
 
+int ticks_omg=0;
+int frames_yay=0;
+
 void screen::update()
 {
+    if ( SDL_GetTicks()-ticks_omg > 1000 )
+    {
+        printf( "FPS: %i\n", frames_yay );
+        frames_yay=0;
+        ticks_omg=SDL_GetTicks();
+    }
+
+    frames_yay++;
     SDL_GL_SwapBuffers();
 }
 
