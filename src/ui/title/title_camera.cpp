@@ -4,7 +4,7 @@
 title_camera::title_camera()
 {
     direction=1.0;
-    speed=0.001;
+    speed=0.05;
 }
 
 void title_camera::update()

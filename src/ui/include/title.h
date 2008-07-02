@@ -4,8 +4,9 @@
 
 #include "screen.h"
 #include "camera.h"
+#include "game.h"
 
-class title_screen
+class title_screen: public game
 {
     public:
         title_screen();

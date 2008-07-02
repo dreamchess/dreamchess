@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     arg.argv = argv;
 
     title_screen *title = new title_screen;
-    title->loop();
+    title->start();
     delete title;
 
     return dreamchess(&arg);

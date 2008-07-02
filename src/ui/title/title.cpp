@@ -19,8 +19,7 @@
 */
 
 #include <iostream>
-#include "scene.h"
-#include "input.h"
+
 #include "model.h"
 #include "box.h"
 #include "light.h"
@@ -28,36 +27,10 @@
 
 #include "title.h"
 
-#define MAXIMUM_FRAME_RATE 30
-#define MINIMUM_FRAME_RATE 15
-#define UPDATE_INTERVAL (1.0 / MAXIMUM_FRAME_RATE)
-#define MAX_CYCLES_PER_FRAME (MAXIMUM_FRAME_RATE / MINIMUM_FRAME_RATE)
-
-screen *scr;
-
 title_screen::title_screen()
 {
-    std::cout << "Starting title screen." << std::endl;
-}
-
-title_screen::~title_screen()
-{
-    std::cout << "Cleaning up title screen." << std::endl;
-}
-
-int ticks_yay;
-int updates_yay;
-
-void title_screen::loop()
-{
-    static double lastFrameTime = 0.0;
-    static double cyclesLeftOver = 0.0;
-    double currentTime;
-    double updateIterations;
-
     scr = new screen(640,480);
 
-    input_layer input;
     input.add( (new keyboard_event("QUIT", SDLK_ESCAPE, TRUE)) );
 
     input.add( (new keyboard_event("UP", SDLK_UP, FALSE)) );
@@ -75,8 +48,6 @@ void title_screen::loop()
     input.add( (new keyboard_event("ROTZN", SDLK_x, FALSE)) );
 
     input.add( (new keyboard_event("INFO", SDLK_i, TRUE)) );
-
-    scene scn;
 
     // Board... 
     scn.add( (new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
@@ -118,74 +89,57 @@ void title_screen::loop()
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
     scn.add(e); // Light
+}
 
-    updates_yay=0;
-    ticks_yay=SDL_GetTicks();
-    
-     while ( !input.get_input("QUIT") )
+title_screen::~title_screen()
+{
+    printf( "title_screen::~title_screen:game\n");
+}
+
+void title_screen::loop()
+{
+    static int last_update_tick;
+
+    input.update();
+
+    // Printf update and frame info.
+    if ( SDL_GetTicks()-last_update_tick > 1000 )
     {
-        currentTime = SDL_GetTicks();
-        updateIterations = ((currentTime - lastFrameTime) + cyclesLeftOver);
-  
-        if (updateIterations > (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL))
-            updateIterations = (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL);
-
-        input.update();
-        while (updateIterations > UPDATE_INTERVAL) 
-        {
-            updateIterations -= UPDATE_INTERVAL;
-
-            if ( input.get_input("INFO") )
-                printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
-                    scn.active_cam->xpos, scn.active_cam->ypos, scn.active_cam->zpos, 
-                    scn.active_cam->xrot, scn.active_cam->yrot, scn.active_cam->zrot );
-
-            if ( input.get_input("UP") )
-                scn.active_cam->ypos+=0.01;
-            if ( input.get_input("DOWN") )
-                scn.active_cam->ypos-=0.01;
-            if ( input.get_input("LEFT") )
-                scn.active_cam->xpos+=0.01;
-            if ( input.get_input("RIGHT") )
-                scn.active_cam->xpos-=0.01;
-            if ( input.get_input("ZOOMIN") )
-                scn.active_cam->zpos-=0.01;
-            if ( input.get_input("ZOOMOUT") )
-                scn.active_cam->zpos+=0.01;
-
-            if ( input.get_input("ROTX") )
-                scn.active_cam->xrot+=0.01;
-            if ( input.get_input("ROTXN") )
-                scn.active_cam->xrot-=0.01;
-
-            if ( input.get_input("ROTY") )
-                scn.active_cam->yrot+=0.01;
-            if ( input.get_input("ROTYN") )
-                scn.active_cam->yrot-=0.01;
-
-            if ( input.get_input("ROTZ") )
-                scn.active_cam->zrot+=0.01;
-            if ( input.get_input("ROTZN") )
-                scn.active_cam->zrot-=0.01;
-
-            scn.update();
-
-            updates_yay++;
-        }
-  
-        // Count updates per second.
-        if ( SDL_GetTicks()-ticks_yay > 1000 )
-        {
-            printf( "Updates: %i\n", updates_yay );
-            updates_yay=0;
-            ticks_yay=SDL_GetTicks();
-        }
-
-        cyclesLeftOver = updateIterations;
-        lastFrameTime = currentTime;
-  
-        scn.render();
-        scr->update();
+        printf( "Updates per Second: %i\n", ups );
+        last_update_tick=SDL_GetTicks();
     }
+
+    if ( input.get_input("INFO") )
+        printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
+            scn.active_cam->xpos, scn.active_cam->ypos, scn.active_cam->zpos, 
+            scn.active_cam->xrot, scn.active_cam->yrot, scn.active_cam->zrot );
+
+    if ( input.get_input("UP") )
+        scn.active_cam->ypos+=0.01;
+    if ( input.get_input("DOWN") )
+        scn.active_cam->ypos-=0.01;
+    if ( input.get_input("LEFT") )
+        scn.active_cam->xpos+=0.01;
+    if ( input.get_input("RIGHT") )
+        scn.active_cam->xpos-=0.01;
+    if ( input.get_input("ZOOMIN") )
+        scn.active_cam->zpos-=0.01;
+    if ( input.get_input("ZOOMOUT") )
+        scn.active_cam->zpos+=0.01;
+
+    if ( input.get_input("ROTX") )
+        scn.active_cam->xrot+=0.01;
+    if ( input.get_input("ROTXN") )
+        scn.active_cam->xrot-=0.01;
+
+    if ( input.get_input("ROTY") )
+        scn.active_cam->yrot+=0.01;
+    if ( input.get_input("ROTYN") )
+        scn.active_cam->yrot-=0.01;
+
+    if ( input.get_input("ROTZ") )
+        scn.active_cam->zrot+=0.01;
+    if ( input.get_input("ROTZN") )
+        scn.active_cam->zrot-=0.01;
 }
 
