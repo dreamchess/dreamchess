@@ -372,9 +372,8 @@ find_best_move(state_t *state)
 {
     int depth = state->depth;
     board_t *board = &state->board;
-    move_t best_move;
+    move_t best_move = NO_MOVE;
     int cur_depth;
-    int best_score;
     long long en_passant = board->en_passant;
     int castle_flags = board->castle_flags;
     int fifty_moves = board->fifty_moves;
@@ -388,7 +387,6 @@ find_best_move(state_t *state)
     {
         int alpha = ALPHABETA_MIN;
 	move_t move;
-        best_score = ALPHABETA_MIN;
 
         compute_legal_moves(board, 0);
 
@@ -412,50 +410,22 @@ find_best_move(state_t *state)
             if (score == -ALPHABETA_ILLEGAL)
                 continue;
             if (score > alpha)
-                alpha = score;
-            if (score > best_score)
             {
+                alpha = score;
                 best_move = move;
-                best_score = score;
                 pv_copy(0, move);
                 if (get_option(OPTION_POST))
-                    pv_print(state, cur_depth + 1, best_score);
+                    pv_print(state, cur_depth + 1, alpha);
             }
         }
 
         /* If we found a mate in 'ply' we stop the search */
-        if (best_score == ALPHABETA_MAX - cur_depth) {
+        if (alpha == ALPHABETA_MAX - cur_depth) {
             break;
         }
 
-        if (best_score < ALPHABETA_MIN + 100) {
+        if (alpha < ALPHABETA_MIN + 100) {
             break;
-        }
-
-        if (best_score == ALPHABETA_ILLEGAL)
-        {
-            /* There are no legal moves. We're either checkmated or
-            ** stalemated.
-            */
-
-            /* If the opponent can capture the king that means we're
-            ** checkmated.
-            */
-            board->current_player = OPPONENT(board->current_player);
-            if (compute_legal_moves(board, 0) < 0)
-            {
-                /* We're checkmated. */
-                move = RESIGN_MOVE;
-                board->current_player = OPPONENT(board->current_player);
-                return move;
-            }
-            else
-            {
-                /* We're stalemated. */
-                move = STALEMATE_MOVE;
-                board->current_player = OPPONENT(board->current_player);
-                return move;
-            }
         }
 
 #ifdef DEBUG
@@ -470,6 +440,32 @@ find_best_move(state_t *state)
 
         if (abort_search)
             break;
+    }
+
+    if (best_move == NO_MOVE)
+    {
+	state->hint = NO_MOVE;
+
+        /* There are no legal moves. We're either checkmated or
+        ** stalemated.
+        */
+
+        /* If the opponent can capture the king that means we're
+        ** checkmated.
+        */
+        board->current_player = OPPONENT(board->current_player);
+        if (compute_legal_moves(board, 0) < 0)
+        {
+            /* We're checkmated. */
+            board->current_player = OPPONENT(board->current_player);
+            return RESIGN_MOVE;
+        }
+        else
+        {
+            /* We're stalemated. */
+            board->current_player = OPPONENT(board->current_player);
+            return STALEMATE_MOVE;
+        }
     }
 
     if (pv_len[0] > 1)

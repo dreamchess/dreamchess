@@ -77,6 +77,12 @@ char *msgbuf_process(char *buf)
 
             /* Full message has been received. Chop off the newline. */
             *end = '\0';
+
+            /* Chop off carriage return if it is present. */
+            end = strrchr(msg, '\r');
+            if (end && *end == '\r')
+                *end = '\0';
+
             msg = NULL;
             return retval;
         }

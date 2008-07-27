@@ -60,6 +60,8 @@
     | ((DEST) << MOVE_DEST_SHIFT) | ((TYPE) << MOVE_TYPE_SHIFT) \
     | ((CAPTURED) << MOVE_CAPTURED_SHIFT))
 
+#define MOVE_IS_REGULAR(M) (((M) != NO_MOVE) && ((M) != RESIGN_MOVE) && ((M) != STALEMATE_MOVE))
+
 extern move_t moves[(MAX_DEPTH + 1) * 256];
 extern int moves_start[MAX_DEPTH + 2];
 extern int moves_cur[MAX_DEPTH + 1];

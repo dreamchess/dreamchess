@@ -120,7 +120,7 @@ int comm_init(char *engine)
     /* Close unneeded handle. */
     CloseHandle(proc_info.hThread);
 
-    pipe_win32_init(from_child_rd_dup, to_child_wr_dup);
+    pipe_win32_init(from_child_rd_dup, to_child_wr_dup, 0);
     init_ok = 1;
     return 0;
 }

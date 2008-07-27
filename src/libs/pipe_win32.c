@@ -30,10 +30,14 @@ static char buf[BUF_LEN];
 
 static HANDLE h_in, h_out;
 
-void pipe_win32_init(HANDLE in, HANDLE out)
+/* Console mode flag */
+static int console_mode;
+
+void pipe_win32_init(HANDLE in, HANDLE out, int console)
 {
     h_in = in;
     h_out = out;
+    console_mode = console;
 }
 
 void pipe_win32_exit()
@@ -73,7 +77,16 @@ char *pipe_win32_poll(int *error)
         len = strlen(buf);
 
         /* Check whether data is available. */
-        if (!PeekNamedPipe(h_in, NULL, 0, NULL, &bytes, NULL))
+        if (console_mode)
+        {
+            if (!GetNumberOfConsoleInputEvents(h_in, &bytes))
+            {
+                /* Error reading console input. */
+                fprintf(stderr, "%s, L%d: Error reading console input.\n", __FILE__, __LINE__);
+                *error = 1;
+                return NULL;
+            }
+        } else if (!PeekNamedPipe(h_in, NULL, 0, NULL, &bytes, NULL))
         {
             /* Error reading pipe. */
             fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
@@ -92,7 +105,7 @@ char *pipe_win32_poll(int *error)
                 return NULL;
             }
 
-            if (bytes == 0)
+            if (!console_mode && bytes == 0)
             {
                 /* Received EOF. */
                 fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);

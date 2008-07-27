@@ -21,10 +21,11 @@
 #ifndef _PIPE_WIN32_H
 #define _PIPE_WIN32_H
 
-void pipe_win32_init(HANDLE in, HANDLE out);
+void pipe_win32_init(HANDLE in, HANDLE out, int console);
 /* Initializes the I/O library with handles for input and output.
 ** Parameters: (HANDLE) in: handle to use for input.
 **             (HANDLE) out: handle to use for output.
+**             (int) console: 1 = console mode, 0 = pipe mode.
 ** Returns   : (void)
 */
 

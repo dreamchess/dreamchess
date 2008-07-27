@@ -526,7 +526,7 @@ int command_usermove(state_t *state, char *command)
 
         if (state->ponder_my_move != NO_MOVE) {
             /* We already have a possible answer to this move from pondering. */
-            if (move == state->ponder_opp_move)
+            if (move == state->ponder_opp_move && MOVE_IS_REGULAR(state->ponder_my_move))
             {
                 /* User made the expected move. */
                 send_move(state, state->ponder_my_move);

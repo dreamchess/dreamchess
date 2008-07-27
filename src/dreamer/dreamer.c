@@ -309,7 +309,7 @@ int engine()
 
                 if (state.flags & FLAG_NEW_GAME)
                     command_handle(&state, "new");
-                else if (move != NO_MOVE)
+                else if (MOVE_IS_REGULAR(move))
                 {
                     send_move(&state, move);
                     if (get_option(OPTION_PONDER))
@@ -338,7 +338,7 @@ int engine()
                             state.flags |= FLAG_PONDER;
                     }
                 }
-                else if (move != NO_MOVE)
+                else if (MOVE_IS_REGULAR(move))
                 {
                     /* Opponent made the expected move. */
                     send_move(&state, move);

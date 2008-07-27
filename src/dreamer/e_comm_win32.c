@@ -32,6 +32,7 @@
 void e_comm_init()
 {
     HANDLE h_in, h_out;
+    DWORD mode;
 
     h_in = GetStdHandle(STD_INPUT_HANDLE);
     h_out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -42,7 +43,7 @@ void e_comm_init()
         exit(1);
     }
 
-    pipe_win32_init(h_in, h_out);
+    pipe_win32_init(h_in, h_out, GetConsoleMode(h_in, &mode) != 0);
 }
 
 void e_comm_exit()
