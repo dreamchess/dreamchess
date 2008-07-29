@@ -564,8 +564,9 @@ void command_handle(state_t *state, char *command)
         if (errno || (*endptr != 0))
              BADPARAM(command);
 
-        e_comm_send("feature setboard=1\n");
         e_comm_send("feature myname=\"Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\"\n");
+        e_comm_send("feature setboard=1\n");
+        e_comm_send("feature colors=0\n");
         e_comm_send("feature done=1\n");
         return;
     }
