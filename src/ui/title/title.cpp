@@ -47,6 +47,8 @@ title_screen::title_screen()
     input.add( (new keyboard_event("ROTYN", SDLK_s, FALSE)) );
     input.add( (new keyboard_event("ROTZN", SDLK_x, FALSE)) );
 
+    input.add( (new keyboard_event("CAMSHAKE", SDLK_k, TRUE)) );
+
     input.add( (new keyboard_event("INFO", SDLK_i, TRUE)) );
 
     // Board... 
@@ -77,10 +79,11 @@ title_screen::title_screen()
     scn.add(e); // Black king
 
     //Position Camera...
-    camera *c = new title_camera();
-    c->xpos=1.919f; c->ypos=-1.160f; c->zpos=1.299f;
-    c->xrot=-90.0f; c->yrot=0.0f; c->zrot=-52.286f;
-    c->target=scn.entities[2];
+    title_camera *c = new title_camera();
+
+    c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
+    c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
+    //c->target=scn.entities[2];
     scn.add(c); // Camera
 
     scn.active_cam=c; // Set the camera.
@@ -113,33 +116,42 @@ void title_screen::loop()
         printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
             scn.active_cam->xpos, scn.active_cam->ypos, scn.active_cam->zpos, 
             scn.active_cam->xrot, scn.active_cam->yrot, scn.active_cam->zrot );
+    if ( input.get_input("CAMSHAKE") )
+    {
+        title_camera *cam=(title_camera*)scn.active_cam;
+
+        if ( cam->shake == TRUE )
+            cam->shake=FALSE;
+        else
+            cam->shake=TRUE;
+    }
 
     if ( input.get_input("UP") )
-        scn.active_cam->ypos+=0.01;
+        scn.active_cam->ypos+=0.1;
     if ( input.get_input("DOWN") )
-        scn.active_cam->ypos-=0.01;
+        scn.active_cam->ypos-=0.1;
     if ( input.get_input("LEFT") )
-        scn.active_cam->xpos+=0.01;
+        scn.active_cam->xpos+=0.1;
     if ( input.get_input("RIGHT") )
-        scn.active_cam->xpos-=0.01;
+        scn.active_cam->xpos-=0.1;
     if ( input.get_input("ZOOMIN") )
-        scn.active_cam->zpos-=0.01;
+        scn.active_cam->zpos-=0.1;
     if ( input.get_input("ZOOMOUT") )
-        scn.active_cam->zpos+=0.01;
+        scn.active_cam->zpos+=0.1;
 
     if ( input.get_input("ROTX") )
-        scn.active_cam->xrot+=0.01;
+        scn.active_cam->xrot+=1.0;
     if ( input.get_input("ROTXN") )
-        scn.active_cam->xrot-=0.01;
+        scn.active_cam->xrot-=1.0;
 
     if ( input.get_input("ROTY") )
-        scn.active_cam->yrot+=0.01;
+        scn.active_cam->yrot+=1.0;
     if ( input.get_input("ROTYN") )
-        scn.active_cam->yrot-=0.01;
+        scn.active_cam->yrot-=1.0;
 
     if ( input.get_input("ROTZ") )
-        scn.active_cam->zrot+=0.01;
+        scn.active_cam->zrot+=1.0;
     if ( input.get_input("ROTZN") )
-        scn.active_cam->zrot-=0.01;
+        scn.active_cam->zrot-=1.0;
 }
 

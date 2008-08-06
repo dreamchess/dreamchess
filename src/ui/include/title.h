@@ -17,6 +17,7 @@ class title_screen: public game
 class title_camera: public camera
 {
     public:
+        int shake;
         title_camera();
         void update();
         float speed;
