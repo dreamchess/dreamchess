@@ -2,24 +2,17 @@
 #ifndef __INPUT_H_
 #define __INPUT_H_
 
-#include <vector>
-#include <string>
-#include <iostream>
-
-#define FALSE 0
-#define TRUE -1
+#include "resource.h"
 
 class input_event
 {
     friend class keyboard_event;
     friend class input_layer;
     public:
-        input_event() { tag="Empty."; active=FALSE; event_type=FALSE; }
-        input_event( std::string t ) { tag=t; active=FALSE;} 
+        input_event() { active=FALSE; event_type=FALSE; }
         bool is_active() { return active; }
         virtual void update() = 0;
     private:
-        std::string tag;
         bool active;
         int event_type;
 };
@@ -27,7 +20,7 @@ class input_event
 class keyboard_event: public input_event
 {
     public:
-        keyboard_event( std::string t, int c, bool ot );
+        keyboard_event( int c, bool ot );
         void update();
     private:
         int key;
@@ -35,17 +28,11 @@ class keyboard_event: public input_event
         bool wait_for_release;
 };
 
-class input_layer
+class input_layer: public resource_list
 {
     public:
-        ~input_layer();
         bool get_input( std::string name );
         void update();
-        void add( input_event *event );
-        void clear();
-        void list();
-    private:
-        std::vector<input_event*> inputs;
 };
 
-#endif /* __B_BINPUT_H */
+#endif /* INPUT_H */

@@ -2,19 +2,11 @@
 #include "SDL/SDL.h"
 #include "input.h"
 
-void input_layer::list()
-{
-    for ( int i=0; i<inputs.size();i++ )
-    {
-        std::cout << inputs[i]->tag << std::endl;
-    }
-}
-
 void input_layer::update()
 {
-    for ( int i=0; i<inputs.size();i++ )
+    for ( int i=0; i<resources.size();i++ )
     {
-        inputs[i]->update();
+        ((input_event*)resources[i]->data)->update();
     }
 }
 
@@ -22,35 +14,17 @@ bool input_layer::get_input( std::string name )
 {
     bool retval=FALSE;
 
-    for ( int i=0; i<inputs.size(); i++ )
+    for ( int i=0; i<resources.size(); i++ )
     {
-        if ( !name.compare(inputs[i]->tag) && inputs[i]->active )
+        if ( !name.compare(resources[i]->name) && ((input_event*)resources[i]->data)->active )
+        {
             retval=TRUE;
+        }
     }    
     return retval;
 }
 
-void input_layer::add( input_event *event )
-{
-    inputs.push_back(event);
-}
-
-input_layer::~input_layer()
-{
-    clear();
-}
-
-void input_layer::clear()
-{
-    for ( int i=0; i<inputs.size();i++ )
-    {
-        delete inputs[i];
-    }
-
-    inputs.clear();
-}
-
-keyboard_event::keyboard_event( std::string t, int c, bool ot ): input_event(t) 
+keyboard_event::keyboard_event( int c, bool ot ): input_event() 
 {
     key=c;
     one_time=ot;

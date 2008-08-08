@@ -31,25 +31,24 @@ title_screen::title_screen()
 {
     scr = new screen(640,480);
 
-    input.add( (new keyboard_event("QUIT", SDLK_ESCAPE, TRUE)) );
+    input.add( "QUIT", "INPUT_EVENT", (new keyboard_event(SDLK_ESCAPE, TRUE)) );
 
-    input.add( (new keyboard_event("UP", SDLK_UP, FALSE)) );
-    input.add( (new keyboard_event("DOWN", SDLK_DOWN, FALSE)) );
-    input.add( (new keyboard_event("LEFT", SDLK_LEFT, FALSE)) );
-    input.add( (new keyboard_event("RIGHT", SDLK_RIGHT, FALSE)) );
-    input.add( (new keyboard_event("ZOOMIN", SDLK_o, FALSE)) );
-    input.add( (new keyboard_event("ZOOMOUT", SDLK_p, FALSE)) );
+    input.add( "UP", "INPUT_EVENT", (new keyboard_event(SDLK_UP, FALSE)) );
+    input.add( "DOWN", "INPUT_EVENT", (new keyboard_event(SDLK_DOWN, FALSE)) );
+    input.add( "LEFT", "INPUT_EVENT", (new keyboard_event(SDLK_LEFT, FALSE)) );
+    input.add( "RIGHT", "INPUT_EVENT", (new keyboard_event(SDLK_RIGHT, FALSE)) );
+    input.add( "ZOOMIN", "INPUT_EVENT", (new keyboard_event(SDLK_o, FALSE)) );
+    input.add( "ZOOMOUT", "INPUT_EVENT", (new keyboard_event(SDLK_p, FALSE)) );
 
-    input.add( (new keyboard_event("ROTX", SDLK_q, FALSE)) );
-    input.add( (new keyboard_event("ROTY", SDLK_a, FALSE)) );
-    input.add( (new keyboard_event("ROTZ", SDLK_z, FALSE)) );
-    input.add( (new keyboard_event("ROTXN", SDLK_w, FALSE)) );
-    input.add( (new keyboard_event("ROTYN", SDLK_s, FALSE)) );
-    input.add( (new keyboard_event("ROTZN", SDLK_x, FALSE)) );
+    input.add( "ROTX", "INPUT_EVENT", (new keyboard_event(SDLK_q, FALSE)) );
+    input.add( "ROTY", "INPUT_EVENT", (new keyboard_event(SDLK_a, FALSE)) );
+    input.add( "ROTZ", "INPUT_EVENT", (new keyboard_event(SDLK_z, FALSE)) );
+    input.add( "ROTXN", "INPUT_EVENT", (new keyboard_event(SDLK_w, FALSE)) );
+    input.add( "ROTYN", "INPUT_EVENT", (new keyboard_event(SDLK_s, FALSE)) );
+    input.add( "ROTZN", "INPUT_EVENT", (new keyboard_event(SDLK_x, FALSE)) );
 
-    input.add( (new keyboard_event("CAMSHAKE", SDLK_k, TRUE)) );
-
-    input.add( (new keyboard_event("INFO", SDLK_i, TRUE)) );
+    input.add( "CAMSHAKE", "INPUT_EVENT", (new keyboard_event(SDLK_k, TRUE)) );
+    input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
 
     // Board... 
     scn.add( (new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
