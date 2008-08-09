@@ -27,4 +27,5 @@ entity::entity()
     xscale=yscale=zscale=1.0f;
     type="entity";
     name="entity";
+    parent_scene=NULL;
 }

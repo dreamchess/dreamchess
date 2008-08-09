@@ -29,7 +29,8 @@ void scene::update()
 {
     for ( int i=0; i<resources.size();i++ )
     {
-        ((entity*)resources[i]->data)->update();
+        if ( resources[i]->type == "ENTITY" )
+            ((entity*)resources[i]->data)->update();
     }  
 }
 
@@ -127,7 +128,10 @@ void scene::render()
 
     /* Step through the list and render them alls! */
     for ( int i=0; i<resources.size();i++ )
-        ((entity*)resources[i]->data)->render();            
+    {
+        if ( resources[i]->type == "ENTITY" )
+            ((entity*)resources[i]->data)->render();            
+    }
 }
 
 int scene::find_type(std::string type, int index)

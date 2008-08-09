@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "model.h"
+#include "mesh.h"
 #include "box.h"
 #include "light.h"
 #include "chess_board.h"
@@ -54,32 +55,38 @@ title_screen::title_screen()
     input.add( "CAMSHAKE", "INPUT_EVENT", (new keyboard_event(SDLK_k, TRUE)) );
     input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
 
-    // Board... 
-    add( "BOARD","BOARD",(new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
-        "/usr/local/share/dreamchess/boards/classic/board.png" )) );
+    // Textures.
+    add( "BOARD_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/boards/classic/board.png")) );
+    add( "WHITE_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/pieces/classic/white.png")) );
+    add( "BLACK_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/pieces/classic/black.png")) );
 
+    // Meshes.
+    add( "BOARD_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/boards/classic/board.dcm")) );
+    add( "QUEEN_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/queen.dcm")) );
+    add( "BISHOP_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/bishop.dcm")) );
+    add( "ROOK_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/rook.dcm")) );
+    add( "KING_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/king.dcm")) );
+
+    // Entities.
     entity *e;
-    // Various pieces...
-    e = new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm",
-        "/usr/local/share/dreamchess/pieces/classic/white.png" );
+    add( "BOARD","ENTITY",(new chess_board("BOARD_MESH","BOARD_TEX",this)) );
+
+    e = new model("QUEEN_MESH","WHITE_TEX",this );
     e->xpos=-0.5f; e->ypos=2.5f;
-    add("WHITE_QUEEN","PIECE",e); // White queen
+    add("WHITE_QUEEN","ENTITY",e); // White queen
 
-    e = new model("/usr/local/share/dreamchess/pieces/classic/bishop.dcm",
-        "/usr/local/share/dreamchess/pieces/classic/white.png" );
+    e = new model("BISHOP_MESH", "WHITE_TEX",this );
     e->xpos=-0.5f; e->ypos=1.5f; e->zrot=90.0f;
-    add("WHITE_BISHOP","PIECE",e); // White bishop
+    add("WHITE_BISHOP","ENTITY",e); // White bishop
 
-    e = new model("/usr/local/share/dreamchess/pieces/classic/rook.dcm",
-        "/usr/local/share/dreamchess/pieces/classic/white.png" );
+    e = new model("ROOK_MESH", "WHITE_TEX",this );
     e->xpos=3.5f; e->ypos=-0.5f;
-    add("WHITE_ROOK","PIECE",e); // White rook
+    add("WHITE_ROOK","ENTITY",e); // White rook
 
-    e = new model("/usr/local/share/dreamchess/pieces/classic/king.dcm",
-        "/usr/local/share/dreamchess/pieces/classic/black.png" );
+    e = new model("KING_MESH","BLACK_TEX",this );
     e->xpos=2.5f; e->ypos=3.5f; e->zpos=0.35;
     e->xrot=96.0f; e->yrot=20.0f; e->zrot=23.0f;
-    add("BLACK_KING","PIECE",e); // Black king
+    add("BLACK_KING","ENTITY",e); // Black king
 
     //Position Camera...
     title_camera *c = new title_camera();
@@ -87,14 +94,14 @@ title_screen::title_screen()
     c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
     c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
     //c->target=scn.entities[2];
-    add("CAMERA","CAMERA",c); // Camera
+    add("CAMERA","ENTITY",c); // Camera
 
     active_cam=c; // Set the camera.
 
     e = new light();
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
-    add("LIGHT","LIGHT",e); // Light
+    add("LIGHT","ENTITY",e); // Light
 }
 
 void title_screen::loop()

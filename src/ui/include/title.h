@@ -3,7 +3,6 @@
 #define __TITLE_H
 
 #include "scene.h"
-#include "screen.h"
 #include "camera.h"
 
 class title_screen: public scene

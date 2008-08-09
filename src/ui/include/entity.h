@@ -16,6 +16,7 @@ class entity
         float xscale,yscale,zscale;
         std::string name;
         std::string type;
+        void *parent_scene;
 };
 
 #endif /* __ENTITY_H */

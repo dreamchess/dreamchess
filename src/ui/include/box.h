@@ -8,11 +8,11 @@
 class box: public entity
 {
     public:
-        box( float xsize, float ysize, std::string file );
+        box( float xsize, float ysize, std::string tx, void *parent );
         void render();
         void update();
     private:
-        texture *tx;    
+        std::string tx;    
 };
 
 #endif

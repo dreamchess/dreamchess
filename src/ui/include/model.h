@@ -4,19 +4,17 @@
 
 #include <string>
 #include "entity.h"
-#include "mesh.h"
-#include "texture.h"
 
 class model: public entity
 {
     public:
-        model(std::string msh2, std::string tx2);
+        model(std::string msh2, std::string tx2, void *parent);
         void render();
         void update();
     private:
-        mesh *msh;
-        texture *tx;
-        GLfloat alpha;
+        std::string msh;
+        std::string tx;
+        float alpha;
         int specular;
 };
 

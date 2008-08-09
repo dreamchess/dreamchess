@@ -2,10 +2,9 @@
 #define __SCENE_H_
 
 #include "resource.h"
-#include "entity.h"
-#include "camera.h"
 #include "input.h"
 #include "screen.h"
+#include "camera.h"
 
 #define MAXIMUM_FRAME_RATE 60
 #define MINIMUM_FRAME_RATE 15

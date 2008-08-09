@@ -21,7 +21,8 @@ class resource_list
 {
     public:
         ~resource_list();
-        bool get_resource( std::string name, std::string type );
+        void *get_resource( std::string name, std::string type );
+        bool find_resource( std::string name, std::string type );
         void update();
         void add( std::string name, std::string type, void *data );
         void clear();

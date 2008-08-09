@@ -1,12 +1,16 @@
 
 #include "model.h"
+#include "texture.h"
+#include "mesh.h"
+#include "scene.h"
 
-model::model(std::string msh2, std::string tx2)
+model::model(std::string msh2, std::string tx2, void *parent)
 {
-    msh = new mesh(msh2);
-    tx = new texture(tx2);
+    msh = msh2;
+    tx = tx2;
     alpha=1.0f;
     specular=1;
+    parent_scene=parent;
 }
 
 void model::render()
@@ -37,13 +41,13 @@ void model::render()
         glMateriali(GL_FRONT, GL_SHININESS, 128);
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
-        glCallList(msh->mesh_data->list);
+        glBindTexture(GL_TEXTURE_2D, ((texture*)((resource*)((scene*)parent_scene)->get_resource(tx,"TEXTURE"))->data)->texture_data.id);
+        glCallList( ((mesh*)((resource*)((scene*)parent_scene)->get_resource(msh,"MESH"))->data)->mesh_data->list);
         glDisable(GL_TEXTURE_2D);
 
         glDisable(GL_LIGHTING);
  
-    glPopMatrix();              
+    glPopMatrix();           
 }
 
 void model::update()

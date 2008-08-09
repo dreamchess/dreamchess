@@ -7,7 +7,7 @@
 typedef struct
 {
     /** OpenGL Texture ID. */
-    GLuint id;
+    unsigned int id;
 
     /** Upper-left u-coordinate. Ranges from 0.0f to 1.0f. */
     float u1;
