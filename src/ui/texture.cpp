@@ -4,6 +4,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "texture.h"
+#include <string>
 
 int power_of_two(int input)
 {
@@ -133,9 +134,9 @@ void load_texture_png( texture_t *texture, char *filename, int alpha, int clamp 
         SDL_FreeSurface( texture_image );
 }
 
-texture::texture(char *filename)
+texture::texture(std::string filename)
 {
-    load_texture_png( &texture_data, filename, 1, 0 );
+    load_texture_png( &texture_data, (char*)filename.c_str(), 1, 0 );
 }
 
 texture::~texture()

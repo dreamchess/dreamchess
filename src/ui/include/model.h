@@ -10,7 +10,7 @@
 class model: public entity
 {
     public:
-        model(char *msh2, char *tx2);
+        model(std::string msh2, std::string tx2);
         void render();
         void update();
     private:

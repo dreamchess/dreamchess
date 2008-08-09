@@ -164,8 +164,8 @@ mesh_t *dcm_load(char *filename)
     return msh;
 }
 
-mesh::mesh( char *filename )
+mesh::mesh( std::string filename )
 {
-    mesh_data=dcm_load(filename);
+    mesh_data=dcm_load((char*)filename.c_str());
     mesh_make_list(mesh_data);
 }

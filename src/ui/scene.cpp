@@ -27,10 +27,67 @@
 
 void scene::update()
 {
-    for ( int i=0; i<entities.size();i++ )
+    for ( int i=0; i<resources.size();i++ )
     {
-        entities[i]->update();
+        ((entity*)resources[i]->data)->update();
     }  
+}
+
+void scene::start()
+{
+    static double lastFrameTime = 0.0;
+    static double cyclesLeftOver = 0.0;
+    double currentTime;
+    double updateIterations;
+
+    int updates_per_sec;
+    int last_update_tick;
+
+    updates_per_sec=0;
+    last_update_tick=SDL_GetTicks();
+    ups=0;
+
+    while ( !input.get_input("QUIT") )
+    {
+        currentTime = SDL_GetTicks();
+        updateIterations = ((currentTime - lastFrameTime) + cyclesLeftOver);
+  
+        if (updateIterations > (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL))
+            updateIterations = (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL);
+
+        while (updateIterations > UPDATE_INTERVAL) 
+        {
+            static int last_update_tick;
+
+            updateIterations -= UPDATE_INTERVAL;
+            input.update();  
+
+            // Printf update and frame info.
+            if ( SDL_GetTicks()-last_update_tick > 1000 )
+            {
+                printf( "Updates per Second: %i\n", ups );
+                last_update_tick=SDL_GetTicks();
+            }
+            loop();
+
+            update();
+            updates_per_sec++;
+        }
+
+        // Count updates per second.
+        if ( SDL_GetTicks()-last_update_tick > 1000 )
+        {
+            ups=updates_per_sec;
+            updates_per_sec=0; 
+            last_update_tick=SDL_GetTicks();
+        }
+
+        cyclesLeftOver = updateIterations;
+        lastFrameTime = currentTime;
+
+        render();
+        scr->update();
+    }
 }
 
 void scene::render()
@@ -69,16 +126,8 @@ void scene::render()
     active_cam->render();
 
     /* Step through the list and render them alls! */
-    for ( int i=0; i<entities.size();i++ )
-        entities[i]->render();            
-}
-
-void scene::list()
-{
-    for ( int i=0; i<entities.size();i++ )
-    {
-        std::cout << entities[i]->name << std::endl;
-    }
+    for ( int i=0; i<resources.size();i++ )
+        ((entity*)resources[i]->data)->render();            
 }
 
 int scene::find_type(std::string type, int index)
@@ -89,9 +138,9 @@ int scene::find_type(std::string type, int index)
     if ( count_type(type) < index )
         return -1;
 
-    for ( int i=0; i<entities.size();i++ )
+    for ( int i=0; i<resources.size();i++ )
     {
-        if ( entities[i]->type == type )
+        if ( resources[i]->type == type )
         {
             if ( count == index )
                 return i;
@@ -107,31 +156,12 @@ int scene::count_type(std::string type)
 {
     int count=0;
 
-    for ( int i=0; i<entities.size();i++ )
+    for ( int i=0; i<resources.size();i++ )
     {
-        if ( entities[i]->type == type )
+        if ( resources[i]->type == type )
             count++;
     }
 
     return count;
 }
 
-void scene::add( entity *ent )
-{
-    entities.push_back(ent);
-}
-
-scene::~scene()
-{
-    clear();
-}
-
-void scene::clear()
-{
-    for ( int i=0; i<entities.size();i++ )
-    {
-        delete entities[i];
-    }
-
-    entities.clear();
-}

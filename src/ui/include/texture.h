@@ -2,6 +2,8 @@
 #ifndef __TEXTURE_H_
 #define __TEXTURE_H_
 
+#include <string>
+
 typedef struct
 {
     /** OpenGL Texture ID. */
@@ -30,7 +32,7 @@ texture_t;
 class texture
 {
     public:
-        texture( char *filename );
+        texture( std::string filename );
         ~texture();
         texture_t texture_data;
 };

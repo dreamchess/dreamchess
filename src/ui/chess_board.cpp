@@ -1,7 +1,7 @@
 
 #include "chess_board.h"
 
-chess_board::chess_board(char *msh2, char *tx2)
+chess_board::chess_board(std::string msh2, std::string tx2)
 {
     mdl = new model(msh2,tx2);
     bx = new box(8,8,tx2);

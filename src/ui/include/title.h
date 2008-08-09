@@ -6,11 +6,10 @@
 #include "camera.h"
 #include "game.h"
 
-class title_screen: public game
+class title_screen: public scene
 {
     public:
         title_screen();
-        ~title_screen();
         void loop();
 };
 
@@ -23,7 +22,5 @@ class title_camera: public camera
         float speed;
         float direction;
 };
-
-extern screen *scr;
 
 #endif

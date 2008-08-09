@@ -8,7 +8,7 @@
 class box: public entity
 {
     public:
-        box( float xsize, float ysize, char *file );
+        box( float xsize, float ysize, std::string file );
         void render();
         void update();
     private:

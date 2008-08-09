@@ -27,7 +27,7 @@
 
 #include "title.h"
 
-title_screen::title_screen()
+ingame::ingame()
 {
     scr = new screen(640,480);
 
@@ -51,31 +51,31 @@ title_screen::title_screen()
     input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
 
     // Board... 
-    add( "BOARD","BOARD",(new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
+    scn.add( "BOARD","BOARD",(new chess_board("/usr/local/share/dreamchess/boards/classic/board.dcm",
         "/usr/local/share/dreamchess/boards/classic/board.png" )) );
 
-    entity *e;
+    /*entity *e;
     // Various pieces...
     e = new model("/usr/local/share/dreamchess/pieces/classic/queen.dcm",
         "/usr/local/share/dreamchess/pieces/classic/white.png" );
     e->xpos=-0.5f; e->ypos=2.5f;
-    add("WHITE_QUEEN","PIECE",e); // White queen
+    scn.add("WHITE_QUEEN","PIECE",e); // White queen
 
     e = new model("/usr/local/share/dreamchess/pieces/classic/bishop.dcm",
         "/usr/local/share/dreamchess/pieces/classic/white.png" );
     e->xpos=-0.5f; e->ypos=1.5f; e->zrot=90.0f;
-    add("WHITE_BISHOP","PIECE",e); // White bishop
+    scn.add("WHITE_BISHOP","PIECE",e); // White bishop
 
     e = new model("/usr/local/share/dreamchess/pieces/classic/rook.dcm",
         "/usr/local/share/dreamchess/pieces/classic/white.png" );
     e->xpos=3.5f; e->ypos=-0.5f;
-    add("WHITE_ROOK","PIECE",e); // White rook
+    scn.add("WHITE_ROOK","PIECE",e); // White rook
 
     e = new model("/usr/local/share/dreamchess/pieces/classic/king.dcm",
         "/usr/local/share/dreamchess/pieces/classic/black.png" );
     e->xpos=2.5f; e->ypos=3.5f; e->zpos=0.35;
     e->xrot=96.0f; e->yrot=20.0f; e->zrot=23.0f;
-    add("BLACK_KING","PIECE",e); // Black king
+    scn.add("BLACK_KING","PIECE",e); // Black king*/
 
     //Position Camera...
     title_camera *c = new title_camera();
@@ -83,26 +83,41 @@ title_screen::title_screen()
     c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
     c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
     //c->target=scn.entities[2];
-    add("CAMERA","CAMERA",c); // Camera
+    scn.add("CAMERA","CAMERA",c); // Camera
 
-    active_cam=c; // Set the camera.
+    scn.active_cam=c; // Set the camera.
 
     e = new light();
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
-    add("LIGHT","LIGHT",e); // Light
+    scn.add("LIGHT","LIGHT",e); // Light
+}
+
+title_screen::~title_screen()
+{
+    printf( "title_screen::~title_screen:game\n");
 }
 
 void title_screen::loop()
 {
+    static int last_update_tick;
+
+    input.update();
+
+    // Printf update and frame info.
+    if ( SDL_GetTicks()-last_update_tick > 1000 )
+    {
+        printf( "Updates per Second: %i\n", ups );
+        last_update_tick=SDL_GetTicks();
+    }
+
     if ( input.get_input("INFO") )
         printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
-            active_cam->xpos, active_cam->ypos, active_cam->zpos, 
-            active_cam->xrot, active_cam->yrot, active_cam->zrot );
-
+            scn.active_cam->xpos, scn.active_cam->ypos, scn.active_cam->zpos, 
+            scn.active_cam->xrot, scn.active_cam->yrot, scn.active_cam->zrot );
     if ( input.get_input("CAMSHAKE") )
     {
-        title_camera *cam=(title_camera*)active_cam;
+        title_camera *cam=(title_camera*)scn.active_cam;
 
         if ( cam->shake == TRUE )
             cam->shake=FALSE;
@@ -111,31 +126,31 @@ void title_screen::loop()
     }
 
     if ( input.get_input("UP") )
-        active_cam->ypos+=0.1;
+        scn.active_cam->ypos+=0.1;
     if ( input.get_input("DOWN") )
-        active_cam->ypos-=0.1;
+        scn.active_cam->ypos-=0.1;
     if ( input.get_input("LEFT") )
-        active_cam->xpos+=0.1;
+        scn.active_cam->xpos+=0.1;
     if ( input.get_input("RIGHT") )
-        active_cam->xpos-=0.1;
+        scn.active_cam->xpos-=0.1;
     if ( input.get_input("ZOOMIN") )
-        active_cam->zpos-=0.1;
+        scn.active_cam->zpos-=0.1;
     if ( input.get_input("ZOOMOUT") )
-        active_cam->zpos+=0.1;
+        scn.active_cam->zpos+=0.1;
 
     if ( input.get_input("ROTX") )
-        active_cam->xrot+=1.0;
+        scn.active_cam->xrot+=1.0;
     if ( input.get_input("ROTXN") )
-        active_cam->xrot-=1.0;
+        scn.active_cam->xrot-=1.0;
 
     if ( input.get_input("ROTY") )
-        active_cam->yrot+=1.0;
+        scn.active_cam->yrot+=1.0;
     if ( input.get_input("ROTYN") )
-        active_cam->yrot-=1.0;
+        scn.active_cam->yrot-=1.0;
 
     if ( input.get_input("ROTZ") )
-        active_cam->zrot+=1.0;
+        scn.active_cam->zrot+=1.0;
     if ( input.get_input("ROTZN") )
-        active_cam->zrot-=1.0;
+        scn.active_cam->zrot-=1.0;
 }
 

@@ -6,7 +6,7 @@
 class chess_board: public entity
 {
     public:
-        chess_board(char *msh2, char *tx2);
+        chess_board(std::string msh2, std::string tx2);
         void render();
         void update();
     private:

@@ -47,7 +47,7 @@ typedef struct
 class mesh
 {
     public:
-        mesh(char *filename);
+        mesh(std::string filename);
         std::string name;
         mesh_t *mesh_data;
 };

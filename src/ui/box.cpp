@@ -3,7 +3,7 @@
 #include <GL/glu.h>
 #include "box.h"
 
-box::box( float xsize, float ysize, char *file )
+box::box( float xsize, float ysize, std::string file )
 {
     xscale=xsize;
     yscale=ysize;    

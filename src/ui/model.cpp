@@ -1,7 +1,7 @@
 
 #include "model.h"
 
-model::model(char *msh2, char *tx2)
+model::model(std::string msh2, std::string tx2)
 {
     msh = new mesh(msh2);
     tx = new texture(tx2);
