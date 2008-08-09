@@ -5,7 +5,7 @@
 #include "scene.h"
 #include "resource.h"
 
-box::box( float xsize, float ysize, std::string tex, void *parent )
+box::box( float xsize, float ysize, std::string tex, scene *parent )
 {
     xscale=xsize;
     yscale=ysize;    

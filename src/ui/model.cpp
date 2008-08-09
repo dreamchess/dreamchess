@@ -4,7 +4,7 @@
 #include "mesh.h"
 #include "scene.h"
 
-model::model(std::string msh2, std::string tx2, void *parent)
+model::model(std::string msh2, std::string tx2, scene *parent)
 {
     msh = msh2;
     tx = tx2;

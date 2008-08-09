@@ -8,7 +8,7 @@
 class model: public entity
 {
     public:
-        model(std::string msh2, std::string tx2, void *parent);
+        model(std::string msh2, std::string tx2, scene *parent);
         void render();
         void update();
     private:

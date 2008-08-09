@@ -4,6 +4,8 @@
 //#include "dreamchess_ui.h"
 #include <string>
 
+class scene;
+
 class entity
 {
     public:
@@ -16,7 +18,7 @@ class entity
         float xscale,yscale,zscale;
         std::string name;
         std::string type;
-        void *parent_scene;
+        scene *parent_scene;
 };
 
 #endif /* __ENTITY_H */
