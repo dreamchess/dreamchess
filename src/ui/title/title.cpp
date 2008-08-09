@@ -19,6 +19,7 @@
 */
 
 #include <iostream>
+#include <math.h>
 
 #include "model.h"
 #include "box.h"
@@ -26,6 +27,9 @@
 #include "chess_board.h"
 
 #include "title.h"
+
+/* constant used for converting to radians */
+const float piover180 = 0.0174532925f;
 
 title_screen::title_screen()
 {
@@ -111,13 +115,22 @@ void title_screen::loop()
     }
 
     if ( input.get_input("UP") )
-        active_cam->ypos+=0.1;
+    {
+    	active_cam->xpos += (float)sin(active_cam->zrot*piover180) * 0.1f;
+    	active_cam->ypos += (float)cos(active_cam->zrot*piover180) * 0.1f;
+    }
     if ( input.get_input("DOWN") )
-        active_cam->ypos-=0.1;
+    {
+    	active_cam->xpos -= (float)sin(active_cam->zrot*piover180) * 0.1f;
+    	active_cam->ypos -= (float)cos(active_cam->zrot*piover180) * 0.1f;
+    }
+
     if ( input.get_input("LEFT") )
-        active_cam->xpos+=0.1;
+        active_cam->zrot-=1.0;//
     if ( input.get_input("RIGHT") )
-        active_cam->xpos-=0.1;
+        active_cam->zrot+=1.0;//
+
+
     if ( input.get_input("ZOOMIN") )
         active_cam->zpos-=0.1;
     if ( input.get_input("ZOOMOUT") )
@@ -133,9 +146,5 @@ void title_screen::loop()
     if ( input.get_input("ROTYN") )
         active_cam->yrot-=1.0;
 
-    if ( input.get_input("ROTZ") )
-        active_cam->zrot+=1.0;
-    if ( input.get_input("ROTZN") )
-        active_cam->zrot-=1.0;
 }
 

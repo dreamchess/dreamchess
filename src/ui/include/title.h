@@ -2,9 +2,9 @@
 #ifndef __TITLE_H
 #define __TITLE_H
 
+#include "scene.h"
 #include "screen.h"
 #include "camera.h"
-#include "game.h"
 
 class title_screen: public scene
 {
