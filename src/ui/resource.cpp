@@ -49,6 +49,7 @@ void *resource_list::get_resource( std::string name, std::string type )
 
 void resource_list::add( std::string name, std::string type, void *data )
 {
+    // set up parent?
     resource *res=new resource(name, type, data);
     resources.push_back(res);
 }

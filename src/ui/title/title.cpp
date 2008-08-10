@@ -133,9 +133,9 @@ void title_screen::loop()
     }
 
     if ( input.get_input("LEFT") )
-        active_cam->zrot-=1.0;//
+        active_cam->zrot-=1.0;
     if ( input.get_input("RIGHT") )
-        active_cam->zrot+=1.0;//
+        active_cam->zrot+=1.0;
 
 
     if ( input.get_input("ZOOMIN") )

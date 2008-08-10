@@ -31,6 +31,7 @@ extern "C" {
 }
 
 #include "title.h"
+#include "game.h"
 
 int main(int argc, char **argv)
 {
@@ -42,6 +43,10 @@ int main(int argc, char **argv)
     title_screen *title = new title_screen;
     title->start();
     delete title;
+
+    game *ingame = new game;
+    ingame->start();
+    delete ingame;
 
     return dreamchess(&arg);
 }

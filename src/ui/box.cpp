@@ -20,7 +20,6 @@ void box::render()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, ((texture*)((resource*)((scene*)parent_scene)->get_resource(tx,"TEXTURE"))->data)->texture_data.id);
-//    glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
 
     glBegin(GL_QUADS);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

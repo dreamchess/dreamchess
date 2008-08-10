@@ -27,5 +27,5 @@ void camera::render()
 
 void camera::update()
 {
-    printf( "Uh oh.\n" );
+   // printf( "Uh oh.\n" );
 }
