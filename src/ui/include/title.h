@@ -16,7 +16,7 @@ class title_camera: public camera
 {
     public:
         int shake;
-        title_camera();
+        title_camera(std::string name2);
         void update();
         float speed;
         float direction;

@@ -4,13 +4,26 @@
 #include "mesh.h"
 #include "scene.h"
 
-model::model(std::string msh2, std::string tx2, scene *parent)
+// Doesn't really work.. yet...
+void get_size( float *xs, float *ys, float *zs, std::string msh )
+{
+    *xs=1.0f;
+    *ys=1.0f;
+    *zs=1.0f;
+}
+
+model::model(std::string name2, std::string msh2, std::string tx2, scene *parent)
 {
     msh = msh2;
     tx = tx2;
+    name = name2;
     alpha=1.0f;
     specular=1;
     parent_scene=parent;
+
+    get_size( &xsize, &ysize, &zsize, msh );
+
+    //printf( "Size: %f, %f, %f\n", xsize, ysize, zsize );
 }
 
 void model::render()
@@ -50,7 +63,3 @@ void model::render()
     glPopMatrix();           
 }
 
-void model::update()
-{
-    //yrot+=0.1f;
-}

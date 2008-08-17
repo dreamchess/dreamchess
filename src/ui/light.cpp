@@ -1,8 +1,9 @@
 
 #include "light.h"
 
-light::light()
+light::light(std::string name2)
 {
+    name=name2;
     type="light";
 }
 

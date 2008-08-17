@@ -28,4 +28,54 @@ entity::entity()
     type="entity";
     name="entity";
     parent_scene=NULL;
+
+    sc=new script("/home/kris/Devel/projects/dreamchess/linux/experimental/data/scripts/chess_piece.lua");
+    sc->run("entity_spawn");
 }
+
+bool entity::collision_at( vec pos )
+{
+    bool retval=FALSE;
+
+    if ( pos.x > (xpos-(xsize/2)) && pos.x < (xpos+(xsize/2)) )
+    if ( pos.y > (ypos-(ysize/2)) && pos.y < (ypos+(ysize/2)) )
+    //if ( pos.z > (zpos-(zsize/2)) && pos.z < (zpos+(zsize/2)) )
+    {
+        printf( "Collision: %s\n", name.c_str() );
+        if ( type == "entity" );
+        retval=TRUE;
+    }
+
+    if ( name=="LIGHT" )
+    {
+        printf( "X:%f,%f,%f\n", (xpos-(xsize/2)), pos.x, (xpos+(xsize/2)) );
+        printf( "Y:%f,%f,%f\n", (ypos-(ysize/2)), pos.y, (ypos+(ysize/2)) );
+    }
+
+    return retval;
+}
+
+void entity::update()
+{
+    //script_test();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

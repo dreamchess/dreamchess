@@ -8,7 +8,7 @@
 class box: public entity
 {
     public:
-        box( float xsize, float ysize, std::string tx, scene *parent );
+        box(std::string name2, float xsize, float ysize, std::string tx, scene *parent );
         void render();
         void update();
     private:

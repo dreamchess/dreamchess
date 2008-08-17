@@ -3,8 +3,9 @@
 
 float startrotx=-5,startrotz=-5;
 
-title_camera::title_camera()
+title_camera::title_camera(std::string name2):camera(name2)
 {
+    name=name2;
     direction=1.0;
     speed=0.05;
     shake=FALSE;

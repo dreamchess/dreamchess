@@ -5,10 +5,14 @@
 #include "scene.h"
 #include "resource.h"
 
-box::box( float xsize, float ysize, std::string tex, scene *parent )
+box::box( std::string name2, float xs, float ys, std::string tex, scene *parent )
 {
-    xscale=xsize;
-    yscale=ysize;    
+    name=name2;
+    xscale=xs;
+    yscale=ys;    
+    xsize=xs;
+    ysize=ys;
+    zsize=0.0f;
 
     tx = tex;
     parent_scene=parent;

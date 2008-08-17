@@ -71,10 +71,10 @@ game::game()
 
     // Entities.
     entity *e;
-    add( "BOARD","ENTITY",(new chess_board("BOARD_MESH","BOARD_TEX",this)) );
+    add( "BOARD","ENTITY",(new chess_board("BOARD","BOARD_MESH","BOARD_TEX",this)) );
 
     /* White pieces... */
-    e = new model("KING_MESH","WHITE_TEX",this );
+   /* e = new model("KING_MESH","WHITE_TEX",this );
     e->xpos=0.5f; e->ypos=-3.5f;
     add("WHITE_KING","ENTITY",e); // White king
 
@@ -111,11 +111,11 @@ game::game()
         e = new model("PAWN_MESH","WHITE_TEX",this );
         e->xpos=f; e->ypos=-2.5f;
         add("WHITE_PAWN","ENTITY",e); // White pawn
-    }
+    }*/
 
 
     /* Black pieces... */
-    e = new model("KING_MESH","BLACK_TEX",this );
+   /* e = new model("BLACK_KING","KING_MESH","BLACK_TEX",this );
     e->xpos=0.5f; e->ypos=3.5f;
     add("BLACK_KING","ENTITY",e); // White king
 
@@ -152,10 +152,10 @@ game::game()
         e = new model("PAWN_MESH","BLACK_TEX",this );
         e->xpos=f; e->ypos=2.5f;
         add("BLACK_PAWN","ENTITY",e); // White pawn
-    }
+    }*/
 
     //Position Camera...
-    camera *c = new camera();
+    camera *c = new camera("camera");
 
     c->xpos=0.0f; c->ypos=-7.0f; c->zpos=10.0f;
     c->xrot=-32.0f; c->yrot=0.0f; c->zrot=-0.0f;
@@ -164,7 +164,7 @@ game::game()
 
     active_cam=c; // Set the camera.
 
-    e = new light();
+    e = new light("light");
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
     add("LIGHT","ENTITY",e); // Light

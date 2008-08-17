@@ -24,6 +24,34 @@ bool input_layer::get_input( std::string name )
     return retval;
 }
 
+mouse_event::mouse_event( int b, bool ot ): input_event() 
+{
+    button=b;
+    one_time=ot;
+    wait_for_release=FALSE;
+}
+
+void mouse_event::update()
+{
+    SDL_PumpEvents();
+
+    active=SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);
+
+    if ( one_time ) // Keypress should only register once.
+    {
+        if ( active )
+        {
+            if ( wait_for_release )
+                active=FALSE;
+            else
+                wait_for_release=TRUE;
+        }
+        else
+            wait_for_release=FALSE;
+    }
+
+}
+
 keyboard_event::keyboard_event( int c, bool ot ): input_event() 
 {
     key=c;

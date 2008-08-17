@@ -26,6 +26,7 @@
 #include "box.h"
 #include "light.h"
 #include "chess_board.h"
+#include "screen.h"
 
 #include "title.h"
 
@@ -55,6 +56,11 @@ title_screen::title_screen()
     input.add( "CAMSHAKE", "INPUT_EVENT", (new keyboard_event(SDLK_k, TRUE)) );
     input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
 
+    // mouse.
+    input.add( "LEFTMOUSE", "INPUT_EVENT", (new mouse_event(1, TRUE)) );
+    input.add( "MIDDLEMOUSE", "INPUT_EVENT", (new mouse_event(2, TRUE)) );
+    input.add( "RIGHTMOUSE", "INPUT_EVENT", (new mouse_event(3, TRUE)) );
+
     // Textures.
     add( "BOARD_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/boards/classic/board.png")) );
     add( "WHITE_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/pieces/classic/white.png")) );
@@ -69,39 +75,43 @@ title_screen::title_screen()
 
     // Entities.
     entity *e;
-    add( "BOARD","ENTITY",(new chess_board("BOARD_MESH","BOARD_TEX",this)) );
+    add( "BOARD","ENTITY",(new chess_board("BOARD","BOARD_MESH","BOARD_TEX",this)) );
 
-    e = new model("QUEEN_MESH","WHITE_TEX",this );
+    e = new model("WHITE_QUEEN","QUEEN_MESH","WHITE_TEX",this);
     e->xpos=-0.5f; e->ypos=2.5f;
     add("WHITE_QUEEN","ENTITY",e); // White queen
 
-    e = new model("BISHOP_MESH", "WHITE_TEX",this );
+    e = new model("WHITE_BISHOP","BISHOP_MESH", "WHITE_TEX",this);
     e->xpos=-0.5f; e->ypos=1.5f; e->zrot=90.0f;
     add("WHITE_BISHOP","ENTITY",e); // White bishop
 
-    e = new model("ROOK_MESH", "WHITE_TEX",this );
+    e = new model("WHITE_ROOK","ROOK_MESH", "WHITE_TEX",this);
     e->xpos=3.5f; e->ypos=-0.5f;
     add("WHITE_ROOK","ENTITY",e); // White rook
 
-    e = new model("KING_MESH","BLACK_TEX",this );
+    e = new model("BLACK_KING","KING_MESH","BLACK_TEX",this);
     e->xpos=2.5f; e->ypos=3.5f; e->zpos=0.35;
     e->xrot=96.0f; e->yrot=20.0f; e->zrot=23.0f;
     add("BLACK_KING","ENTITY",e); // Black king
 
     //Position Camera...
-    title_camera *c = new title_camera();
+    title_camera *c = new title_camera("CAMERA");
 
-    c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
-    c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
+    //c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
+    //c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
     //c->target=scn.entities[2];
+    c->xpos=0.0f; c->ypos=0.0f; c->zpos=10.0f;
+    c->xrot=0.0f; c->yrot=0.0f; c->zrot=0.0f;
     add("CAMERA","ENTITY",c); // Camera
 
     active_cam=c; // Set the camera.
 
-    e = new light();
+    /*e = new light("LIGHT");
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
-    add("LIGHT","ENTITY",e); // Light
+    add("LIGHT","ENTITY",e); // Light*/
+
+    list();
 }
 
 void title_screen::loop()
@@ -110,6 +120,33 @@ void title_screen::loop()
         printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
             active_cam->xpos, active_cam->ypos, active_cam->zpos, 
             active_cam->xrot, active_cam->yrot, active_cam->zrot );
+    
+    if ( input.get_input("LEFTMOUSE") )
+    {
+        for ( int i=0; i<resources.size(); i++ )
+        {
+            if ( resources[i]->type == "ENTITY" )
+            if ( ((entity*)resources[i]->data)->collision_at(GetOGLPos(get_mouse())) == TRUE )            
+                {
+                    printf( "Hmm!\n" );
+                    ((entity*)resources[i]->data)->sc->run("entity_clicked");
+                }
+        }        
+        //vec v=GetOGLPos(get_mouse());
+        //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
+    }    
+
+  /*  if ( input.get_input("LEFTMOUSE") )
+    {
+        vec v=GetOGLPos(get_mouse());
+        //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
+    }  
+
+    if ( input.get_input("LEFTMOUSE") )
+    {
+        vec v=GetOGLPos(get_mouse());
+        //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
+    }  */
 
     if ( input.get_input("CAMSHAKE") )
     {
@@ -152,6 +189,11 @@ void title_screen::loop()
         active_cam->yrot+=1.0;
     if ( input.get_input("ROTYN") )
         active_cam->yrot-=1.0;
+
+    if ( input.get_input("ROTZ") )
+        active_cam->zrot+=1.0;
+    if ( input.get_input("ROTZN") )
+        active_cam->zrot-=1.0;
 
 }
 

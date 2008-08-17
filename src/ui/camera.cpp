@@ -3,8 +3,9 @@
 #include <GL/glu.h>
 #include "camera.h"
 
-camera::camera()
+camera::camera(std::string name2)
 {
+    name=name2;
     type="camera";
     target=NULL;
 }

@@ -8,7 +8,7 @@
 class camera: public entity
 {
     public:
-        camera();
+        camera(std::string name2);
         void render();
         virtual void update();
         entity *target;

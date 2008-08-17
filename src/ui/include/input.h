@@ -7,6 +7,7 @@
 class input_event
 {
     friend class keyboard_event;
+    friend class mouse_event;
     friend class input_layer;
     public:
         input_event() { active=FALSE; event_type=FALSE; }
@@ -15,6 +16,17 @@ class input_event
     private:
         bool active;
         int event_type;
+};
+
+class mouse_event: public input_event
+{
+    public:
+        mouse_event( int b, bool ot );
+        void update();
+    private:
+        int button;
+        bool one_time;
+        bool wait_for_release;
 };
 
 class keyboard_event: public input_event

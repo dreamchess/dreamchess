@@ -1,10 +1,10 @@
 
 #include "chess_board.h"
 
-chess_board::chess_board(std::string msh2, std::string tx2, scene *parent)
+chess_board::chess_board(std::string name2, std::string msh2, std::string tx2, scene *parent)
 {
-    mdl = new model(msh2,tx2,parent);
-    bx = new box(8,8,tx2,parent);
+    mdl = new model(name2,msh2,tx2,parent);
+    bx = new box(name2,8,8,tx2,parent);
     parent_scene=parent;
 }
 

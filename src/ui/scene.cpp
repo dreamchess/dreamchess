@@ -66,7 +66,7 @@ void scene::start()
             // Printf update and frame info.
             if ( SDL_GetTicks()-last_update_tick > 1000 )
             {
-                printf( "Updates per Second: %i\n", ups );
+                //printf( "Updates per Second: %i\n", ups );
                 last_update_tick=SDL_GetTicks();
             }
             loop();

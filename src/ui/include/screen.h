@@ -3,6 +3,16 @@
 
 #include "SDL/SDL.h"
 
+class vec
+{
+    public:
+        vec( float xp, float yp, float zp){x=xp;y=yp;z=zp;}
+        float x, y, z;
+};
+
+vec GetOGLPos(vec pos);
+vec get_mouse();
+
 class screen
 {
     int width, height;

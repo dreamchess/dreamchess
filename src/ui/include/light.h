@@ -1,11 +1,15 @@
 
+#ifndef __LIGHT_H
+#define __LIGHT_H
+
 #include "entity.h"
 
 class light: public entity
 {
     public:
-        light();
+        light(std::string name2);
         void render();
-        void update();
-        
+        void update();        
 };
+
+#endif
