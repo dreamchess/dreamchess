@@ -138,28 +138,35 @@ fi
 
 have_gl="no"
 
-if test "$host_os" = "mingw32"; then
-	AC_CHECK_LIB(shlwapi, main, [],
-		[AC_MSG_ERROR([Cannot find shlwapi library.])])
-	AC_CHECK_LIB(opengl32, main,
-		AC_CHECK_LIB(glu32, main,
-			[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
-			)
-		)
-elif test x"$CC" = xkos-cc; then
-	AC_CHECK_LIB(gl, glBegin,
-		[OPENGL_LIBS="-lgl" have_gl="yes"]
-		)
-else
-	AC_CHECK_LIB(GL, glBegin,
-		AC_CHECK_LIB(GLU, gluUnProject,
-			[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"],
-			AC_CHECK_LIB(GL, gluUnProject,
-				[OPENGL_LIBS="-lGL" have_gl="yes"]
+case $host_os in
+	mingw32*)
+		AC_CHECK_LIB(shlwapi, main, [],
+			[AC_MSG_ERROR([Cannot find shlwapi library.])])
+		AC_CHECK_LIB(opengl32, main,
+			AC_CHECK_LIB(glu32, main,
+				[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
 				)
+			) ;;
+	darwin*)
+		AC_MSG_CHECKING([for OpenGL framework])
+		dc_libs=$LIBS
+		LIBS="-Wl,-framework,OpenGL"
+		AC_LINK_IFELSE([char gluUnProject(); int main(){return gluUnProject();}],
+			[OPENGL_LIBS="-Wl,-framework,OpenGL" have_gl="yes" ; AC_MSG_RESULT([yes])],
+			[AC_MSG_RESULT([no])]
 			)
-		)
-fi
+		LIBS=$dc_libs
+		;;
+	*)
+		AC_CHECK_LIB(GL, glBegin,
+			AC_CHECK_LIB(GLU, gluUnProject,
+				[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"],
+				AC_CHECK_LIB(GL, gluUnProject,
+					[OPENGL_LIBS="-lGL" have_gl="yes"]
+					)
+				)
+			) ;;
+esac
 
 if test x"$have_sdl_image_h" = xyes -a \
 	x"$have_sdl_opengl_h" = xyes -a \
@@ -313,12 +320,6 @@ else
 		DREAMER_LIBS="../libs/libpipe_unix.a"
 		AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
 	fi
-fi
-
-if test x"$CC" = xkos-cc; then
-	DREAMCHESS_LIBS="${DREAMCHESS_LIBS} libs/minizip/libminizip.a"
-	MINIZIP_LIB="libminizip.a"
-	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
 fi
 
 AC_CHECK_LIB(pthread, pthread_create, [have_pthread="yes" PTHREAD_LIBS="-lpthread"], [have_pthread="no"])
