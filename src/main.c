@@ -22,6 +22,10 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#ifdef WITH_UI_SDLGL
+#include "sdl.h"
+#endif
+
 #ifndef COMM_SDL_THREADS
 
 #include <stdio.h>

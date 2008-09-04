@@ -1,7 +1,7 @@
-SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio macosx
+SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
-EXTRA_DIST = win32.rc win32.ico beos.rdef
+EXTRA_DIST = win32.rc win32.ico beos.rdef macosx
 bin_PROGRAMS = dreamchess
 INCLUDES = -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
@@ -24,6 +24,11 @@ win32_rc.$(OBJEXT): win32.rc win32.ico
 
 beos.rsrc:
 	@RC@ beos.rdef
+
+DreamChess.app: dreamchess$(EXEEXT) dreamer/dreamer$(EXEEXT)
+	$(top_srcdir)/src/macosx/makeapp.pl
+
+all-local: @DREAMCHESS_APP@
 
 if BEOS_RC
 dreamchess$(EXEEXT): $(dreamchess_OBJECTS) $(dreamchess_DEPENDENCIES) beos.rsrc

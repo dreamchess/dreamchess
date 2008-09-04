@@ -48,6 +48,11 @@ if test x"$have_gnuc_varargs" = xyes; then
 	AC_DEFINE([HAVE_GNUC_VARARGS_MACROS], [1], [Define to 1 if the compiler supports GNU C varargs macros.])
 fi
 
+case $host_os in
+	darwin*)
+		AC_SUBST([DREAMCHESS_APP], [DreamChess.app]) ;;
+esac
+
 # Checks for libraries.
 dnl Check for SDL
 AC_ARG_WITH([sdl], [  --without-sdl           do not use SDL])
@@ -356,8 +361,6 @@ AC_C_VOLATILE
 AC_CONFIG_FILES([Makefile
 		desktop/Makefile
 		doc/Makefile
-		DreamChess.xcodeproj/Makefile
-		English.lproj/Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
@@ -372,7 +375,6 @@ AC_CONFIG_FILES([Makefile
 		src/include/minizip/Makefile
 		src/ui_sdlgl/Makefile
 		src/dreamer/Makefile
-		src/macosx/Makefile
 		src/gamegui_dialogs/Makefile])
 AC_OUTPUT
 
