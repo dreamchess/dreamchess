@@ -8,9 +8,5 @@ noinst_HEADERS = engine.h gamegui.h main_sdlthd.h pipe_mem.h pipe_unix.h \
 
 svn_version.h:
 	if [ -d .svn ]; then \
-		( \
-		echo -n '#define SVN_VERSION "'; \
-		svnversion -n ../..; \
-		echo '"'; \
-		) > svn_version.h; \
+		echo '#define SVN_VERSION "'`svnversion -n ../..`'"' > svn_version.h; \
 	fi
