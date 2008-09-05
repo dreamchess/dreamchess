@@ -5,6 +5,8 @@ use File::Path;
 
 $base = "DreamChess.app/Contents";
 
+print "Building DreamChess.app\n";
+
 sub finddeps {
   my($filename) = @_;
   my @libs = `otool -L $filename`;
@@ -17,9 +19,9 @@ sub finddeps {
     if (/^\t(\/System)|(\/usr\/lib)|($filename)/) {
       next;
     }
-    (my $orglib = $_) =~ s/^\t([^ ]*) .*$/\1/;
+    (my $orglib = $_) =~ s/^\t([^ ]*) .*$/$1/;
     if (!exists($deps{$orglib})) {
-      (my $libfile = $orglib) =~ s/[^ ]*\/([^\/ ]*)$/\1/;
+      (my $libfile = $orglib) =~ s/[^ ]*\/([^\/ ]*)$/$1/;
       $deps{$orglib} = $libfile;
       finddeps($orglib);
     }
@@ -29,9 +31,7 @@ sub finddeps {
 sub fixdeps {
   my($filename) = @_;
 
-  print "Fixing dependencies for $filename:\n";
   foreach my $dep (keys(%deps)) {
-    print "\t$dep\n";
     system("install_name_tool -change $dep \@executable_path/../Frameworks/$deps{$dep} $filename");
   }
 }
@@ -39,7 +39,7 @@ sub fixdeps {
 sub copylibs {
   foreach my $dep (keys(%deps)) {
     my $filename = "DreamChess.app/Contents/Frameworks/$deps{$dep}";
-    print "Copying $dep to $filename\n";
+    print "Importing $dep\n";
     copy($dep, $filename);
     system("install_name_tool -id \@executable_path/../Frameworks/$deps{$dep} $filename");
     fixdeps($filename);
@@ -62,3 +62,18 @@ $mode = 0755;
 chmod($mode, $filename);
 fixdeps($filename);
 copylibs;
+
+open(file, "include/svn_version.h");
+my $version = join("", <file>);
+close(file);
+$version =~ s/^.*("|:)([0-9M]*)"(.|\n)*$/$2/;
+open(FH, "macosx/Info.plist");
+my $plist = join("", <FH>);
+close(FH);
+$plist =~ s/SVNVERSION/$version/;
+open(FH, ">$base/Info.plist");
+print FH $plist;
+close(FH);
+
+system("cp -R ../data/* $base/Resources/");
+system("find $base/Resources/ -type d -name '.svn' -print | xargs rm -rf");

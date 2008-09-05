@@ -25,8 +25,8 @@ win32_rc.$(OBJEXT): win32.rc win32.ico
 beos.rsrc:
 	@RC@ beos.rdef
 
-DreamChess.app: dreamchess$(EXEEXT) dreamer/dreamer$(EXEEXT)
-	$(top_srcdir)/src/macosx/makeapp.pl
+DreamChess.app: dreamchess$(EXEEXT) dreamer/dreamer$(EXEEXT) macosx/makeapp.pl macosx/Info.plist
+	@macosx/makeapp.pl
 
 all-local: @DREAMCHESS_APP@
 
