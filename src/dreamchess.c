@@ -607,8 +607,6 @@ int dreamchess(void *data)
 	
 			sprintf( temp3, "%s%sdreamer", temp2, temp1 );				
 		
-			printf( "%s\n", temp3 );
-		
 			game_set_engine_error(comm_init(temp3));
 		}
 		else
