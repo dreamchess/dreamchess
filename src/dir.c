@@ -105,6 +105,54 @@ int ch_userdir()
     return chdir("/ram");
 }
 
+#elif defined __APPLE__
+
+#include "CoreFoundation/CoreFoundation.h"
+
+#define USERDIR "Library/Application Support/DreamChess"
+
+int ch_datadir()
+{
+	char temp1[200];
+	char temp2[200];
+	char temp3[200];
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+	CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
+	CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
+	
+	CFStringRef stringref=CFURLCopyPath( bundledir );	
+	CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
+	
+	stringref=CFURLCopyPath( resdir );	
+	CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
+	
+	sprintf( temp3, "%s%s", temp2, temp1 );
+	
+	chdir(temp3);
+}
+
+int ch_userdir()
+{
+    char *home = getenv("HOME");
+
+    if (!home)
+        return -1;
+
+    if (chdir(home))
+        return -1;
+
+    if (chdir(USERDIR))
+    {
+        if (mkdir(USERDIR, 0755))
+            return -1;
+
+        return chdir(USERDIR);
+    }
+
+    return 0;
+}
+
 #else /* !__WIN32__ && !_arch_dreamcast */
 
 #define USERDIR ".dreamchess"

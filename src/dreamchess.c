@@ -42,6 +42,10 @@
 #include "audio.h"
 #include "system_config.h"
 
+#ifdef __APPLE__
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
 #else
@@ -583,7 +587,35 @@ int dreamchess(void *data)
         ch_userdir();
         option = config_get_option("first_engine");
 
-        game_set_engine_error(comm_init(option->string));
+#ifdef __APPLE__
+		char temp1[200];
+		char temp2[200];
+		char temp3[200];
+				
+		if (!strcmp(option->string,"dreamer") || !strcmp(option->string,"Dreamer") )
+		{
+			CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+			CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
+			CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
+	
+			CFStringRef stringref=CFURLCopyPath( bundledir );	
+			CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
+	
+			stringref=CFURLCopyPath( resdir );	
+			CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
+	
+			sprintf( temp3, "%s%sdreamer", temp2, temp1 );				
+		
+			printf( "%s\n", temp3 );
+		
+			game_set_engine_error(comm_init(temp3));
+		}
+		else
+		game_set_engine_error(comm_init(option->string));		
+#else
+		game_set_engine_error(comm_init(option->string));
+#endif
 
         comm_send("xboard\n");
 
