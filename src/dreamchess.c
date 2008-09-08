@@ -596,16 +596,12 @@ int dreamchess(void *data)
 		{
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
 
-			CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
-			CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
-	
-			CFStringRef stringref=CFURLCopyPath( bundledir );	
+			CFURLRef bundledir=CFBundleCopyBundleURL(mainBundle);
+			CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );	
 			CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
 	
-			stringref=CFURLCopyPath( resdir );	
-			CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
-	
-			sprintf( temp3, "%s%sdreamer", temp2, temp1 );				
+			sprintf( temp3, "%s/contents/MacOS/dreamer", temp1 );
+			printf( "%s\n", temp3 );				
 		
 			game_set_engine_error(comm_init(temp3));
 		}

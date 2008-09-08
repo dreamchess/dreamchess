@@ -77,4 +77,4 @@ close(FH);
 
 system("cp -R ../data/* $base/Resources/");
 system("find $base/Resources/ -type d -name '.svn' -print | xargs rm -rf");
-system("cp dreamer/dreamer $base/Resources/");
+system("cp dreamer/dreamer $base/MacOS/");
