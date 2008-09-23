@@ -1,6 +1,5 @@
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include "SDL_opengl.h"
 #include "camera.h"
 
 camera::camera(std::string name2)

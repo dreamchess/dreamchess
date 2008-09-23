@@ -1,5 +1,5 @@
 
-#include "SDL/SDL.h"
+#include "SDL.h"
 #include "resource.h"
 
 resource::resource( std::string n, std::string t, void *d )

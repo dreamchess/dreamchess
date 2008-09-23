@@ -2,9 +2,8 @@
 #ifndef __MESH_H
 #define __MESH_H
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include "SDL/SDL.h"
+#include "SDL_opengl.h"
+#include "SDL.h"
 #include <string>
 
 typedef enum primitive_type

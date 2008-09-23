@@ -1,5 +1,5 @@
 
-#include "SDL/SDL.h"
+#include "SDL.h"
 #include "input.h"
 
 void input_layer::update()

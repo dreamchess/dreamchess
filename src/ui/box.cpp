@@ -1,6 +1,5 @@
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include "SDL_opengl.h"
 #include "box.h"
 #include "scene.h"
 #include "resource.h"

@@ -1,7 +1,7 @@
 #ifndef __SCREEN_H_
 #define __SCREEN_H_
 
-#include "SDL/SDL.h"
+#include "SDL.h"
 
 class vec
 {
