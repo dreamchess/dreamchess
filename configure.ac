@@ -49,6 +49,11 @@ if test x"$have_gnuc_varargs" = xyes; then
 	AC_DEFINE([HAVE_GNUC_VARARGS_MACROS], [1], [Define to 1 if the compiler supports GNU C varargs macros.])
 fi
 
+case $host_os in
+	darwin*)
+		AC_SUBST([DREAMCHESS_APP], [DreamChess.app]) ;;
+esac
+
 # Checks for libraries.
 dnl Check for SDL
 AC_ARG_WITH([sdl], [  --without-sdl           do not use SDL])
@@ -139,28 +144,35 @@ fi
 
 have_gl="no"
 
-if test "$host_os" = "mingw32"; then
-	AC_CHECK_LIB(shlwapi, main, [],
-		[AC_MSG_ERROR([Cannot find shlwapi library.])])
-	AC_CHECK_LIB(opengl32, main,
-		AC_CHECK_LIB(glu32, main,
-			[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
-			)
-		)
-elif test x"$CC" = xkos-cc; then
-	AC_CHECK_LIB(gl, glBegin,
-		[OPENGL_LIBS="-lgl" have_gl="yes"]
-		)
-else
-	AC_CHECK_LIB(GL, glBegin,
-		AC_CHECK_LIB(GLU, gluUnProject,
-			[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"],
-			AC_CHECK_LIB(GL, gluUnProject,
-				[OPENGL_LIBS="-lGL" have_gl="yes"]
+case $host_os in
+	mingw32*)
+		AC_CHECK_LIB(shlwapi, main, [],
+			[AC_MSG_ERROR([Cannot find shlwapi library.])])
+		AC_CHECK_LIB(opengl32, main,
+			AC_CHECK_LIB(glu32, main,
+				[OPENGL_LIBS="-lopengl32 -lglu32" have_gl="yes"]
 				)
+			) ;;
+	darwin*)
+		AC_MSG_CHECKING([for OpenGL framework])
+		dc_libs=$LIBS
+		LIBS="-Wl,-framework,OpenGL"
+		AC_LINK_IFELSE([char gluUnProject(); int main(){return gluUnProject();}],
+			[OPENGL_LIBS="-Wl,-framework,OpenGL" have_gl="yes" ; AC_MSG_RESULT([yes])],
+			[AC_MSG_RESULT([no])]
 			)
-		)
-fi
+		LIBS=$dc_libs
+		;;
+	*)
+		AC_CHECK_LIB(GL, glBegin,
+			AC_CHECK_LIB(GLU, gluUnProject,
+				[OPENGL_LIBS="-lGL -lGLU" have_gl="yes"],
+				AC_CHECK_LIB(GL, gluUnProject,
+					[OPENGL_LIBS="-lGL" have_gl="yes"]
+					)
+				)
+			) ;;
+esac
 
 if test x"$have_sdl_image_h" = xyes -a \
 	x"$have_sdl_opengl_h" = xyes -a \
@@ -316,12 +328,6 @@ else
 	fi
 fi
 
-if test x"$CC" = xkos-cc; then
-	DREAMCHESS_LIBS="${DREAMCHESS_LIBS} libs/minizip/libminizip.a"
-	MINIZIP_LIB="libminizip.a"
-	AC_SUBST(MINIZIP_CFLAGS, "-DZ_BUFSIZE=2048 -DUNZ_BUFSIZE=2048")
-fi
-
 AC_CHECK_LIB(pthread, pthread_create, [have_pthread="yes" PTHREAD_LIBS="-lpthread"], [have_pthread="no"])
 AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])])
 AC_CHECK_LIB(mxml, mxmlLoadFile, [MXML_LIBS="-lmxml"], [AC_MSG_ERROR([Cannot find Mini-XML library.])], [${PTHREAD_LIBS}])
@@ -356,8 +362,6 @@ AC_C_VOLATILE
 AC_CONFIG_FILES([Makefile
 		desktop/Makefile
 		doc/Makefile
-		DreamChess.xcodeproj/Makefile
-		English.lproj/Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
@@ -372,9 +376,9 @@ AC_CONFIG_FILES([Makefile
 		src/include/minizip/Makefile
 		src/ui_sdlgl/Makefile
 		src/dreamer/Makefile
-		src/macosx/Makefile
 		src/gamegui_dialogs/Makefile
-        src/ui/Makefile])
+		src/macosx/Info.plist
+		src/ui/Makefile])
 AC_OUTPUT
 
 cat <<_ACEOF

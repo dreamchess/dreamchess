@@ -1,4 +1,4 @@
-SUBDIRS = desktop doc src man m4 pkg DreamChess.xcodeproj English.lproj
+SUBDIRS = desktop doc src man m4 pkg
 EXTRA_DIST = data Info.plist COPYRIGHT
 ACLOCAL_AMFLAGS = -I m4
 

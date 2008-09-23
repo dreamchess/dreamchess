@@ -509,6 +509,9 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_EnableUNICODE(1);
 
     ch_datadir();
+    
+    #ifndef __APPLE__
+    
     icon = IMG_Load("icon.png");
 
     if (!icon)
@@ -519,6 +522,8 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     SDL_WM_SetIcon(icon, NULL);
     SDL_FreeSurface(icon);
+
+	#endif
 
 #ifdef _arch_dreamcast
     dc_draw_vmu_icon();
