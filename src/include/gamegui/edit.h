@@ -23,7 +23,9 @@
 
 #include <gamegui/system.h>
 #include <gamegui/widget.h>
+#include <gamegui/container.h>
 #include <gamegui/queue.h>
+#include <gamegui/scrollbarv.h>
 
 #define EDIT_SPACING 2
 #define EDIT_LINE_SPACING 2
@@ -36,7 +38,7 @@ struct gg_edit_line {
 };
 
 #define GG_EDIT_DATA \
-    GG_WIDGET_DATA \
+    GG_CONTAINER_DATA \
     TAILQ_HEAD(lines_head, gg_edit_line) lines; \
     int lines_nr; \
     int display_pos; \

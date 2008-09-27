@@ -589,7 +589,7 @@ board_eval_complete(board_t *board, int side, int alpha, int beta)
             eval_bad_bishops(board, &eval_data, side) +
             eval_development(board, side) +
             eval_rook_bonus(board, &eval_data, side) +
-            eval_king_tropism(board, side);
+            eval_king_tropism(board, side) + 192; /* Add 192 to have the starting position score 0 */
 
     if (board->current_player == side)
         return eval1 + eval2;

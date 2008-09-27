@@ -21,8 +21,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <gamegui/edit.h>
-#include <gamegui/clipping.h>
+#include <gamegui/scrollbarv.h>
+
+#define SCROLLBARV_WIDTH 16
 
 static gg_colour_t col_grey = {
     0.5f, 0.5f, 0.5f, 1.0f
@@ -36,7 +37,7 @@ static gg_colour_t col_text = {
     1.0f, 1.0f, 1.0f, 1.0f
 };
 
-gg_class_id gg_edit_get_class_id()
+gg_class_id gg_scrollbarv_get_class_id()
 {
 GG_CHILD(gg_widget_get_class_id())
 }
@@ -52,12 +53,12 @@ static int string_width(char *s, int n)
     return retval;
 }
 
-void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
+void gg_scrollbarv_render(gg_widget_t * widget, int x, int y, int focus)
 {
-    gg_edit_t *edit = GG_EDIT(widget);
+    gg_scrollbarv_t *scrollbarv = GG_SCROLLBARV(widget);
     gg_rect_t rect;
     gg_colour_t *colour;
-    struct gg_edit_line *line;
+    struct gg_scrollbarv_line *line;
 
     switch (focus)
     {
@@ -76,60 +77,32 @@ void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 	if (!widget->enabled)
 		colour = &col_grey;
 	
-    gg_system_draw_rect(x, y, edit->width_a, edit->height_a, colour);
-
-    x += EDIT_SPACING;
-    y += EDIT_SPACING;
-
-    rect.x = x;
-    rect.y = y;
-    rect.width = edit->width_a - 2 * EDIT_SPACING;
-    rect.height = edit->height_a - 2 * EDIT_SPACING;
-    gg_clipping_adjust(&rect);
-
-    TAILQ_FOREACH(line, &edit->lines, entries) {
-        gg_system_draw_string(line->text, x, y, colour, 0, 0);
-        y += edit->line_height;
-    }
-
-    gg_clipping_undo();
+    gg_system_draw_rect(x, y, scrollbarv->width_a, scrollbarv->height_a, colour);
 }
 
-int gg_edit_input(gg_widget_t * widget, gg_event_t event)
+int gg_scrollbarv_input(gg_widget_t * widget, gg_event_t event)
 {
     return 1;
 }
 
-void gg_edit_append(gg_edit_t *edit, char *text)
+void gg_scrollbarv_init(gg_scrollbarv_t * scrollbarv, int height)
 {
-    struct gg_edit_line *line = malloc(sizeof(struct gg_edit_line));
-    line->text = strdup(text);
-    TAILQ_INSERT_TAIL(&edit->lines, line, entries);
+    gg_widget_init((gg_widget_t *) scrollbarv);
+
+    scrollbarv->render = gg_scrollbarv_render;
+    scrollbarv->input = gg_scrollbarv_input;
+    scrollbarv->id = gg_scrollbarv_get_class_id();
+    scrollbarv->enabled = 1;
+    scrollbarv->width = SCROLLBARV_WIDTH;
+    scrollbarv->height = height;
 }
 
-void gg_edit_init(gg_edit_t * edit, int width, int height)
+gg_widget_t *gg_scrollbarv_create(int height)
 {
-    gg_container_init((gg_container_t *) edit);
+    gg_scrollbarv_t *scrollbarv = malloc(sizeof(gg_scrollbarv_t));
 
-    edit->render = gg_edit_render;
-    edit->input = gg_edit_input;
-    edit->id = gg_edit_get_class_id();
-    TAILQ_INIT(&edit->lines);
-    edit->enabled = 1;
-    edit->width = width + EDIT_SPACING * 2;
-    edit->height = height + EDIT_SPACING * 2;
-    edit->display_pos = 0;
-    gg_system_get_string_size("W", NULL, &edit->line_height);
-    edit->line_height += EDIT_LINE_SPACING;
-    gg_container_append(GG_CONTAINER(edit), gg_scrollbarv_create(edit->height));
-}
+    gg_scrollbarv_init(scrollbarv, height);
 
-gg_widget_t *gg_edit_create(int width, int height)
-{
-    gg_edit_t *edit = malloc(sizeof(gg_edit_t));
-
-    gg_edit_init(edit, width, height);
-
-    return GG_WIDGET(edit);
+    return GG_WIDGET(scrollbarv);
 }
 

@@ -176,7 +176,7 @@ int check_abort(int ply)
 {
     char *s;
 
-    if (!(state.flags & FLAG_PONDER) && (get_time() >= state.move_now_time))
+    if (!(state.flags & FLAG_PONDER) && (clock_get(&state.move_time) <= 0))
         return 1;
 
     s = e_comm_poll();
@@ -227,21 +227,23 @@ static void set_start_time()
     start_time = tv.tv_sec;
 }
 
-static void set_move_now_time()
+void set_move_time()
 {
-    int safe_time = state.engine_time - 1000;
+    int safe_time = clock_get(&state.engine_time) - 1000;
+
+    clock_init(&state.move_time, 1);
 
     if (safe_time > 0)
     {
         if (state.time.mps == 0)
-            state.move_now_time = get_time() + safe_time / 30 + state.time.inc;
+            clock_set(&state.move_time, safe_time / 30 + state.time.inc);
         else {
             int moves_left = state.time.mps - (state.moves / 2) % state.time.mps;
-            state.move_now_time = get_time() + safe_time / moves_left + state.time.inc;
+            clock_set(&state.move_time, safe_time / moves_left + state.time.inc);
         }
     }
     else
-        state.move_now_time = 0;
+        clock_set(&state.move_time, 0);
 }
 
 int get_time()
@@ -255,11 +257,30 @@ int get_time()
     return tv.tv_sec * 100 + tv.tv_usec / 10000;
 }
 
+static void update_clock(state_t *state)
+{
+    int val;
+
+    if (state->time.mps == 0)
+        return;
+
+    val = clock_get(&state->engine_time);
+
+    if ((((state->moves  + 1) / 2) % state->time.mps) == 0)
+        val += state->time.base;
+
+    val += state->time.inc;
+
+    clock_set(&state->engine_time, val);
+}
+
 void send_move(state_t *state, move_t move)
 {
     char *str = coord_move_str(move);
     do_move(state, move);
     e_comm_send("move %s\n", str);
+    clock_stop(&state->move_time);
+    update_clock(state);
     free(str);
     check_game_end(state);
 }
@@ -269,19 +290,14 @@ int engine()
     e_comm_init();
     set_start_time();
 
-    setup_board(&state.board);
-    state.mode = MODE_IDLE;
-    state.flags = 0;
-    state.undo_data = 0;
-    state.moves = 0;
     state.time.mps = 40;
     state.time.base = 5;
     state.time.inc = 0;
-    state.done = 0;
-    state.hint = NO_MOVE;
     set_option(OPTION_QUIESCE, 1);
     set_option(OPTION_PONDER, 0);
     set_option(OPTION_POST, 0);
+
+    command_handle(&state, "new");
 
     while (state.mode != MODE_QUIT)
     {
@@ -303,8 +319,9 @@ int engine()
             if (my_turn(&state))
             {
                 state.flags = 0;
-                set_move_now_time();
+                set_move_time();
 
+		clock_start(&state.engine_time);
                 move = find_best_move(&state);
 
                 if (state.flags & FLAG_NEW_GAME)
@@ -312,14 +329,13 @@ int engine()
                 else if (MOVE_IS_REGULAR(move))
                 {
                     send_move(&state, move);
+		    clock_stop(&state.engine_time);
                     if (get_option(OPTION_PONDER))
                         state.flags |= FLAG_PONDER;
                 }
             }
             else if (state.flags & FLAG_PONDER)
             {
-                set_move_now_time();
-
                 move = ponder(&state);
 
                 if (state.flags & FLAG_NEW_GAME)

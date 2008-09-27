@@ -18,30 +18,25 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#include <sys/time.h>
 
-#include <gamegui/system.h>
-#include <gamegui/action.h>
-#include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
-#include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
-#include <gamegui/bin.h>
-#include <gamegui/dialog.h>
-#include <gamegui/image.h>
-#include <gamegui/select.h>
-#include <gamegui/seperatorh.h>
-#include <gamegui/seperatorv.h>
-#include <gamegui/widget.h>
-#include <gamegui/frame.h>
-#include <gamegui/viewport.h>
-#include <gamegui/edit.h>
-#include <gamegui/scrollbarv.h>
+#ifndef CLOCK_H
+#define CLOCK_H
 
-#endif /* GAMEGUI_H */
+#define CLOCK_DOWN (1 << 0)
+#define CLOCK_RUNNING (1 << 1)
+
+typedef struct
+{
+	int flags;
+	int val; /* Current value */
+	struct timeval start_time; /* Time when clock was started */
+} clock;
+
+int clock_get(clock *c);
+void clock_set(clock *c, int val);
+void clock_start(clock *c);
+void clock_stop(clock *c);
+void clock_init(clock *c, int down);
+
+#endif /* CLOCK_H */

@@ -18,10 +18,11 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STATE_H
-#define STATE_H
+#ifndef DREAMER_H
+#define DREAMER_H
 
 #include "board.h"
+#include "clock.h"
 
 #define MODE_WHITE 0
 #define MODE_BLACK 1
@@ -64,9 +65,8 @@ typedef struct state
     int moves;
     int options;
     struct time_control time;
-    int engine_time;
-    int opponent_time;
-    int move_now_time;
+    clock engine_time;
+    clock move_time;
     move_t hint;
     move_t ponder_opp_move;
     move_t ponder_my_move;
@@ -95,5 +95,6 @@ void set_option(int option, int value);
 int get_time();
 int is_check(board_t *board, int ply);
 void send_move(state_t *state, move_t move);
+void set_move_time();
 
-#endif /* STATE_H */
+#endif /* DREAMER_H */

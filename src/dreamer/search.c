@@ -33,6 +33,7 @@
 #include "dreamer.h"
 #include "e_comm.h"
 #include "commands.h"
+#include "clock.h"
 
 /* #define DEBUG */
 
@@ -383,6 +384,8 @@ find_best_move(state_t *state)
     abort_search = 0;
     pv_len[0] = 0;
 
+    clock_start(&state->move_time);
+
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
         int alpha = ALPHABETA_MIN;
@@ -494,6 +497,8 @@ ponder(state_t *state)
 	state->ponder_opp_move = state->hint;
 	do_move(state, state->ponder_opp_move);
         state->flags = FLAG_DELAY_MOVE;
+
+        set_move_time();
 
         command_handle(state, "hint");
 	move = find_best_move(state);

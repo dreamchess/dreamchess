@@ -433,6 +433,7 @@ static int parse_time_control(state_t *state, char *s)
         return 1;
 
     state->time = t;
+    clock_set(&state->engine_time, t.base);
     return 0;
 }
 
@@ -459,22 +460,12 @@ static int command_always(state_t *state, char *command)
         if (errno || *end != 0)
             BADPARAM(command);
         else
-            state->engine_time = time;
+            clock_set(&state->engine_time, time);
         return 1;
     }
 
     if (!strncmp(command, "otim ", 5))
-    {
-        int time;
-        char *end;
-        errno = 0;
-        time = strtol(command + 5, &end, 10);
-        if (errno || *end != 0)
-            BADPARAM(command);
-        else
-            state->opponent_time = time;
         return 1;
-    }
 
     return 0;
 }
@@ -516,6 +507,9 @@ int command_usermove(state_t *state, char *command)
             NOT_NOW(command);
             return 0;
         }
+
+	if (state->mode == MODE_WHITE || state->mode == MODE_BLACK)
+		clock_start(&state->engine_time);
 
         do_move(state, move);
         check_game_end(state);
@@ -582,7 +576,7 @@ void command_handle(state_t *state, char *command)
     if (!strncmp(command, "accepted ", 9))
     {
         if (!strcmp(command + 9, "setboard") || !strcmp(command + 9, "done")
-            || !strcmp(command + 9, "myname"))
+            || !strcmp(command + 9, "myname") || !strcmp(command + 9, "colors"))
             return;
 
         BADPARAM(command);
@@ -596,13 +590,24 @@ void command_handle(state_t *state, char *command)
         clear_table();
         pv_clear();
         repetition_init(&state->board);
+        state->done = 0;
+        state->mode = MODE_BLACK;
         state->flags = 0;
         state->depth = MAX_DEPTH;
-        state->mode = MODE_BLACK;
-        state->done = 0;
+
+	if (state->undo_data != NULL)
+		free(state->undo_data);
+	state->undo_data = NULL;
+
+	state->moves = 0;
+	clock_init(&state->engine_time, 1);
+	clock_set(&state->engine_time, state->time.base * 60 * 100);
+	clock_init(&state->move_time, 1);
+
         state->hint = NO_MOVE;
         state->ponder_opp_move = NO_MOVE;
         state->ponder_my_move = NO_MOVE;
+        state->ponder_actual_move = NO_MOVE;
         return;
     }
 
@@ -843,6 +848,9 @@ int command_check_abort(state_t *state, int ply, char *command)
                 e_comm_send("Illegal move: %s\n", command);
                 return 0;
             }
+
+            /* Start our timer */
+            clock_start(&state->engine_time);
 
             if (move == state->ponder_opp_move)
             {

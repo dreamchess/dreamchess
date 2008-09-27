@@ -23,7 +23,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #ifdef WITH_UI_SDLGL
-#include "sdl.h"
+#include "SDL.h"
 #endif
 
 #ifndef COMM_SDL_THREADS
