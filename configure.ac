@@ -297,34 +297,38 @@ elif test x"$enable_linked_engine" = xyes; then
 	AC_MSG_ERROR([Option `--enable-linked-engine' requires SDL, which was not found or disabled.])
 else
 	AC_SUBST(DREAMER, "dreamer\$(EXEEXT)")
-	if test "$host_os" = "mingw32"; then
-		AC_SUBST(PIPE_LIB, "libpipe_win32.a")
-		AC_CHECK_TOOL(WINDRES, windres)
-		if test -n "$WINDRES"; then
-			AC_SUBST(WINDRES)
-			AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
-		fi
-		DREAMCHESS_LIBS="libs/libpipe_win32.a"
-		DREAMER_LIBS="../libs/libpipe_win32.a"
-		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
-	elif test "$host_os" = "beos"; then
-		AC_SUBST(PIPE_LIB, "libpipe_beos.a")
-		AC_CHECK_TOOL(RC, rc)
-		AC_CHECK_TOOL(XRES, xres)
-		if test -n "$RC" -a -n "$XRES"; then
-			AC_SUBST(RC)
-			AC_SUBST(XRES)
-			beos_rc="yes"
-		fi
-		DREAMCHESS_LIBS="libs/libpipe_beos.a"
-		DREAMER_LIBS="../libs/libpipe_beos.a"
-		AC_DEFINE([COMM_PIPE_UNIX], [1])
-	else
-		AC_SUBST(PIPE_LIB, "libpipe_unix.a")
-		DREAMCHESS_LIBS="libs/libpipe_unix.a"
-		DREAMER_LIBS="../libs/libpipe_unix.a"
-		AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
-	fi
+	case $host_os in
+		mingw32*)
+			AC_SUBST(PIPE_LIB, "libpipe_win32.a")
+			AC_CHECK_TOOL(WINDRES, windres)
+			if test -n "$WINDRES"; then
+				AC_SUBST(WINDRES)
+				AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
+			fi
+			DREAMCHESS_LIBS="libs/libpipe_win32.a"
+			DREAMER_LIBS="../libs/libpipe_win32.a"
+			AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
+			;;
+		beos*)
+			AC_SUBST(PIPE_LIB, "libpipe_beos.a")
+			AC_CHECK_TOOL(RC, rc)
+			AC_CHECK_TOOL(XRES, xres)
+			if test -n "$RC" -a -n "$XRES"; then
+				AC_SUBST(RC)
+				AC_SUBST(XRES)
+				beos_rc="yes"
+			fi
+			DREAMCHESS_LIBS="libs/libpipe_beos.a"
+			DREAMER_LIBS="../libs/libpipe_beos.a"
+			AC_DEFINE([COMM_PIPE_UNIX], [1])
+			;;
+		*)
+			AC_SUBST(PIPE_LIB, "libpipe_unix.a")
+			DREAMCHESS_LIBS="libs/libpipe_unix.a"
+			DREAMER_LIBS="../libs/libpipe_unix.a"
+			AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
+			;;
+	esac
 fi
 
 AC_CHECK_LIB(pthread, pthread_create, [have_pthread="yes" PTHREAD_LIBS="-lpthread"], [have_pthread="no"])
