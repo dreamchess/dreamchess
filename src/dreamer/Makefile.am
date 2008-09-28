@@ -1,6 +1,6 @@
 noinst_HEADERS = board.h dreamer.h eval.h history.h move.h repetition.h \
 	commands.h hashing.h e_comm.h move_data.h search.h transposition.h \
-	clock.h
+	timer.h
 
 INCLUDES = -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DREAMER_SDL_CFLAGS@
@@ -16,4 +16,4 @@ noinst_LIBRARIES = libdreamer.a
 libdreamer_a_SOURCES = dreamer.c e_comm_unix.c commands.c board.c \
 	gen_chess_moves.c hashing.c move.c search.c repetition.c \
 	transposition.c eval.c history.c e_comm_sdlthd.c e_comm_win32.c \
-	e_comm.c pgn_parser.y pgn_scanner.l makebook.c clock.c
+	e_comm.c pgn_parser.y pgn_scanner.l makebook.c timer.c

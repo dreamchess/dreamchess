@@ -33,7 +33,7 @@
 #include "dreamer.h"
 #include "e_comm.h"
 #include "commands.h"
-#include "clock.h"
+#include "timer.h"
 
 /* #define DEBUG */
 
@@ -384,7 +384,7 @@ find_best_move(state_t *state)
     abort_search = 0;
     pv_len[0] = 0;
 
-    clock_start(&state->move_time);
+    timer_start(&state->move_time);
 
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {

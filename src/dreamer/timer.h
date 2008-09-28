@@ -20,23 +20,23 @@
 
 #include <sys/time.h>
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#ifndef TIMER_H
+#define TIMER_H
 
-#define CLOCK_DOWN (1 << 0)
-#define CLOCK_RUNNING (1 << 1)
+#define TIMER_DOWN (1 << 0)
+#define TIMER_RUNNING (1 << 1)
 
 typedef struct
 {
 	int flags;
 	int val; /* Current value */
 	struct timeval start_time; /* Time when clock was started */
-} clock;
+} timer;
 
-int clock_get(clock *c);
-void clock_set(clock *c, int val);
-void clock_start(clock *c);
-void clock_stop(clock *c);
-void clock_init(clock *c, int down);
+int timer_get(timer *c);
+void timer_set(timer *c, int val);
+void timer_start(timer *c);
+void timer_stop(timer *c);
+void timer_init(timer *c, int down);
 
-#endif /* CLOCK_H */
+#endif /* TIMER_H */

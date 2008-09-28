@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <sys/time.h>
 #include <stdlib.h>
-#include "clock.h"
+#include "timer.h"
 
 /* Borrowed from libc.info */
 static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
@@ -47,11 +47,11 @@ static int timeval_subtract(struct timeval *result, struct timeval *x, struct ti
 	return x->tv_sec < y->tv_sec;
 }
 
-static int get_time(clock *c)
+static int get_time(timer *c)
 {
 	struct timeval tv;
 
-	if (!(c->flags & CLOCK_RUNNING))
+	if (!(c->flags & TIMER_RUNNING))
 		return 0;
 
 	gettimeofday(&tv, NULL);
@@ -60,31 +60,31 @@ static int get_time(clock *c)
 	return tv.tv_sec * 100 + tv.tv_usec / 10000;
 }
 
-int clock_get(clock *c)
+int timer_get(timer *c)
 {
-	return c->val + (c->flags & CLOCK_DOWN? -get_time(c) : get_time(c));
+	return c->val + (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
 }
 
-void clock_set(clock *c, int val)
+void timer_set(timer *c, int val)
 {
-	clock_stop(c);
+	timer_stop(c);
 	c->val = val;
 }
 
-void clock_start(clock *c)
+void timer_start(timer *c)
 {
         gettimeofday(&c->start_time, NULL);
-	c->flags |= CLOCK_RUNNING;
+	c->flags |= TIMER_RUNNING;
 }
 
-void clock_stop(clock *c)
-{	c->val += (c->flags & CLOCK_DOWN? -get_time(c) : get_time(c));
-	c->flags &= ~CLOCK_RUNNING;
+void timer_stop(timer *c)
+{	c->val += (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
+	c->flags &= ~TIMER_RUNNING;
 }
 
-void clock_init(clock *c, int down)
+void timer_init(timer *c, int down)
 {
-	clock_set(c, 0);
-	c->flags = (down? CLOCK_DOWN : 0);
+	timer_set(c, 0);
+	c->flags = (down? TIMER_DOWN : 0);
 }
 

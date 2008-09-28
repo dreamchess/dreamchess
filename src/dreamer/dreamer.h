@@ -22,7 +22,7 @@
 #define DREAMER_H
 
 #include "board.h"
-#include "clock.h"
+#include "timer.h"
 
 #define MODE_WHITE 0
 #define MODE_BLACK 1
@@ -65,8 +65,8 @@ typedef struct state
     int moves;
     int options;
     struct time_control time;
-    clock engine_time;
-    clock move_time;
+    timer engine_time;
+    timer move_time;
     move_t hint;
     move_t ponder_opp_move;
     move_t ponder_my_move;

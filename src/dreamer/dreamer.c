@@ -176,7 +176,7 @@ int check_abort(int ply)
 {
     char *s;
 
-    if (!(state.flags & FLAG_PONDER) && (clock_get(&state.move_time) <= 0))
+    if (!(state.flags & FLAG_PONDER) && (timer_get(&state.move_time) <= 0))
         return 1;
 
     s = e_comm_poll();
@@ -229,21 +229,21 @@ static void set_start_time()
 
 void set_move_time()
 {
-    int safe_time = clock_get(&state.engine_time) - 1000;
+    int safe_time = timer_get(&state.engine_time) - 1000;
 
-    clock_init(&state.move_time, 1);
+    timer_init(&state.move_time, 1);
 
     if (safe_time > 0)
     {
         if (state.time.mps == 0)
-            clock_set(&state.move_time, safe_time / 30 + state.time.inc);
+            timer_set(&state.move_time, safe_time / 30 + state.time.inc);
         else {
             int moves_left = state.time.mps - (state.moves / 2) % state.time.mps;
-            clock_set(&state.move_time, safe_time / moves_left + state.time.inc);
+            timer_set(&state.move_time, safe_time / moves_left + state.time.inc);
         }
     }
     else
-        clock_set(&state.move_time, 0);
+        timer_set(&state.move_time, 0);
 }
 
 int get_time()
@@ -264,14 +264,14 @@ static void update_clock(state_t *state)
     if (state->time.mps == 0)
         return;
 
-    val = clock_get(&state->engine_time);
+    val = timer_get(&state->engine_time);
 
     if ((((state->moves  + 1) / 2) % state->time.mps) == 0)
         val += state->time.base;
 
     val += state->time.inc;
 
-    clock_set(&state->engine_time, val);
+    timer_set(&state->engine_time, val);
 }
 
 void send_move(state_t *state, move_t move)
@@ -279,7 +279,7 @@ void send_move(state_t *state, move_t move)
     char *str = coord_move_str(move);
     do_move(state, move);
     e_comm_send("move %s\n", str);
-    clock_stop(&state->move_time);
+    timer_stop(&state->move_time);
     update_clock(state);
     free(str);
     check_game_end(state);
@@ -321,7 +321,7 @@ int engine()
                 state.flags = 0;
                 set_move_time();
 
-		clock_start(&state.engine_time);
+		timer_start(&state.engine_time);
                 move = find_best_move(&state);
 
                 if (state.flags & FLAG_NEW_GAME)
@@ -329,7 +329,7 @@ int engine()
                 else if (MOVE_IS_REGULAR(move))
                 {
                     send_move(&state, move);
-		    clock_stop(&state.engine_time);
+		    timer_stop(&state.engine_time);
                     if (get_option(OPTION_PONDER))
                         state.flags |= FLAG_PONDER;
                 }
