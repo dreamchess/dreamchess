@@ -26,8 +26,11 @@
 #include "box.h"
 #include "light.h"
 #include "chess_board.h"
+//#include "dir.h"
 
 #include "game.h"
+
+extern "C" int ch_datadir();
 
 /* constant used for converting to radians */
 const float piover180 = 0.0174532925f;
@@ -55,19 +58,21 @@ game::game()
     input.add( "CAMSHAKE", "INPUT_EVENT", (new keyboard_event(SDLK_k, TRUE)) );
     input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
 
+	//ch_datadir();
+
     // Textures.
-    add( "BOARD_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/boards/classic/board.png")) );
-    add( "WHITE_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/pieces/classic/white.png")) );
-    add( "BLACK_TEX", "TEXTURE", (new texture("/usr/local/share/dreamchess/pieces/classic/black.png")) );
+    add( "BOARD_TEX", "TEXTURE", (new texture("boards/classic/board.png")) );
+    add( "WHITE_TEX", "TEXTURE", (new texture("pieces/classic/white.png")) );
+    add( "BLACK_TEX", "TEXTURE", (new texture("pieces/classic/black.png")) );
 
     // Meshes.
-    add( "BOARD_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/boards/classic/board.dcm")) );
-    add( "KING_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/king.dcm")) );
-    add( "QUEEN_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/queen.dcm")) );
-    add( "BISHOP_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/bishop.dcm")) );
-    add( "ROOK_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/rook.dcm")) );
-    add( "KNIGHT_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/knight.dcm")) );
-    add( "PAWN_MESH", "MESH", (new mesh("/usr/local/share/dreamchess/pieces/classic/pawn.dcm")) );
+    add( "BOARD_MESH", "MESH", (new mesh("boards/classic/board.dcm")) );
+    add( "KING_MESH", "MESH", (new mesh("pieces/classic/king.dcm")) );
+    add( "QUEEN_MESH", "MESH", (new mesh("pieces/classic/queen.dcm")) );
+    add( "BISHOP_MESH", "MESH", (new mesh("pieces/classic/bishop.dcm")) );
+    add( "ROOK_MESH", "MESH", (new mesh("pieces/classic/rook.dcm")) );
+    add( "KNIGHT_MESH", "MESH", (new mesh("pieces/classic/knight.dcm")) );
+    add( "PAWN_MESH", "MESH", (new mesh("pieces/classic/pawn.dcm")) );
 
     // Entities.
     entity *e;

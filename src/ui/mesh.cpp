@@ -23,7 +23,7 @@ void mesh_make_list(mesh_t *msh)
 
         for (i = 0; i < msh->group[g].len; i++)
         {
-            unsigned int *data = msh->group[g].data;
+            unsigned int *data = (unsigned int*)msh->group[g].data;
 
             glTexCoord2fv(msh->tex_coord + data[i] * 2);
             glNormal3fv(msh->normal + data[i] * 3);

@@ -72,7 +72,7 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
     }
 
     /* Create an OpenGL texture for the image */
-    glGenTextures(1, &texture.id);
+    glGenTextures(1, (GLuint*)&texture.id);
     glBindTexture(GL_TEXTURE_2D, texture.id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -4,9 +4,9 @@
 #include <string>
 
 extern "C" {
-#include "lua50/lua.h"
-#include "lua50/lualib.h"
-#include "lua50/lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
 
 class script
