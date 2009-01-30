@@ -25,12 +25,10 @@ entity::entity()
     xpos=ypos=zpos=0.0f;
     xrot=yrot=zrot=0.0f;
     xscale=yscale=zscale=1.0f;
-    type="entity";
-    name="entity";
     parent_scene=NULL;
 
-    sc=new script("/home/kris/Devel/projects/dreamchess/linux/experimental/data/scripts/chess_piece.lua");
-    sc->run("entity_spawn");
+    sc=new script("/usr/local/share/dreamchess/scripts/chess_piece.lua");
+    //sc->run("entity_spawn");
 }
 
 bool entity::collision_at( vec pos )
@@ -42,7 +40,7 @@ bool entity::collision_at( vec pos )
     //if ( pos.z > (zpos-(zsize/2)) && pos.z < (zpos+(zsize/2)) )
     {
         printf( "Collision: %s\n", name.c_str() );
-        if ( type == "entity" );
+        if ( type == "ENTITY" );
         retval=TRUE;
     }
 

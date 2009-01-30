@@ -9,6 +9,11 @@ camera::camera(std::string name2)
     target=NULL;
 }
 
+void camera::generate_bbox()
+{
+	
+}
+
 void camera::render()
 {
     if ( target )

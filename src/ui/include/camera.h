@@ -10,6 +10,7 @@ class camera: public entity
     public:
         camera(std::string name2);
         void render();
+        void generate_bbox();
         virtual void update();
         entity *target;
 };

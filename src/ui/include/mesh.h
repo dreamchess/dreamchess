@@ -5,6 +5,7 @@
 #include "SDL_opengl.h"
 #include "SDL.h"
 #include <string>
+#include "resource.h"
 
 typedef enum primitive_type
 {
@@ -43,11 +44,10 @@ typedef struct
     GLuint list;
 }mesh_t;
 
-class mesh
+class mesh: public resource
 {
     public:
-        mesh(std::string filename);
-        std::string name;
+        mesh(std::string n, std::string t, std::string filename);
         mesh_t *mesh_data;
 };
 

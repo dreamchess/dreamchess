@@ -35,13 +35,15 @@ vec get_mouse()
     return vec(x,y,0);
 }
 
-vec GetOGLPos(vec pos)
+vec get_mouse_3d()
 {
 	GLint viewport[4];
 	GLdouble modelview[16];
 	GLdouble projection[16];
 	GLfloat winX, winY, winZ;
 	GLdouble posX, posY, posZ;
+
+	vec pos=get_mouse();
 
 	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
 	glGetDoublev( GL_PROJECTION_MATRIX, projection );

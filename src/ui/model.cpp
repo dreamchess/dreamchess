@@ -12,6 +12,11 @@ void get_size( float *xs, float *ys, float *zs, std::string msh )
     *zs=1.0f;
 }
 
+void model::generate_bbox()
+{
+	
+}
+
 model::model(std::string name2, std::string msh2, std::string tx2, scene *parent)
 {
     msh = msh2;
@@ -54,8 +59,8 @@ void model::render()
         glMateriali(GL_FRONT, GL_SHININESS, 128);
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, ((texture*)((resource*)((scene*)parent_scene)->get_resource(tx,"TEXTURE"))->data)->texture_data.id);
-        glCallList( ((mesh*)((resource*)((scene*)parent_scene)->get_resource(msh,"MESH"))->data)->mesh_data->list);
+        glBindTexture(GL_TEXTURE_2D, ((texture*)((resource*)((scene*)parent_scene)->get_resource(tx,"TEXTURE")))->texture_data.id);
+        glCallList( ((mesh*)((resource*)((scene*)parent_scene)->get_resource(msh,"MESH")))->mesh_data->list);
         glDisable(GL_TEXTURE_2D);
 
         glDisable(GL_LIGHTING);

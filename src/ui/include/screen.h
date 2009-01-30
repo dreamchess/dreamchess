@@ -10,7 +10,7 @@ class vec
         float x, y, z;
 };
 
-vec GetOGLPos(vec pos);
+vec get_mouse_3d();
 vec get_mouse();
 
 class screen

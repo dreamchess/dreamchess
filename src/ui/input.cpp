@@ -6,7 +6,7 @@ void input_layer::update()
 {
     for ( int i=0; i<resources.size();i++ )
     {
-        ((input_event*)resources[i]->data)->update();
+        ((input_event*)resources[i])->update();
     }
 }
 
@@ -16,7 +16,7 @@ bool input_layer::get_input( std::string name )
 
     for ( int i=0; i<resources.size(); i++ )
     {
-        if ( !name.compare(resources[i]->name) && ((input_event*)resources[i]->data)->active )
+        if ( !name.compare(resources[i]->name) && ((input_event*)resources[i])->active )
         {
             retval=TRUE;
         }
@@ -24,11 +24,13 @@ bool input_layer::get_input( std::string name )
     return retval;
 }
 
-mouse_event::mouse_event( int b, bool ot ): input_event() 
+mouse_event::mouse_event( std::string name2, std::string type2, int b, bool ot )//: input_event() 
 {
     button=b;
     one_time=ot;
     wait_for_release=FALSE;
+    name=name2;
+    type=type2;
 }
 
 void mouse_event::update()
@@ -37,7 +39,7 @@ void mouse_event::update()
 
     active=SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);
 
-    if ( one_time ) // Keypress should only register once.
+    if ( one_time ) // Mouse button should only register once.
     {
         if ( active )
         {
@@ -52,11 +54,13 @@ void mouse_event::update()
 
 }
 
-keyboard_event::keyboard_event( int c, bool ot ): input_event() 
+keyboard_event::keyboard_event( std::string name2, std::string type2, int c, bool ot ): input_event() 
 {
     key=c;
     one_time=ot;
     wait_for_release=FALSE;
+    name=name2;
+    type=type2;
 }
 
 void keyboard_event::update()

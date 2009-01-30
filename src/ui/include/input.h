@@ -4,7 +4,7 @@
 
 #include "resource.h"
 
-class input_event
+class input_event: public resource
 {
     friend class keyboard_event;
     friend class mouse_event;
@@ -21,7 +21,7 @@ class input_event
 class mouse_event: public input_event
 {
     public:
-        mouse_event( int b, bool ot );
+        mouse_event(std::string name2, std::string type2, int b, bool ot );
         void update();
     private:
         int button;
@@ -32,7 +32,7 @@ class mouse_event: public input_event
 class keyboard_event: public input_event
 {
     public:
-        keyboard_event( int c, bool ot );
+        keyboard_event(std::string name2, std::string type2, int c, bool ot );
         void update();
     private:
         int key;

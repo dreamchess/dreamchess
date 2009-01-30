@@ -11,10 +11,9 @@
 class resource
 {   
     public:
-        resource( std::string name, std::string type, void *data );
+        resource();
         std::string name;
         std::string type;
-        void *data;
 };
 
 class resource_list
@@ -24,7 +23,7 @@ class resource_list
         void *get_resource( std::string name, std::string type );
         bool find_resource( std::string name, std::string type );
         void update();
-        void add( std::string name, std::string type, void *data );
+        void add( resource *res );
         void clear();
         void list();
         std::vector<resource*> resources;

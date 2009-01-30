@@ -11,6 +11,7 @@ class model: public entity
         model(std::string name, std::string msh2, std::string tx2, scene *parent);
         void render();
         //void update();
+        void generate_bbox();
     private:
         std::string msh;
         std::string tx;

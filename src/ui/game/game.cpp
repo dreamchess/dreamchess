@@ -39,44 +39,44 @@ game::game()
 {
     scr = new screen(640,480);
 
-    input.add( "QUIT", "INPUT_EVENT", (new keyboard_event(SDLK_ESCAPE, TRUE)) );
+    input.add( (new keyboard_event("QUIT", "INPUT_EVENT", SDLK_ESCAPE, TRUE)) );
 
-    input.add( "UP", "INPUT_EVENT", (new keyboard_event(SDLK_UP, FALSE)) );
-    input.add( "DOWN", "INPUT_EVENT", (new keyboard_event(SDLK_DOWN, FALSE)) );
-    input.add( "LEFT", "INPUT_EVENT", (new keyboard_event(SDLK_LEFT, FALSE)) );
-    input.add( "RIGHT", "INPUT_EVENT", (new keyboard_event(SDLK_RIGHT, FALSE)) );
-    input.add( "ZOOMIN", "INPUT_EVENT", (new keyboard_event(SDLK_o, FALSE)) );
-    input.add( "ZOOMOUT", "INPUT_EVENT", (new keyboard_event(SDLK_p, FALSE)) );
+    input.add( (new keyboard_event("UP", "INPUT_EVENT", SDLK_UP, FALSE)) );
+    input.add( (new keyboard_event("DOWN", "INPUT_EVENT", SDLK_DOWN, FALSE)) );
+    input.add( (new keyboard_event("LEFT", "INPUT_EVENT", SDLK_LEFT, FALSE)) );
+    input.add( (new keyboard_event("RIGHT", "INPUT_EVENT", SDLK_RIGHT, FALSE)) );
+    input.add( (new keyboard_event("ZOOMIN", "INPUT_EVENT", SDLK_o, FALSE)) );
+    input.add( (new keyboard_event("ZOOMOUT", "INPUT_EVENT", SDLK_p, FALSE)) );
 
-    input.add( "ROTX", "INPUT_EVENT", (new keyboard_event(SDLK_q, FALSE)) );
-    input.add( "ROTY", "INPUT_EVENT", (new keyboard_event(SDLK_a, FALSE)) );
-    input.add( "ROTZ", "INPUT_EVENT", (new keyboard_event(SDLK_z, FALSE)) );
-    input.add( "ROTXN", "INPUT_EVENT", (new keyboard_event(SDLK_w, FALSE)) );
-    input.add( "ROTYN", "INPUT_EVENT", (new keyboard_event(SDLK_s, FALSE)) );
-    input.add( "ROTZN", "INPUT_EVENT", (new keyboard_event(SDLK_x, FALSE)) );
+    input.add( (new keyboard_event("ROTX", "INPUT_EVENT", SDLK_q, FALSE)) );
+    input.add( (new keyboard_event("ROTY", "INPUT_EVENT", SDLK_a, FALSE)) );
+    input.add( (new keyboard_event("ROTZ", "INPUT_EVENT", SDLK_z, FALSE)) );
+    input.add( (new keyboard_event("ROTXN", "INPUT_EVENT", SDLK_w, FALSE)) );
+    input.add( (new keyboard_event("ROTYN", "INPUT_EVENT", SDLK_s, FALSE)) );
+    input.add( (new keyboard_event("ROTZN", "INPUT_EVENT", SDLK_x, FALSE)) );
 
-    input.add( "CAMSHAKE", "INPUT_EVENT", (new keyboard_event(SDLK_k, TRUE)) );
-    input.add( "INFO", "INPUT_EVENT", (new keyboard_event(SDLK_i, TRUE)) );
+    input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, TRUE)) );
+    input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, TRUE)) );
 
 	//ch_datadir();
 
     // Textures.
-    add( "BOARD_TEX", "TEXTURE", (new texture("boards/classic/board.png")) );
-    add( "WHITE_TEX", "TEXTURE", (new texture("pieces/classic/white.png")) );
-    add( "BLACK_TEX", "TEXTURE", (new texture("pieces/classic/black.png")) );
+    add( (new texture("BOARD_TEX", "TEXTURE", "boards/classic/board.png")) );
+    add( (new texture("WHITE_TEX", "TEXTURE", "pieces/classic/white.png")) );
+    add( (new texture("BLACK_TEX", "TEXTURE", "pieces/classic/black.png")) );
 
     // Meshes.
-    add( "BOARD_MESH", "MESH", (new mesh("boards/classic/board.dcm")) );
-    add( "KING_MESH", "MESH", (new mesh("pieces/classic/king.dcm")) );
-    add( "QUEEN_MESH", "MESH", (new mesh("pieces/classic/queen.dcm")) );
-    add( "BISHOP_MESH", "MESH", (new mesh("pieces/classic/bishop.dcm")) );
-    add( "ROOK_MESH", "MESH", (new mesh("pieces/classic/rook.dcm")) );
-    add( "KNIGHT_MESH", "MESH", (new mesh("pieces/classic/knight.dcm")) );
-    add( "PAWN_MESH", "MESH", (new mesh("pieces/classic/pawn.dcm")) );
+    add( (new mesh("BOARD_MESH", "MESH", "boards/classic/board.dcm")) );
+    add( (new mesh("KING_MESH", "MESH", "pieces/classic/king.dcm")) );
+    add( (new mesh("QUEEN_MESH", "MESH", "pieces/classic/queen.dcm")) );
+    add( (new mesh("BISHOP_MESH", "MESH", "pieces/classic/bishop.dcm")) );
+    add( (new mesh("ROOK_MESH", "MESH", "pieces/classic/rook.dcm")) );
+    add( (new mesh("KNIGHT_MESH", "MESH", "pieces/classic/knight.dcm")) );
+    add( (new mesh("PAWN_MESH", "MESH", "pieces/classic/pawn.dcm")) );
 
     // Entities.
     entity *e;
-    add( "BOARD","ENTITY",(new chess_board("BOARD","BOARD_MESH","BOARD_TEX",this)) );
+    add( (new chess_board("BOARD","ENTITY","BOARD_MESH","BOARD_TEX",this)) );
 
     /* White pieces... */
    /* e = new model("KING_MESH","WHITE_TEX",this );
@@ -161,18 +161,19 @@ game::game()
 
     //Position Camera...
     camera *c = new camera("camera");
-
+	c->type="CAMERA";
     c->xpos=0.0f; c->ypos=-7.0f; c->zpos=10.0f;
     c->xrot=-32.0f; c->yrot=0.0f; c->zrot=-0.0f;
     //c->target=scn.entities[2];
-    add("CAMERA","ENTITY",c); // Camera
+    add(c); // Camera
 
     active_cam=c; // Set the camera.
 
     e = new light("light");
+    e->type="LIGHT";
     e->xpos=5.919f; e->ypos=-1.160f; e->zpos=1.299f;
     e->xrot=-90.0f; e->yrot=0.0f; e->zrot=-52.286f;
-    add("LIGHT","ENTITY",e); // Light
+    add(e); // Light
 }
 
 void game::loop()

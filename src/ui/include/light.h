@@ -9,7 +9,8 @@ class light: public entity
     public:
         light(std::string name2);
         void render();
-        void update();        
+        void update();    
+        void generate_bbox();    
 };
 
 #endif

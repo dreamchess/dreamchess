@@ -3,6 +3,7 @@
 #define __TEXTURE_H_
 
 #include <string>
+#include "resource.h"
 
 typedef struct
 {
@@ -29,10 +30,10 @@ typedef struct
 }
 texture_t;
 
-class texture
+class texture: public resource
 {
     public:
-        texture( std::string filename );
+        texture( std::string name, std::string type, std::string filename );
         ~texture();
         texture_t texture_data;
 };

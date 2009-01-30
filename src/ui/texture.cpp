@@ -133,9 +133,10 @@ void load_texture_png( texture_t *texture, char *filename, int alpha, int clamp 
         SDL_FreeSurface( texture_image );
 }
 
-texture::texture(std::string filename)
+texture::texture( std::string n, std::string t, std::string filename)
 {
     load_texture_png( &texture_data, (char*)filename.c_str(), 1, 0 );
+    name=n; type=t;
 }
 
 texture::~texture()

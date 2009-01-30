@@ -29,7 +29,7 @@ void scene::update()
     for ( int i=0; i<resources.size();i++ )
     {
         if ( resources[i]->type == "ENTITY" )
-            ((entity*)resources[i]->data)->update();
+            ((entity*)resources[i])->update();
     }  
 }
 
@@ -129,7 +129,7 @@ void scene::render()
     for ( int i=0; i<resources.size();i++ )
     {
         if ( resources[i]->type == "ENTITY" )
-            ((entity*)resources[i]->data)->render();            
+            ((entity*)resources[i])->render();            
     }
 }
 
