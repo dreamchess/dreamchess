@@ -31,6 +31,11 @@ entity::entity()
     //sc->run("entity_spawn");
 }
 
+void entity::generate_bbox()
+{
+	
+}
+
 bool entity::collision_at( vec pos )
 {
     bool retval=FALSE;

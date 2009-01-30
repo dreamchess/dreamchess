@@ -16,7 +16,7 @@ class entity: public resource
     public:
         entity();        
         virtual void render() = 0;
-        virtual void generate_bbox() = 0;
+        virtual void generate_bbox();
         void update();
         bool collision_at( vec pos );
 

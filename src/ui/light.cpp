@@ -7,6 +7,11 @@ light::light(std::string name2)
     type="light";
 }
 
+void light::generate_bbox()
+{
+	
+}
+
 void light::render()
 {
 

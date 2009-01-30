@@ -151,8 +151,8 @@ void title_screen::loop()
         //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
     }  */
 
-	//((entity*)resources[11])->xpos=get_mouse_3d().x;
-	//((entity*)resources[11])->ypos=get_mouse_3d().y;
+	((entity*)resources[11])->xpos=get_mouse_3d().x;
+	((entity*)resources[11])->ypos=get_mouse_3d().y;
 	//((entity*)resources[11])->zpos=0;
 
     if ( input.get_input("CAMSHAKE") )
