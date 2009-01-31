@@ -12,13 +12,13 @@ void input_layer::update()
 
 bool input_layer::get_input( std::string name )
 {
-    bool retval=FALSE;
+    bool retval=false;
 
     for ( int i=0; i<resources.size(); i++ )
     {
         if ( !name.compare(resources[i]->name) && ((input_event*)resources[i])->active )
         {
-            retval=TRUE;
+            retval=true;
         }
     }    
     return retval;
@@ -28,7 +28,7 @@ mouse_event::mouse_event( std::string name2, std::string type2, int b, bool ot )
 {
     button=b;
     one_time=ot;
-    wait_for_release=FALSE;
+    wait_for_release=false;
     name=name2;
     type=type2;
 }
@@ -44,12 +44,12 @@ void mouse_event::update()
         if ( active )
         {
             if ( wait_for_release )
-                active=FALSE;
+                active=false;
             else
-                wait_for_release=TRUE;
+                wait_for_release=true;
         }
         else
-            wait_for_release=FALSE;
+            wait_for_release=false;
     }
 
 }
@@ -58,7 +58,7 @@ keyboard_event::keyboard_event( std::string name2, std::string type2, int c, boo
 {
     key=c;
     one_time=ot;
-    wait_for_release=FALSE;
+    wait_for_release=false;
     name=name2;
     type=type2;
 }
@@ -75,12 +75,12 @@ void keyboard_event::update()
         if ( active )
         {
             if ( wait_for_release )
-                active=FALSE;
+                active=false;
             else
-                wait_for_release=TRUE;
+                wait_for_release=true;
         }
         else
-            wait_for_release=FALSE;
+            wait_for_release=false;
     }
 
 }

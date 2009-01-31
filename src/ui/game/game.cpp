@@ -39,24 +39,24 @@ game::game()
 {
     scr = new screen(640,480);
 
-    input.add( (new keyboard_event("QUIT", "INPUT_EVENT", SDLK_ESCAPE, TRUE)) );
+    input.add( (new keyboard_event("QUIT", "INPUT_EVENT", SDLK_ESCAPE, true)) );
 
-    input.add( (new keyboard_event("UP", "INPUT_EVENT", SDLK_UP, FALSE)) );
-    input.add( (new keyboard_event("DOWN", "INPUT_EVENT", SDLK_DOWN, FALSE)) );
-    input.add( (new keyboard_event("LEFT", "INPUT_EVENT", SDLK_LEFT, FALSE)) );
-    input.add( (new keyboard_event("RIGHT", "INPUT_EVENT", SDLK_RIGHT, FALSE)) );
-    input.add( (new keyboard_event("ZOOMIN", "INPUT_EVENT", SDLK_o, FALSE)) );
-    input.add( (new keyboard_event("ZOOMOUT", "INPUT_EVENT", SDLK_p, FALSE)) );
+    input.add( (new keyboard_event("UP", "INPUT_EVENT", SDLK_UP, false)) );
+    input.add( (new keyboard_event("DOWN", "INPUT_EVENT", SDLK_DOWN, false)) );
+    input.add( (new keyboard_event("LEFT", "INPUT_EVENT", SDLK_LEFT, false)) );
+    input.add( (new keyboard_event("RIGHT", "INPUT_EVENT", SDLK_RIGHT, false)) );
+    input.add( (new keyboard_event("ZOOMIN", "INPUT_EVENT", SDLK_o, false)) );
+    input.add( (new keyboard_event("ZOOMOUT", "INPUT_EVENT", SDLK_p, false)) );
 
-    input.add( (new keyboard_event("ROTX", "INPUT_EVENT", SDLK_q, FALSE)) );
-    input.add( (new keyboard_event("ROTY", "INPUT_EVENT", SDLK_a, FALSE)) );
-    input.add( (new keyboard_event("ROTZ", "INPUT_EVENT", SDLK_z, FALSE)) );
-    input.add( (new keyboard_event("ROTXN", "INPUT_EVENT", SDLK_w, FALSE)) );
-    input.add( (new keyboard_event("ROTYN", "INPUT_EVENT", SDLK_s, FALSE)) );
-    input.add( (new keyboard_event("ROTZN", "INPUT_EVENT", SDLK_x, FALSE)) );
+    input.add( (new keyboard_event("ROTX", "INPUT_EVENT", SDLK_q, false)) );
+    input.add( (new keyboard_event("ROTY", "INPUT_EVENT", SDLK_a, false)) );
+    input.add( (new keyboard_event("ROTZ", "INPUT_EVENT", SDLK_z, false)) );
+    input.add( (new keyboard_event("ROTXN", "INPUT_EVENT", SDLK_w, false)) );
+    input.add( (new keyboard_event("ROTYN", "INPUT_EVENT", SDLK_s, false)) );
+    input.add( (new keyboard_event("ROTZN", "INPUT_EVENT", SDLK_x, false)) );
 
-    input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, TRUE)) );
-    input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, TRUE)) );
+    input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, true)) );
+    input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, true)) );
 
 	//ch_datadir();
 
@@ -187,10 +187,10 @@ void game::loop()
     {
         camera *cam=(camera*)active_cam;
 
-        if ( cam->shake == TRUE )
-            cam->shake=FALSE;
+        if ( cam->shake == true )
+            cam->shake=false;
         else
-            cam->shake=TRUE;
+            cam->shake=true;
     }*/
 
     if ( input.get_input("UP") )

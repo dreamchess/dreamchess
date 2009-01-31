@@ -90,6 +90,42 @@ void scene::start()
     }
 }
 
+vec mouse_3d;
+
+vec get_mouse_3d()
+{
+	return mouse_3d;
+}
+
+void _get_mouse_3d()
+{
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLfloat winX, winY, winZ;
+	GLdouble posX, posY, posZ;
+
+	vec pos=get_mouse();
+
+	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetIntegerv( GL_VIEWPORT, viewport );
+
+	winX = (float)pos.x;
+	winY = (float)viewport[3] - (float)pos.y;
+	glReadPixels( pos.x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+
+	gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+
+    //printf( "%f,%f\n", posX, posY);
+
+	mouse_3d.x=posX;
+	mouse_3d.y=posY;
+	mouse_3d.z=posZ;
+
+	//return vec(posX, posY, posZ);
+}
+
 void scene::render()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -128,7 +164,16 @@ void scene::render()
     /* Step through the list and render them alls! */
     for ( int i=0; i<resources.size();i++ )
     {
-        if ( resources[i]->type == "ENTITY" )
+        if ( resources[i]->type == "ENTITY" && ((entity*)resources[i])->post_mouse_render == false )
+            ((entity*)resources[i])->render();            
+    }
+    
+    _get_mouse_3d();
+    
+    /* Render any post mouses... */
+    for ( int i=0; i<resources.size();i++ )
+    {
+        if ( resources[i]->type == "ENTITY" && ((entity*)resources[i])->post_mouse_render == true )
             ((entity*)resources[i])->render();            
     }
 }

@@ -10,7 +10,7 @@ class input_event: public resource
     friend class mouse_event;
     friend class input_layer;
     public:
-        input_event() { active=FALSE; event_type=FALSE; }
+        input_event() { active=false; event_type=false; }
         bool is_active() { return active; }
         virtual void update() = 0;
     private:

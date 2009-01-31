@@ -35,31 +35,6 @@ vec get_mouse()
     return vec(x,y,0);
 }
 
-vec get_mouse_3d()
-{
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLfloat winX, winY, winZ;
-	GLdouble posX, posY, posZ;
-
-	vec pos=get_mouse();
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewport );
-
-	winX = (float)pos.x;
-	winY = (float)viewport[3] - (float)pos.y;
-	glReadPixels( pos.x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
-
-	gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
-
-    //printf( "%f,%f\n", posX, posY);
-
-	return vec(posX, posY, posZ);
-}
-
 void screen::update()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )

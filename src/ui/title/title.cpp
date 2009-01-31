@@ -37,29 +37,29 @@ title_screen::title_screen()
 {
     scr = new screen(640,480);
 
-    input.add( (new keyboard_event("QUIT", "INPUT_EVENT", SDLK_ESCAPE, TRUE)) );
+    input.add( (new keyboard_event("QUIT", "INPUT_EVENT", SDLK_ESCAPE, true)) );
 
-    input.add( (new keyboard_event("UP", "INPUT_EVENT", SDLK_UP, FALSE)) );
-    input.add( (new keyboard_event("DOWN", "INPUT_EVENT", SDLK_DOWN, FALSE)) );
-    input.add( (new keyboard_event("LEFT", "INPUT_EVENT", SDLK_LEFT, FALSE)) );
-    input.add( (new keyboard_event("RIGHT", "INPUT_EVENT", SDLK_RIGHT, FALSE)) );
-    input.add( (new keyboard_event("ZOOMIN", "INPUT_EVENT", SDLK_o, FALSE)) );
-    input.add( (new keyboard_event("ZOOMOUT", "INPUT_EVENT", SDLK_p, FALSE)) );
+    input.add( (new keyboard_event("UP", "INPUT_EVENT", SDLK_UP, false)) );
+    input.add( (new keyboard_event("DOWN", "INPUT_EVENT", SDLK_DOWN, false)) );
+    input.add( (new keyboard_event("LEFT", "INPUT_EVENT", SDLK_LEFT, false)) );
+    input.add( (new keyboard_event("RIGHT", "INPUT_EVENT", SDLK_RIGHT, false)) );
+    input.add( (new keyboard_event("ZOOMIN", "INPUT_EVENT", SDLK_o, false)) );
+    input.add( (new keyboard_event("ZOOMOUT", "INPUT_EVENT", SDLK_p, false)) );
 
-    input.add( (new keyboard_event("ROTX", "INPUT_EVENT", SDLK_q, FALSE)) );
-    input.add( (new keyboard_event("ROTY", "INPUT_EVENT", SDLK_a, FALSE)) );
-    input.add( (new keyboard_event("ROTZ", "INPUT_EVENT", SDLK_z, FALSE)) );
-    input.add( (new keyboard_event("ROTXN", "INPUT_EVENT", SDLK_w, FALSE)) );
-    input.add( (new keyboard_event("ROTYN", "INPUT_EVENT", SDLK_s, FALSE)) );
-    input.add( (new keyboard_event("ROTZN", "INPUT_EVENT", SDLK_x, FALSE)) );
+    input.add( (new keyboard_event("ROTX", "INPUT_EVENT", SDLK_q, false)) );
+    input.add( (new keyboard_event("ROTY", "INPUT_EVENT", SDLK_a, false)) );
+    input.add( (new keyboard_event("ROTZ", "INPUT_EVENT", SDLK_z, false)) );
+    input.add( (new keyboard_event("ROTXN", "INPUT_EVENT", SDLK_w, false)) );
+    input.add( (new keyboard_event("ROTYN", "INPUT_EVENT", SDLK_s, false)) );
+    input.add( (new keyboard_event("ROTZN", "INPUT_EVENT", SDLK_x, false)) );
 
-    input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, TRUE)) );
-    input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, TRUE)) );
+    input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, true)) );
+    input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, true)) );
 
     // mouse.
-    input.add( (new mouse_event("LEFTMOUSE", "INPUT_EVENT", 1, TRUE)) );
-    input.add( (new mouse_event("MIDDLEMOUSE", "INPUT_EVENT", 2, TRUE)) );
-    input.add( (new mouse_event("RIGHTMOUSE", "INPUT_EVENT", 3, TRUE)) );
+    input.add( (new mouse_event("LEFTMOUSE", "INPUT_EVENT", 1, true)) );
+    input.add( (new mouse_event("MIDDLEMOUSE", "INPUT_EVENT", 2, true)) );
+    input.add( (new mouse_event("RIGHTMOUSE", "INPUT_EVENT", 3, true)) );
     
     input.list();
 
@@ -100,11 +100,11 @@ title_screen::title_screen()
     //Position Camera...
     title_camera *c = new title_camera("CAMERA");
 	c->type="CAMERA";
-    //c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
-    //c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
+    c->xpos=5.518997f; c->ypos=-0.860000f; c->zpos=1.099000f;
+    c->xrot=-93.0f; c->yrot=-1.0f; c->zrot=-59.285999f;
     //c->target=scn.entities[2];
-    c->xpos=0.0f; c->ypos=0.0f; c->zpos=10.0f;
-    c->xrot=0.0f; c->yrot=0.0f; c->zrot=0.0f;
+    //c->xpos=0.0f; c->ypos=0.0f; c->zpos=10.0f;
+    //c->xrot=0.0f; c->yrot=0.0f; c->zrot=0.0f;
     add(c); // Camera
 
     active_cam=c; // Set the camera.
@@ -119,6 +119,8 @@ title_screen::title_screen()
 
 void title_screen::loop()
 {
+    static int grabbed_piece=-1;
+    	
     if ( input.get_input("INFO") )
         printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
             active_cam->xpos, active_cam->ypos, active_cam->zpos, 
@@ -126,18 +128,44 @@ void title_screen::loop()
     
     if ( input.get_input("LEFTMOUSE") )
     {
+    	bool release_piece=true;
+    	
         for ( int i=0; i<resources.size(); i++ )
-        {
+        {      	
             if ( resources[i]->type == "ENTITY" )
-            if ( ((entity*)resources[i])->collision_at(get_mouse_3d()) == TRUE )            
-                {
-                    printf( "Hmm!\n" );
-                    ((entity*)resources[i])->sc->run("entity_clicked");
-                }
-        }        
+            if ( grabbed_piece != i )
+            if ( ((entity*)resources[i])->collision_at(get_mouse_3d()) == true )            
+            {
+            	if ( grabbed_piece == -1 )
+            	{
+            		          	printf( "Grab piece.\n" );
+            		grabbed_piece=i;
+            		((entity*)resources[i])->post_mouse_render=true;
+            		release_piece=false;
+            	}
+            	//printf( "Collision: %s\n", resources[i]->name.c_str() );
+                //((entity*)resources[i])->sc->run("entity_clicked");
+            }
+        }    
+        
+        if ( release_piece && grabbed_piece != -1 )
+        {
+        	printf( "Drop piece.\n" );
+          	((entity*)resources[grabbed_piece])->post_mouse_render=false;
+          	grabbed_piece=-1;
+        }    
         //vec v=GetOGLPos(get_mouse());
         //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
     }    
+
+	/* Piece grabbed? */
+	if ( grabbed_piece != -1 )
+	{
+		((entity*)resources[grabbed_piece])->xpos=get_mouse_3d().x;
+		((entity*)resources[grabbed_piece])->ypos=get_mouse_3d().y;
+		((entity*)resources[grabbed_piece])->zpos=get_mouse_3d().z;
+	}
+
 
   /*  if ( input.get_input("LEFTMOUSE") )
     {
@@ -151,18 +179,18 @@ void title_screen::loop()
         //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
     }  */
 
-	((entity*)resources[11])->xpos=get_mouse_3d().x;
-	((entity*)resources[11])->ypos=get_mouse_3d().y;
-	//((entity*)resources[11])->zpos=0;
+	//((entity*)resources[11])->xpos=get_mouse_3d().x;
+	//((entity*)resources[11])->ypos=get_mouse_3d().y;
+	//((entity*)resources[11])->zpos=get_mouse_3d().z;
 
     if ( input.get_input("CAMSHAKE") )
     {
         title_camera *cam=(title_camera*)active_cam;
 
-        if ( cam->shake == TRUE )
-            cam->shake=FALSE;
+        if ( cam->shake == true )
+            cam->shake=false;
         else
-            cam->shake=TRUE;
+            cam->shake=true;
     }
 
     if ( input.get_input("UP") )

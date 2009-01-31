@@ -6,9 +6,6 @@
 #include "screen.h"
 #include "resource.h"
 
-#define FALSE 0
-#define TRUE -1
-
 class scene;
 
 class entity: public resource
@@ -24,6 +21,12 @@ class entity: public resource
         float xrot,yrot,zrot;
         float xscale,yscale,zscale;
         float xsize,ysize,zsize;
+
+		float bbox_x1, bbox_x2;
+		float bbox_y1, bbox_y2;
+		float bbox_z1, bbox_z2;
+		
+		bool post_mouse_render;
 
         script *sc;
         scene *parent_scene;

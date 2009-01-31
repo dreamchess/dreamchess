@@ -11,6 +11,8 @@
 #define UPDATE_INTERVAL (1000.0 / MAXIMUM_FRAME_RATE)
 #define MAX_CYCLES_PER_FRAME (MAXIMUM_FRAME_RATE / MINIMUM_FRAME_RATE)
 
+vec get_mouse_3d();
+
 class scene: public resource_list
 {
     public:

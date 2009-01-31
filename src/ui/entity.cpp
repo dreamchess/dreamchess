@@ -26,6 +26,7 @@ entity::entity()
     xrot=yrot=zrot=0.0f;
     xscale=yscale=zscale=1.0f;
     parent_scene=NULL;
+    post_mouse_render=false;
 
     sc=new script("/usr/local/share/dreamchess/scripts/chess_piece.lua");
     //sc->run("entity_spawn");
@@ -33,27 +34,27 @@ entity::entity()
 
 void entity::generate_bbox()
 {
-	
+	bbox_x1=bbox_x2=0.0f;
+	bbox_y1=bbox_y2=0.0f;
+	bbox_z1=bbox_z2=0.0f;
 }
 
 bool entity::collision_at( vec pos )
 {
-    bool retval=FALSE;
+    bool retval=false;
 
     if ( pos.x > (xpos-(xsize/2)) && pos.x < (xpos+(xsize/2)) )
     if ( pos.y > (ypos-(ysize/2)) && pos.y < (ypos+(ysize/2)) )
     //if ( pos.z > (zpos-(zsize/2)) && pos.z < (zpos+(zsize/2)) )
     {
-        printf( "Collision: %s\n", name.c_str() );
-        if ( type == "ENTITY" );
-        retval=TRUE;
+        retval=true;
     }
 
-    if ( name=="LIGHT" )
+    /*if ( name=="LIGHT" )
     {
         printf( "X:%f,%f,%f\n", (xpos-(xsize/2)), pos.x, (xpos+(xsize/2)) );
         printf( "Y:%f,%f,%f\n", (ypos-(ysize/2)), pos.y, (ypos+(ysize/2)) );
-    }
+    }*/
 
     return retval;
 }

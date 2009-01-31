@@ -11,20 +11,20 @@ void resource_list::list()
 {
     for ( int i=0; i<resources.size();i++ )
     {
-        std::cout << "Name: " << resources[i]->name << " ,Type: " << resources[i]->type << std::endl;
+        std::cout << "Name: " << resources[i]->name << ",Type: " << resources[i]->type << std::endl;
     }
 }
 
 bool resource_list::find_resource( std::string name, std::string type )
 {
-    bool retval=FALSE;
+    bool retval=false;
 
     for ( int i=0; i<resources.size(); i++ )
     {
         if ( !name.compare(resources[i]->name) ) 
         {
             // Name matches... check type too, unless it's set to 'ANY' ..
-            retval=TRUE;
+            retval=true;
         }
     }    
     return retval;

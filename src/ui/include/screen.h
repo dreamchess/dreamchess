@@ -6,11 +6,11 @@
 class vec
 {
     public:
+    	vec(){x=0,y=0,z=0;}
         vec( float xp, float yp, float zp){x=xp;y=yp;z=zp;}
         float x, y, z;
 };
 
-vec get_mouse_3d();
 vec get_mouse();
 
 class screen

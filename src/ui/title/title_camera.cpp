@@ -8,7 +8,7 @@ title_camera::title_camera(std::string name2):camera(name2)
     name=name2;
     direction=1.0;
     speed=0.05;
-    shake=FALSE;
+    shake=false;
 }
 
 void title_camera::update()
