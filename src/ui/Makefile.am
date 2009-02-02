@@ -1,5 +1,5 @@
 noinst_LIBRARIES = libui.a
-AM_CXXFLAGS = $(CXXFLAGS) @DATADIR@ @SDL_CFLAGS@
+AM_CXXFLAGS = $(CXXFLAGS) @DATADIR@ @SDL_CFLAGS@ @LUA_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src -I$(top_srcdir)/src/ui/include
 libui_a_SOURCES = screen.cpp entity.cpp scene.cpp input.cpp mesh.cpp \
     model.cpp texture.cpp camera.cpp light.cpp box.cpp chess_board.cpp resource.cpp \

@@ -84,6 +84,15 @@ AC_DEFUN([AC_NEEDS],
 	LIBS="${OLD_LIBS}"
 	)
 
+PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1],
+	[],
+	[AC_MSG_NOTICE([liblua5.1 not found, trying liblua])
+	PKG_CHECK_MODULES([LUA], [lua >= 5.1])]
+	)
+
+AC_SUBST(LUA_CFLAGS, $LUA_CFLAGS)
+AC_SUBST(LUA_LIBS, $LUA_LIBS)
+
 AM_PATH_SDL([1.2.6], [have_sdl="yes"], [have_sdl="no"])
 SDL_OLD_LIBS="${SDL_LIBS}"
 
