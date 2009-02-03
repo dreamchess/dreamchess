@@ -25,7 +25,7 @@
 #include "mesh.h"
 #include "box.h"
 #include "light.h"
-#include "chess_board.h"
+#include "entity_group.h"
 #include "screen.h"
 
 #include "title.h"
@@ -77,7 +77,16 @@ title_screen::title_screen()
 
     // Entities.
     entity *e;
-    add( (new chess_board("BOARD","ENTITY", "BOARD_MESH","BOARD_TEX",this)) );
+	entity_group *chess_board= new entity_group();
+	chess_board->name="CHESS_BOARD";
+
+	e = new model("BOARD_FRAME","BOARD_MESH","BOARD_TEX",this);
+	chess_board->add(e);
+	
+    e = new box("BOARD",8,8,"BOARD_TEX",this);
+    chess_board->add(e); 
+    
+    add( chess_board );
 
     e = new model("WHITE_QUEEN","QUEEN_MESH","WHITE_TEX",this);
     e->type="ENTITY"; e->xpos=-0.5f; e->ypos=2.5f;
@@ -138,19 +147,16 @@ void title_screen::loop()
             {
             	if ( grabbed_piece == -1 )
             	{
-            		          	printf( "Grab piece.\n" );
             		grabbed_piece=i;
             		((entity*)resources[i])->post_mouse_render=true;
             		release_piece=false;
             	}
-            	//printf( "Collision: %s\n", resources[i]->name.c_str() );
-                //((entity*)resources[i])->sc->run("entity_clicked");
+                ((entity*)resources[i])->sc->run("entity_clicked");
             }
         }    
         
         if ( release_piece && grabbed_piece != -1 )
         {
-        	printf( "Drop piece.\n" );
           	((entity*)resources[grabbed_piece])->post_mouse_render=false;
           	grabbed_piece=-1;
         }    

@@ -25,7 +25,7 @@
 #include "mesh.h"
 #include "box.h"
 #include "light.h"
-#include "chess_board.h"
+#include "entity_group.h"
 //#include "dir.h"
 
 #include "game.h"
@@ -76,7 +76,18 @@ game::game()
 
     // Entities.
     entity *e;
-    add( (new chess_board("BOARD","ENTITY","BOARD_MESH","BOARD_TEX",this)) );
+    //add( (new entity_group("BOARD","ENTITY","BOARD_MESH","BOARD_TEX",this)) );
+
+	entity_group *chess_board= new entity_group();
+	chess_board->name="CHESS_BOARD";
+
+	e = new model("BOARD_FRAME","BOARD_MESH","BOARD_TEX",this);
+	chess_board->add(e);
+	
+    e = new box("BOARD",8,8,"BOARD_TEX",this);
+    chess_board->add(e); 
+    
+    add( chess_board );
 
     /* White pieces... */
    /* e = new model("KING_MESH","WHITE_TEX",this );

@@ -29,7 +29,7 @@ entity::entity()
     post_mouse_render=false;
 
     sc=new script("/usr/local/share/dreamchess/scripts/chess_piece.lua");
-    //sc->run("entity_spawn");
+    sc->run("entity_spawn");
 }
 
 void entity::generate_bbox()
