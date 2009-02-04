@@ -92,7 +92,14 @@ PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1],
 
 AC_SUBST(LUA_CFLAGS, $LUA_CFLAGS)
 AC_SUBST(LUA_LIBS, $LUA_LIBS)
-AC_PROG_SWIG([1.3.26])
+
+case $host_os in
+	darwin*)
+		REQ_SWIG_VER=1.3.32 ;;
+	*)
+		REQ_SWIG_VER=1.3.26 ;;
+esac
+AC_PROG_SWIG([$REQ_SWIG_VER])
 SWIG_ENABLE_CXX
 
 AM_PATH_SDL([1.2.6], [have_sdl="yes"], [have_sdl="no"])
