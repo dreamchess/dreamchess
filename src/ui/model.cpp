@@ -25,6 +25,7 @@ model::model(std::string name2, std::string msh2, std::string tx2, scene *parent
     alpha=1.0f;
     specular=1;
     parent_scene=parent;
+    type="ENTITY";
 
     get_size( &xsize, &ysize, &zsize, msh );
 

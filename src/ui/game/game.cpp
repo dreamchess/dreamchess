@@ -58,117 +58,118 @@ game::game()
     input.add( (new keyboard_event("CAMSHAKE", "INPUT_EVENT", SDLK_k, true)) );
     input.add( (new keyboard_event("INFO", "INPUT_EVENT", SDLK_i, true)) );
 
+    // mouse.
+    input.add( (new mouse_event("LEFTMOUSE", "INPUT_EVENT", 1, true)) );
+    input.add( (new mouse_event("MIDDLEMOUSE", "INPUT_EVENT", 2, true)) );
+    input.add( (new mouse_event("RIGHTMOUSE", "INPUT_EVENT", 3, true)) );
+
 	//ch_datadir();
 
     // Textures.
-    add( (new texture("BOARD_TEX", "TEXTURE", "boards/classic/board.png")) );
-    add( (new texture("WHITE_TEX", "TEXTURE", "pieces/classic/white.png")) );
-    add( (new texture("BLACK_TEX", "TEXTURE", "pieces/classic/black.png")) );
+    add( (new texture("BOARD_TEX", "TEXTURE", "/usr/local/share/dreamchess/boards/classic/board.png")) );
+    add( (new texture("WHITE_TEX", "TEXTURE", "/usr/local/share/dreamchess/pieces/classic/white.png")) );
+    add( (new texture("BLACK_TEX", "TEXTURE", "/usr/local/share/dreamchess/pieces/classic/black.png")) );
 
     // Meshes.
-    add( (new mesh("BOARD_MESH", "MESH", "boards/classic/board.dcm")) );
-    add( (new mesh("KING_MESH", "MESH", "pieces/classic/king.dcm")) );
-    add( (new mesh("QUEEN_MESH", "MESH", "pieces/classic/queen.dcm")) );
-    add( (new mesh("BISHOP_MESH", "MESH", "pieces/classic/bishop.dcm")) );
-    add( (new mesh("ROOK_MESH", "MESH", "pieces/classic/rook.dcm")) );
-    add( (new mesh("KNIGHT_MESH", "MESH", "pieces/classic/knight.dcm")) );
-    add( (new mesh("PAWN_MESH", "MESH", "pieces/classic/pawn.dcm")) );
+    add( (new mesh("BOARD_MESH", "MESH", "/usr/local/share/dreamchess/boards/classic/board.dcm")) );
+    add( (new mesh("QUEEN_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/queen.dcm")) );
+    add( (new mesh("BISHOP_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/bishop.dcm")) );
+    add( (new mesh("ROOK_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/rook.dcm")) );
+    add( (new mesh("KING_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/king.dcm")) );
+    add( (new mesh("KNIGHT_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/knight.dcm")) );
+    add( (new mesh("PAWN_MESH", "MESH", "/usr/local/share/dreamchess/pieces/classic/pawn.dcm")) );    
+
 
     // Entities.
     entity *e;
-    //add( (new entity_group("BOARD","ENTITY","BOARD_MESH","BOARD_TEX",this)) );
 
 	entity_group *chess_board= new entity_group();
 	chess_board->name="CHESS_BOARD";
-
 	e = new model("BOARD_FRAME","BOARD_MESH","BOARD_TEX",this);
-	chess_board->add(e);
-	
+	chess_board->add(e);	
     e = new box("BOARD",8,8,"BOARD_TEX",this);
-    chess_board->add(e); 
-    
+    chess_board->add(e);     
     add( chess_board );
 
     /* White pieces... */
-   /* e = new model("KING_MESH","WHITE_TEX",this );
+    e = new model("WHITE_KING","KING_MESH","WHITE_TEX",this );
     e->xpos=0.5f; e->ypos=-3.5f;
-    add("WHITE_KING","ENTITY",e); // White king
+    add(e); // White king
 
-    e = new model("QUEEN_MESH","WHITE_TEX",this );
+    e = new model("WHITE_QUEEN","QUEEN_MESH","WHITE_TEX",this );
     e->xpos=-0.5f; e->ypos=-3.5f;
-    add("WHITE_QUEEN","ENTITY",e); // White queen
+    add(e); // White queen
 
-    e = new model("BISHOP_MESH","WHITE_TEX",this );
+    e = new model("WHITE_BISHOP","BISHOP_MESH","WHITE_TEX",this );
     e->xpos=-1.5f; e->ypos=-3.5f;
-    add("WHITE_BISHOP","ENTITY",e); // White bishop
+    add(e); // White bishop
 
-    e = new model("BISHOP_MESH","WHITE_TEX",this );
+    e = new model("WHITE_BISHOP","BISHOP_MESH","WHITE_TEX", this );
     e->xpos=1.5f; e->ypos=-3.5f;
-    add("WHITE_BISHOP","ENTITY",e); // White bishop
+    add(e); // White bishop
 
-    e = new model("KNIGHT_MESH","WHITE_TEX",this );
+    e = new model("WHITE_KNIGHT", "KNIGHT_MESH","WHITE_TEX",this );
     e->xpos=-2.5f; e->ypos=-3.5f;
-    add("WHITE_KNIGHT","ENTITY",e); // White knight
+    add(e); // White knight
 
-    e = new model("KNIGHT_MESH","WHITE_TEX",this );
+    e = new model("WHITE_KNIGHT","KNIGHT_MESH","WHITE_TEX",this );
     e->xpos=2.5f; e->ypos=-3.5f;
-    add("WHITE_KNIGHT","ENTITY",e); // White knight
+    add(e); // White knight
 
-    e = new model("ROOK_MESH","WHITE_TEX",this );
+    e = new model("WHITE_ROOK","ROOK_MESH","WHITE_TEX",this );
     e->xpos=-3.5f; e->ypos=-3.5f;
-    add("WHITE_ROOK","ENTITY",e); // White rook
+    add(e); // White rook
 
-    e = new model("ROOK_MESH","WHITE_TEX",this );
+    e = new model("WHITE_ROOK","ROOK_MESH","WHITE_TEX",this );
     e->xpos=3.5f; e->ypos=-3.5f;
-    add("WHITE_ROOK","ENTITY",e); // White rook
+    add(e); // White rook
 
     for (float f=-3.5; f<4; f+=1.0f )
     {
-        e = new model("PAWN_MESH","WHITE_TEX",this );
+        e = new model("WHITE_PAWN","PAWN_MESH","WHITE_TEX",this );
         e->xpos=f; e->ypos=-2.5f;
-        add("WHITE_PAWN","ENTITY",e); // White pawn
-    }*/
-
+        add(e); // White pawn
+    }
 
     /* Black pieces... */
-   /* e = new model("BLACK_KING","KING_MESH","BLACK_TEX",this );
+    e = new model("BLACK_KING","KING_MESH","BLACK_TEX",this );
     e->xpos=0.5f; e->ypos=3.5f;
-    add("BLACK_KING","ENTITY",e); // White king
+    add(e); // Black king
 
-    e = new model("QUEEN_MESH","BLACK_TEX",this );
+    e = new model("BLACK_QUEEN","QUEEN_MESH","BLACK_TEX",this );
     e->xpos=-0.5f; e->ypos=3.5f;
-    add("BLACK_QUEEN","ENTITY",e); // White queen
+    add(e); // Black queen
 
-    e = new model("BISHOP_MESH","BLACK_TEX",this );
+    e = new model("BLACK_BISHOP","BISHOP_MESH","BLACK_TEX",this );
     e->xpos=-1.5f; e->ypos=3.5f;
-    add("BLACK_BISHOP","ENTITY",e); // White bishop
+    add(e); // Black bishop
 
-    e = new model("BISHOP_MESH","BLACK_TEX",this );
+    e = new model("BLACK_BISHOP","BISHOP_MESH","BLACK_TEX", this );
     e->xpos=1.5f; e->ypos=3.5f;
-    add("BLACK_BISHOP","ENTITY",e); // White bishop
+    add(e); // Black bishop
 
-    e = new model("KNIGHT_MESH","BLACK_TEX",this );
+    e = new model("BLACK_KNIGHT", "KNIGHT_MESH","BLACK_TEX",this );
     e->xpos=-2.5f; e->ypos=3.5f;
-    add("BLACK_KNIGHT","ENTITY",e); // White knight
+    add(e); // Black knight
 
-    e = new model("KNIGHT_MESH","BLACK_TEX",this );
+    e = new model("BLACK_KNIGHT","KNIGHT_MESH","BLACK_TEX",this );
     e->xpos=2.5f; e->ypos=3.5f;
-    add("BLACK_KNIGHT","ENTITY",e); // White knight
+    add(e); // Black knight
 
-    e = new model("ROOK_MESH","BLACK_TEX",this );
+    e = new model("BLACK_ROOK","ROOK_MESH","BLACK_TEX",this );
     e->xpos=-3.5f; e->ypos=3.5f;
-    add("BLACK_ROOK","ENTITY",e); // White rook
+    add(e); // Black rook
 
-    e = new model("ROOK_MESH","BLACK_TEX",this );
+    e = new model("BLACK_ROOK","ROOK_MESH","BLACK_TEX",this );
     e->xpos=3.5f; e->ypos=3.5f;
-    add("BLACK_ROOK","ENTITY",e); // White rook
+    add(e); // Black rook
 
     for (float f=-3.5; f<4; f+=1.0f )
     {
-        e = new model("PAWN_MESH","BLACK_TEX",this );
+        e = new model("BLACK_PAWN","PAWN_MESH","BLACK_TEX",this );
         e->xpos=f; e->ypos=2.5f;
-        add("BLACK_PAWN","ENTITY",e); // White pawn
-    }*/
+        add(e); // Black pawn
+    }
 
     //Position Camera...
     camera *c = new camera("camera");
@@ -189,20 +190,49 @@ game::game()
 
 void game::loop()
 {
+    static int grabbed_piece=-1;
+    	
     if ( input.get_input("INFO") )
         printf( "Camera: pos(%f,%f,%f), rot(%f,%f,%f), frametime:%f\n", 
             active_cam->xpos, active_cam->ypos, active_cam->zpos, 
             active_cam->xrot, active_cam->yrot, active_cam->zrot );
-
-    /*if ( input.get_input("CAMSHAKE") )
+    
+    if ( input.get_input("LEFTMOUSE") )
     {
-        camera *cam=(camera*)active_cam;
+    	bool release_piece=true;
+    	
+        for ( int i=0; i<resources.size(); i++ )
+        {      	
+            if ( resources[i]->type == "ENTITY" )
+            if ( grabbed_piece != i )
+            if ( ((entity*)resources[i])->collision_at(get_mouse_3d()) == true )            
+            {
+            	if ( grabbed_piece == -1 )
+            	{
+            		grabbed_piece=i;
+            		((entity*)resources[i])->post_mouse_render=true;
+            		release_piece=false;
+            	}
+                ((entity*)resources[i])->sc->run("entity_clicked");
+            }
+        }    
+        
+        if ( release_piece && grabbed_piece != -1 )
+        {
+          	((entity*)resources[grabbed_piece])->post_mouse_render=false;
+          	grabbed_piece=-1;
+        }    
+        //vec v=GetOGLPos(get_mouse());
+        //printf( "Vector: %f, %f, %f\n", v.x, v.y, v.z );
+    }    
 
-        if ( cam->shake == true )
-            cam->shake=false;
-        else
-            cam->shake=true;
-    }*/
+	/* Piece grabbed? */
+	if ( grabbed_piece != -1 )
+	{
+		((entity*)resources[grabbed_piece])->xpos=get_mouse_3d().x;
+		((entity*)resources[grabbed_piece])->ypos=get_mouse_3d().y;
+		((entity*)resources[grabbed_piece])->zpos=get_mouse_3d().z;
+	}
 
     if ( input.get_input("UP") )
     {
@@ -216,9 +246,9 @@ void game::loop()
     }
 
     if ( input.get_input("LEFT") )
-        active_cam->zrot-=1.0;//
+        active_cam->zrot-=1.0;
     if ( input.get_input("RIGHT") )
-        active_cam->zrot+=1.0;//
+        active_cam->zrot+=1.0;
 
 
     if ( input.get_input("ZOOMIN") )
@@ -236,5 +266,9 @@ void game::loop()
     if ( input.get_input("ROTYN") )
         active_cam->yrot-=1.0;
 
-}
+    if ( input.get_input("ROTZ") )
+        active_cam->zrot+=1.0;
+    if ( input.get_input("ROTZN") )
+        active_cam->zrot-=1.0;
 
+}
