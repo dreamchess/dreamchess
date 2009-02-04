@@ -28,6 +28,8 @@ entity::entity()
     parent_scene=NULL;
     post_mouse_render=false;
 
+    sc=new script("/usr/local/share/dreamchess/scripts/luatest.lua");
+    sc->run("test");
     sc=new script("/usr/local/share/dreamchess/scripts/chess_piece.lua");
     sc->run("entity_spawn");
 }
