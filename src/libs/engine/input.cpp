@@ -2,6 +2,27 @@
 #include "SDL.h"
 #include "input.h"
 
+keyboard::keyboard()
+{
+}
+
+bool keyboard::is_pressed( int key )
+{
+    SDL_PumpEvents();
+    Uint8 *keystate = SDL_GetKeyState(NULL);
+
+    return keystate[key];	
+}
+
+bool mouse::is_pressed( int button )
+{
+    SDL_PumpEvents();
+
+    return SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);	
+}
+
+/* Old stuff! */
+
 void input_layer::update()
 {
     for ( int i=0; i<resources.size();i++ )

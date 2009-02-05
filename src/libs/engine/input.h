@@ -4,6 +4,20 @@
 
 #include "resource.h"
 
+class keyboard
+{
+	keyboard();
+	bool is_pressed( int key );
+};
+
+class mouse
+{
+	mouse();
+	bool is_pressed( int button );
+};
+
+/* Old stuffs o-o */
+
 class input_event: public resource
 {
     friend class keyboard_event;

@@ -9,7 +9,7 @@ ConfigManager = class(
 
 function ConfigManager:AddOption(name, values)
 	log:warning("testing the error logger with a warning")
-	log:error("testing the error logger with an error")
+	--log:error("testing the error logger with an error")
 	self.options[name] = values
 end
 

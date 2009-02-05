@@ -30,8 +30,8 @@ extern "C" {
 #include "dreamchess.h"
 }
 
-#include "title.h"
-#include "game.h"
+//#include "title.h"
+//#include "game.h"
 
 void testengine();
 
@@ -44,13 +44,13 @@ int main(int argc, char **argv)
 
     testengine();
 
-    title_screen *title = new title_screen;
+    /*title_screen *title = new title_screen;
     title->start();
     delete title;
 
     game *ingame = new game;
     ingame->start();
-    delete ingame;
+    delete ingame;*/
 
     return dreamchess(&arg);
 }
