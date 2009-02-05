@@ -64,6 +64,7 @@ void testengine()
 	luaopen_engine(L);
 
 	loadfile(L, "config_manager.lua");
+	loadfile(L, "title.lua");
 
 	exit(0);
 }

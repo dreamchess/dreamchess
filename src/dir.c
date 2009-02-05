@@ -128,7 +128,6 @@ int ch_datadir()
 	CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
 	
 	sprintf( temp3, "%s/%s", temp2, temp1 );
-	printf( "%s\n", temp3 );
 	
 	chdir(temp3);
 }
