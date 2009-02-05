@@ -15,9 +15,11 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	system_config.c
 
 dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
-	libs/gamegui/libgamegui.a ui/libui.a @DREAMCHESS_LIBS@ @MXML_LIBS@ @SDL_LIBS@ @LUA_LIBS@
+	libs/gamegui/libgamegui.a ui/libui.a libs/engine/libengine.a \
+	@DREAMCHESS_LIBS@ @MXML_LIBS@ @SDL_LIBS@ @LUA_LIBS@
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
-	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ ui/libui.a
+	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ ui/libui.a \
+	libs/engine/libengine.a
 
 win32_rc.$(OBJEXT): win32.rc win32.ico
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

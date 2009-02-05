@@ -387,6 +387,7 @@ AC_CONFIG_FILES([Makefile
 		src/Makefile
 		src/audio/Makefile
 		src/libs/Makefile
+		src/libs/engine/Makefile
 		src/libs/gamegui/Makefile
 		src/libs/minizip/Makefile
 		src/include/Makefile

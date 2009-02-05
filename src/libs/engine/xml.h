@@ -18,41 +18,38 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
+#ifndef XML_H
+#define XML_H
 
-#ifndef COMM_SDL_THREADS
+#include <mxml.h>
 
-#include <stdio.h>
-
-extern "C" {
-#include "dreamchess.h"
-}
-
-#include "title.h"
-#include "game.h"
-
-void testengine();
-
-int main(int argc, char **argv)
+struct XMLOption
 {
-    arguments_t arg;
+	char *name;
+	char *value;
+};
 
-    arg.argc = argc;
-    arg.argv = argv;
+class XML {
+	public:
+		mxml_node_t *tree;
+		XML() { tree = NULL; }
+		~XML() { if (tree) mxmlDelete(tree); }
+};
 
-    testengine();
+class XMLReader: private XML {
+	private:
+		mxml_node_t *walk;
+	public:
+		XMLReader() { walk = NULL; }
+		int LoadXMLFile(const char *filename);
+		XMLOption ReadNextOption();
+};
+#if 0
+class XMLWriter: private XML {
+	public:
+		int SaveXMLFile(const char *filename);
+		void WriteOption(char *option, char *value);
+};
+#endif
+#endif
 
-    title_screen *title = new title_screen;
-    title->start();
-    delete title;
-
-    game *ingame = new game;
-    ingame->start();
-    delete ingame;
-
-    return dreamchess(&arg);
-}
-
-#endif /* !COMM_SDL_THREADS */

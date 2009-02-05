@@ -1,4 +1,4 @@
-SUBDIRS = gamegui minizip
+SUBDIRS = gamegui minizip engine
 EXTRA_DIST = msgbuf.h
 INCLUDES = -I$(top_srcdir)/src/include
 AM_YFLAGS = -p san
