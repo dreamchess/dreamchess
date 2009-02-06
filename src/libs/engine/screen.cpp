@@ -56,14 +56,14 @@ screen::screen(int w, int h)
 
     width = w; height = h;
 
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 )
+   if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 )
 	{
 	    fprintf( stderr, "Video initialization failed: %s\n",
 		     SDL_GetError( ) );
 	    exit(1);
 	} 
 
-    /* Fetch the video info */
+    // Fetch the video info 
     video_info = SDL_GetVideoInfo( );
 
     if ( !video_info )
@@ -72,33 +72,33 @@ screen::screen(int w, int h)
 	    exit(1);
 	}
 
-    /* the flags to pass to SDL_SetVideoMode */
-    video_flags  = SDL_OPENGL;          /* Enable OpenGL in SDL */
-    video_flags |= SDL_GL_DOUBLEBUFFER; /* Enable double buffering */
-    video_flags |= SDL_HWPALETTE;       /* Store the palette in hardware */
-    video_flags |= SDL_RESIZABLE;       /* Enable window resizing */
+    // the flags to pass to SDL_SetVideoMode 
+    video_flags  = SDL_OPENGL;          
+    video_flags |= SDL_GL_DOUBLEBUFFER; 
+    video_flags |= SDL_HWPALETTE;       
+    video_flags |= SDL_RESIZABLE;       
 
-    /* This checks to see if surfaces can be stored in memory */
+    // This checks to see if surfaces can be stored in memory 
     if ( video_info->hw_available )
 	    video_flags |= SDL_HWSURFACE;
     else
 	    video_flags |= SDL_SWSURFACE;
 
-    /* This checks if hardware blits can be done */
+    // This checks if hardware blits can be done 
     if ( video_info->blit_hw )
 	video_flags |= SDL_HWACCEL;
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     surface = SDL_SetVideoMode( width, height, 24, video_flags );
 
-    /* Verify there is a surface */
+    // Verify there is a surface
     if ( !surface )
 	{
 	    fprintf( stderr,  "Video mode set failed: %s\n", SDL_GetError( ) );
 	    exit(1);
 	}
 
-    /* initialize OpenGL */
+    // initialize OpenGL
     glShadeModel( GL_SMOOTH );
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     glClearDepth( 1.0f );
@@ -106,25 +106,25 @@ screen::screen(int w, int h)
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    /* resize the initial window */
-    /* Protect against a divide by zero */
+    // resize the initial window 
+    // Protect against a divide by zero 
     if ( height == 0 )
     	height = 1;
     ratio = ( GLfloat )width / ( GLfloat )height;
 
-    /* Setup our viewport. */
+    // Setup our viewport.
     glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
 
-    /* change to the projection matrix and set our viewing volume. */
+    // change to the projection matrix and set our viewing volume. 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity( );
 
-    /* Set our perspective */
+    // Set our perspective 
     gluPerspective( 45.0f, ratio, 0.1f, 100.0f );
 
-    /* Make sure we're chaning the model view and not the projection */
+    // Make sure we're chaning the model view and not the projection
     glMatrixMode( GL_MODELVIEW );
 
-    /* Reset The View */
+    // Reset The View
     glLoadIdentity( );
 }

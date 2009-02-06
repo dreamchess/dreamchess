@@ -2,10 +2,6 @@
 #include "SDL.h"
 #include "input.h"
 
-keyboard::keyboard()
-{
-}
-
 bool keyboard::is_pressed( int key )
 {
     SDL_PumpEvents();

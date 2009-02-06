@@ -20,7 +20,6 @@ class screen
     public:
         screen(int,int);
         void update();
-    private:
         SDL_Surface *surface; 
 };
 

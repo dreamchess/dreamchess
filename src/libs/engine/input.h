@@ -6,14 +6,14 @@
 
 class keyboard
 {
-	keyboard();
-	bool is_pressed( int key );
+	public:
+		bool is_pressed( int key );
 };
 
 class mouse
 {
-	mouse();
-	bool is_pressed( int button );
+	public:	
+		bool is_pressed( int button );
 };
 
 /* Old stuffs o-o 
