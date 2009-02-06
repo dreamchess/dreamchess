@@ -1,9 +1,9 @@
-SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio ui
+SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef macosx
 bin_PROGRAMS = dreamchess
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/ui/include
+INCLUDES = -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 AM_CXXFLAGS = $(CXXFLAGS) @DATADIR@ @SDL_CFLAGS@ @LUA_CFLAGS@
 BUILT_SOURCES = pgn_parser.h
@@ -15,10 +15,10 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	system_config.c
 
 dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
-	libs/gamegui/libgamegui.a ui/libui.a libs/engine/libengine.a \
+	libs/gamegui/libgamegui.a libs/engine/libengine.a \
 	@DREAMCHESS_LIBS@ @MXML_LIBS@ @SDL_LIBS@ @LUA_LIBS@
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
-	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ ui/libui.a \
+	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ \
 	libs/engine/libengine.a
 
 win32_rc.$(OBJEXT): win32.rc win32.ico

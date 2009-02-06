@@ -2,7 +2,7 @@
 #ifndef __INPUT_H_
 #define __INPUT_H_
 
-#include "resource.h"
+//#include "resource.h"
 
 class keyboard
 {
@@ -16,7 +16,7 @@ class mouse
 	bool is_pressed( int button );
 };
 
-/* Old stuffs o-o */
+/* Old stuffs o-o 
 
 class input_event: public resource
 {
@@ -58,6 +58,6 @@ class input_layer: public resource_list
     public:
         bool get_input( std::string name );
         void update();
-};
+};*/
 
 #endif /* INPUT_H */

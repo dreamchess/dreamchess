@@ -21,7 +21,7 @@ bool mouse::is_pressed( int button )
     return SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);	
 }
 
-/* Old stuff! */
+/* Old stuff! 
 
 void input_layer::update()
 {
@@ -103,5 +103,5 @@ void keyboard_event::update()
         else
             wait_for_release=false;
     }
-}
+}*/
 
