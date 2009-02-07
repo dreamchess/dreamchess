@@ -1,44 +1,61 @@
 require 'class'
 require 'log'
 
-ConfigManager = class(
-	function(o)
-		o.options = {}
-	end
-)
+ConfigManager = class()
 
-function ConfigManager:AddOption(name, values)
-	log:warning("testing the error logger with a warning")
-	--log:error("testing the error logger with an error")
-	self.options[name] = values
+function ConfigManager:Add(name, options, default)
+	if type(options) == "table" then
+		default = default or options[1]
+		self[name] = options
+		self:Set(name, default)
+	else
+		self[name] = options
+	end
 end
 
-ConfigOption = class(
-	function(o, name)
-		o.name = name
+function ConfigManager:SetOption(name, index)
+	if index < 1 or index > #self[name] then
+		log:warning('index out of bounds when setting \'' .. name ..
+			'\'; need [1..' .. #self[name] .. '] got ' .. index) 
+	else
+		self[name].index = index
 	end
-)
-
-ConfigOptionInt = class(ConfigOption,
-	function(o, name, value)
-		ConfigOption.init(o, name)
-		o.value = value
-	end
-)
-
-function ConfigOptionInt:Set(value)
 end
 
-xml = engine.XMLReader()
-xml:LoadXMLFile("options.xml")
-while true
-do
-	option = xml:ReadNextOption()
-	if option.name == nil then break end
-	print("Option", option.name, ":", option.value)
+function ConfigManager:Set(name, value)
+	local t = type(self[name])
+	if t == 'table' then
+		for i, v in ipairs(self[name]) do
+			if v == value then
+				self[name].index = i
+				return
+			end
+		end
+		log:warning('unknown option \'' .. value .. '\' when setting \'' .. name .. '\'') 
+	else
+		if type(value) ~= t then
+			log:warning('type mismatch when setting \'' .. name .. '\'; need ' .. t .. ' got ' .. type(value))
+		else
+			self[name] = value
+		end
+	end
 end
 
-cm = ConfigManager()
-cm:AddOption("sound volume", {1, 2, 3})
-for i, v in pairs(cm.options) do print(i, v) end
+function ConfigManager:Save(filename)
+	local file, err = io.open(filename, "w+")
+
+	if not file then
+		log:warning(err)
+	end
+
+	for i, v in pairs(self) do
+		if type(v) == "table" then
+			file:write(i .. ' = ' .. self[i][v.index] .. '\n')
+		else
+			file:write(i .. ' = ' .. self[i] .. '\n')
+		end
+	end
+
+	file:close()
+end
 
