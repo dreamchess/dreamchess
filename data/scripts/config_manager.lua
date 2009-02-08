@@ -13,31 +13,27 @@ function ConfigManager:Add(name, options, default)
 	end
 end
 
-function ConfigManager:SetOption(name, index)
-	if index < 1 or index > #self[name] then
-		log:warning('index out of bounds when setting \'' .. name ..
-			'\'; need [1..' .. #self[name] .. '] got ' .. index) 
-	else
-		self[name].index = index
-	end
-end
-
 function ConfigManager:Set(name, value)
 	local t = type(self[name])
 	if t == 'table' then
-		for i, v in ipairs(self[name]) do
-			if v == value then
-				self[name].index = i
-				return
+		if type(value) == "number" then
+			if value < 1 or value > #self[name] then
+				log:warning('index out of bounds when setting \'' .. name ..
+					'\'; need [1..' .. #self[name] .. '] got ' .. value) 
+			else
+				self[name].index = value
 			end
-		end
-		log:warning('unknown option \'' .. value .. '\' when setting \'' .. name .. '\'') 
-	else
-		if type(value) ~= t then
-			log:warning('type mismatch when setting \'' .. name .. '\'; need ' .. t .. ' got ' .. type(value))
 		else
-			self[name] = value
+			for i, v in ipairs(self[name]) do
+				if v == value then
+					self[name].index = i
+					return
+				end
+			end
+			log:warning('unknown option \'' .. value .. '\' when setting \'' .. name .. '\'') 
 		end
+	else
+		self[name] = value
 	end
 end
 
@@ -46,14 +42,37 @@ function ConfigManager:Save(filename)
 
 	if not file then
 		log:warning(err)
+		return
 	end
 
 	for i, v in pairs(self) do
 		if type(v) == "table" then
-			file:write(i .. ' = ' .. self[i][v.index] .. '\n')
+			file:write(i .. '=' .. self[i][v.index] .. '\n')
 		else
-			file:write(i .. ' = ' .. self[i] .. '\n')
+			file:write(i .. '=' .. self[i] .. '\n')
 		end
+	end
+
+	file:close()
+end
+
+function ConfigManager:Load(filename)
+	local file, err = io.open(filename, "r")
+
+	if not file then
+		log:warning(err)
+		return
+	end
+
+	local line = file:read()
+	while line do
+		local name, value = string.match(line, '^(.-)=(.*)$')
+		if not name then
+			log:warning('failed to parse \'' .. line .. '\'')
+		else
+			self:Set(name, value)
+		end
+		line = file:read()
 	end
 
 	file:close()
