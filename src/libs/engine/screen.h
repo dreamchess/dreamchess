@@ -27,7 +27,6 @@ class screen
         void pre_render();
         void post_render();
         SDL_Surface *surface; 
-        int ups; 
 };
 
 #endif /* __SCREEN_H */

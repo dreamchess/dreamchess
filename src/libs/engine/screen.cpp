@@ -37,52 +37,35 @@ vec get_mouse()
 
 void screen::pre_render()
 {
-    static double lastFrameTime = 0.0;
-    static double cyclesLeftOver = 0.0;
-    double currentTime;
-    double updateIterations;
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glLoadIdentity();
 
-    int updates_per_sec;
-    int last_update_tick;
+    // Lights...
+    //int light_count=count_type("light");
 
-    updates_per_sec=0;
-    last_update_tick=SDL_GetTicks();
-    ups=0;
-    	
-    currentTime = SDL_GetTicks();
-    updateIterations = ((currentTime - lastFrameTime) + cyclesLeftOver);
-  
-    if (updateIterations > (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL))
-        updateIterations = (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL);
-
-    while (updateIterations > UPDATE_INTERVAL) 
+    // FIX MEEEeee...
+    /*if ( light_count >= 0 )
     {
-        static int last_update_tick;
+        float mcolor[] = { 1.0f, 1.0f, 1.0f };
+        float position[] = { 5.919f, -1.160f, 1.299f, 1.0f };
+        glLightfv(GL_LIGHT0, GL_POSITION, position );  
 
-        updateIterations -= UPDATE_INTERVAL;
+	    // Create light components 
+	    GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
+	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
+	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+      	 
+	    // Assign created components to GL_LIGHT0 
+	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 
-        // Printf update and frame info.
-        if ( SDL_GetTicks()-last_update_tick > 1000 )
-        {
-            //printf( "Updates per Second: %i\n", ups );
-            last_update_tick=SDL_GetTicks();
-        }
-        //loop();
+        // White specular highlights 
+        glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
 
-        //update();
-        updates_per_sec++;
-    }
-
-    // Count updates per second.
-    if ( SDL_GetTicks()-last_update_tick > 1000 )
-    {
-        ups=updates_per_sec;
-        updates_per_sec=0; 
-        last_update_tick=SDL_GetTicks();
-    }
-
-    cyclesLeftOver = updateIterations;
-    lastFrameTime = currentTime;	
+        glEnable(GL_LIGHT0);  
+    }	*/
 }
 
 void screen::post_render()
