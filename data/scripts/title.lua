@@ -5,11 +5,10 @@ s = engine.screen(640,480);
 
 -- Create keyboard object...
 k = engine.keyboard();
+t = engine.texture("boards/classic/board.png");
+m = engine.mesh("boards/classic/board.dcm");
 
-while (true) do
-
- if (k:is_pressed(27)) then
- break
- end 
-
-end
+repeat
+m:render(t);
+s:update();
+until (k:is_pressed(27))
