@@ -85,8 +85,8 @@ void scene::start()
         cyclesLeftOver = updateIterations;
         lastFrameTime = currentTime;
 
-        render();
-        scr->update();
+        //render();
+        //scr->update();
     }
 }
 

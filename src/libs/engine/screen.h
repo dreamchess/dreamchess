@@ -3,6 +3,11 @@
 
 #include "SDL.h"
 
+#define MAXIMUM_FRAME_RATE 60
+#define MINIMUM_FRAME_RATE 15
+#define UPDATE_INTERVAL (1000.0 / MAXIMUM_FRAME_RATE)
+#define MAX_CYCLES_PER_FRAME (MAXIMUM_FRAME_RATE / MINIMUM_FRAME_RATE)
+
 class vec
 {
     public:
@@ -19,8 +24,10 @@ class screen
 
     public:
         screen(int,int);
-        void update();
+        void pre_render();
+        void post_render();
         SDL_Surface *surface; 
+        int ups; 
 };
 
 #endif /* __SCREEN_H */

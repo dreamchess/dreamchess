@@ -35,7 +35,57 @@ vec get_mouse()
     return vec(x,y,0);
 }
 
-void screen::update()
+void screen::pre_render()
+{
+    static double lastFrameTime = 0.0;
+    static double cyclesLeftOver = 0.0;
+    double currentTime;
+    double updateIterations;
+
+    int updates_per_sec;
+    int last_update_tick;
+
+    updates_per_sec=0;
+    last_update_tick=SDL_GetTicks();
+    ups=0;
+    	
+    currentTime = SDL_GetTicks();
+    updateIterations = ((currentTime - lastFrameTime) + cyclesLeftOver);
+  
+    if (updateIterations > (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL))
+        updateIterations = (MAX_CYCLES_PER_FRAME * UPDATE_INTERVAL);
+
+    while (updateIterations > UPDATE_INTERVAL) 
+    {
+        static int last_update_tick;
+
+        updateIterations -= UPDATE_INTERVAL;
+
+        // Printf update and frame info.
+        if ( SDL_GetTicks()-last_update_tick > 1000 )
+        {
+            //printf( "Updates per Second: %i\n", ups );
+            last_update_tick=SDL_GetTicks();
+        }
+        //loop();
+
+        //update();
+        updates_per_sec++;
+    }
+
+    // Count updates per second.
+    if ( SDL_GetTicks()-last_update_tick > 1000 )
+    {
+        ups=updates_per_sec;
+        updates_per_sec=0; 
+        last_update_tick=SDL_GetTicks();
+    }
+
+    cyclesLeftOver = updateIterations;
+    lastFrameTime = currentTime;	
+}
+
+void screen::post_render()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )
     {

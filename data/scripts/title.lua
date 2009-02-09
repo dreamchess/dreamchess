@@ -9,6 +9,7 @@ t = engine.texture("boards/classic/board.png");
 m = engine.mesh("boards/classic/board.dcm");
 
 repeat
+s:pre_render();
 m:render(t);
-s:update();
+s:post_render();
 until (k:is_pressed(27))
