@@ -24,9 +24,14 @@ class screen
 
     public:
         screen(int,int);
-        void pre_render();
-        void post_render();
-        SDL_Surface *surface; 
+        void start_frame();
+        void end_frame();
+        SDL_Surface *surface;
+		void move( float x, float y, float z );
+		void rotate( float x, float y, float z );
+		void scale( float x, float y, float z );  
+		void push();
+		void pop();       
 };
 
 #endif /* __SCREEN_H */

@@ -172,13 +172,7 @@ void mesh::render( texture *tx )
 
     glPushMatrix();
 
-        glEnable(GL_LIGHTING);
-
-        //glTranslatef( xpos, ypos, zpos );
-        //glScalef(xscale, yscale, zscale);
-        //glRotatef( xrot, 1, 0, 0 );
-        //glRotatef( yrot, 0, 1, 0 );
-        //glRotatef( zrot, 0, 0, 1 );
+        //glEnable(GL_LIGHTING);
 
         glColor4f(1.0f,1.0f,1.0f,1.0f);
 

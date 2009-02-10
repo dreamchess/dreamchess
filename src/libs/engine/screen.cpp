@@ -35,10 +35,39 @@ vec get_mouse()
     return vec(x,y,0);
 }
 
-void screen::pre_render()
+void screen::push()
+{
+	glPushMatrix();
+}
+
+void screen::pop()
+{
+	glPopMatrix();
+}
+
+void screen::move( float x, float y, float z )
+{
+	glTranslatef( x, y, z );
+}
+
+void screen::rotate( float x, float y, float z )
+{
+	glRotatef(x, 1, 0, 0);
+    glRotatef(y, 0, 1, 0);
+    glRotatef(z, 0, 0, 1);
+}
+
+void screen::scale( float x, float y, float z )
+{
+	glScalef(x, y, z);
+}
+
+void screen::start_frame()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
+
+	glTranslatef( 0.0f, 0.0f, -12.0f );
 
     // Lights...
     //int light_count=count_type("light");
@@ -68,7 +97,7 @@ void screen::pre_render()
     }	*/
 }
 
-void screen::post_render()
+void screen::end_frame()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )
     {
