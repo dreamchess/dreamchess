@@ -67,8 +67,6 @@ void screen::start_frame()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
 
-	glTranslatef( 0.0f, 0.0f, -12.0f );
-
     // Lights...
     //int light_count=count_type("light");
 
