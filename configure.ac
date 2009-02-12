@@ -88,20 +88,33 @@ PKG_CHECK_MODULES([lua], [lua5.1 >= 5.1],
 	[
 		PKG_CHECK_MODULES([lualpeg],
 			[lua5.1-lpeg],
-			[lua_LIBS="$lualpeg_LIBS $lua_LIBS"],
-			[AC_SUBST(LPEG_LIB, "liblpeg.a")]
-			[DREAMCHESS_LIBS="libs/lpeg/liblpeg.a $DREAMCHESS_LIBS"]
+			[have_lualpeg="yes"], [have_lualpeg="no"]
 			)
 		PKG_CHECK_MODULES([luasocket],
 			[lua5.1-socket],
-			[lua_LIBS="$luasocket_LIBS $lua_LIBS"],
-			[AC_SUBST(SOCKET_LIB, "libsocket.a")]
-			[DREAMCHESS_LIBS="libs/socket/libsocket.a $DREAMCHESS_LIBS"]
+			[have_luasocket="yes"], [have_luasocket="no"]
 			)
 	],
-	[AC_MSG_NOTICE([liblua5.1 not found, trying liblua])
-	PKG_CHECK_MODULES([lua], [lua >= 5.1])]
-	)
+	[
+		AC_MSG_NOTICE([liblua5.1 not found, trying liblua])
+		PKG_CHECK_MODULES([lua], [lua >= 5.1])
+		have_lualpeg="no"
+		have_luasocket="no"
+	])
+
+if test x"$have_lualpeg" = xno; then
+	AC_SUBST(LPEG_LIB, "liblpeg.a")
+	DREAMCHESS_LIBS="libs/lpeg/liblpeg.a $DREAMCHESS_LIBS"
+else
+	lua_LIBS="$lualpeg_LIBS $lua_LIBS"
+fi
+
+if test x"$have_luasocket" = xno; then
+	AC_SUBST(SOCKET_LIB, "libsocket.a")
+	DREAMCHESS_LIBS="libs/socket/libsocket.a $DREAMCHESS_LIBS"
+else
+	lua_LIBS="$luasocket_LIBS $lua_LIBS"
+fi
 
 AC_SUBST(LUA_CFLAGS, $lua_CFLAGS)
 AC_SUBST(LUA_LIBS, $lua_LIBS)
