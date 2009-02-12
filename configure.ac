@@ -84,14 +84,27 @@ AC_DEFUN([AC_NEEDS],
 	LIBS="${OLD_LIBS}"
 	)
 
-PKG_CHECK_MODULES([LUA], [lua5.1 >= 5.1],
-	[],
+PKG_CHECK_MODULES([lua], [lua5.1 >= 5.1],
+	[
+		PKG_CHECK_MODULES([lualpeg],
+			[lua5.1-lpeg],
+			[lua_LIBS="$lualpeg_LIBS $lua_LIBS"],
+			[AC_SUBST(LPEG_LIB, "liblpeg.a")]
+			[DREAMCHESS_LIBS="libs/lpeg/liblpeg.a $DREAMCHESS_LIBS"]
+			)
+		PKG_CHECK_MODULES([luasocket],
+			[lua5.1-socket],
+			[lua_LIBS="$luasocket_LIBS $lua_LIBS"],
+			[AC_SUBST(SOCKET_LIB, "libsocket.a")]
+			[DREAMCHESS_LIBS="libs/socket/libsocket.a $DREAMCHESS_LIBS"]
+			)
+	],
 	[AC_MSG_NOTICE([liblua5.1 not found, trying liblua])
-	PKG_CHECK_MODULES([LUA], [lua >= 5.1])]
+	PKG_CHECK_MODULES([lua], [lua >= 5.1])]
 	)
 
-AC_SUBST(LUA_CFLAGS, $LUA_CFLAGS)
-AC_SUBST(LUA_LIBS, $LUA_LIBS)
+AC_SUBST(LUA_CFLAGS, $lua_CFLAGS)
+AC_SUBST(LUA_LIBS, $lua_LIBS)
 
 case $host_os in
 	darwin*)
@@ -308,7 +321,7 @@ if test x"$with_ui_sdl" = xyes; then
 fi
 
 if test x"$enable_linked_engine" = xyes -a x"$have_sdl" = xyes -a x"$with_sdl" != xno; then
-	DREAMCHESS_LIBS="libs/libpipe_mem.a dreamer/libdreamer.a"
+	DREAMCHESS_LIBS="libs/libpipe_mem.a dreamer/libdreamer.a $DREAMCHESS_LIBS"
 	AC_SUBST(DREAMER_SDL_CFLAGS, $SDL_CFLAGS)
 	AC_SUBST(PIPE_LIB, "libpipe_mem.a")
 	AC_DEFINE([COMM_SDL_THREADS], [1], [Define to 1 if you want UI<->engine communication via SDL threads.])
@@ -323,7 +336,7 @@ else
 			AC_SUBST(WINDRES)
 			AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
 		fi
-		DREAMCHESS_LIBS="libs/libpipe_win32.a"
+		DREAMCHESS_LIBS="libs/libpipe_win32.a $DREAMCHESS_LIBS"
 		DREAMER_LIBS="../libs/libpipe_win32.a"
 		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
 	elif test "$host_os" = "beos"; then
@@ -335,12 +348,12 @@ else
 			AC_SUBST(XRES)
 			beos_rc="yes"
 		fi
-		DREAMCHESS_LIBS="libs/libpipe_beos.a"
+		DREAMCHESS_LIBS="libs/libpipe_beos.a $DREAMCHESS_LIBS"
 		DREAMER_LIBS="../libs/libpipe_beos.a"
 		AC_DEFINE([COMM_PIPE_UNIX], [1])
 	else
 		AC_SUBST(PIPE_LIB, "libpipe_unix.a")
-		DREAMCHESS_LIBS="libs/libpipe_unix.a"
+		DREAMCHESS_LIBS="libs/libpipe_unix.a $DREAMCHESS_LIBS"
 		DREAMER_LIBS="../libs/libpipe_unix.a"
 		AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
 	fi
@@ -366,6 +379,15 @@ if test "$host_os" != "mingw32"; then
 	AC_SUBST(DATADIR, "-DDATADIR=\\\"\$(pkgdatadir)\\\"")
 fi
 
+# Add system-specific file for luasocket
+case $host_os in
+	*mingw32)
+		SOCKET_SYSTEM='wsocket.$(OBJEXT)' ;;
+	*)
+		SOCKET_SYSTEM='usocket.$(OBJEXT)' ;;
+esac
+AC_SUBST(SOCKET_SYSTEM)
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h string.h getopt.h])
@@ -389,7 +411,9 @@ AC_CONFIG_FILES([Makefile
 		src/libs/Makefile
 		src/libs/engine/Makefile
 		src/libs/gamegui/Makefile
+		src/libs/lpeg/Makefile
 		src/libs/minizip/Makefile
+		src/libs/socket/Makefile
 		src/include/Makefile
 		src/include/gamegui/Makefile
 		src/include/minizip/Makefile

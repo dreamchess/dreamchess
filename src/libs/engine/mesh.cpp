@@ -174,7 +174,7 @@ void mesh::render( texture *tx )
 
         //glEnable(GL_LIGHTING);
 
-        glColor4f(1.0f,1.0f,1.0f,1.0f);
+        glColor4f(1.0f,1.0f,1.0f,0.0f);
 
         mcolor[3] = alpha;
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
@@ -187,11 +187,11 @@ void mesh::render( texture *tx )
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
-        glCallList( ((mesh_t*)mesh_data)->list);
+        glCallList(mesh_data->list);
         glDisable(GL_TEXTURE_2D);
 
         glDisable(GL_LIGHTING);
- 
+
     glPopMatrix();           
 }
 

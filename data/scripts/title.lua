@@ -1,4 +1,6 @@
 require 'entity'
+require 'board'
+require 'san'
 
 -- Create the window...
 s = engine.screen(640,480);

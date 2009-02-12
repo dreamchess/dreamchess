@@ -10,6 +10,7 @@ extern "C" {
 #include "lualib.h"
 #include "lauxlib.h"
 int luaopen_engine(lua_State* L);
+int luaopen_lpeg(lua_State* L);
 }
 
 static void loadfile(lua_State *L, char *filename)
@@ -32,24 +33,19 @@ static void loadfile(lua_State *L, char *filename)
 
 static void setclasspath(lua_State *L)
 {
-	char path[PATH_MAX + 14 + 7] = "package.path='";
+	char path[PATH_MAX + 33 + 7] = "package.path = package.path .. ';";
 
 	ch_datadir();
 	chdir("scripts");
 
-	if (!getcwd(path + 14, PATH_MAX)) {
+	if (!getcwd(path + 33, PATH_MAX)) {
 		DBG_ERROR("Error setting lua class path\n");
 		exit(1);
 	}
 
 	strcat(path, "/?.lua'");
 
-	if (luaL_loadstring(L, path) != 0) {
-		DBG_ERROR("%s\n", lua_tostring (L, -1));
-		exit(1);
-	}
-
-	if (lua_pcall(L, 0, 0, 0) != 0) {
+	if (luaL_dostring(L, path) != 0) {
 		DBG_ERROR("%s\n", lua_tostring (L, -1));
 		exit(1);
 	}
@@ -61,9 +57,26 @@ void testengine()
 
 	luaL_openlibs(L);
 	setclasspath(L);
-	luaopen_engine(L);
 
-	loadfile(L, "title.lua");
+	
+	/* luaopen_engine(L); */
+	lua_pushcfunction(L, luaopen_engine);
+	lua_pushstring(L, "engine");
+	lua_call(L, 1, 0);
+
+	/* luaopen_lpeg(L); */
+/*	lua_pushcfunction(L, luaopen_lpeg);
+	lua_pushstring(L, "lpeg");
+	lua_call(L, 1, 0);*/
+
+	lua_register(L, "luaopen_lpeg", luaopen_lpeg);
+
+/*	if (luaL_dostring(L, "package.preload['lpeg'] = 'luaopen_lpeg'") != 0) {
+		DBG_ERROR("%s\n", lua_tostring (L, -1));
+		exit(1);
+	}*/
+
+	loadfile(L, "main.lua");
 
 	exit(0);
 }
