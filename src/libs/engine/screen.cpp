@@ -35,6 +35,30 @@ vec get_mouse()
   return vec(x,y,0);
 }
 
+// Add support for multiple lights, colour, etc...
+void screen::setlight( float x, float y, float z )
+{
+    float mcolor[] = { 1.0f, 1.0f, 1.0f };
+    float position[] = { x, y, z, 1.0f };
+    glLightfv(GL_LIGHT0, GL_POSITION, position );  
+
+	/* Create light components */
+    GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
+	GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
+	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+      	 
+	/* Assign created components to GL_LIGHT0 */
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+
+    /* White specular highlights */
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
+
+    glEnable(GL_LIGHT0); 
+}
+
 void screen::push()
 {
     glPushMatrix();
@@ -66,33 +90,6 @@ void screen::start_frame()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
-
-    // Lights...
-    //int light_count=count_type("light");
-
-    // FIX MEEEeee...
-    /*if ( light_count >= 0 )
-    {
-        float mcolor[] = { 1.0f, 1.0f, 1.0f };
-        float position[] = { 5.919f, -1.160f, 1.299f, 1.0f };
-        glLightfv(GL_LIGHT0, GL_POSITION, position );  
-
-	    // Create light components 
-	    GLfloat ambientLight[] = { 0.15f, 0.15f, 0.15f, 1.0f };
-	    GLfloat diffuseLight[] = { 0.45f, 0.45f, 0.45f, 1.0f };
-	    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-      	 
-	    // Assign created components to GL_LIGHT0 
-	    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-
-        // White specular highlights 
-        glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-        glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
-
-        glEnable(GL_LIGHT0);  
-    }	*/
 }
 
 void screen::end_frame()

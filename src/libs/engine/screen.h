@@ -2,6 +2,7 @@
 #define __SCREEN_H_
 
 #include "SDL.h"
+#include "texture.h"
 
 #define MAXIMUM_FRAME_RATE 60
 #define MINIMUM_FRAME_RATE 15
@@ -30,8 +31,9 @@ class screen
 		void move( float x, float y, float z );
 		void rotate( float x, float y, float z );
 		void scale( float x, float y, float z );  
+		void setlight( float x, float y, float z );
 		void push();
-		void pop();       
+		void pop();      
 };
 
 #endif /* __SCREEN_H */

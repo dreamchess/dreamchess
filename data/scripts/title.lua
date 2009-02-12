@@ -54,7 +54,7 @@ title_scene:add("King", king_entity);
 cam = camera();
 cam:setpos(5.519, -0.86, 1.09);
 cam:setrot(-93, -1, -59.286);
-title_scene:add("Camera", cam);
+title_scene:setcam(cam);
 
 light1 = light();
 light1:setcolour(1, 1, 1);

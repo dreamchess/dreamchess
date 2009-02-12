@@ -172,7 +172,7 @@ void mesh::render( texture *tx )
 
     glPushMatrix();
 
-        //glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHTING);
 
         glColor4f(1.0f,1.0f,1.0f,0.0f);
 
