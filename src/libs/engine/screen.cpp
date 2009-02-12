@@ -28,31 +28,31 @@ int frames_yay=0;
 
 vec get_mouse()
 {
-    int x, y;
-    SDL_PumpEvents();
-    SDL_GetMouseState(&x, &y);
+	int x, y;
+  SDL_PumpEvents();
+  SDL_GetMouseState(&x, &y);
 
-    return vec(x,y,0);
+  return vec(x,y,0);
 }
 
 void screen::push()
 {
-	glPushMatrix();
+    glPushMatrix();
 }
 
 void screen::pop()
 {
-	glPopMatrix();
+    glPopMatrix();
 }
 
 void screen::move( float x, float y, float z )
 {
-	glTranslatef( x, y, z );
+    glTranslatef( x, y, z );
 }
 
 void screen::rotate( float x, float y, float z )
 {
-	glRotatef(x, 1, 0, 0);
+    glRotatef(x, 1, 0, 0);
     glRotatef(y, 0, 1, 0);
     glRotatef(z, 0, 0, 1);
 }
@@ -117,11 +117,11 @@ screen::screen(int w, int h)
     width = w; height = h;
 
    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 )
-	{
+	 {
 	    fprintf( stderr, "Video initialization failed: %s\n",
 		     SDL_GetError( ) );
 	    exit(1);
-	} 
+	 } 
 
     // Fetch the video info 
     video_info = SDL_GetVideoInfo( );
