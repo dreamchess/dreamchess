@@ -4,7 +4,8 @@
 #include "screen.h"
 #include "input.h"
 #include "texture.h"
-#include "mesh.h"
+#include "dcm.h"
+#include "md3.h"
 %}
 
 %include <std_string.i>
@@ -12,4 +13,5 @@
 %include "screen.h"
 %include "input.h"
 %include "texture.h"
-%include "mesh.h"
+%include "dcm.h"
+%include "md3.h"

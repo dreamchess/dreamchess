@@ -15,11 +15,11 @@ white_texture = engine.texture("pieces/classic/white.png");
 black_texture = engine.texture("pieces/classic/black.png");
 
 -- Load meshes...
-board_mesh = engine.mesh("boards/classic/board.dcm");
-queen_mesh = engine.mesh("pieces/classic/queen.dcm");
-bishop_mesh = engine.mesh("pieces/classic/bishop.dcm");
-rook_mesh = engine.mesh("pieces/classic/rook.dcm");
-king_mesh = engine.mesh("pieces/classic/king.dcm");
+board_mesh = engine.dcm("boards/classic/board.dcm");
+queen_mesh = engine.dcm("pieces/classic/queen.dcm");
+bishop_mesh = engine.dcm("pieces/classic/bishop.dcm");
+rook_mesh = engine.dcm("pieces/classic/rook.dcm");
+king_mesh = engine.dcm("pieces/classic/king.dcm");
 
 title_scene = scene();
 

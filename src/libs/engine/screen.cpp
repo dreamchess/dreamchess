@@ -172,6 +172,14 @@ screen::screen(int w, int h)
     // Setup our viewport.
     glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
 
+    /* Enable lighting */
+    //glEnable(GL_LIGHTING);
+
+    /* Enable normalisation of normals */
+    glEnable(GL_NORMALIZE);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+
     // change to the projection matrix and set our viewing volume. 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity( );
