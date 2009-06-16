@@ -19,7 +19,7 @@ dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
 	@MXML_LIBS@ @SDL_LIBS@ @LUA_LIBS@
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
 	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ \
-	libs/engine/libengine.a
+	libs/engine/libengine.a libs/md3/libmd3.a
 
 win32_rc.$(OBJEXT): win32.rc win32.ico
 	@WINDRES@ win32.rc win32_rc.$(OBJEXT)

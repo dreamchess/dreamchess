@@ -1,4 +1,4 @@
-SUBDIRS = gamegui minizip engine lpeg socket
+SUBDIRS = gamegui minizip engine lpeg socket md3
 EXTRA_DIST = msgbuf.h
 INCLUDES = -I$(top_srcdir)/src/include
 AM_YFLAGS = -p san

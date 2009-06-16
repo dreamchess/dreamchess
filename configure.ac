@@ -427,6 +427,7 @@ AC_CONFIG_FILES([Makefile
 		src/libs/lpeg/Makefile
 		src/libs/minizip/Makefile
 		src/libs/socket/Makefile
+		src/libs/md3/Makefile
 		src/include/Makefile
 		src/include/gamegui/Makefile
 		src/include/minizip/Makefile
