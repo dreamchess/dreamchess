@@ -4,6 +4,7 @@ require 'class'
 scene = class(function(s) s.entities={} s.lights={} end);
 
 function scene:add(name,e)
+    -- TODO: Check if the name exists... if so, append a number... 
     self.entities[name]=e;
     
     -- Check if it's a light, if it is, also add to light list...

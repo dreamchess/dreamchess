@@ -38,9 +38,9 @@ void libmd3_unpack_normals(libmd3_mesh * mesh)
         return;
     }
 
-    mesh->normals = (float*)calloc(mesh->mesh_header->vertex_count * 3, sizeof(float));
+    mesh->normals = (float*)calloc(mesh->mesh_header->vertex_count*mesh->mesh_header->frame_count * 3, sizeof(float));
 
-    for(i = 0; i < mesh->mesh_header->vertex_count; ++i) {
+    for(i = 0; i < mesh->mesh_header->vertex_count*mesh->mesh_header->frame_count; ++i) {
         lat = (mesh->vertices[i * 4 + 3] >> 8) & 0xff;
         lng = (mesh->vertices[i * 4 + 3]) & 0xff;
 

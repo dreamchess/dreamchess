@@ -96,7 +96,7 @@ void screen::end_frame()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )
     {
-        //printf( "FPS: %i\n", frames_yay );
+        printf( "FPS: %i\n", frames_yay );
         frames_yay=0;
         ticks_omg=SDL_GetTicks();
     }

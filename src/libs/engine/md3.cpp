@@ -11,7 +11,7 @@ static void fixPath(char * filename)
     }
 }
 
-static void draw_one_mesh(libmd3_mesh * mesh, int tx )
+static void draw_one_mesh(libmd3_mesh * mesh, int index,  int tx )
 {
     /*if (mesh->mesh_header->skin_count != 0) {
         if (mesh->user.u == 0) {
@@ -31,7 +31,11 @@ static void draw_one_mesh(libmd3_mesh * mesh, int tx )
 
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    glVertexPointer(3, GL_SHORT, 0, mesh->vertices);
+    int vertex_offset=(mesh->mesh_header->vertex_count*3)*index;
+
+    //printf
+
+    glVertexPointer(3, GL_SHORT, 0, mesh->vertices+vertex_offset);
     glTexCoordPointer(2, GL_FLOAT, 0, mesh->texcoords);
     glNormalPointer(GL_FLOAT, 0, mesh->normals);
     glDrawElements(GL_TRIANGLES, mesh->mesh_header->triangle_count * 3,
@@ -47,8 +51,8 @@ static void draw_one_mesh(libmd3_mesh * mesh, int tx )
 
 void md3::render( texture *tx )
 {
-   int i;
-   libmd3_mesh * meshp;
+    int i;
+    libmd3_mesh * meshp;
 
     glPushMatrix();
 
@@ -60,10 +64,11 @@ void md3::render( texture *tx )
         return;
     }
 
-    meshp = modelFile->meshes;
+
+    meshp = modelFile->meshes;    
     for(i = 0; i < modelFile->header->mesh_count; ++i, ++meshp) 
     {
-        draw_one_mesh(meshp, tx->texture_data.id);
+        draw_one_mesh(meshp, 0, tx->texture_data.id);
     }
 
     glPopMatrix();      
@@ -83,5 +88,6 @@ md3::md3( std::string filename )
     {
         libmd3_unpack_normals(&modelFile->meshes[i]);
     }
-    //return 0;
+
+    //dump_frames(libmd3_file_load((char*)filename.c_str()));
 }

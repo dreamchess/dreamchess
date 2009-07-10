@@ -4,5 +4,6 @@ for i, v in pairs(package.preload) do
 	print(i .. ' = ' .. tostring(v))
 end
 
-require 'title'
+--require 'title'
+require 'game'
 
