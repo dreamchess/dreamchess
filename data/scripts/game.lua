@@ -40,7 +40,7 @@ title_scene:add("Rook", rook_entity);
 rook_entity = model();
 rook_entity:setres(rook_mesh, white_texture);
 rook_entity:setpos(-3.5, -3.5, 0);
-title_scene:add("Rook2", rook_entity);
+title_scene:add("Rook", rook_entity);
 
 knight_entity = model();
 knight_entity:setres(knight_mesh, white_texture);
@@ -52,7 +52,7 @@ knight_entity = model();
 knight_entity:setres(knight_mesh, white_texture);
 knight_entity:setpos(-2.5, -3.5, 0);
 knight_entity:setrot(0, 0, 90)
-title_scene:add("Knight2", knight_entity);
+title_scene:add("Knight", knight_entity);
 
 bishop_entity = model();
 bishop_entity:setres(bishop_mesh, white_texture);
@@ -64,7 +64,7 @@ bishop_entity = model();
 bishop_entity:setres(bishop_mesh, white_texture);
 bishop_entity:setpos(-1.5, -3.5, 0);
 bishop_entity:setrot(0, 0, 0)
-title_scene:add("Bishop2", bishop_entity);
+title_scene:add("Bishop", bishop_entity);
 
 king_entity = model();
 king_entity:setres(king_mesh, white_texture);
@@ -84,7 +84,7 @@ repeat
     pawn_entity:setres(pawn_mesh, white_texture);
     pawn_entity:setpos(-3.5+i, -2.5, 0);
     pawn_entity:setrot(0, 0, 0)
-    title_scene:add("Pawn"..tostring(i), pawn_entity);
+    title_scene:add("Pawn", pawn_entity);
     i=i+1;  
 until (i > 7)
 
@@ -92,48 +92,48 @@ until (i > 7)
 rook_entity = model();
 rook_entity:setres(rook_mesh, black_texture);
 rook_entity:setpos(3.5, 3.5, 0);
-title_scene:add("BRook", rook_entity);
+title_scene:add("Rook", rook_entity);
 
 rook_entity = model();
 rook_entity:setres(rook_mesh, black_texture);
 rook_entity:setpos(-3.5, 3.5, 0);
-title_scene:add("BRook2", rook_entity);
+title_scene:add("Rook", rook_entity);
 
 knight_entity = model();
 knight_entity:setres(knight_mesh, black_texture);
 knight_entity:setpos(2.5, 3.5, 0);
 knight_entity:setrot(0, 0, 90);
-title_scene:add("BKnight", knight_entity);
+title_scene:add("Knight", knight_entity);
 
 knight_entity = model();
 knight_entity:setres(knight_mesh, black_texture);
 knight_entity:setpos(-2.5, 3.5, 0);
 knight_entity:setrot(0, 0, 90)
-title_scene:add("BKnight2", knight_entity);
+title_scene:add("Knight", knight_entity);
 
 bishop_entity = model();
 bishop_entity:setres(bishop_mesh, black_texture);
 bishop_entity:setpos(1.5, 3.5, 0);
 bishop_entity:setrot(0, 0, 0);
-title_scene:add("BBishop", bishop_entity);
+title_scene:add("Bishop", bishop_entity);
 
 bishop_entity = model();
 bishop_entity:setres(bishop_mesh, black_texture);
 bishop_entity:setpos(-1.5, 3.5, 0);
 bishop_entity:setrot(0, 0, 0)
-title_scene:add("BBishop2", bishop_entity);
+title_scene:add("Bishop", bishop_entity);
 
 king_entity = model();
 king_entity:setres(king_mesh, black_texture);
 king_entity:setpos(0.5, 3.5, 0);
 king_entity:setrot(0, 0, 0);
-title_scene:add("BKing", king_entity);
+title_scene:add("King", king_entity);
 
 queen_entity = model();
 queen_entity:setres(queen_mesh, black_texture);
 queen_entity:setpos(-0.5, 3.5, 0);
 queen_entity:setrot(0, 0, 0)
-title_scene:add("BQueen", queen_entity);
+title_scene:add("Queen", queen_entity);
 
 i=0
 repeat
@@ -141,7 +141,7 @@ repeat
     pawn_entity:setres(pawn_mesh, black_texture);
     pawn_entity:setpos(-3.5+i, 2.5, 0);
     pawn_entity:setrot(0, 0, 0)
-    title_scene:add("BPawn"..tostring(i), pawn_entity);
+    title_scene:add("Pawn", pawn_entity);
     i=i+1;  
 until (i > 7)
 
