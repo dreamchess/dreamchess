@@ -49,9 +49,9 @@ function scene:render()
 
     -- Render the entities...
     for i, v in pairs(self.entities) do 
-        if ( v:is_a(model) ) then
+    --    if v:render() then
             v:render();
-        end
+    --    end
     end
 
     s:end_frame();

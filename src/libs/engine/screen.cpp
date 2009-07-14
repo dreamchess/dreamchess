@@ -96,13 +96,39 @@ void screen::end_frame()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )
     {
-        printf( "FPS: %i\n", frames_yay );
+        //printf( "FPS: %i\n", frames_yay );
         frames_yay=0;
         ticks_omg=SDL_GetTicks();
     }
 
     frames_yay++;
     SDL_GL_SwapBuffers();
+}
+
+void screen::draw_quad( float width, float height, texture *tx )
+{
+    float tc = 46 / 512.0f;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tx->texture_data.id);
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glTexCoord2f(tc, 1 - tc);
+    glNormal3f(0, 0, 1);
+    glVertex3f(-(width/2), -(height/2), 0);
+    glTexCoord2f(1 - tc, 1 - tc);
+    glNormal3f(0, 0, 1);
+    glVertex3f((width/2), -(height/2), 0);
+    glTexCoord2f(1 - tc, tc);
+    glNormal3f(0, 0, 1);
+    glVertex3f((width/2), (height/2), 0);
+    glTexCoord2f(tc, tc);
+    glNormal3f(0, 0, 1);
+    glVertex3f(-(width/2), (height/2), 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);    
 }
 
 screen::screen(int w, int h) 

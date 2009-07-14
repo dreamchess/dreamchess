@@ -3,6 +3,8 @@ require 'scene'
 require 'board'
 require 'san'
 
+require 'chess_board'
+
 -- Create the window...
 s = engine.screen(640,480);
 
@@ -26,8 +28,8 @@ king_mesh = engine.dcm("pieces/classic/king.dcm");
 title_scene = scene();
 
 -- Add the board...
-board_entity = model();
-board_entity:setres(board_mesh, board_texture)
+board_entity = chess_board();
+board_entity:setres(board_mesh, board_texture);
 board_entity:setpos(0, 0, 0);
 title_scene:add("Board", board_entity);
 
@@ -158,17 +160,6 @@ title_scene:add("Light", light1);
 repeat
     title_scene:render();
 until (k:is_pressed(27))
-
-
-
-
-
-
-
-
-
-
-
 
 
 

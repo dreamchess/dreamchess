@@ -33,7 +33,8 @@ class screen
 		void scale( float x, float y, float z );  
 		void setlight( float x, float y, float z );
 		void push();
-		void pop();      
+		void pop();   
+        void draw_quad( float width, float height, texture *tx );   
 };
 
 #endif /* __SCREEN_H */

@@ -30,6 +30,10 @@ function light:setcolour(r, g, b)
     self.b=b;
 end
 
+function light:render()
+
+end
+
 -- Model entity. Mesh+texture.
 model = class(entity);
 function model:setres(mesh,texture)
