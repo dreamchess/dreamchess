@@ -1,0 +1,6 @@
+
+-- Create the window...
+s = engine.screen(640,480);
+
+-- Create keyboard object...
+k = engine.keyboard();

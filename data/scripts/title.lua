@@ -5,12 +5,6 @@ require 'san'
 
 require 'chess_board'
 
--- Create the window...
-s = engine.screen(640,480);
-
--- Create keyboard object...
-k = engine.keyboard();
-
 -- Load textures...
 board_texture = engine.texture("boards/classic/board.png");
 white_texture = engine.texture("pieces/classic/white.png");
@@ -65,7 +59,7 @@ title_scene:add("Light", light1);
 -- Enter loop...
 repeat
     title_scene:render();
-until (k:is_pressed(27))
+until (k:is_pressed(27,true))
 
 
 

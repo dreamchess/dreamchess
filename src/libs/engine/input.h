@@ -7,7 +7,9 @@
 class keyboard
 {
 	public:
-		bool is_pressed( int key );
+        keyboard();
+		bool is_pressed( int key, bool one_time );
+        bool wait_for_release[256];
 };
 
 class mouse

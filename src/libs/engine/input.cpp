@@ -2,12 +2,35 @@
 #include "SDL.h"
 #include "input.h"
 
-bool keyboard::is_pressed( int key )
+keyboard::keyboard()
+{
+    for (int i=0; i<256; i++)
+        wait_for_release[i]=false;
+}
+
+bool keyboard::is_pressed( int key, bool one_time )
 {
     SDL_PumpEvents();
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    return keystate[key];	
+    int active=keystate[key];
+
+    // Wait for release is active for the key.
+    if ( wait_for_release[key] )
+    {        
+        if ( !active ) // If the key is not pressed, reset wait for release.
+            wait_for_release[key]=false;
+        else // If it is pressed, force a 'false' return, even if it's pressed.
+            active=false;
+    }
+    else // Wait for release not set
+    {
+        if ( one_time && active) // If 'one time' set and the key is active, set wait for release.
+            wait_for_release[key]=true;
+    }
+
+    // Return the key's active state -- or false, if it's been forced by wait_for_release.
+    return active;	
 }
 
 bool mouse::is_pressed( int button )
