@@ -15,7 +15,8 @@ class keyboard
 class mouse
 {
 	public:	
-		bool is_pressed( int button );
+		bool is_pressed( int button, bool one_time );
+        bool wait_for_release[256];
 };
 
 /* Old stuffs o-o 

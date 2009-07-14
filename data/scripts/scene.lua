@@ -36,6 +36,13 @@ function scene:setcam(c)
 scene.active_cam=c;
 end
 
+function scene:update()
+    -- Update the entities...
+    for i, v in pairs(self.entities) do 
+            v:update();
+   end
+end
+
 function scene:render()
     s:start_frame();
     

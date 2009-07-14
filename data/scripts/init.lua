@@ -4,3 +4,6 @@ s = engine.screen(640,480);
 
 -- Create keyboard object...
 k = engine.keyboard();
+
+-- Create mouse object...
+m = engine.mouse();

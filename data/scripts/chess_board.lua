@@ -15,3 +15,12 @@ function chess_board:render()
     s:draw_quad(8,8,self.texture);
 	s:pop();
 end
+
+function chess_board:update()
+    if m:is_pressed(1,true) then
+        print("Button 0 pressed!");
+        if self:collision_at( 0, 0, 0 ) then
+
+        end
+    end
+end

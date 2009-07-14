@@ -33,11 +33,29 @@ bool keyboard::is_pressed( int key, bool one_time )
     return active;	
 }
 
-bool mouse::is_pressed( int button )
+bool mouse::is_pressed( int button, bool one_time )
 {
     SDL_PumpEvents();
+    Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    return SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);	
+    int active=SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);
+
+    // Wait for release is active for the key.
+    if ( wait_for_release[button] )
+    {        
+        if ( !active ) // If the key is not pressed, reset wait for release.
+            wait_for_release[button]=false;
+        else // If it is pressed, force a 'false' return, even if it's pressed.
+            active=false;
+    }
+    else // Wait for release not set
+    {
+        if ( one_time && active) // If 'one time' set and the key is active, set wait for release.
+            wait_for_release[button]=true;
+    }
+
+    // Return the key's active state -- or false, if it's been forced by wait_for_release.
+    return active;	
 }
 
 /* Old stuff! 
