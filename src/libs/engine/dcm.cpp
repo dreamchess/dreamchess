@@ -174,10 +174,12 @@ void dcm::render( texture *tx )
 
         glEnable(GL_LIGHTING);
 
-        glColor4f(1.0f,1.0f,1.0f,0.0f);
+        //glColor4f(1.0f,1.0f,1.0f,0.0f);
 
         mcolor[3] = alpha;
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_COLOR_MATERIAL);
 
         if (specular)
             glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);

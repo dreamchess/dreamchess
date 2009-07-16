@@ -4,6 +4,7 @@ require 'board'
 require 'san'
 
 require 'chess_board'
+require 'chess_piece'
 
 -- Load textures...
 board_texture = engine.texture("boards/classic/board.png");
@@ -28,47 +29,47 @@ board_entity:setpos(0, 0, 0);
 game_scene:add("Board", board_entity);
 
 -- Add white pieces...
-rook_entity = model();
+rook_entity = chess_piece();
 rook_entity:setres(rook_mesh, white_texture);
 rook_entity:setpos(3.5, -3.5, 0);
 game_scene:add("Rook", rook_entity);
 
-rook_entity = model();
+rook_entity = chess_piece();
 rook_entity:setres(rook_mesh, white_texture);
 rook_entity:setpos(-3.5, -3.5, 0);
 game_scene:add("Rook", rook_entity);
 
-knight_entity = model();
+knight_entity = chess_piece();
 knight_entity:setres(knight_mesh, white_texture);
 knight_entity:setpos(2.5, -3.5, 0);
 knight_entity:setrot(0, 0, 90);
 game_scene:add("Knight", knight_entity);
 
-knight_entity = model();
+knight_entity = chess_piece();
 knight_entity:setres(knight_mesh, white_texture);
 knight_entity:setpos(-2.5, -3.5, 0);
 knight_entity:setrot(0, 0, 90)
 game_scene:add("Knight", knight_entity);
 
-bishop_entity = model();
+bishop_entity = chess_piece();
 bishop_entity:setres(bishop_mesh, white_texture);
 bishop_entity:setpos(1.5, -3.5, 0);
 bishop_entity:setrot(0, 0, 0);
 game_scene:add("Bishop", bishop_entity);
 
-bishop_entity = model();
+bishop_entity = chess_piece();
 bishop_entity:setres(bishop_mesh, white_texture);
 bishop_entity:setpos(-1.5, -3.5, 0);
 bishop_entity:setrot(0, 0, 0)
 game_scene:add("Bishop", bishop_entity);
 
-king_entity = model();
+king_entity = chess_piece();
 king_entity:setres(king_mesh, white_texture);
 king_entity:setpos(0.5, -3.5, 0);
 king_entity:setrot(0, 0, 0);
 game_scene:add("King", king_entity);
 
-queen_entity = model();
+queen_entity = chess_piece();
 queen_entity:setres(queen_mesh, white_texture);
 queen_entity:setpos(-0.5, -3.5, 0);
 queen_entity:setrot(0, 0, 0)
@@ -76,7 +77,7 @@ game_scene:add("Queen", queen_entity);
 
 i=0
 repeat
-    pawn_entity = model();
+    pawn_entity = chess_piece();
     pawn_entity:setres(pawn_mesh, white_texture);
     pawn_entity:setpos(-3.5+i, -2.5, 0);
     pawn_entity:setrot(0, 0, 0)
@@ -85,47 +86,47 @@ repeat
 until (i > 7)
 
 -- Add black pieces...
-rook_entity = model();
+rook_entity = chess_piece();
 rook_entity:setres(rook_mesh, black_texture);
 rook_entity:setpos(3.5, 3.5, 0);
 game_scene:add("Rook", rook_entity);
 
-rook_entity = model();
+rook_entity = chess_piece();
 rook_entity:setres(rook_mesh, black_texture);
 rook_entity:setpos(-3.5, 3.5, 0);
 game_scene:add("Rook", rook_entity);
 
-knight_entity = model();
+knight_entity = chess_piece();
 knight_entity:setres(knight_mesh, black_texture);
 knight_entity:setpos(2.5, 3.5, 0);
 knight_entity:setrot(0, 0, 90);
 game_scene:add("Knight", knight_entity);
 
-knight_entity = model();
+knight_entity = chess_piece();
 knight_entity:setres(knight_mesh, black_texture);
 knight_entity:setpos(-2.5, 3.5, 0);
 knight_entity:setrot(0, 0, 90)
 game_scene:add("Knight", knight_entity);
 
-bishop_entity = model();
+bishop_entity = chess_piece();
 bishop_entity:setres(bishop_mesh, black_texture);
 bishop_entity:setpos(1.5, 3.5, 0);
 bishop_entity:setrot(0, 0, 0);
 game_scene:add("Bishop", bishop_entity);
 
-bishop_entity = model();
+bishop_entity = chess_piece();
 bishop_entity:setres(bishop_mesh, black_texture);
 bishop_entity:setpos(-1.5, 3.5, 0);
 bishop_entity:setrot(0, 0, 0)
 game_scene:add("Bishop", bishop_entity);
 
-king_entity = model();
+king_entity = chess_piece();
 king_entity:setres(king_mesh, black_texture);
 king_entity:setpos(0.5, 3.5, 0);
 king_entity:setrot(0, 0, 0);
 game_scene:add("King", king_entity);
 
-queen_entity = model();
+queen_entity = chess_piece();
 queen_entity:setres(queen_mesh, black_texture);
 queen_entity:setpos(-0.5, 3.5, 0);
 queen_entity:setrot(0, 0, 0)
@@ -133,7 +134,7 @@ game_scene:add("Queen", queen_entity);
 
 i=0
 repeat
-    pawn_entity = model();
+    pawn_entity = chess_piece();
     pawn_entity:setres(pawn_mesh, black_texture);
     pawn_entity:setpos(-3.5+i, 2.5, 0);
     pawn_entity:setrot(0, 0, 0)

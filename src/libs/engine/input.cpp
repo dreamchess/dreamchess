@@ -1,4 +1,5 @@
 
+#include "SDL_opengl.h"
 #include "SDL.h"
 #include "input.h"
 
@@ -13,7 +14,7 @@ bool keyboard::is_pressed( int key, bool one_time )
     SDL_PumpEvents();
     Uint8 *keystate = SDL_GetKeyState(NULL);
 
-    int active=keystate[key];
+    bool active=keystate[key];
 
     // Wait for release is active for the key.
     if ( wait_for_release[key] )
@@ -33,112 +34,65 @@ bool keyboard::is_pressed( int key, bool one_time )
     return active;	
 }
 
-bool mouse::is_pressed( int button, bool one_time )
+mouse::mouse()
 {
+
+}
+
+bool mouse::is_pressed( int button )
+{
+    bool active=mouse_buttons[button];
+    return active;
+}
+
+void mouse::update_mouse()
+{
+    int x, y;
     SDL_PumpEvents();
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    SDL_GetMouseState(&x, &y);
+    mouse_2d.x=x; mouse_2d.y=y;
 
-    int active=SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);
-
-    // Wait for release is active for the key.
-    if ( wait_for_release[button] )
-    {        
-        if ( !active ) // If the key is not pressed, reset wait for release.
-            wait_for_release[button]=false;
-        else // If it is pressed, force a 'false' return, even if it's pressed.
-            active=false;
-    }
-    else // Wait for release not set
-    {
-        if ( one_time && active) // If 'one time' set and the key is active, set wait for release.
-            wait_for_release[button]=true;
-    }
-
-    // Return the key's active state -- or false, if it's been forced by wait_for_release.
-    return active;	
+    mouse_buttons[1]=SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1);
 }
 
-/* Old stuff! 
-
-void input_layer::update()
+vec mouse::position2d()
 {
-    for ( int i=0; i<resources.size();i++ )
-    {
-        ((input_event*)resources[i])->update();
-    }
+    return mouse_2d;
 }
 
-bool input_layer::get_input( std::string name )
+void mouse::update_mouse3d()
 {
-    bool retval=false;
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLfloat winX, winY, winZ;
+	GLdouble posX, posY, posZ;
 
-    for ( int i=0; i<resources.size(); i++ )
-    {
-        if ( !name.compare(resources[i]->name) && ((input_event*)resources[i])->active )
-        {
-            retval=true;
-        }
-    }    
-    return retval;
+	vec pos=mouse_2d;
+
+	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetIntegerv( GL_VIEWPORT, viewport );
+
+	winX = (float)pos.x;
+	winY = (float)viewport[3] - (float)pos.y;
+	glReadPixels( pos.x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+
+	gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+
+	mouse_3d.x=posX;
+	mouse_3d.y=posY;
+	mouse_3d.z=posZ;
 }
 
-mouse_event::mouse_event( std::string name2, std::string type2, int b, bool ot )//: input_event() 
+vec mouse::position()
 {
-    button=b;
-    one_time=ot;
-    wait_for_release=false;
-    name=name2;
-    type=type2;
+    return vec(mouse_3d.x,mouse_3d.y,mouse_3d.z);
 }
 
-void mouse_event::update()
-{
-    SDL_PumpEvents();
 
-    active=SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(button);
 
-    if ( one_time ) // Mouse button should only register once.
-    {
-        if ( active )
-        {
-            if ( wait_for_release )
-                active=false;
-            else
-                wait_for_release=true;
-        }
-        else
-            wait_for_release=false;
-    }
 
-}
 
-keyboard_event::keyboard_event( std::string name2, std::string type2, int c, bool ot ): input_event() 
-{
-    key=c;
-    one_time=ot;
-    wait_for_release=false;
-    name=name2;
-    type=type2;
-}
 
-void keyboard_event::update()
-{
-    SDL_PumpEvents();
-    Uint8 *keystate = SDL_GetKeyState(NULL);
-
-    active=keystate[key];
-
-    if ( one_time ) // Keypress should only register once.
-    {
-        if ( active )
-        {
-            if ( wait_for_release )
-                active=false;
-            else
-                wait_for_release=true;
-        }
-        else
-            wait_for_release=false;
-    }
-}*/
 

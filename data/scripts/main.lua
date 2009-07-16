@@ -5,6 +5,6 @@ for i, v in pairs(package.preload) do
 end
 
 require 'init'
-require 'title'
+--require 'title'
 require 'game'
 

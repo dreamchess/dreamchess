@@ -17,8 +17,6 @@ class vec
         float x, y, z;
 };
 
-vec get_mouse();
-
 class screen
 {
     int width, height;
@@ -35,6 +33,7 @@ class screen
 		void push();
 		void pop();   
         void draw_quad( float width, float height, texture *tx );   
+        void colour( float r, float g, float b, float a);
 };
 
 #endif /* __SCREEN_H */

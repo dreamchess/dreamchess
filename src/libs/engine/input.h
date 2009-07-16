@@ -1,8 +1,7 @@
 
 #ifndef __INPUT_H_
 #define __INPUT_H_
-
-//#include "resource.h"
+#include "screen.h"
 
 class keyboard
 {
@@ -15,52 +14,18 @@ class keyboard
 class mouse
 {
 	public:	
-		bool is_pressed( int button, bool one_time );
-        bool wait_for_release[256];
+        mouse();
+		bool is_pressed(int button);
+
+        vec position();
+        vec position2d();
+        
+        void update_mouse();
+        void update_mouse3d();
+
+        vec mouse_2d;
+        vec mouse_3d;
+        bool mouse_buttons[5];
 };
-
-/* Old stuffs o-o 
-
-class input_event: public resource
-{
-    friend class keyboard_event;
-    friend class mouse_event;
-    friend class input_layer;
-    public:
-        input_event() { active=false; event_type=false; }
-        bool is_active() { return active; }
-        virtual void update() = 0;
-        bool active;
-        int event_type;
-};
-
-class mouse_event: public input_event
-{
-    public:
-        mouse_event(std::string name2, std::string type2, int b, bool ot );
-        void update();
-    private:
-        int button;
-        bool one_time;
-        bool wait_for_release;
-};
-
-class keyboard_event: public input_event
-{
-    public:
-        keyboard_event(std::string name2, std::string type2, int c, bool ot );
-        void update();
-    private:
-        int key;
-        bool one_time;
-        bool wait_for_release;
-};
-
-class input_layer: public resource_list
-{
-    public:
-        bool get_input( std::string name );
-        void update();
-};*/
 
 #endif /* INPUT_H */

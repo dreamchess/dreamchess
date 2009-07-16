@@ -26,15 +26,6 @@
 int ticks_omg=0;
 int frames_yay=0;
 
-vec get_mouse()
-{
-	int x, y;
-  SDL_PumpEvents();
-  SDL_GetMouseState(&x, &y);
-
-  return vec(x,y,0);
-}
-
 // Add support for multiple lights, colour, etc...
 void screen::setlight( float x, float y, float z )
 {
@@ -57,6 +48,11 @@ void screen::setlight( float x, float y, float z )
     glMaterialfv(GL_FRONT, GL_AMBIENT, mcolor);
 
     glEnable(GL_LIGHT0); 
+}
+
+void screen::colour(float r, float g, float b, float a)
+{
+    glColor4f(r,g,b,a);
 }
 
 void screen::push()
