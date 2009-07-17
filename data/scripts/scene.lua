@@ -61,7 +61,6 @@ function scene:render()
     --    end
     end
 
-    m:update_mouse();
     m:update_mouse3d();
 
     s:end_frame();

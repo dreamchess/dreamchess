@@ -16,6 +16,8 @@ class mouse
 	public:	
         mouse();
 		bool is_pressed(int button);
+        bool wait_for_release[256];
+        bool is_waiting( int button );
 
         vec position();
         vec position2d();

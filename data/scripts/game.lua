@@ -143,8 +143,8 @@ repeat
 until (i > 7)
 
 cam = camera();
-cam:setpos(0, -3, 15);
-cam:setrot(-10, 0, 0);
+cam:setpos(0, 0, 12);
+cam:setrot(-50, 0, 0);
 game_scene:setcam(cam);
 
 light1 = light();

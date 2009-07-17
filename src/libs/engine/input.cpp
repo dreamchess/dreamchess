@@ -36,12 +36,25 @@ bool keyboard::is_pressed( int key, bool one_time )
 
 mouse::mouse()
 {
-
+    for (int i=0; i<256; i++)
+        wait_for_release[i]=false;
 }
 
-bool mouse::is_pressed( int button )
+bool mouse::is_waiting( int button )
+{
+    return wait_for_release[button];
+}
+
+bool mouse::is_pressed(int button)
 {
     bool active=mouse_buttons[button];
+
+    if (!active)
+        wait_for_release[button]=false;
+
+    if (active)
+        wait_for_release[button]=true;
+
     return active;
 }
 
@@ -53,6 +66,9 @@ void mouse::update_mouse()
     mouse_2d.x=x; mouse_2d.y=y;
 
     mouse_buttons[1]=SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1);
+
+    if ( !mouse_buttons[1] )
+        wait_for_release[1]=false;    
 }
 
 vec mouse::position2d()

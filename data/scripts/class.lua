@@ -40,6 +40,13 @@ function class(base,ctor)
       end
       return false
     end
+  c.is = function(self)
+      local m = getmetatable(self)
+      while m do 
+         print (tostring(m))
+         m = m._base
+      end
+    end
   setmetatable(c,mt)
   return c
 end

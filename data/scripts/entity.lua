@@ -44,8 +44,8 @@ end
 -- Camera entity.
 camera = class(entity);
 function camera:position()
-    s:rotate(self.xrot,self.yrot,self.zrot);
     s:move(-self.x,-self.y,-self.z);
+    s:rotate(self.xrot,self.yrot,self.zrot);
 end
 
 -- Light entity.
