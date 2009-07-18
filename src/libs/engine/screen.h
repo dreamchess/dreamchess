@@ -19,8 +19,6 @@ class vec
 
 class screen
 {
-    int width, height;
-
     public:
         screen(int,int);
         void start_frame();
@@ -34,6 +32,11 @@ class screen
 		void pop();   
         void draw_quad( float width, float height, texture *tx );   
         void colour( float r, float g, float b, float a);
+        void set_perspective_view();
+        void set_ortho_view();
+        void resize();
+
+        int width, height;
 };
 
 #endif /* __SCREEN_H */

@@ -3,12 +3,18 @@ require 'class'
 -- Base entity class.
 entity = class( function(e)	e.x=0 e.y=0 e.z=0 
     e.xrot=0 e.yrot=0 e.zrot=0
-    e.xsize=1 e.ysize=1 e.zsize=1 e.r=1 e.g=1 e.b=1 e.a=1 end );
+    e.xsize=1 e.ysize=1 e.zsize=1 e.r=1 e.g=1 e.b=1 e.a=1 e.glow=false end );
 
 function entity:setpos(x, y, z)
 	self.x=x;
 	self.y=y;
 	self.z=z;	
+end
+
+function entity:setsize(x, y, z)
+    self.xsize=x;
+    self.ysize=y;
+    self.zsize=z;
 end
 
 function entity:setrot(x, y, z)

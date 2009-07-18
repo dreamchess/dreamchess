@@ -49,16 +49,14 @@ function scene:render()
     -- Look for lights...
     for i, v in pairs(self.lights) do
         -- Found a light... fix to allow more... 
-        s:setlight( v.x, v.y, v.z )
+        s:setlight(v.x,v.y,v.z);
     end
 
     self.active_cam:position();
 
     -- Render the entities...
     for i, v in pairs(self.entities) do 
-    --    if v:render() then
             v:render();
-    --    end
     end
 
     m:update_mouse3d();

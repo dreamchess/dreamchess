@@ -25,6 +25,55 @@
 
 int ticks_omg=0;
 int frames_yay=0;
+int glow_size=128;
+
+
+void screen::set_ortho_view()
+{
+	glMatrixMode(GL_PROJECTION);					// Select Projection
+	glPushMatrix();							// Push The Matrix
+	glLoadIdentity();						// Reset The Matrix
+	glOrtho( 0, 640 , 480 , 0, -1, 1 );				// Select Ortho Mode (640x480)
+	glMatrixMode(GL_MODELVIEW);					// Select Modelview Matrix
+	glPushMatrix();							// Push The Matrix
+	glLoadIdentity();						// Reset The Matrix
+
+}
+
+void screen::set_perspective_view()							// Set Up A Perspective View
+{
+	glMatrixMode( GL_PROJECTION );					// Select Projection
+	glPopMatrix();							// Pop The Matrix
+	glMatrixMode( GL_MODELVIEW );					// Select Modelview
+	glPopMatrix();							// Pop The Matrix
+}
+
+
+void screen::resize()
+{
+    GLfloat ratio;
+
+    /* resize the initial window */
+    /* Protect against a divide by zero */
+    if ( height == 0 )
+    	height = 1;
+    ratio = ( GLfloat )width / ( GLfloat )height;
+
+    /* Setup our viewport. */
+    glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
+
+    /* change to the projection matrix and set our viewing volume. */
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity( );
+
+    /* Set our perspective */
+    gluPerspective( 45.0f, ratio, 0.1f, 100.0f );
+
+    /* Make sure we're chaning the model view and not the projection */
+    glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity();
+}
+
 
 // Add support for multiple lights, colour, etc...
 void screen::setlight( float x, float y, float z )
@@ -84,6 +133,7 @@ void screen::scale( float x, float y, float z )
 
 void screen::start_frame()
 {
+    glClearColor(0.0f, 0.0f, 0.0f, 0.5);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();
 }
@@ -92,7 +142,7 @@ void screen::end_frame()
 {
     if ( SDL_GetTicks()-ticks_omg > 1000 )
     {
-        //printf( "FPS: %i\n", frames_yay );
+        printf( "FPS: %i\n", frames_yay );
         frames_yay=0;
         ticks_omg=SDL_GetTicks();
     }
@@ -185,15 +235,6 @@ screen::screen(int w, int h)
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    // resize the initial window 
-    // Protect against a divide by zero 
-    if ( height == 0 )
-    	height = 1;
-    ratio = ( GLfloat )width / ( GLfloat )height;
-
-    // Setup our viewport.
-    glViewport( 0, 0, ( GLsizei )width, ( GLsizei )height );
-
     /* Enable lighting */
     //glEnable(GL_LIGHTING);
 
@@ -202,16 +243,5 @@ screen::screen(int w, int h)
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    // change to the projection matrix and set our viewing volume. 
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    // Set our perspective 
-    gluPerspective( 45.0f, ratio, 0.1f, 100.0f );
-
-    // Make sure we're chaning the model view and not the projection
-    glMatrixMode( GL_MODELVIEW );
-
-    // Reset The View
-    glLoadIdentity( );
+    resize();
 }
