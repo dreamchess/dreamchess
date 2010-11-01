@@ -74,7 +74,7 @@ AC_DEFUN([AC_CHECK_SDL_HEADER],
 AC_DEFUN([AC_NEEDS],
 	OLD_LIBS="${LIBS}"
 	LIBS="${LIBS} -l$1 $6"
-	[AC_CACHE_CHECK([whether lib$1 needs -l$2], ac_$1_needs_$2,
+	[AC_CACHE_CHECK([whether lib$1 needs -l$2], ac_cv_$1_needs_$2,
 		AC_TRY_LINK_FUNC($3,
 			[ac_$1_needs_$2="no" ; $5],
 			[ac_$1_needs_$2="yes" ; $4]
@@ -156,7 +156,7 @@ case $host_os in
 		AC_MSG_CHECKING([for OpenGL framework])
 		dc_libs=$LIBS
 		LIBS="-Wl,-framework,OpenGL"
-		AC_LINK_IFELSE([char gluUnProject(); int main(){return gluUnProject();}],
+		AC_LINK_IFELSE([AC_LANG_SOURCE([char gluUnProject(); int main(){return gluUnProject();}])],
 			[OPENGL_LIBS="-Wl,-framework,OpenGL" have_gl="yes" ; AC_MSG_RESULT([yes])],
 			[AC_MSG_RESULT([no])]
 			)
