@@ -590,7 +590,6 @@ int dreamchess(void *data)
 #ifdef __APPLE__
 		char temp1[200];
 		char temp2[200];
-		char temp3[200];
 				
 		if (!strcmp(option->string,"dreamer") || !strcmp(option->string,"Dreamer") )
 		{
@@ -600,10 +599,10 @@ int dreamchess(void *data)
 			CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );	
 			CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
 	
-			sprintf( temp3, "%s/contents/MacOS/dreamer", temp1 );
-			printf( "%s\n", temp3 );				
+			sprintf( temp2, "%s/contents/MacOS/dreamer", temp1 );
+			printf( "%s\n", temp2 );				
 		
-			game_set_engine_error(comm_init(temp3));
+			game_set_engine_error(comm_init(temp2));
 		}
 		else
 		game_set_engine_error(comm_init(option->string));		

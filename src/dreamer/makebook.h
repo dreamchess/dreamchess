@@ -29,5 +29,7 @@
 #define MAKEBOOK_LAST (1 << 15)
 
 void makebook(char *pgnfile, char *binfile);
+void makebook_reset();
+void makebook_move(char *str);
 
 #endif

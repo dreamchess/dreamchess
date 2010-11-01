@@ -229,44 +229,41 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     gg_system_draw_image(image[4], source, dest, GG_MODE_TILE, GG_MODE_TILE, &col_white);
 }
 
-float dialog_transition_x;
-float dialog_transition_y;
-float dialog_transition_speed=200;
-float dialog_transition_start_pos;
-float dialog_trans_amount=320;
-int dialog_trans_in;
-int dialog_trans_reset;
-int dialog_in_trans;
+static float dialog_transition_speed=200;
+static float dialog_transition_start_pos;
+static int dialog_trans_in;
+static int dialog_trans_reset;
+static int dialog_in_trans;
 
-void dialog_reset_transition( int in )
+void dialog_reset_transition(int in)
 {
-    dialog_trans_in=in;
-    dialog_trans_reset=1;
-    dialog_in_trans=1;
+    dialog_trans_in = in;
+    dialog_trans_reset = 1;
+    dialog_in_trans = 1;
 }
 
 float dialog_get_transition()
 {
-    float ticks=SDL_GetTicks();
+    float ticks = gg_system_get_ticks();
 
-    if ( dialog_trans_reset )
+    if (dialog_trans_reset)
     {
-        dialog_transition_start_pos=SDL_GetTicks();
-        dialog_trans_reset=0;
+        dialog_transition_start_pos = gg_system_get_ticks();
+        dialog_trans_reset = 0;
     }
 
-    float dialog_transition=((ticks-dialog_transition_start_pos)/dialog_transition_speed);
+    float dialog_transition = ((ticks-dialog_transition_start_pos) / dialog_transition_speed);
 
-    if ( dialog_transition > 1.0f )
+    if (dialog_transition > 1.0f)
     {
         dialog_transition = 1.0f;
-        dialog_in_trans=0;
+        dialog_in_trans = 0;
     }
 
-    if ( dialog_trans_in )
+    if (dialog_trans_in)
         return dialog_transition;
     else
-        return 1.0f-dialog_transition;
+        return 1.0f - dialog_transition;
   
 }
 
@@ -313,8 +310,8 @@ void gg_dialog_render(gg_dialog_t *dialog)
 
     active = gg_dialog_get_active() == dialog;
 
-    if ( dialog_in_trans )
-        area.height*=dialog_get_transition();
+    if (dialog_in_trans)
+        area.height *= dialog_get_transition();
 
     draw_border(style->border.image, dialog->title, active, area, size);
 
@@ -323,7 +320,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
     ymin += style->vert_pad;
     ymax -= style->vert_pad;
 
-    if ( !dialog_in_trans )
+    if (!dialog_in_trans)
         child->render(child, xmin, ymin, active);
 
     dialog_get_transition();

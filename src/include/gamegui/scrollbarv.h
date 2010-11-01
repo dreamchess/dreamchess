@@ -37,8 +37,6 @@ gg_scrollbarv_t;
 
 gg_class_id gg_scrollbarv_get_class_id();
 
-static int string_width(char *s, int n);
-
 void gg_scrollbarv_render(gg_widget_t * widget, int x, int y, int focus);
 
 int gg_scrollbarv_input(gg_widget_t * widget, gg_event_t event);

@@ -27,6 +27,10 @@
 #include "move.h"
 #include "commands.h"
 
+/* FIXME */
+extern int pgn_parse_file(char *filename);
+extern int parse_move(board_t *board, int ply, char *command, move_t *move);
+
 typedef struct
 {
     move_t move;
@@ -202,6 +206,7 @@ static void makebook_cleanup_moves()
     }
 }
 
+#if 0
 static void makebook_print(long long hash)
 {
     int index = makebook_find(hash);
@@ -217,6 +222,7 @@ static void makebook_print(long long hash)
         fprintf(stderr, "%s (%i)\n", s, table[index].move[i].count);
     }
 }
+#endif
 
 static void write_uint8(FILE *f, unsigned char c)
 {

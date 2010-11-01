@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "dreamer.h"
 #include "e_comm.h"
@@ -78,6 +79,9 @@ static int convert_piece(int san_piece)
     case SAN_PAWN:
         return PAWN;
     }
+
+    /* We should never get here */
+    assert(0);
 }
 
 static int san_piece(int piece)
@@ -97,11 +101,13 @@ static int san_piece(int piece)
     case PAWN:
         return SAN_PAWN;
     }
+
+    /* We should never get here */
+    assert(0);
 }
 
 static move_t get_san_move(board_t *board, int ply, san_move_t *san)
 {
-    int source, dest;
     move_t move;
     int piece;
     bitboard_t en_passant = board->en_passant;
@@ -538,9 +544,6 @@ int command_usermove(state_t *state, char *command)
 
 void command_handle(state_t *state, char *command)
 {
-    san_move_t *san;
-    move_t move = NO_MOVE;
-
     if (command_always(state, command))
         return;
 

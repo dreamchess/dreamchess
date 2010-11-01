@@ -27,12 +27,6 @@
 #include "system_config.h"
 #include "audio.h"
 
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    gg_dialog_close();
-    return 1;
-}
-
 static int add_text(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
     gg_edit_append((gg_edit_t *) extra_data, gg_entry_get_text(GG_ENTRY(widget)));

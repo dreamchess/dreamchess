@@ -60,7 +60,7 @@ void ui_list_drivers()
     {
         if (i > 0)
             printf(", ");
-        printf(ui_driver[i]->name);
+        printf("%s", ui_driver[i]->name);
         i++;
     }
     printf("\n");

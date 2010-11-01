@@ -28,6 +28,7 @@
 #include "dreamer.h"
 #include "history.h"
 #include "commands.h"
+#include "e_comm.h"
 
 /* Global move tables. */
 int ***rook_moves;

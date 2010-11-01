@@ -41,6 +41,7 @@ gg_class_id gg_edit_get_class_id()
 GG_CHILD(gg_widget_get_class_id())
 }
 
+#if 0
 static int string_width(char *s, int n)
 {
     int retval;
@@ -51,6 +52,7 @@ static int string_width(char *s, int n)
     s[n] = c;
     return retval;
 }
+#endif
 
 void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 {

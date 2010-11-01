@@ -33,7 +33,7 @@
 #define GG_EDIT(W) GG_CHECK_CAST(W, gg_edit_get_class_id(), gg_edit_t)
 
 struct gg_edit_line {
-	TAILQ_ENTRY(gg_edit_line_s) entries;
+	TAILQ_ENTRY(gg_edit_line) entries;
 	char *text;
 };
 
@@ -62,6 +62,8 @@ void gg_edit_init(gg_edit_t *edit, int width, int height);
 gg_widget_t *gg_edit_create(int width, int height);
 
 int gg_edit_add_line(gg_edit_t *edit, char *text);
+
+void gg_edit_append(gg_edit_t *edit, char *text);
 
 #endif /* GAMEGUI_EDIT_H */
 

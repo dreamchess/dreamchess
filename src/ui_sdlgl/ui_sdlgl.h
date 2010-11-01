@@ -199,6 +199,9 @@ float get_ui_trans_pos();
 void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
 void draw_health_bars();
 void draw_backdrop();
+void reset_transition(int in);
+void transition_update();
+void draw_ui_elements();
 
 /* theme.c */
 void load_theme(struct theme_struct *theme);

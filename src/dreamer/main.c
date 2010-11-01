@@ -20,6 +20,10 @@
 
 #include <stdio.h>
 
+#include "board.h"
+#include "hashing.h"
+#include "move.h"
+#include "transposition.h"
 #include "svn_version.h"
 #include "config.h"
 

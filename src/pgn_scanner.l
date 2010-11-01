@@ -19,6 +19,7 @@
 */
 
 %option noyywrap
+%option nounput
 
 %{
 #include "pgn_parser.h"

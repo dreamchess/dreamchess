@@ -156,7 +156,7 @@ void transposition_init(int megabytes)
     x /= 2;
     power_of_two = i;
 
-    printf("Hash table size: %i MB\n", x * sizeof(entry_t) / 1024768);
+    printf("Hash table size: %i MB\n", x * (int)sizeof(entry_t) / 1024768);
     table = malloc(x * sizeof(entry_t));
 
     if (!table)

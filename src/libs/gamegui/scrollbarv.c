@@ -42,6 +42,7 @@ gg_class_id gg_scrollbarv_get_class_id()
 GG_CHILD(gg_widget_get_class_id())
 }
 
+#if 0
 static int string_width(char *s, int n)
 {
     int retval;
@@ -52,13 +53,14 @@ static int string_width(char *s, int n)
     s[n] = c;
     return retval;
 }
+#endif
 
 void gg_scrollbarv_render(gg_widget_t * widget, int x, int y, int focus)
 {
     gg_scrollbarv_t *scrollbarv = GG_SCROLLBARV(widget);
-    gg_rect_t rect;
+/*    gg_rect_t rect; */
     gg_colour_t *colour;
-    struct gg_scrollbarv_line *line;
+/*    struct gg_scrollbarv_line *line; */
 
     switch (focus)
     {

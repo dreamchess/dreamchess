@@ -25,13 +25,6 @@
 #include "system_config.h"
 
 static gg_widget_t *entry1, *entry2, *entry3, *label1, *label2, *label3, *label4, *time_increment;
-static int old_ms;
-
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
-    gg_dialog_close();
-    return 1;
-}
 
 static void create_option_values(gg_option_t *widget, option_t *option)
 {

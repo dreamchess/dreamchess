@@ -107,6 +107,8 @@ int ch_userdir()
 
 #elif defined __APPLE__
 
+#include <unistd.h>
+#include <sys/stat.h>
 #include "CoreFoundation/CoreFoundation.h"
 
 #define USERDIR "Library/Application Support/DreamChess"
@@ -130,7 +132,7 @@ int ch_datadir()
 	sprintf( temp3, "%s/%s", temp2, temp1 );
 	printf( "%s\n", temp3 );
 	
-	chdir(temp3);
+	return chdir(temp3);
 }
 
 int ch_userdir()

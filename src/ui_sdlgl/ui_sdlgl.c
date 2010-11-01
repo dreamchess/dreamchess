@@ -491,7 +491,9 @@ static int resize(int width, int height, int fullscreen, int ms)
 /** Implements ui_driver::init. */
 static int init_gui( int width, int height, int fullscreen, int ms)
 {
+#ifndef __APPLE__
     SDL_Surface *icon;
+#endif
     int i;
 
     screen_width=width;
@@ -510,7 +512,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     ch_datadir();
     
-    #ifndef __APPLE__
+#ifndef __APPLE__
     
     icon = IMG_Load("icon.png");
 
@@ -522,8 +524,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     SDL_WM_SetIcon(icon, NULL);
     SDL_FreeSurface(icon);
-
-	#endif
+#endif
 
 #ifdef _arch_dreamcast
     dc_draw_vmu_icon();

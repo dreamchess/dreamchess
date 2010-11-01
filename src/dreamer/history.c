@@ -27,7 +27,6 @@
 #include "history.h"
 
 static int history[2][64][64];
-static int current_side;
 
 static inline int
 move_compare(move_t move1, move_t move2, int current_side)

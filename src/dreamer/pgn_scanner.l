@@ -19,11 +19,13 @@
 */
 
 %option noyywrap
+%option nounput
 
 %{
 #include "pgn_parser.h"
 
 static char *make_string();
+extern int pgn_parse();
 
 int pgn_parse_file(char *filename)
 {
