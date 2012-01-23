@@ -32,7 +32,7 @@
 #include "theme.h"
 #include "system_config.h"
 
-static sound_t sounds[AUDIO_SOUNDS] = 
+static sound_t sounds[AUDIO_SOUNDS] =
 {
 	{AUDIO_MOVE, "move1.wav"}
 };
@@ -43,6 +43,7 @@ static playlist_t *playlist;
 static int next_song;
 static int have_songs;
 static playlist_entry_t *current_song;
+static int have_audio = 0;
 
 static Mix_Chunk *wav_data[AUDIO_SOUNDS];
 
@@ -89,9 +90,12 @@ void audio_init()
 
 	SDL_Init(SDL_INIT_AUDIO);
 
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
+	if (!Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
 		DBG_ERROR("unable to open audio");
+		return;
 	}
+
+	have_audio = 1;
 
 	chdir("sounds");
 	load_sounds();
@@ -121,6 +125,9 @@ void audio_init()
 
 void audio_exit()
 {
+	if (!have_audio)
+		return;
+
 	Mix_CloseAudio();
 	free_sounds();
 	playlist_destroy(playlist);
@@ -128,6 +135,9 @@ void audio_exit()
 
 void audio_poll(int title)
 {
+	if (!have_audio)
+		return;
+
         /* Less than two songs or volume off, abort. */
         if (!have_songs || !music_volume)
                 return;
@@ -171,6 +181,9 @@ void audio_set_music_callback(audio_music_callback_t callback)
 
 void audio_play_sound(int id)
 {
+	if (!have_audio)
+		return;
+
 	if (sound_volume == 0)
 		return;
 
@@ -180,12 +193,18 @@ void audio_play_sound(int id)
 
 void audio_set_sound_volume(int vol)
 {
+	if (!have_audio)
+		return;
+
 	sound_volume = vol * MIX_MAX_VOLUME / AUDIO_MAX_VOL;
 	Mix_Volume(0, sound_volume);
 }
 
 void audio_set_music_volume(int vol)
 {
+	if (!have_audio)
+		return;
+
 	int restart = vol && (music_volume == 0);
 	music_volume = vol * MIX_MAX_VOLUME / AUDIO_MAX_VOL;
 	Mix_VolumeMusic(music_volume);
