@@ -20,7 +20,7 @@ dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
 	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@
 
 win32_rc.$(OBJEXT): win32.rc win32.ico
-	@WINDRES@ win32.rc win32_rc.$(OBJEXT)
+	@WINDRES@ $(srcdir)/win32.rc win32_rc.$(OBJEXT)
 
 beos.rsrc:
 	@RC@ beos.rdef
