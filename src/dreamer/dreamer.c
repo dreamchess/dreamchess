@@ -33,7 +33,6 @@
 #include "commands.h"
 #include "repetition.h"
 #include "transposition.h"
-#include "svn_version.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

@@ -24,14 +24,14 @@
 #include "hashing.h"
 #include "move.h"
 #include "transposition.h"
-#include "svn_version.h"
+#include "git_rev.h"
 #include "config.h"
 
 int engine();
 
 int main(int argc, char **argv)
 {
-    fprintf(stderr, "Dreamer v" PACKAGE_VERSION " (r" SVN_VERSION ")\n");
+    fprintf(stderr, "Dreamer v" PACKAGE_VERSION " (" GIT_REV ")\n");
 
     board_init();
     init_hash();

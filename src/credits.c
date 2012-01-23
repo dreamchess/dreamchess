@@ -50,7 +50,7 @@ static char* thanks[] = { "Special Thanks To",
                           NULL };
 
 static char* copyright[] = { "DreamChess",
-                             "© 2003-2008",
+                             "© 2003-2012",
                              "http://www.dreamchess.org",
                              NULL };
 

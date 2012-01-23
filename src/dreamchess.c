@@ -38,7 +38,7 @@
 #include "dir.h"
 #include "dreamchess.h"
 #include "debug.h"
-#include "svn_version.h"
+#include "git_rev.h"
 #include "audio.h"
 #include "system_config.h"
 
@@ -556,7 +556,7 @@ int dreamchess(void *data)
 
     ui = ui_driver[0];
 
-    printf( "DreamChess " "v" PACKAGE_VERSION " (r" SVN_VERSION ")\n" );
+    printf( "DreamChess " "v" PACKAGE_VERSION " (" GIT_REV ")\n" );
 
 #ifndef _arch_dreamcast
 

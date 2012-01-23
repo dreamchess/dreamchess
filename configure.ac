@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.2.1-SVN])
+AC_INIT([dreamchess],[0.2.1-GIT])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
@@ -76,8 +76,8 @@ AC_DEFUN([AC_NEEDS],
 	LIBS="${LIBS} -l$1 $6"
 	[AC_CACHE_CHECK([whether lib$1 needs -l$2], ac_cv_$1_needs_$2,
 		AC_TRY_LINK_FUNC($3,
-			[ac_$1_needs_$2="no" ; $5],
-			[ac_$1_needs_$2="yes" ; $4]
+			[ac_cv_$1_needs_$2="no" ; $5],
+			[ac_cv_$1_needs_$2="yes" ; $4]
 			)
 		)]
 	LIBS="${OLD_LIBS}"
@@ -336,8 +336,7 @@ AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])
 AC_CHECK_LIB(mxml, mxmlLoadFile, [MXML_LIBS="-lmxml"], [AC_MSG_ERROR([Cannot find Mini-XML library.])], [${PTHREAD_LIBS}])
 if test x"$have_pthread" = xyes; then
 	AC_NEEDS(mxml, pthread, mxmlLoadFile,
-		[MXML_LIBS="${MXML_LIBS} ${PTHREAD_LIBS}"],
-		[], []
+		[MXML_LIBS="${MXML_LIBS} ${PTHREAD_LIBS}"]
 		)
 fi
 

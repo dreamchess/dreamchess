@@ -19,7 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
-#include "svn_version.h"
+#include "git_rev.h"
 #include "audio.h"
 #include "options.h"
 #include "theme.h"
@@ -283,7 +283,7 @@ static config_t *do_menu(int *pgn)
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (r" SVN_VERSION ")", 0.75f, get_col(COL_WHITE));
+        text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (" GIT_REV ")", 0.75f, get_col(COL_WHITE));
 
         /*if (get_show_egg())
             text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/

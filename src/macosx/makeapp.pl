@@ -5,6 +5,11 @@ use File::Path;
 
 $base = "DreamChess.app/Contents";
 
+if ($#ARGV != 0) {
+  print "Invalid arguments\n";
+  exit;
+}
+$top_srcdir = $ARGV[0];
 print "Building DreamChess.app\n";
 
 sub finddeps {
@@ -63,19 +68,19 @@ chmod($mode, $filename);
 fixdeps($filename);
 copylibs;
 
-open(file, "include/svn_version.h");
+open(file, "include/git_rev.h") or open(file, "$top_srcdir/src/include/git_rev.h") or die $!;
 my $version = join("", <file>);
 close(file);
-$version =~ s/^.*("|:)([0-9M]*)"(.|\n)*$/$2/;
-open(FH, "macosx/Info.plist");
+$version =~ s/^.*("|:)([0-9a-f]*)"(.|\n)*$/$2/;
+open(FH, "macosx/Info.plist") or die $!;
 my $plist = join("", <FH>);
 close(FH);
-$plist =~ s/SVNVERSION/$version/;
-open(FH, ">$base/Info.plist");
+$plist =~ s/GITREV/$version/;
+open(FH, ">$base/Info.plist") or die $!;
 print FH $plist;
 close(FH);
 
-system("cp -R ../data/* $base/Resources/");
-system("find $base/Resources/ -type d -name '.svn' -print | xargs rm -rf");
+system("cp -R $top_srcdir/data/* $base/Resources/");
+system("find $base/Resources/ -type d -name '.git' -print | xargs rm -rf");
 system("cp dreamer/dreamer $base/MacOS/");
 #system("cp -R ../../../music/trunk/data/music $base/Resources");

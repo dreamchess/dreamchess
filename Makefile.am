@@ -2,10 +2,10 @@ SUBDIRS = desktop doc src man m4 pkg
 EXTRA_DIST = data Info.plist COPYRIGHT
 ACLOCAL_AMFLAGS = -I m4
 
-INSTALL_DIRS = `find $(srcdir)/data -name '.svn' -prune -o -name 'data' -o -type d -printf '/%P\n'`
+INSTALL_DIRS = `find $(srcdir)/data -name '.git' -prune -o -name 'data' -o -type d -printf '/%P\n'`
 
 dist-hook:
-	rm -rf `find $(distdir)/data -name '.svn'`
+	rm -rf `find $(distdir)/data -name '.git'`
 
 install-data-local:
 	@for dir in '' $(INSTALL_DIRS); do \
