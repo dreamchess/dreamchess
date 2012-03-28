@@ -370,6 +370,7 @@ AC_CONFIG_FILES([Makefile
 		pkg/win32/Makefile
 		src/Makefile
 		src/audio/Makefile
+		src/network/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
 		src/libs/minizip/Makefile

@@ -1,4 +1,4 @@
-SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio
+SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio network
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef macosx
@@ -13,8 +13,9 @@ dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
 	comm_win32.c credits.c theme.c options.c pgn_parser.y pgn_scanner.l \
 	system_config.c
 
-dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
-	libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ @MXML_LIBS@ @SDL_LIBS@
+dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a network/libnetwork.a \
+	libs/libsan.a libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ @MXML_LIBS@ \
+	@SDL_LIBS@
 
 dreamchess_DEPENDENCIES = @WIN32_RC@ libs/libsan.a audio/libaudio.a \
 	@UI_LIBS@ libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@
