@@ -91,7 +91,7 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
     #endif /* __BEOS__ */
-    
+
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  (alpha ? 4 : 3),

@@ -23,7 +23,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #ifdef WITH_UI_SDLGL
-
 #include <stdio.h>
 
 #include "matrix.h"
