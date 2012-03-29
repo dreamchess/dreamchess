@@ -23,92 +23,71 @@
 #ifdef WITH_NET_SDL
 
 #include "debug.h"
-#include "http_parser.h"
+#include "network.h"
 #include <SDL_net.h>
+
+struct net_socket {
+	IPaddress ip;
+	TCPsocket sd;
+	SDLNet_SocketSet set;
+};
 
 int net_init() {
 	return SDL_Init(0) || SDLNet_Init();
 }
 
-typedef struct {
-	int len;
-	char *buf;
-} recv_buf;
+net_socket *net_open_socket(const char *host, unsigned int port) {
+	struct net_socket *s = malloc(sizeof(struct net_socket));
+	if (SDLNet_ResolveHost(&s->ip, host, port)) {
+		DBG_WARN("failed to resolve %s", host);
+		goto error2;
+	}
 
-static int on_body_cb(http_parser *parser, const char *at, size_t length) {
-	recv_buf *body = parser->data;
-	body->buf = realloc(body->buf, body->len + length + 1);
-	memcpy(body->buf + body->len, at, length);
-	body->len += length;
-	body->buf[body->len] = 0;
-	return 0;
+	s->set = SDLNet_AllocSocketSet(1);
+	if (!s->set) {
+		DBG_WARN("failed to create socket set");
+		goto error2;
+	}
+
+	if (!(s->sd = SDLNet_TCP_Open(&s->ip))) {
+		DBG_WARN("failed to open TCP socket to %s", host);
+		goto error1;
+	}
+
+	SDLNet_TCP_AddSocket(s->set, s->sd);
+	return s;
+
+error1:
+	SDLNet_FreeSocketSet(s->set);
+error2:
+	free(s);
+	return NULL;
 }
 
-char *net_http_get(char *host, char *request) {
-	IPaddress ip;
-	TCPsocket sd;
-	recv_buf body;
-	body.buf = NULL;
-	body.len = 0;
-	char *buf = NULL;
+int net_read_socket(net_socket *s, char *buf, unsigned int len) {
+	int numready = SDLNet_CheckSockets(s->set, 0);
 
-	if (SDLNet_ResolveHost(&ip, host, 80)) {
-		DBG_WARN("failed to resolve %s", host);
-		return NULL;
+	if (numready == -1) {
+		DBG_WARN("error polling socket");
+		return -1;
 	}
 
-	if (!(sd = SDLNet_TCP_Open(&ip))) {
-		DBG_WARN("failed to open TCP socket to %s", host);
-		return NULL;
-	}
+	if (numready == 0)
+		return 0;
 
-	const int bufsize = 1024;
-	buf = malloc(bufsize);
-	int len = snprintf(buf, bufsize,
-	  "GET %s HTTP/1.1\r\n"
-	  "Host: %s\r\n"
-	  "Accept-Encoding:\r\n"
-	  "Connection: close\r\n\r\n",
-	  request, host);
+	int read = SDLNet_TCP_Recv(s->sd, buf, len);
+	if (read <= 0)
+		return -1; // Socket closed
+	return read;
+}
 
-	if (len >= bufsize || SDLNet_TCP_Send(sd, buf, len) < len) {
-		DBG_WARN("failed to send \"%s\" to %s", request, host);
-		goto error;
-	}
+int net_write_socket(net_socket *s, char *buf, unsigned int len) {
+	return SDLNet_TCP_Send(s->sd, buf, len);
+}
 
-	http_parser_settings settings;
-	memset(&settings, 0, sizeof(http_parser_settings));
-	settings.on_body = on_body_cb;
-	http_parser *parser = malloc(sizeof(http_parser));
-	parser->data = &body;
-	http_parser_init(parser, HTTP_RESPONSE);
-
-	int parsed;
-	do {
-		len = SDLNet_TCP_Recv(sd, buf, bufsize - 1);
-
-		if (len < 0)
-			len = 0;
-
-		parsed = http_parser_execute(parser, &settings, buf, len);
-	} while (len != 0 && len == parsed);
-
-	if (parser->status_code == 200) {
-		free(buf);
-		SDLNet_TCP_Close(sd);
-		printf("%s\n", body.buf);
-		return body.buf;
-	}
-
-	DBG_WARN("failed to download \"%s\" from %s", request, host);
-
-error:
-	if (buf)
-		free(buf);
-	if (body.buf)
-		free(body.buf);
-	SDLNet_TCP_Close(sd);
-	return NULL;
+void net_close_socket(net_socket *s) {
+	SDLNet_TCP_Close(s->sd);
+	SDLNet_FreeSocketSet(s->set);
 }
 
 #endif

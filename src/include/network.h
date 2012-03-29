@@ -18,5 +18,24 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef NETWORK_H
+#define NETWORK_H
+
+struct net_http_handle;
+typedef struct net_http_handle net_http_handle;
+struct net_socket;
+typedef struct net_socket net_socket;
+
+// Generic socket functions
 int net_init();
-char *net_http_get(char *host, char *request);
+net_socket *net_open_socket(const char *host, unsigned int port);
+int net_read_socket(net_socket *s, char *buf, unsigned int len);
+int net_write_socket(net_socket *s, char *buf, unsigned int len);
+void net_close_socket(net_socket *s);
+
+// HTTP read functions
+net_http_handle *net_http_open(char *host, char *request);
+int net_http_poll(net_http_handle *h);
+char *net_http_close(net_http_handle *h);
+
+#endif

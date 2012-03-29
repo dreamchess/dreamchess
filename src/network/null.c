@@ -21,4 +21,24 @@
 #include "config.h"
 
 #ifndef WITH_NET_SDL
+
+int net_init() {
+	return 1;
+}
+
+net_socket *net_open_socket(const char *host, unsigned int port) {
+	return NULL;
+}
+
+int net_read_socket(net_socket *s, char *buf, unsigned int len) {
+	return -1;
+}
+
+int net_write_socket(net_socket *s, char *buf, unsigned int len) {
+	return 0;
+}
+
+void net_close_socket(net_socket *s) {
+}
+
 #endif
