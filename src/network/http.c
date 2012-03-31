@@ -111,10 +111,8 @@ char *net_http_close(net_http_handle *h) {
 	free(h->parser);
 	free(h);
 
-	if (ok) {
-		printf("%s\n", data);
+	if (ok)
 		return data;
-	}
 
 	DBG_WARN("http download failed");
 

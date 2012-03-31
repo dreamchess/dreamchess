@@ -41,6 +41,7 @@
 #include "git_rev.h"
 #include "audio.h"
 #include "network.h"
+#include "news.h"
 #include "system_config.h"
 
 #ifdef __APPLE__
@@ -48,9 +49,9 @@
 #endif
 
 #ifdef HAVE_GETOPT_LONG
-#define OPTION_TEXT(L, S, T) "	" L "\t" S "\t" T "\n"
+#define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
 #else
-#define OPTION_TEXT(L, S, T) "	" S "\t" T "\n"
+#define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
 #endif
 
 /* FIXME */
@@ -469,9 +470,9 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 				   OPTION_TEXT("--fullscreen\t", "-f\t", "Run fullscreen")
 				   OPTION_TEXT("--width\t", "-W<num>\t", "Set screen width")
 				   OPTION_TEXT("--height\t", "-H<num>\t", "Set screen height")
-				   OPTION_TEXT("--1st-engine <eng>", "-1<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t	 Defaults to 'dreamer'.")
-				   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.\n\t\t\t\t\t	 Verbosity levels:\n\t\t\t\t\t	0 - Silent\n\t\t\t\t\t	1 - Errors only\n\t\t\t\t\t	 2 - Errors and warnings only\n\t\t\t\t\t  3 - All\n\t\t\t\t\t	Defaults to 1")
-				  );
+				   OPTION_TEXT("--1st-engine <eng>", "-1<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to 'dreamer'.")
+				   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.\n\t\t\t\t\t  Verbosity levels:\n\t\t\t\t\t  0 - Silent\n\t\t\t\t\t  1 - Errors only\n\t\t\t\t\t  2 - Errors and warnings only\n\t\t\t\t\t  3 - All\n\t\t\t\t\t  Defaults to 1")
+			);
 			exit(0);
 		case 'l':
 			printf("Available drivers:\n\n");
@@ -575,8 +576,8 @@ int dreamchess(void *data)
 	}
 
 	init_resolution();
-
 	net_init();
+	news_init();
 
 	while (1)
 	{
@@ -727,5 +728,6 @@ int dreamchess(void *data)
 		move_list_exit(&fullalg_list);
 	}
 	ui->exit();
+	news_exit();
 	return 0;
 }

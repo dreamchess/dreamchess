@@ -122,16 +122,15 @@ int ch_datadir()
 
 	CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
 	CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
-	
-	CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );	
+
+	CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );
 	CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
-	
-	stringref=CFURLCopyFileSystemPath( resdir, kCFURLPOSIXPathStyle );	
+
+	stringref=CFURLCopyFileSystemPath( resdir, kCFURLPOSIXPathStyle );
 	CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
-	
+
 	sprintf( temp3, "%s/%s", temp2, temp1 );
-	printf( "%s\n", temp3 );
-	
+
 	return chdir(temp3);
 }
 

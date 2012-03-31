@@ -25,6 +25,7 @@
 #include "theme.h"
 #include "system_config.h"
 #include "gamegui_dialogs.h"
+#include "news.h"
 
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
@@ -236,6 +237,9 @@ static int poll_event(gg_event_t *event)
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
+	int news_count;
+	news_item *news;
+
 #ifdef _arch_dreamcast
 	SDL_Joystick *joy1=SDL_JoystickOpen(0);
 #endif
@@ -264,6 +268,8 @@ static config_t *do_menu(int *pgn)
 
 	while ( 1 )
 	{
+		news = news_get(&news_count);
+
 		Uint8 *keystate;
 		gg_event_t event;
 
@@ -310,8 +316,10 @@ static config_t *do_menu(int *pgn)
 			while (poll_event(&event))
 				gg_dialog_input_current(event);
 
-			if (title_process_retval == 1)
+			if (title_process_retval == 1) {
+				news_stop();
 				return NULL;
+			}
 
 			if (set_loading)
 			{
@@ -360,6 +368,7 @@ static config_t *do_menu(int *pgn)
 				#endif
 				set_fade_start(gg_system_get_ticks());
 				menu_state = MENU_STATE_RETURN;
+				news_stop();
 				return &config;
 			}
 			break;
@@ -385,6 +394,7 @@ static config_t *do_menu(int *pgn)
 		gl_swap();
 	}
 }
+
 static void free_menu_tex()
 {
 	glDeleteTextures(1, &menu_title_tex.id);
