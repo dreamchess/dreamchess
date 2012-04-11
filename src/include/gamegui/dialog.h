@@ -65,7 +65,7 @@
     gg_dialog_style_t style;                                                 \
                                                                              \
     /** Title bar text, or NULL for no title bar. */                         \
-    char *title;                                                             
+    char *title;
 
 /** Dialog flags */
 #define GG_DIALOG_MODAL (1 << 0)
@@ -184,7 +184,7 @@ gg_dialog_t *gg_dialog_get_active();
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y);
 
 /** Implements gg_widget_t::render. */
-void gg_dialog_render(gg_dialog_t *dialog);
+void gg_dialog_render(gg_dialog_t *dialog, int active);
 
 /** @brief Notifies a dialog of mouse movement. Used for shifting focus on
  *         mouse movement.
@@ -206,6 +206,8 @@ void gg_dialog_input_current(gg_event_t event);
  *  @param modal 1 = modal, 0 = not modal.
  */
 void gg_dialog_set_modal(gg_dialog_t *dialog, int modal);
+
+int gg_dialog_input(gg_widget_t *widget, gg_event_t event);
 
 void gg_dialog_show(gg_dialog_t *dialog);
 

@@ -22,6 +22,9 @@
 #include "options.h"
 #include "system_config.h"
 #include "gamegui_dialogs.h"
+#include "news.h"
+
+static gg_dialog_style_t style_news;
 
 static void create_option_values(gg_option_t *widget, option_t *option)
 {
@@ -55,7 +58,7 @@ static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *dat
     option = config_get_option("level");
     selected_level = option->selected->index;
 
-    DBG_LOG("starting a new game - difficulty: %i - level: %i - player scheme: %i", 
+    DBG_LOG("starting a new game - difficulty: %i - level: %i - player scheme: %i",
         selected_difficulty, selected_level, selected_player_layout);
 
     if ( get_egg_req() )
@@ -135,6 +138,12 @@ static int dialog_title_chat_load(gg_widget_t *widget, gg_widget_t *emitter, voi
     return 1;
 }
 
+static int dialog_title_news_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+	printf("Open URL %s\n", (char *)extra_data);
+    return 1;
+}
+
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
@@ -201,6 +210,31 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
+
+    return GG_DIALOG(dialog);
+}
+
+gg_dialog_t *dialog_title_news_create(news_item *news, int count)
+{
+	style_news.textured = 0;
+	style_news.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
+	style_news.hor_pad = 0;
+	style_news.vert_pad = 0;
+
+	gg_widget_t *ticker = gg_ticker_create(640, 50);
+	int i;
+	for (i = 0; i < count; i++)
+	{
+		gg_widget_t *label = gg_label_create(news[i].title);
+		label = gg_action_create_with_label(news[i].title, 0.0f, 0.0f);
+		gg_widget_subscribe_signal_name(label, label->id, "action_pressed", dialog_title_news_open, news[i].link);
+		gg_container_append(GG_CONTAINER(ticker), label);
+	}
+
+    gg_widget_t *dialog = gg_dialog_create(ticker, NULL, NULL, 0);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 0);
+    gg_dialog_set_position(GG_DIALOG(dialog), 0, 2, 0.0f, 0.0f);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_news);
 
     return GG_DIALOG(dialog);
 }

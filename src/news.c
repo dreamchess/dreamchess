@@ -25,6 +25,7 @@
 #include "dir.h"
 #include "network.h"
 #include <mxml.h>
+#include "news.h"
 
 enum news_state {
 	NEWS_CACHE,
@@ -34,10 +35,6 @@ enum news_state {
 };
 
 static net_http_handle *http_handle;
-typedef struct {
-	char *title;
-	char *link;
-} news_item;
 static int news_count;
 static news_item *news;
 static enum news_state state;

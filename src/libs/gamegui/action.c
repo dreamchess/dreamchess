@@ -98,4 +98,3 @@ gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign)
     action = gg_action_create(label);
     return action;
 }
-

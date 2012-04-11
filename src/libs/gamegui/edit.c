@@ -77,7 +77,7 @@ void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 	/* TODO Fix temporary hack */
 	if (!widget->enabled)
 		colour = &col_grey;
-	
+
     gg_system_draw_rect(x, y, edit->width_a, edit->height_a, colour);
 
     x += EDIT_SPACING;

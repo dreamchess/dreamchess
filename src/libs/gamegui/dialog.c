@@ -207,7 +207,7 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     dest.height = size;
     gg_system_draw_image(image[7], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
-    /* Draw top */ 
+    /* Draw top */
     dest.y += area.height - size;
     gg_system_draw_image(image[1], source, dest, GG_MODE_TILE, GG_MODE_SCALE, &col_white);
 
@@ -264,7 +264,7 @@ float dialog_get_transition()
         return dialog_transition;
     else
         return 1.0f - dialog_transition;
-  
+
 }
 
 /** @brief Renders a dialog.
@@ -275,12 +275,11 @@ float dialog_get_transition()
  *  @param style The style to render in.
  *  @param pos The position to render at.
  */
-void gg_dialog_render(gg_dialog_t *dialog)
+void gg_dialog_render(gg_dialog_t *dialog, int active)
 {
     gg_dialog_style_t *style = &dialog->style;
     gg_widget_t *child = gg_bin_get_child(GG_BIN(dialog));
-    int size;
-    int active;
+    int size = 0;
     gg_rect_t area;
 
     int xmin, xmax, ymin, ymax;
@@ -296,7 +295,8 @@ void gg_dialog_render(gg_dialog_t *dialog)
     /* Draw the 'fade' */
     gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
 
-    gg_system_get_image_size(style->border.image[0], &size, NULL);
+	if (style->textured)
+	    gg_system_get_image_size(style->border.image[0], &size, NULL);
 
     xmin += size;
     xmax -= size;
@@ -308,12 +308,11 @@ void gg_dialog_render(gg_dialog_t *dialog)
     area.width = xmax - xmin;
     area.height = ymax - ymin;
 
-    active = gg_dialog_get_active() == dialog;
-
     if (dialog_in_trans)
         area.height *= dialog_get_transition();
 
-    draw_border(style->border.image, dialog->title, active, area, size);
+	if (style->textured)
+	    draw_border(style->border.image, dialog->title, active, area, size);
 
     xmin += style->hor_pad;
     xmax -= style->hor_pad;
@@ -346,12 +345,13 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
 
     if (event.type == GG_EVENT_MOUSE)
     {
-        int size;
+        int size = 0;
 
         event.mouse.x -= x;
         event.mouse.y -= y;
 
-        gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
+		if (dialog->style.textured)
+	        gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
 
         if (event.mouse.type == GG_MOUSE_BUTTON_DOWN
             && event.mouse.button == 0)
@@ -526,9 +526,12 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
     dialog->width = child->width_a + 2 * dialog->style.hor_pad;
     dialog->height = child->height_a + 2 * dialog->style.vert_pad;
 
-    gg_system_get_image_size(style->border.image[0], &size, NULL);
-    dialog->width += 2 * size;
-    dialog->height += 2 * size;
+	if (style->textured)
+	{
+	    gg_system_get_image_size(style->border.image[0], &size, NULL);
+	    dialog->width += 2 * size;
+	    dialog->height += 2 * size;
+	}
 
     if (dialog->title)
     {
@@ -545,5 +548,5 @@ void gg_dialog_render_all()
 
     TAILQ_FOREACH_REVERSE(dialog, &dialogs, dialogs_head, entries)
         if (!(dialog->flags & GG_DIALOG_HIDDEN))
-            gg_dialog_render(dialog);
+            gg_dialog_render(dialog, gg_dialog_get_active() == dialog);
 }

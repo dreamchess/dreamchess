@@ -18,31 +18,35 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#ifndef GAMEGUI_TICKER_H
+#define GAMEGUI_TICKER_H
 
-#include <gamegui/system.h>
-#include <gamegui/action.h>
 #include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
-#include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
-#include <gamegui/bin.h>
-#include <gamegui/dialog.h>
-#include <gamegui/image.h>
-#include <gamegui/select.h>
-#include <gamegui/seperatorh.h>
-#include <gamegui/seperatorv.h>
-#include <gamegui/widget.h>
-#include <gamegui/frame.h>
-#include <gamegui/viewport.h>
-#include <gamegui/edit.h>
-#include <gamegui/scrollbarv.h>
-#include <gamegui/ticker.h>
 
-#endif /* GAMEGUI_H */
+#define GG_TICKER(W) GG_CHECK_CAST(W, gg_ticker_get_class_id(), gg_ticker_t)
+
+#define GG_TICKER_DATA \
+    GG_BOX_DATA \
+    int offset;
+
+typedef struct gg_ticker {
+    GG_TICKER_DATA
+} gg_ticker_t;
+
+gg_class_id gg_ticker_get_class_id();
+
+void gg_ticker_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_ticker_init(gg_ticker_t *ticker, int width, int spacing);
+
+void gg_ticker_set_size(gg_widget_t *widget, int width, int height);
+
+gg_rect_t gg_ticker_get_focus_pos(gg_widget_t *widget);
+
+int gg_ticker_set_focus_pos(gg_widget_t *widget, int x, int y);
+
+int gg_ticker_input(gg_widget_t *widget, gg_event_t event);
+
+gg_widget_t *gg_ticker_create(int width, int spacing);
+
+#endif /* GAMEGUI_TICKER_H */

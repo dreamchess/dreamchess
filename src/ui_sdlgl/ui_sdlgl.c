@@ -238,7 +238,8 @@ static int poll_event(gg_event_t *event)
 static config_t *do_menu(int *pgn)
 {
 	int news_count;
-	news_item *news;
+	news_item *news = NULL;
+	gg_dialog_t *news_dialog = NULL;
 
 #ifdef _arch_dreamcast
 	SDL_Joystick *joy1=SDL_JoystickOpen(0);
@@ -268,7 +269,10 @@ static config_t *do_menu(int *pgn)
 
 	while ( 1 )
 	{
-		news = news_get(&news_count);
+		if (!news) {
+			news = news_get(&news_count);
+		    news_dialog = dialog_title_news_create(news, news_count);
+		}
 
 		Uint8 *keystate;
 		gg_event_t event;
@@ -285,7 +289,7 @@ static config_t *do_menu(int *pgn)
 		draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
-		text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (" GIT_REV ")", 0.75f, get_col(COL_WHITE));
+		text_draw_string_right(640, 460, "v" PACKAGE_VERSION " (" GIT_REV ")", 0.75f, get_col(COL_WHITE));
 
 		/*if (get_show_egg())
 			text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/
@@ -295,11 +299,13 @@ static config_t *do_menu(int *pgn)
 		case MENU_STATE_FADE_IN:
 			while (poll_event(&event));
 			gg_dialog_render_all();
+			if (news_dialog)
+				gg_dialog_render(news_dialog, 1);
 
 			if (!draw_fade(FADE_IN))
 			{
 				menu_state = MENU_STATE_IN_MENU;
-				draw_credits(1);
+//				draw_credits(1);
 			}
 			break;
 
@@ -314,9 +320,14 @@ static config_t *do_menu(int *pgn)
 #endif
 
 			while (poll_event(&event))
+			{
 				gg_dialog_input_current(event);
+				if (news_dialog)
+					gg_dialog_input(news_dialog, event);
+			}
 
-			if (title_process_retval == 1) {
+			if (title_process_retval == 1)
+			{
 				news_stop();
 				return NULL;
 			}
@@ -329,10 +340,13 @@ static config_t *do_menu(int *pgn)
 				gg_dialog_open(GG_DIALOG(widget));
 				menu_state = MENU_STATE_LOAD;
 			}
-			else
-				draw_credits(0);
+//			else
+//				draw_credits(0);
 
 			gg_dialog_render_all();
+			if (news_dialog)
+				gg_dialog_render(news_dialog, get_mouse_y() > 400);
+
 			break;
 
 		case MENU_STATE_LOAD:

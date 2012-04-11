@@ -23,6 +23,7 @@
 
 typedef struct {
 	char *title;
+	char *link;
 } news_item;
 
 void news_init();
