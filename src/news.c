@@ -131,7 +131,7 @@ news_item *news_get(int *count) {
 		// Check the cache file and see if it's recent enough
 		ch_userdir();
 		if (!stat("news.rss", &news_stat)) {
-			time_t age = time(NULL) - news_stat.st_mtimespec.tv_sec;
+			time_t age = time(NULL) - news_stat.st_mtime;
 			if (age > 3600 * 24) {
 				DBG_LOG("news cache file is over a day old, getting new version online");
 				state = NEWS_CONNECT;

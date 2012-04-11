@@ -244,6 +244,7 @@ void gg_system_get_string_size(char *s, int *width, int *height)
     }
 }
 
+/* The bounce is a lie. It bounces the alpha now instead of the y position. */
 void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align)
 {
     int i;
@@ -262,7 +263,7 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
 
     for (i = 0; i < strlen((char *) s); i++)
     {
-        int y_off = 0;
+        float y_off = 0;
         void *image = driver->get_char_image(s[i]);
         gg_rect_t rect_s = {0, 0};
         gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -280,7 +281,9 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         gg_system_get_image_size(image, &rect_s.width, &rect_s.height);
         rect_d.width = rect_s.width;
         rect_d.height = rect_s.height;
-        rect_d.y = y + y_off;
+        rect_d.y = y; // + y_off;
+
+	colour->a=1.0f-(0.25f*(y_off/3.0f));
 
         /* FIXME */
         rect_d.x += 2;
