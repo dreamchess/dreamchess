@@ -28,20 +28,6 @@ gg_class_id gg_ticker_get_class_id() {
 	GG_CHILD(gg_box_get_class_id())
 }
 
-static gg_widget_t *get_child_for_x(gg_ticker_t *ticker, int x) {
-	int size = gg_container_get_size(GG_CONTAINER(ticker));
-
-	int child_x = ticker->width_a - ticker->offset;
-	int i;
-	for (i = 0; i < size; i++) {
-		gg_widget_t *child = gg_container_get_child(GG_CONTAINER(ticker), i);
-		if (child_x <= x && x < child_x + child->width_a)
-			return gg_container_get_child(GG_CONTAINER(ticker), i);
-		child_x += child->width_a + ticker->spacing;
-	}
-	return NULL;
-}
-
 void gg_ticker_render(gg_widget_t *widget, int x, int y, int focus) {
 	gg_box_t *box = GG_BOX(widget);
 	gg_rect_t rect;
