@@ -106,11 +106,6 @@ static void parse_rss() {
 		node = mxmlFindElement(node, tree, "item", NULL, NULL, MXML_NO_DESCEND);
     }
 
-	printf("%i items found\n", news_count);
-	for (i = 0; i < news_count; i++) {
-		printf("%i: %s\n", i, news[i].title);
-		printf("    %s\n", news[i].link);
-	}
 	mxmlDelete(tree);
 	return;
 

@@ -18,36 +18,30 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_TICKER_H
-#define GAMEGUI_TICKER_H
+#include <string.h>
+#include <stdlib.h>
+#include "debug.h"
 
-#include <gamegui/box.h>
+void browser_open(const char *url) {
+	char *cmd;
+#ifdef __WIN32__
+	cmd = "cmd /c start";
+#elif defined __APPLE__
+	cmd = "open";
+#else
+	cmd = "xdg-open";
+#endif
 
-#define GG_TICKER(W) GG_CHECK_CAST(W, gg_ticker_get_class_id(), gg_ticker_t)
+	if (strncmp(url, "http://", 7))
+		return;
 
-#define GG_TICKER_DATA \
-    GG_BOX_DATA \
-    int offset; \
-    int focus_x;
+	char *run = malloc(strlen(cmd) + strlen(url) + 4);
+	strcpy(run, cmd);
+	strcat(run, " \"");
+	strcat(run, url);
+	strcat(run, "\"");
 
-typedef struct gg_ticker {
-    GG_TICKER_DATA
-} gg_ticker_t;
-
-gg_class_id gg_ticker_get_class_id();
-
-void gg_ticker_render(gg_widget_t *widget, int x, int y, int focus);
-
-void gg_ticker_init(gg_ticker_t *ticker, int width, int spacing);
-
-void gg_ticker_set_size(gg_widget_t *widget, int width, int height);
-
-gg_rect_t gg_ticker_get_focus_pos(gg_widget_t *widget);
-
-int gg_ticker_set_focus_pos(gg_widget_t *widget, int x, int y);
-
-int gg_ticker_input(gg_widget_t *widget, gg_event_t event);
-
-gg_widget_t *gg_ticker_create(int width, int spacing);
-
-#endif /* GAMEGUI_TICKER_H */
+	DBG_LOG("running system command %s", run);
+	system(run);
+	free(run);
+}

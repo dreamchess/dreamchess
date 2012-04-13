@@ -272,6 +272,8 @@ static config_t *do_menu(int *pgn)
 		if (!news) {
 			news = news_get(&news_count);
 		    news_dialog = dialog_title_news_create(news, news_count);
+		    gg_dialog_open(news_dialog);
+		    gg_dialog_push_back(news_dialog);
 		}
 
 		Uint8 *keystate;
@@ -299,8 +301,6 @@ static config_t *do_menu(int *pgn)
 		case MENU_STATE_FADE_IN:
 			while (poll_event(&event));
 			gg_dialog_render_all();
-			if (news_dialog)
-				gg_dialog_render(news_dialog, 1);
 
 			if (!draw_fade(FADE_IN))
 			{
@@ -321,9 +321,17 @@ static config_t *do_menu(int *pgn)
 
 			while (poll_event(&event))
 			{
+				if (event.type == GG_EVENT_MOUSE && event.mouse.type == GG_MOUSE_MOVE)
+				{
+					if (news_dialog)
+					{
+						if (gg_dialog_is_over(news_dialog, event.mouse.x, event.mouse.y))
+							gg_dialog_set_active(news_dialog);
+						else
+							gg_dialog_push_back(news_dialog);
+					}
+				}
 				gg_dialog_input_current(event);
-				if (news_dialog)
-					gg_dialog_input(news_dialog, event);
 			}
 
 			if (title_process_retval == 1)
@@ -344,9 +352,6 @@ static config_t *do_menu(int *pgn)
 //				draw_credits(0);
 
 			gg_dialog_render_all();
-			if (news_dialog)
-				gg_dialog_render(news_dialog, get_mouse_y() > 400);
-
 			break;
 
 		case MENU_STATE_LOAD:

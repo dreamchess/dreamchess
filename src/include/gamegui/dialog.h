@@ -233,4 +233,8 @@ void gg_dialog_render_all();
 
 void gg_dialog_set_active(gg_dialog_t *dialog);
 
+void gg_dialog_push_back(gg_dialog_t *dialog);
+
+int gg_dialog_is_over(gg_dialog_t *dialog, int x, int y);
+
 #endif /* GAMEGUI_DIALOG_H */

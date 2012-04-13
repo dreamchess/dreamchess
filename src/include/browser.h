@@ -18,36 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_TICKER_H
-#define GAMEGUI_TICKER_H
+#ifndef BROWSER_H
+#define BROWSER_H
 
-#include <gamegui/box.h>
+void browser_open(const char *url);
 
-#define GG_TICKER(W) GG_CHECK_CAST(W, gg_ticker_get_class_id(), gg_ticker_t)
-
-#define GG_TICKER_DATA \
-    GG_BOX_DATA \
-    int offset; \
-    int focus_x;
-
-typedef struct gg_ticker {
-    GG_TICKER_DATA
-} gg_ticker_t;
-
-gg_class_id gg_ticker_get_class_id();
-
-void gg_ticker_render(gg_widget_t *widget, int x, int y, int focus);
-
-void gg_ticker_init(gg_ticker_t *ticker, int width, int spacing);
-
-void gg_ticker_set_size(gg_widget_t *widget, int width, int height);
-
-gg_rect_t gg_ticker_get_focus_pos(gg_widget_t *widget);
-
-int gg_ticker_set_focus_pos(gg_widget_t *widget, int x, int y);
-
-int gg_ticker_input(gg_widget_t *widget, gg_event_t event);
-
-gg_widget_t *gg_ticker_create(int width, int spacing);
-
-#endif /* GAMEGUI_TICKER_H */
+#endif

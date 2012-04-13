@@ -23,6 +23,7 @@
 #include "system_config.h"
 #include "gamegui_dialogs.h"
 #include "news.h"
+#include "browser.h"
 
 static gg_dialog_style_t style_news;
 
@@ -140,7 +141,7 @@ static int dialog_title_chat_load(gg_widget_t *widget, gg_widget_t *emitter, voi
 
 static int dialog_title_news_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-	printf("Open URL %s\n", (char *)extra_data);
+	browser_open((char *)extra_data);
     return 1;
 }
 
@@ -232,7 +233,7 @@ gg_dialog_t *dialog_title_news_create(news_item *news, int count)
 	}
 
     gg_widget_t *dialog = gg_dialog_create(ticker, NULL, NULL, 0);
-    gg_dialog_set_modal(GG_DIALOG(dialog), 0);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 0, 2, 0.0f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_news);
 
