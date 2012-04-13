@@ -283,7 +283,7 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         rect_d.height = rect_s.height;
         rect_d.y = y; // + y_off;
 
-	colour->a=1.0f-(0.25f*(y_off/3.0f));
+	colour->a=1.0f-(0.35f*(y_off/(GG_BOUNCE_AMP + 1)));
 
         /* FIXME */
         rect_d.x += 2;

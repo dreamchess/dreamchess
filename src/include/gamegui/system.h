@@ -41,9 +41,9 @@
 /** Bouncy text amplitude in pixels. */
 #define GG_BOUNCE_AMP 2
 /** Bouncy text wave length in characters. */
-#define GG_BOUNCE_LEN 10
+#define GG_BOUNCE_LEN 20
 /** Bouncy text speed in bounces per second. */
-#define GG_BOUNCE_SPEED 3
+#define GG_BOUNCE_SPEED 1
 
 /** Unique value used to identify a class. */
 typedef int gg_class_id;
