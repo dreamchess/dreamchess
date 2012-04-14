@@ -145,6 +145,12 @@ static int dialog_title_news_open(gg_widget_t *widget, gg_widget_t *emitter, voi
     return 1;
 }
 
+static int dialog_title_fb_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+	browser_open("http://www.facebook.com");
+    return 1;
+}
+
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
 {
     gg_widget_t *dialog;
@@ -235,6 +241,23 @@ gg_dialog_t *dialog_title_news_create(news_item *news, int count)
     gg_widget_t *dialog = gg_dialog_create(ticker, NULL, NULL, 0);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_position(GG_DIALOG(dialog), 0, 2, 0.0f, 0.0f);
+    gg_dialog_set_style(GG_DIALOG(dialog), &style_news);
+
+    return GG_DIALOG(dialog);
+}
+
+gg_dialog_t *dialog_title_facebook_create(texture_t *tex)
+{
+	style_news.textured = 0;
+	style_news.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
+	style_news.hor_pad = 0;
+	style_news.vert_pad = 0;
+
+	gg_widget_t *image = gg_action_create(gg_image_create(tex));
+	gg_widget_subscribe_signal_name(image, image->id, "action_pressed", dialog_title_fb_open, NULL);
+    gg_widget_t *dialog = gg_dialog_create(image, NULL, NULL, 0);
+    gg_dialog_set_modal(GG_DIALOG(dialog), 1);
+    gg_dialog_set_position(GG_DIALOG(dialog), 8, 472, 0.0f, 1.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), &style_news);
 
     return GG_DIALOG(dialog);

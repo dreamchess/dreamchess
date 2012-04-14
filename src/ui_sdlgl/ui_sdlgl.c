@@ -30,6 +30,7 @@
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
 static texture_t menu_title_tex;
+static texture_t menu_fb_tex;
 static int game_in_stalemate;
 static int white_in_check;
 static int black_in_check;
@@ -265,6 +266,10 @@ static config_t *do_menu(int *pgn)
 	dc_draw_vmu_icon();
 #endif
 
+    gg_dialog_t *fb_dialog = dialog_title_facebook_create(&menu_fb_tex);
+    gg_dialog_open(fb_dialog);
+    gg_dialog_push_back(fb_dialog);
+
 	DBG_LOG("entering title menu");
 
 	while ( 1 )
@@ -330,6 +335,11 @@ static config_t *do_menu(int *pgn)
 						else
 							gg_dialog_push_back(news_dialog);
 					}
+
+					if (gg_dialog_is_over(fb_dialog, event.mouse.x, event.mouse.y))
+						gg_dialog_set_active(fb_dialog);
+					else
+						gg_dialog_push_back(fb_dialog);
 				}
 				gg_dialog_input_current(event);
 			}
@@ -372,7 +382,7 @@ static config_t *do_menu(int *pgn)
 				config = *get_config_save(pgn_slot);
 
 			set_fade_start(gg_system_get_ticks());
-			gg_dialog_close();
+			gg_dialog_close_all();
 
 			menu_state = MENU_STATE_FADE_OUT;
 			break;
@@ -388,6 +398,7 @@ static config_t *do_menu(int *pgn)
 				set_fade_start(gg_system_get_ticks());
 				menu_state = MENU_STATE_RETURN;
 				news_stop();
+				gg_dialog_close_all();
 				return &config;
 			}
 			break;
@@ -420,6 +431,7 @@ static void free_menu_tex()
 	glDeleteTextures(1, &get_menu_mouse_cursor()->id);
 	glDeleteTextures(1, &get_menu_border()->id);
 	glDeleteTextures(1, &get_text_character(0)->id);
+	glDeleteTextures(1, &menu_fb_tex.id);
 }
 
 static void load_menu_tex()
@@ -427,12 +439,14 @@ static void load_menu_tex()
 	ch_datadir();
 	/* For the menu.. */
 	load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
+	load_texture_png(&menu_fb_tex, "f_logo.png" , 1, 1);
 	/* New text stuff. */
 	generate_text_chars();
 
 	chdir("styles");
 	chdir("default");
 	load_border(get_menu_border(), "border.png");
+
 #ifndef _arch_dreamcast
 #ifndef __BEOS__
 	load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
