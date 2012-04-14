@@ -582,6 +582,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 	SDL_WM_SetCaption( "DreamChess", NULL );
 
 	gg_system_init(get_gg_driver_sdlgl());
+	style_ingame.textured = 1;
 	style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
 	style_ingame.hor_pad = 20;
 	style_ingame.vert_pad = 10;
