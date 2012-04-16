@@ -24,6 +24,8 @@
 #include <gamegui/ticker.h>
 #include <gamegui/clipping.h>
 
+#define TICKER_SPEED 55 // Pixels per second
+
 gg_class_id gg_ticker_get_class_id() {
 	GG_CHILD(gg_box_get_class_id())
 }
@@ -61,10 +63,15 @@ void gg_ticker_render(gg_widget_t *widget, int x, int y, int focus) {
 	}
 
 	gg_clipping_undo();
-	if (child_x <= 0)
+	if (child_x <= 0) {
+		ticker->start_time = gg_system_get_ticks();
 		ticker->offset = 0;
-	else
+	} else {
 		ticker->offset += 1;
+	}
+
+	ticker->offset = (gg_system_get_ticks() - ticker->start_time) * TICKER_SPEED / 1000;
+
 	gg_ticker_set_focus_pos(widget, GG_TICKER(widget)->focus_x, 0);
 }
 
@@ -191,6 +198,7 @@ void gg_ticker_init(gg_ticker_t *ticker, int width, int spacing) {
 	ticker->id = gg_ticker_get_class_id();
 	ticker->width = width;
 	ticker->offset = 0;
+	ticker->start_time = gg_system_get_ticks();
 	ticker->focus_x = width / 2;
 }
 

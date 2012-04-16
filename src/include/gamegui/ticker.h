@@ -28,6 +28,7 @@
 #define GG_TICKER_DATA \
     GG_BOX_DATA \
     int offset; \
+    int start_time; \
     int focus_x;
 
 typedef struct gg_ticker {
