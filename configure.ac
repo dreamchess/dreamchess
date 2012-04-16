@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.2.1-GIT])
+AC_INIT([dreamchess],[0.3.0-GIT])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
