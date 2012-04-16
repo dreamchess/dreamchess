@@ -30,7 +30,7 @@
 static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
 static texture_t menu_title_tex;
-static texture_t menu_fb_tex;
+static texture_t menu_home_tex, menu_fb_tex, menu_twitter_tex;
 static int game_in_stalemate;
 static int white_in_check;
 static int black_in_check;
@@ -266,7 +266,7 @@ static config_t *do_menu(int *pgn)
 	dc_draw_vmu_icon();
 #endif
 
-    gg_dialog_t *fb_dialog = dialog_title_facebook_create(&menu_fb_tex);
+    gg_dialog_t *fb_dialog = dialog_title_icons_create(&menu_home_tex, &menu_fb_tex, &menu_twitter_tex);
     gg_dialog_open(fb_dialog);
     gg_dialog_push_back(fb_dialog);
 
@@ -431,7 +431,9 @@ static void free_menu_tex()
 	glDeleteTextures(1, &get_menu_mouse_cursor()->id);
 	glDeleteTextures(1, &get_menu_border()->id);
 	glDeleteTextures(1, &get_text_character(0)->id);
+	glDeleteTextures(1, &menu_home_tex.id);
 	glDeleteTextures(1, &menu_fb_tex.id);
+	glDeleteTextures(1, &menu_twitter_tex.id);
 }
 
 static void load_menu_tex()
@@ -439,7 +441,9 @@ static void load_menu_tex()
 	ch_datadir();
 	/* For the menu.. */
 	load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
+	load_texture_png(&menu_home_tex, "home.png" , 1, 1);
 	load_texture_png(&menu_fb_tex, "f_logo.png" , 1, 1);
+	load_texture_png(&menu_twitter_tex, "twitter.png" , 1, 1);
 	/* New text stuff. */
 	generate_text_chars();
 
