@@ -23,9 +23,9 @@
 #include <gamegui/image.h>
 
 /** Focussed image scale value. */
-#define IMAGE_SCALE -0.3f
-/** Focussed image enlargement speed in enlargements per second. */
-#define IMAGE_SPEED 2.0f
+#define IMAGE_SCALE -0.2f
+/** Focussed image time to reach full scale in ms. */
+#define IMAGE_SCALE_TIME 150
 
 static gg_colour_t col_white =
     {
@@ -42,23 +42,29 @@ void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
 {
     gg_image_t *image = GG_IMAGE(widget);
     unsigned int ticks = gg_system_get_ticks();
-    float phase = ((ticks % (int) (1000 / IMAGE_SPEED)) / (float) (1000 / IMAGE_SPEED));
     float factor;
     gg_rect_t source, dest;
 
-    if (phase < 0.5f)
-        factor = 1.0f + IMAGE_SCALE * phase * 2;
-    else
-        factor = 1.0f + IMAGE_SCALE * ((1.0f - phase) * 2);
+	int time = ticks - image->ticks;
+	if (time > IMAGE_SCALE_TIME)
+		time = IMAGE_SCALE_TIME;
+	float phase = time / (float)IMAGE_SCALE_TIME;
 
-    dest.width = image->width;
-    dest.height = image->height;
+	if (image->hover)
+		factor = 1.0f + IMAGE_SCALE * phase;
+	else
+		factor = 1.0f + IMAGE_SCALE * (1.0f - phase);
 
-    if (focus != GG_FOCUS_NONE)
-    {
-        dest.width *= factor;
-        dest.height *= factor;
-    }
+	if (image->hover && focus == GG_FOCUS_NONE) {
+		image->hover = 0;
+		image->ticks = ticks - (IMAGE_SCALE_TIME - time);
+	} else if (!image->hover && focus != GG_FOCUS_NONE) {
+		image->hover = 1;
+		image->ticks = ticks - (IMAGE_SCALE_TIME - time);
+	}
+
+    dest.width = image->width * factor;
+    dest.height = image->height * factor;
 
     dest.x = x + image->xalign * (image->width_a - image->width) - (dest.width - image->width) / 2;
     dest.y = y + (1.0f - image->yalign) * (image->height_a - image->height) - (dest.height - image->height) / 2;
@@ -79,6 +85,8 @@ void gg_image_init(gg_image_t *image, void *texture)
     image->id = gg_image_get_class_id();
     image->image = texture;
     image->enabled = 1;
+    image->ticks = -IMAGE_SCALE_TIME;
+    image->hover = 0;
     gg_system_get_image_size(texture, &image->width, &image->height);
 }
 

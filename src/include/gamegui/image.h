@@ -28,7 +28,9 @@
 
 #define GG_IMAGE_DATA \
     GG_ALIGN_DATA \
-    void *image;
+    void *image; \
+    float ticks; \
+    int hover;
 
 typedef struct gg_image
 {
