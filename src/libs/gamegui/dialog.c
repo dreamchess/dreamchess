@@ -504,7 +504,7 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
 
 	gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
 
-	dialog_reset_transition(1);
+	//dialog_reset_transition(1);
 }
 
 /** @brief Creates a dialog.
