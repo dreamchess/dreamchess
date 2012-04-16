@@ -235,6 +235,18 @@ static int poll_event(gg_event_t *event)
 	return 0;
 }
 
+// Workaround for gamegui's lack of multi-dialog support
+static void switch_to_dialog(gg_dialog_t *dialog, gg_event_t *event) {
+	int is_over = gg_dialog_is_over(dialog, event->mouse.x, event->mouse.y);
+	if (gg_dialog_get_active() != dialog) {
+		if (is_over)
+			gg_dialog_set_active(dialog);
+	} else {
+		if (!is_over)
+			gg_dialog_push_back(dialog);
+	}
+}
+
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
@@ -329,17 +341,9 @@ static config_t *do_menu(int *pgn)
 				if (event.type == GG_EVENT_MOUSE && event.mouse.type == GG_MOUSE_MOVE)
 				{
 					if (news_dialog)
-					{
-						if (gg_dialog_is_over(news_dialog, event.mouse.x, event.mouse.y))
-							gg_dialog_set_active(news_dialog);
-						else
-							gg_dialog_push_back(news_dialog);
-					}
+						switch_to_dialog(news_dialog, &event);
 
-					if (gg_dialog_is_over(fb_dialog, event.mouse.x, event.mouse.y))
-						gg_dialog_set_active(fb_dialog);
-					else
-						gg_dialog_push_back(fb_dialog);
+					switch_to_dialog(fb_dialog, &event);
 				}
 				gg_dialog_input_current(event);
 			}
