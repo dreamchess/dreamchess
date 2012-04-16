@@ -228,7 +228,7 @@ void draw_scene( board_t *b, int reflections );
 float get_mouse_square();
 
 /* credits.c */
-void draw_credits(int init);
+int draw_credits(int init);
 
 /* ui_driver.c */
 int get_turn_counter();
@@ -246,6 +246,7 @@ config_t *get_config();
 void set_pgn_slot( int slot );
 void set_quit_to_menu( int menu );
 void set_set_loading( int set );
+void set_show_credits( int set );
 void set_title_process_retval( int ret );
 void set_dialog_promote_piece( int piece );
 int get_dialog_promote_piece();
@@ -293,6 +294,7 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col);
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );
 void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
+void text_draw_string_center( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 texture_t *get_text_character( int index );
 void generate_text_chars();

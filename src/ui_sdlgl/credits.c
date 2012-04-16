@@ -30,7 +30,7 @@
 
 #include "ui_sdlgl.h"
 
-void draw_credits(int init)
+int draw_credits(int init)
 {
     static int section, nr, state;
     int diff;
@@ -51,7 +51,7 @@ void draw_credits(int init)
         nr = 1;
         state = 0;
         start = now;
-        return;
+        return 0;
     }
 
     switch (state)
@@ -93,7 +93,7 @@ void draw_credits(int init)
                 nr = 1;
                 state = 2;
             }
-            return;
+            return 0;
         }
 
         text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
@@ -115,11 +115,13 @@ void draw_credits(int init)
             else
             {
                 state = 3;
-                return;
+                return 1;
             }
 
         text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
         break;
     }
+
+	return 0;
 }

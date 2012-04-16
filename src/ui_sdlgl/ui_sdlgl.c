@@ -41,6 +41,7 @@ static int pgn_slot;
 static int quit_to_menu=FALSE;
 static int title_process_retval;
 static int set_loading=FALSE;
+static int show_credits = 0;
 static int dialog_promote_piece;
 static SDL_Joystick *joy;
 static int show_egg;
@@ -74,6 +75,7 @@ enum {
 	MENU_STATE_IN_MENU,
 	MENU_STATE_LOAD,
 	MENU_STATE_FADE_OUT,
+	MENU_STATE_CREDITS,
 	MENU_STATE_RETURN
 };
 
@@ -112,6 +114,11 @@ void set_title_process_retval( int ret )
 void set_set_loading( int set )
 {
 	set_loading=set;
+}
+
+void set_show_credits( int set )
+{
+	show_credits = set;
 }
 
 void set_quit_to_menu( int menu )
@@ -264,7 +271,9 @@ static config_t *do_menu(int *pgn)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	engine_error_shown = 0;
 	set_loading=FALSE;
+	show_credits = 0;
 	draw_credits(1);
+
 	open_title_root_dialog();
 	if (mode_set_failed) {
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults", NULL));
@@ -320,10 +329,7 @@ static config_t *do_menu(int *pgn)
 			gg_dialog_render_all();
 
 			if (!draw_fade(FADE_IN))
-			{
 				menu_state = MENU_STATE_IN_MENU;
-//				draw_credits(1);
-			}
 			break;
 
 		case MENU_STATE_IN_MENU:
@@ -362,8 +368,12 @@ static config_t *do_menu(int *pgn)
 				gg_dialog_open(GG_DIALOG(widget));
 				menu_state = MENU_STATE_LOAD;
 			}
-//			else
-//				draw_credits(0);
+			else if (show_credits)
+			{
+				menu_state = MENU_STATE_CREDITS;
+				show_credits = 0;
+				draw_credits(1);
+			}
 
 			gg_dialog_render_all();
 			break;
@@ -405,6 +415,18 @@ static config_t *do_menu(int *pgn)
 				gg_dialog_close_all();
 				return &config;
 			}
+			break;
+
+		case MENU_STATE_CREDITS:
+			while (poll_event(&event)) {
+				if ((event.type == GG_EVENT_MOUSE && event.mouse.type == GG_MOUSE_BUTTON_DOWN)
+				    || (event.type == GG_EVENT_KEY))
+				    menu_state = MENU_STATE_IN_MENU;
+			}
+
+			if (draw_credits(0))
+				menu_state = MENU_STATE_IN_MENU;
+
 			break;
 
 		case MENU_STATE_RETURN:
