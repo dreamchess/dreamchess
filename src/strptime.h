@@ -18,30 +18,11 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
-#include <stdlib.h>
-#include "debug.h"
+#include <time.h>
 
-void browser_open(const char *url) {
-	char *cmd;
-#ifdef __WIN32__
-	cmd = "start \"\"";
-#elif defined __APPLE__
-	cmd = "open";
-#else
-	cmd = "xdg-open";
+#ifndef STRPTIME_H
+#define STRPTIME_H
+
+char *strptime(const char *buf, const char *fmt, struct tm *timeptr);
+
 #endif
-
-	if (strncmp(url, "http://", 7))
-		return;
-
-	char *run = malloc(strlen(cmd) + strlen(url) + 4);
-	strcpy(run, cmd);
-	strcat(run, " \"");
-	strcat(run, url);
-	strcat(run, "\"");
-
-	DBG_LOG("running system command %s", run);
-	system(run);
-	free(run);
-}

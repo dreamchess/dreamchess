@@ -27,6 +27,10 @@
 #include <mxml.h>
 #include "news.h"
 
+#ifdef __WIN32__
+#include "strptime.h"
+#endif
+
 enum news_state {
 	NEWS_CACHE,
 	NEWS_CONNECT,
@@ -106,7 +110,7 @@ static void parse_rss() {
 
 		char *time = get_entry(node, "pubDate");
 		printf("%s\n", time);
-		char *ptime = strptime(time, "%a, %d %b %Y %T %Z", &news[i].time);
+		char *ptime = strptime(time, "%a, %d %b %Y %T", &news[i].time);
 		free(time);
 
 		if (!ptime)

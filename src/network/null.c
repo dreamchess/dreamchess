@@ -19,6 +19,8 @@
 */
 
 #include "config.h"
+#include "network.h"
+#include <stdlib.h>
 
 #ifndef WITH_NET_SDL
 
