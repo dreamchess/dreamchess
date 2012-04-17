@@ -109,7 +109,6 @@ static void parse_rss() {
 			goto error;
 
 		char *time = get_entry(node, "pubDate");
-		printf("%s\n", time);
 		char *ptime = strptime(time, "%a, %d %b %Y %T", &news[i].time);
 		free(time);
 

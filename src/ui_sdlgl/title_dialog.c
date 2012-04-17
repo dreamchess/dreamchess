@@ -229,11 +229,24 @@ gg_dialog_t *dialog_title_news_create(news_item *news, int count)
 	style_news.vert_pad = 0;
 
 	gg_widget_t *ticker = gg_ticker_create(640, 50);
+	gg_widget_t *label = gg_label_create("DreamChess News");
+	gg_colour_t colour = { 1.0f, 0.2f, 0.2f, 1.0f };
+	gg_label_set_colour(label, &colour, NULL);
+	gg_container_append(GG_CONTAINER(ticker), label);
+
 	int i;
 	for (i = 0; i < count; i++)
 	{
-		gg_widget_t *label = gg_label_create(news[i].title);
-		label = gg_action_create_with_label(news[i].title, 0.0f, 0.0f);
+		char timestr[20];
+		if (!strftime(timestr, 20, "%d %b %Y - ", &news[i].time))
+			timestr[0] = 0;
+
+		char *str = malloc(strlen(news[i].title) + strlen(timestr) + 1);
+		strcpy(str, timestr);
+		strcat(str, news[i].title);
+
+		label = gg_action_create_with_label(str, 0.0f, 0.0f);
+		free(str);
 		gg_widget_subscribe_signal_name(label, label->id, "action_pressed", dialog_title_url_open, news[i].link);
 		gg_container_append(GG_CONTAINER(ticker), label);
 	}

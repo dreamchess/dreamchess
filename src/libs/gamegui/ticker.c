@@ -117,7 +117,12 @@ gg_rect_t gg_ticker_get_focus_pos(gg_widget_t *widget)
 	gg_rect_t focus;
 	int nr = 0;
 
-	assert(box->sel != -1);
+	if (box->sel == -1)
+	{
+		focus.x = widget->width_a / 2;
+		focus.y = widget->height_a / 2;
+		return focus;
+	}
 
 	child = gg_container_get_child(container, box->sel);
 	focus = child->get_focus_pos(child);
@@ -146,8 +151,11 @@ int gg_ticker_set_focus_pos(gg_widget_t *widget, int x, int y) {
 	{
 		gg_widget_t *child = gg_container_get_child(container, box->sel);
 
-		if (x >= cur_x && cur_x + child->width_a > x)
+		if (x >= cur_x && cur_x + child->width_a > x) {
+			if (!child->input || !child->enabled)
+				box->sel = -1;
 			return 1;
+		}
 		cur_x += child->width_a + box->spacing;
 	}
 
@@ -180,7 +188,7 @@ int gg_ticker_input(gg_widget_t *widget, gg_event_t event) {
 
 	child = gg_container_get_child(GG_CONTAINER(widget), select->sel);
 
-	if (child->input(child, event))
+	if (child->input && child->input(child, event))
 		return 1;
 
 	return 0;
