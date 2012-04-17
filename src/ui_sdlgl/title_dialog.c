@@ -246,7 +246,7 @@ gg_dialog_t *dialog_title_news_create(news_item *news, int count)
     return GG_DIALOG(dialog);
 }
 
-gg_dialog_t *dialog_title_icons_create(const texture_t *home, const texture_t *fb, const texture_t *twitter)
+gg_dialog_t *dialog_title_icons_create(texture_t *home, texture_t *fb, texture_t *twitter)
 {
 	style_news.textured = 0;
 	style_news.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);

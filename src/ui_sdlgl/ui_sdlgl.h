@@ -160,7 +160,7 @@ void show_message_dialog( char *message );
 gg_dialog_t *dialog_title_root_create();
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_title_news_create(news_item *news, int news_count);
-gg_dialog_t *dialog_title_icons_create(const texture_t *home, const texture_t *fb, const texture_t *twitter);
+gg_dialog_t *dialog_title_icons_create(texture_t *home, texture_t *fb, texture_t *twitter);
 void open_title_root_dialog();
 
 /* transitions.c */
