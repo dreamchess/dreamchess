@@ -101,9 +101,19 @@ static void parse_rss() {
 	while (node) {
 		if (!(news[i].title = get_entry(node, "title")))
 			goto error;
-		if (!(news[i++].link = get_entry(node, "link")))
+		if (!(news[i].link = get_entry(node, "link")))
 			goto error;
+
+		char *time = get_entry(node, "pubDate");
+		printf("%s\n", time);
+		char *ptime = strptime(time, "%a, %d %b %Y %T %Z", &news[i].time);
+		free(time);
+
+		if (!ptime)
+			goto error;
+
 		node = mxmlFindElement(node, tree, "item", NULL, NULL, MXML_NO_DESCEND);
+		i += 1;
     }
 
 	mxmlDelete(tree);

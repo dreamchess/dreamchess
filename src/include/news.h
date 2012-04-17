@@ -18,12 +18,15 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <time.h>
+
 #ifndef NEWS_H
 #define NEWS_H
 
 typedef struct {
 	char *title;
 	char *link;
+	struct tm time;
 } news_item;
 
 void news_init();

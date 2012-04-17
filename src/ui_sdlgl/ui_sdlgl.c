@@ -257,7 +257,7 @@ static void switch_to_dialog(gg_dialog_t *dialog, gg_event_t *event) {
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
-	int news_count;
+	int news_count = 0;
 	news_item *news = NULL;
 	gg_dialog_t *news_dialog = NULL;
 
@@ -295,11 +295,13 @@ static config_t *do_menu(int *pgn)
 
 	while ( 1 )
 	{
-		if (!news) {
+		if (!news && news_count != -1) {
 			news = news_get(&news_count);
-		    news_dialog = dialog_title_news_create(news, news_count);
-		    gg_dialog_open(news_dialog);
-		    gg_dialog_push_back(news_dialog);
+			if (news) {
+			    news_dialog = dialog_title_news_create(news, news_count);
+			    gg_dialog_open(news_dialog);
+			    gg_dialog_push_back(news_dialog);
+			}
 		}
 
 		Uint8 *keystate;
