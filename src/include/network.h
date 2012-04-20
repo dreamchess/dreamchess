@@ -25,13 +25,18 @@ struct net_http_handle;
 typedef struct net_http_handle net_http_handle;
 struct net_socket;
 typedef struct net_socket net_socket;
+struct net_server_socket;
+typedef struct net_server_socket net_server_socket;
 
 // Generic socket functions
 int net_init();
-net_socket *net_open_socket(const char *host, unsigned int port);
-int net_read_socket(net_socket *s, char *buf, unsigned int len);
-int net_write_socket(net_socket *s, char *buf, unsigned int len);
-void net_close_socket(net_socket *s);
+net_socket *net_connect(const char *host, unsigned int port);
+net_server_socket *net_listen(unsigned int port);
+net_socket *net_accept(net_server_socket *socket);
+int net_read(net_socket *s, char *buf, unsigned int len);
+int net_write(net_socket *s, char *buf, unsigned int len);
+void net_close(net_socket *s);
+void net_close_server(net_server_socket *s);
 
 // HTTP read functions
 net_http_handle *net_http_open(char *host, char *request);

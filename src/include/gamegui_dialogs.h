@@ -45,6 +45,7 @@ gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *mess
 gg_dialog_t *dialog_engine_error_create();
 gg_dialog_t *dialog_time_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_chat_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_network_create(gg_dialog_t *parent);
 
 /* FIXME */
 void set_quit_to_menu( int menu );

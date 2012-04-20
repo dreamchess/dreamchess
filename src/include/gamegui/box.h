@@ -28,7 +28,8 @@
 
 #define GG_BOX_DATA \
     GG_SELECT_DATA \
-    int spacing;
+    int spacing; \
+    float align;
 
 typedef struct gg_box
 {
@@ -37,6 +38,8 @@ typedef struct gg_box
 gg_box_t;
 
 gg_class_id gg_box_get_class_id();
+
+void gg_box_set_alignment(gg_box_t *box, float align);
 
 void gg_box_init(gg_box_t *box, int spacing);
 

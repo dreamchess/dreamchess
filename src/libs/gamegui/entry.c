@@ -77,7 +77,7 @@ void gg_entry_render(gg_widget_t * widget, int x, int y, int focus)
 	/* TODO Fix temporary hack */
 	if (!widget->enabled)
 		colour = &col_grey;
-	
+
     gg_system_draw_rect(x, y, entry->width_a, entry->height_a, colour);
 
     x += ENTRY_SPACING;
@@ -242,7 +242,7 @@ int gg_entry_set_text(gg_entry_t *entry, char *text)
         return 1;
 
     strcpy(entry->text, text);
-    entry->cursor_pos = 0;
+    entry->cursor_pos = strlen(text);
     return 0;
 }
 

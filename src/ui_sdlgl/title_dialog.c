@@ -139,6 +139,12 @@ static int dialog_title_chat_load(gg_widget_t *widget, gg_widget_t *emitter, voi
     return 1;
 }
 
+static int dialog_title_network(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
+{
+    gg_dialog_open(dialog_network_create(gg_widget_find_dialog(widget)));
+    return 1;
+}
+
 static int dialog_title_credits(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
 	set_show_credits(1);
@@ -301,6 +307,10 @@ gg_dialog_t *dialog_title_root_create()
 
     widget = gg_action_create_with_label("Load Game..", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_load, NULL);
+    gg_container_append(GG_CONTAINER(vbox), widget);
+
+    widget = gg_action_create_with_label("Network Game..", 0.0f, 0.0f);
+    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_network, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     widget = gg_action_create_with_label("Configuration..", 0.0f, 0.0f);

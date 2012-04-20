@@ -54,7 +54,7 @@ static int on_message_complete_cb(http_parser *parser) {
 
 net_http_handle *net_http_open(char *host, char *request) {
 	struct net_http_handle *h = malloc(sizeof(struct net_http_handle));
-	h->socket = net_open_socket(host, 80);
+	h->socket = net_connect(host, 80);
 	if (!h->socket) {
 		free(h);
 		return NULL;
@@ -67,9 +67,9 @@ net_http_handle *net_http_open(char *host, char *request) {
 	  "Connection: close\r\n\r\n",
 	  request, host);
 
-	if (len >= BUF_SIZE || net_write_socket(h->socket, h->buf, len) < len) {
+	if (len >= BUF_SIZE || net_write(h->socket, h->buf, len) < len) {
 		DBG_WARN("failed to send \"%s\" to %s", request, host);
-		net_close_socket(h->socket);
+		net_close(h->socket);
 		free(h);
 		return NULL;
 	}
@@ -89,7 +89,7 @@ net_http_handle *net_http_open(char *host, char *request) {
 int net_http_poll(net_http_handle *h) {
 	int parsed, len;
 	while (1) {
-		len = net_read_socket(h->socket, h->buf, BUF_SIZE - 1);
+		len = net_read(h->socket, h->buf, BUF_SIZE - 1);
 		if (len == 0) // No data yet
 			break;
 
@@ -106,7 +106,7 @@ int net_http_poll(net_http_handle *h) {
 
 char *net_http_close(net_http_handle *h) {
 	int ok = h->parser->status_code == 200 && h->complete;
-	net_close_socket(h->socket);
+	net_close(h->socket);
 	char *data = h->data;
 	free(h->parser);
 	free(h);

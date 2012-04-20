@@ -23,6 +23,8 @@
 
 #include <gamegui/vbox.h>
 
+/* FIXME: support box->align property */
+
 gg_class_id gg_vbox_get_class_id()
 {
     GG_CHILD(gg_box_get_class_id())

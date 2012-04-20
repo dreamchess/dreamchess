@@ -149,6 +149,15 @@ void config_init()
 		option_add_value(option, buf, NULL);
 	}
 
+	option = option_group_add_string(config, "join_ip");
+	option->string = strdup("");
+
+	option = option_group_add_string(config, "join_port");
+	option->string = strdup("4000");
+
+	option = option_group_add_string(config, "host_port");
+	option->string = strdup("4000");
+
 	option_group_load_xml(config);
 }
 

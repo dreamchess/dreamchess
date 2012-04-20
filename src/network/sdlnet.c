@@ -32,11 +32,16 @@ struct net_socket {
 	SDLNet_SocketSet set;
 };
 
+struct net_server_socket {
+	IPaddress ip;
+	TCPsocket sd;
+};
+
 int net_init() {
 	return SDL_Init(0) || SDLNet_Init();
 }
 
-net_socket *net_open_socket(const char *host, unsigned int port) {
+net_socket *net_connect(const char *host, unsigned int port) {
 	struct net_socket *s = malloc(sizeof(struct net_socket));
 	if (SDLNet_ResolveHost(&s->ip, host, port)) {
 		DBG_WARN("failed to resolve %s", host);
@@ -64,7 +69,36 @@ error2:
 	return NULL;
 }
 
-int net_read_socket(net_socket *s, char *buf, unsigned int len) {
+net_server_socket *net_listen(unsigned int port) {
+	struct net_server_socket *s = malloc(sizeof(struct net_server_socket));
+	if (SDLNet_ResolveHost(&s->ip, NULL, port)) {
+		DBG_WARN("failed to resolve host");
+		goto error;
+	}
+
+	if (!(s->sd = SDLNet_TCP_Open(&s->ip))) {
+		DBG_WARN("failed to open TCP socket for listening on port %i", port);
+		goto error;
+	}
+
+	return s;
+
+error:
+	free(s);
+	return NULL;
+}
+
+net_socket *net_accept(net_server_socket *socket) {
+	struct net_socket *s = malloc(sizeof(struct net_socket));
+	if (!(s->sd = SDLNet_TCP_Accept(socket->sd))) {
+		free(s);
+		return NULL;
+	}
+
+	return s;
+}
+
+int net_read(net_socket *s, char *buf, unsigned int len) {
 	int numready = SDLNet_CheckSockets(s->set, 0);
 
 	if (numready == -1) {
@@ -81,13 +115,17 @@ int net_read_socket(net_socket *s, char *buf, unsigned int len) {
 	return read;
 }
 
-int net_write_socket(net_socket *s, char *buf, unsigned int len) {
+int net_write(net_socket *s, char *buf, unsigned int len) {
 	return SDLNet_TCP_Send(s->sd, buf, len);
 }
 
-void net_close_socket(net_socket *s) {
+void net_close(net_socket *s) {
 	SDLNet_TCP_Close(s->sd);
 	SDLNet_FreeSocketSet(s->set);
+}
+
+void net_close_server(net_server_socket *s) {
+	SDLNet_TCP_Close(s->sd);
 }
 
 #endif

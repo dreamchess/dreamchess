@@ -28,19 +28,30 @@ int net_init() {
 	return 1;
 }
 
-net_socket *net_open_socket(const char *host, unsigned int port) {
+net_socket *net_connect(const char *host, unsigned int port) {
 	return NULL;
 }
 
-int net_read_socket(net_socket *s, char *buf, unsigned int len) {
+net_server_socket *net_listen(unsigned int port) {
+	return NULL;
+}
+
+net_socket *net_accept(net_server_socket *socket) {
+	return NULL;
+}
+
+int net_read(net_socket *s, char *buf, unsigned int len) {
 	return -1;
 }
 
-int net_write_socket(net_socket *s, char *buf, unsigned int len) {
+int net_write(net_socket *s, char *buf, unsigned int len) {
 	return 0;
 }
 
-void net_close_socket(net_socket *s) {
+void net_close(net_socket *s) {
+}
+
+void net_close_server(net_server_socket *s) {
 }
 
 #endif

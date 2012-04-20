@@ -33,6 +33,8 @@ void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus)
     gg_box_t *box = GG_BOX(widget);
     int nr = 0;
 
+    x += (widget->width_a - widget->width) * box->align;
+
     while (nr < gg_container_get_size(GG_CONTAINER(widget)))
     {
         int focus_child;
@@ -62,6 +64,8 @@ int gg_hbox_input(gg_widget_t *widget, gg_event_t event)
 
     if (select->sel == -1)
         return 0;
+
+    event.mouse.x -= (widget->width_a - widget->width) * box->align;
 
     if (event.type == GG_EVENT_MOUSE)
     {
@@ -179,6 +183,7 @@ gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget)
     }
 
     focus.x += box->sel * box->spacing;
+    focus.x += (widget->width_a - widget->width) * box->align;
 
     return focus;
 }
@@ -187,7 +192,7 @@ int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y)
 {
     gg_box_t *box = GG_BOX(widget);
     gg_container_t *container = GG_CONTAINER(widget);
-    int cur_x = 0;
+    int cur_x = (widget->width_a - widget->width) * box->align;
     int prev = box->sel;
 
     box->sel = -1;
