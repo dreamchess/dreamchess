@@ -1,3 +1,15 @@
+*** 2013-??-?? - DreamChess v0.2.1 ***
+
+2013 marks the 10-year anniversary of DreamChess. While we haven't been able
+to spend a lot of time on the project in recent years, we have decided to
+do a maintenance release to fix some of the issues that have been reported.
+
+Most important changes:
+- Now supports building with mxml > 2.2
+- Fixed issue with rotating chess board on some Linux machines
+- DreamChess no longer auto-exits when audio fails to open
+- Pondering support in Dreamer chess engine
+
 *** 2007-11-17 - DreamChess v0.2.0 ***
 
 Over a year has passed since the first release, and we are now happy to
