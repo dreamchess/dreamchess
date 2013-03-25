@@ -22,7 +22,6 @@
 
 gg_event_t convert_event(SDL_Event *event)
 {
-    static unsigned int pressed;
     gg_event_t gg_event;
 
     gg_event.type=GG_EVENT_NONE;

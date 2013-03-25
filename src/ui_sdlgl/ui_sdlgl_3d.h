@@ -37,13 +37,13 @@ coord3_t;
 void move_camera(float x, float z);
 void render_scene_3d(board_t *board, int reflections);
 void move_selector(int direction);
-int get_selector();
+int get_selector(void);
 void select_piece(int square);
-void reset_3d();
+void reset_3d(int flip);
 void loadmodels(char *filename);
 void load_board(char *dcm_name, char *texture_name);
 int find_square(int x, int y, float fd);
-void freemodels();
+void freemodels(void);
 
 #endif
 

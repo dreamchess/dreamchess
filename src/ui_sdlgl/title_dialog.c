@@ -178,12 +178,12 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
-#if 0
-    widget = gg_action_create_with_label("Time options..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_title_time_load, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-#endif
+    if (0) {
+        widget = gg_action_create_with_label("Time options..", 0.0f, 0.0f);
+        gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
+            dialog_title_time_load, NULL);
+        gg_container_append(GG_CONTAINER(vbox), widget);
+    }
 
     widget = gg_action_create_with_label("Start Game", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_start, NULL);
