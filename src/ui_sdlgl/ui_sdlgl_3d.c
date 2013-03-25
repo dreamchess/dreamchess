@@ -1130,7 +1130,7 @@ void select_piece(int square)
     selected = square;
 }
 
-void reset_3d()
+void reset_3d(int flip)
 {
     float mcolor[] = { 1.0f, 1.0f, 1.0f };
     float position[] = { 50.0f, 10.0f, 50.0f, 1.0f };
@@ -1146,7 +1146,6 @@ void reset_3d()
 	GLfloat ambientLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         x_rotation = 0.0f;
-        z_rotation = 0.0f;
 
 	/* Create light components */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -1159,13 +1158,17 @@ void reset_3d()
 	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         x_rotation = -30.0f;
-        z_rotation = 0.0f;
 	  	 
 	/* Assign created components to GL_LIGHT0 */
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     }
+
+    if (flip)
+        z_rotation = 180.0f;
+    else
+        z_rotation = 0.0f;
 
     /* White specular highlights */
     glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);

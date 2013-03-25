@@ -5,10 +5,11 @@ to spend a lot of time on the project in recent years, we have decided to
 do a maintenance release to fix some of the issues that have been reported.
 
 Most important changes:
-- Now supports building with mxml > 2.2
 - Fixed issue with rotating chess board on some Linux machines
 - DreamChess no longer auto-exits when audio fails to open
+- Board is automatically flipped when playing with black
 - Pondering support in Dreamer chess engine
+- Now supports building with mxml > 2.2
 
 *** 2007-11-17 - DreamChess v0.2.0 ***
 

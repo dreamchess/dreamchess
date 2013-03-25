@@ -342,11 +342,11 @@ static config_t *do_menu(int *pgn)
                 reset_transition(TRUE);
             }
 
-            reset_3d();
-
             *pgn = pgn_slot;
             if (pgn_slot >= 0)
                 config = *get_config_save(pgn_slot);
+
+            reset_3d(config.player[WHITE] == PLAYER_ENGINE);
 
             set_fade_start(gg_system_get_ticks());
             gg_dialog_close();
