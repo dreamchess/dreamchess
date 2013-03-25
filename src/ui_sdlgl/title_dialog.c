@@ -178,10 +178,12 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(hbox), vbox2);
     gg_container_append(GG_CONTAINER(vbox), hbox);
 
+#if 0
     widget = gg_action_create_with_label("Time options..", 0.0f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
         dialog_title_time_load, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
+#endif
 
     widget = gg_action_create_with_label("Start Game", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_start, NULL);
@@ -190,7 +192,7 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
-    gg_vbox_set_selected(vbox, 2);
+    gg_vbox_set_selected(vbox, 1);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_position(GG_DIALOG(dialog), 320, 63, 0.5f, 0.0f);
