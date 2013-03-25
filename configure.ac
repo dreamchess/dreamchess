@@ -357,10 +357,8 @@ AC_CONFIG_FILES([Makefile
 		src/audio/Makefile
 		src/libs/Makefile
 		src/libs/gamegui/Makefile
-		src/libs/minizip/Makefile
 		src/include/Makefile
 		src/include/gamegui/Makefile
-		src/include/minizip/Makefile
 		src/ui_sdlgl/Makefile
 		src/dreamer/Makefile
 		src/gamegui_dialogs/Makefile

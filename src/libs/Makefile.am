@@ -1,4 +1,4 @@
-SUBDIRS = gamegui minizip
+SUBDIRS = gamegui
 EXTRA_DIST = msgbuf.h
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 AM_YFLAGS = -p san

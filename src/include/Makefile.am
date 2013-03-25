@@ -1,4 +1,4 @@
-SUBDIRS = gamegui minizip
+SUBDIRS = gamegui
 
 noinst_HEADERS = engine.h gamegui.h main_sdlthd.h pipe_mem.h pipe_unix.h \
 	pipe_win32.h san.h git_rev.h gamegui_dialogs.h theme.h options.h \
