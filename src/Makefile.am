@@ -3,7 +3,7 @@ noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
 	ui.h credits.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef macosx
 bin_PROGRAMS = dreamchess
-INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 BUILT_SOURCES = pgn_parser.h
 AM_YFLAGS = -d

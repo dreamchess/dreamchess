@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/src/include/minizip
+AM_CPPFLAGS = -I$(top_srcdir)/src/include/minizip
 AM_CFLAGS = $(CFLAGS) -DNOCRYPT -DNOUNCRYPT @MINIZIP_CFLAGS@
 noinst_LIBRARIES = @MINIZIP_LIB@
 EXTRA_LIBRARIES = libminizip.a

@@ -2,7 +2,7 @@ noinst_HEADERS = board.h dreamer.h eval.h history.h move.h repetition.h \
 	commands.h hashing.h e_comm.h move_data.h search.h transposition.h \
 	timer.h
 
-INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DREAMER_SDL_CFLAGS@
 AM_LFLAGS = -P`basename $@ scanner.c` -olex.yy.c
 AM_YFLAGS = -d -p `basename $@ parser.c`

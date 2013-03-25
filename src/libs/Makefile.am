@@ -1,6 +1,6 @@
 SUBDIRS = gamegui minizip
 EXTRA_DIST = msgbuf.h
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 AM_YFLAGS = -p san
 noinst_LIBRARIES = @PIPE_LIB@ libsan.a
 EXTRA_LIBRARIES = libpipe_unix.a libpipe_win32.a libpipe_beos.a \
