@@ -165,7 +165,7 @@ void draw_ui_elements()
     coord3_t name_offset={100+get_ui_trans_pos(),480-60};
     coord3_t white_name_size, black_name_size;
 
-    int clocks=TRUE;
+    int clocks=FALSE;
     char *white_clock, *black_clock;
     coord3_t clock_offset={300+get_ui_trans_pos(),480-60};
     coord3_t white_clock_size, black_clock_size;
