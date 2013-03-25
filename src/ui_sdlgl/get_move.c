@@ -38,7 +38,6 @@ int get_move()
 {
     int retval = -1;
     int mousex, mousey;
-    static Sint16 rotx, roty;
     SDL_Event event;
     Uint8 *keystate = SDL_GetKeyState(NULL);
     Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
@@ -72,12 +71,6 @@ int get_move()
                 exit(0);
     }
 
-    if ((roty < -3000) || (roty > 3000))
-        move_camera(-roty / (float) 32768 * KEYBOARD_CAM_SPEED, 0.0f);
-
-    if ((rotx < -3000) || (rotx > 3000))
-        move_camera(0.0f, -rotx / (float) 32768 * KEYBOARD_CAM_SPEED);
-
     while ( SDL_PollEvent( &event ) )
     {
         gg_event_t gg_event;
@@ -104,18 +97,6 @@ int get_move()
         {
             gg_dialog_open(dialog_system_create());
 
-            continue;
-        }
-
-        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_X))
-        {
-            rotx = event.jaxis.value;
-            continue;
-        }
-
-        if ((event.type == SDL_JOYAXISMOTION) && (event.jaxis.axis == AXIS_VIEW_Y))
-        {
-            roty = event.jaxis.value;
             continue;
         }
 
