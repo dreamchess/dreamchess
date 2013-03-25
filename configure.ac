@@ -213,16 +213,6 @@ AC_CHECK_LIB([SDL_mixer], [Mix_OpenAudio],
 	[${SDL_LIBS}]
 	)
 
-AC_CHECK_SDL_HEADER([SDL_net.h], [have_sdl_net_h="yes"],
-	[have_sdl_net_h="no"]
-	)
-
-AC_CHECK_LIB([SDL_net], [SDLNet_Init],
-	[have_sdl_net="yes" SDL_NET_LIBS="-lSDL_net"],
-	[have_sdl_net="no"],
-	[${SDL_LIBS}]
-	)
-
 if test x"$have_sdl_mixer_h" = xyes -a \
 	x"$have_sdl" = xyes -a \
 	x"$have_sdl_mixer" = xyes; then supported_mixer_sdl="yes"
@@ -272,11 +262,6 @@ AM_CONDITIONAL([UI_SDLGL], test x"$with_ui_sdlgl" = xyes)
 if test x"$with_mixer_sdl" = xyes; then
 	SDL_LIBS="${SDL_MIXER_LIBS} ${SDL_LIBS}"
 	AC_DEFINE([WITH_MIXER_SDL], [1], [Define to 1 to enable music and sound effects through SDL_mixer.])
-fi
-
-if test x"$with_net_sdl" = xyes; then
-	SDL_LIBS="${SDL_NET_LIBS} ${SDL_LIBS}"
-	AC_DEFINE([WITH_NET_SDL], [1], [Define to 1 to enable networking through SDL_net.])
 fi
 
 if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$with_net_sdl" = xno -a x"$enable_linked_engine" != xyes; then
@@ -418,22 +403,6 @@ cat <<_ACEOF
 
 Supported:        $supported_mixer_sdl
 Build:            $with_mixer_sdl
-
-Networking requirements:
-
-sdl
----
-
-  Requirement  | Found
-------------------------
-"SDL_net.h"    |  $have_sdl_net_h
-_ACEOF
-AC_PRINT_LIB([libSDL_net     ], [$have_sdl_net], [$SDL_NET_LIBS])
-
-cat <<_ACEOF
-
-Supported:        $supported_net_sdl
-Build:            $with_net_sdl
 
 You can now run \`make'.
 
