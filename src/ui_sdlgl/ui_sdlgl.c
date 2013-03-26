@@ -582,6 +582,8 @@ static void update(board_t *b, move_t *move)
     else
         game_in_stalemate=FALSE;
 
+    black_in_check=FALSE;
+    white_in_check=FALSE;
     if ( board.state == BOARD_CHECK )
     {
         if (IS_WHITE(board.turn))
@@ -589,22 +591,14 @@ static void update(board_t *b, move_t *move)
         else
             black_in_check=TRUE;
     }
-    else
-    {
-        black_in_check=FALSE;
-        white_in_check=FALSE;
-    }
+    black_in_checkmate=FALSE;
+    white_in_checkmate=FALSE;
     if ( board.state == BOARD_CHECKMATE )
     {
         if (IS_WHITE(board.turn))
             white_in_checkmate=TRUE;
         else
             black_in_checkmate=TRUE;
-    }
-    else
-    {
-        black_in_checkmate=FALSE;
-        white_in_checkmate=FALSE;
     }
 
     /* FIXME */
