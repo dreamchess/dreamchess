@@ -1,6 +1,6 @@
 noinst_HEADERS = board.h dreamer.h eval.h history.h move.h repetition.h \
 	commands.h hashing.h e_comm.h move_data.h search.h transposition.h \
-	timer.h
+	timer.h pgn_scanner.h
 
 AM_CPPFLAGS = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
 AM_CFLAGS = $(CFLAGS) @DREAMER_SDL_CFLAGS@

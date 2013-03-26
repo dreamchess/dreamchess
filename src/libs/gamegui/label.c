@@ -42,7 +42,7 @@ static gg_colour_t col_text =
         1.0f, 1.0f, 1.0f, 1.0f
     };
 
-gg_class_id gg_label_get_class_id()
+gg_class_id gg_label_get_class_id(void)
 {
     GG_CHILD(gg_align_get_class_id())
 }

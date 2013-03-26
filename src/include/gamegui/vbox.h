@@ -35,7 +35,7 @@ typedef struct gg_vbox
 }
 gg_vbox_t;
 
-gg_class_id gg_vbox_get_class_id();
+gg_class_id gg_vbox_get_class_id(void);
 
 void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus);
 

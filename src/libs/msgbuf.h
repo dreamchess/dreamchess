@@ -19,5 +19,5 @@
 */
 
 char *msgbuf_process(char *buf);
-void msgbuf_exit();
+void msgbuf_exit(void);
 

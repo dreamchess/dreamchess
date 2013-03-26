@@ -217,7 +217,7 @@ void undo_move(state_t *state)
     repetition_remove();
 }
 
-static void set_start_time()
+static void set_start_time(void)
 {
     struct timeval tv;
 
@@ -226,7 +226,7 @@ static void set_start_time()
     start_time = tv.tv_sec;
 }
 
-void set_move_time()
+void set_move_time(void)
 {
     int safe_time = timer_get(&state.engine_time) - 1000;
 
@@ -245,7 +245,7 @@ void set_move_time()
         timer_set(&state.move_time, 0);
 }
 
-int get_time()
+int get_time(void)
 {
     struct timeval tv;
 
@@ -284,7 +284,7 @@ void send_move(state_t *state, move_t move)
     check_game_end(state);
 }
 
-int engine()
+int engine(void)
 {
     e_comm_init();
     set_start_time();

@@ -138,15 +138,15 @@ typedef struct texture
 }
 texture_t;
 
-int get_show_egg();
+int get_show_egg(void);
 void set_show_egg( int set );
-int get_egg_req();
-int get_screen_width();
-int get_screen_height();
+int get_egg_req(void);
+int get_screen_width(void);
+int get_screen_height(void);
 
 /* dialogs */
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
-gg_dialog_t *dialog_system_create();
+gg_dialog_t *dialog_system_create(void);
 gg_dialog_t *dialog_quit_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
@@ -156,17 +156,20 @@ gg_dialog_t *dialog_victory_create(result_t *result);
 void show_message_dialog( char *message );
 
 /* title_dialog.c */
-gg_dialog_t *dialog_title_root_create();
+gg_dialog_t *dialog_title_root_create(void);
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
-void open_title_root_dialog();
+void open_title_root_dialog(void);
 
 /* transitions.c */
 void set_fade_start( float start );
+int draw_fade( int inout );
+int draw_sonic_fade( int inout );
+float get_ui_trans_pos(void);
 
 /* xmlsavefile.c */
 void load_save_xml( int slot );
 void write_save_xml( int slot );
-int get_slots();
+int get_slots(void);
 void set_slots( int slots );
 char *get_time_save( int index );
 config_t *get_config_save( int index );
@@ -174,102 +177,100 @@ board_t *get_saved_board( int index );
 
 /* gamegui_driver.c */
 gg_event_t convert_event(SDL_Event *event);
-gg_driver_t *get_gg_driver_sdlgl();
+gg_driver_t *get_gg_driver_sdlgl(void);
 
 /* ui_sdlgl_3d.c */
 void start_piece_move( int source, int dest );
-int get_piece_moving_done();
+int get_piece_moving_done(void);
 void set_theme(struct theme_struct *theme, texture_t texture);
 
 /* load_data.c */
-void load_pieces();
+void load_pieces(void);
 void load_border(texture_t border[9], char *filename);
 void unload_border(texture_t border[9]);
 
 /* get_move.c */
-int get_move();
+int get_move(void);
 
-/* transitions.c */
-int get_fading_out();
-int draw_fade( int inout );
-int draw_sonic_fade( int inout );
-float get_ui_trans_pos();
+/* ui_sdlgl.c */
+int get_fading_out(void);
+void set_fading_out(int fade);
 
 /* ingame_ui.c */
 void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
-void draw_health_bars();
-void draw_backdrop();
+void draw_health_bars(void);
+void draw_backdrop(void);
 void reset_transition(int in);
-void transition_update();
-void draw_ui_elements();
+void transition_update(void);
+void draw_ui_elements(void);
 
 /* theme.c */
 void load_theme(struct theme_struct *theme);
-texture_t *get_white_pieces();
-texture_t *get_black_pieces();
+texture_t *get_white_pieces(void);
+texture_t *get_black_pieces(void);
 texture_t *get_white_piece( int index );
 texture_t *get_black_piece( int index );
-texture_t *get_backdrop();
-texture_t *get_selector_tex();
-char *get_white_name();
-char *get_black_name();
-texture_t *get_mouse_cursor();
-texture_t *get_menu_mouse_cursor();
+texture_t *get_backdrop(void);
+texture_t *get_selector_tex(void);
+char *get_white_name(void);
+char *get_black_name(void);
+texture_t *get_mouse_cursor(void);
+texture_t *get_menu_mouse_cursor(void);
 void load_theme_xml( char *xmlfile );
-texture_t *get_menu_border();
-texture_t *get_border();
-void unload_theme();
+texture_t *get_menu_border(void);
+texture_t *get_border(void);
+void unload_theme(void);
 
 /* draw_scene.c */
 void draw_scene( board_t *b, int reflections );
-float get_mouse_square();
+float get_mouse_square(void);
 
 /* credits.c */
 void draw_credits(int init);
 
 /* ui_driver.c */
-int get_turn_counter();
-gg_dialog_style_t *get_ingame_style();
-gg_dialog_style_t *get_menu_style();
-int get_white_in_check();
-int get_black_in_check();
-int get_black_in_checkmate();
-int get_white_in_checkmate();
-int get_game_stalemate();
+int get_turn_counter(void);
+gg_dialog_style_t *get_ingame_style(void);
+gg_dialog_style_t *get_menu_style(void);
+int get_white_in_check(void);
+int get_black_in_check(void);
+int get_black_in_checkmate(void);
+int get_white_in_checkmate(void);
+int get_game_stalemate(void);
 void set_switch_to_menu(int sw);
-board_t *get_board();
-int get_fading_out();
-config_t *get_config();
+board_t *get_board(void);
+int get_fading_out(void);
+config_t *get_config(void);
 void set_pgn_slot( int slot );
 void set_quit_to_menu( int menu );
 void set_set_loading( int set );
 void set_title_process_retval( int ret );
 void set_dialog_promote_piece( int piece );
-int get_dialog_promote_piece();
+int get_dialog_promote_piece(void);
 
 /* vkeyboard.c*/
-gg_dialog_t *dialog_vkeyboard_create();
-void toggle_vkeyboard_enabled();
-int get_vkeyboard_enabled();
-void populate_key_table();
+gg_dialog_t *dialog_vkeyboard_create(void);
+void toggle_vkeyboard_enabled(void);
+int get_vkeyboard_enabled(void);
+void populate_key_table(void);
 
 /* system.c */
 void go_3d(int width, int height);
 void resize_window( int width, int height );
 void set_mouse_pos( int x, int y );
-int get_mouse_x();
-int get_mouse_y();
-int get_true_mouse_x();
-int get_true_mouse_y();
-float get_zerodepth();
-void gl_swap();
-void toggle_show_fps();
-void init_gl();
-float get_fps();
-void update_fps_time();
+int get_mouse_x(void);
+int get_mouse_y(void);
+int get_true_mouse_x(void);
+int get_true_mouse_y(void);
+float get_zerodepth(void);
+void gl_swap(void);
+void toggle_show_fps(void);
+void init_gl(void);
+float get_fps(void);
+void update_fps_time(void);
 int power_of_two(int input);
-float get_dc_z();
-void reset_dc_z();
+float get_dc_z(void);
+void reset_dc_z(void);
 
 /* texture.c */
 texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);
@@ -292,22 +293,15 @@ void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colou
 void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
 texture_t *get_text_character( int index );
-void generate_text_chars();
+void generate_text_chars(void);
 int text_width(char *text);
-int text_height();
+int text_height(void);
 
 /* colours.c */
 #define COL_BLACK   0
 #define COL_WHITE   1
 #define COL_RED     2
 #define COL_YELLOW  3
-
-/* saveload_dc.c */
-#ifdef _arch_dreamcast
-int dc_store_savegames();
-int dc_restore_savegames();
-void dc_draw_vmu_icon();
-#endif
 
 gg_colour_t *get_col( int colour );
 

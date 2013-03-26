@@ -51,7 +51,7 @@ ui_driver_t *ui_find_driver(char *name)
     return NULL;
 }
 
-void ui_list_drivers()
+void ui_list_drivers(void)
 {
     int i = 0;
 

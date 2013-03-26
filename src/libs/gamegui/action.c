@@ -23,7 +23,7 @@
 #include <gamegui/action.h>
 #include <gamegui/label.h>
 
-gg_class_id gg_action_get_class_id()
+gg_class_id gg_action_get_class_id(void)
 {
     GG_CHILD(gg_bin_get_class_id())
 }

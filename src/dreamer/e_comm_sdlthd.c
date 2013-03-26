@@ -28,25 +28,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "e_comm.h"
 #include "pipe_mem.h"
 #include "main_sdlthd.h"
 
-void e_comm_init()
+void e_comm_init(void)
 {
 }
 
-void e_comm_exit()
+void e_comm_exit(void)
 {
 }
 
-void e_comm_send_str(char *str)
+void e_comm_send_str(const char *str)
 {
     SDL_mutexP(to_ui_mutex);
     pipe_mem_send(&to_ui, str);
     SDL_mutexV(to_ui_mutex);
 }
 
-char *e_comm_poll()
+char *e_comm_poll(void)
 {
     char *retval;
 

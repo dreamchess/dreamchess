@@ -67,10 +67,10 @@ extern int moves_start[MAX_DEPTH + 2];
 extern int moves_cur[MAX_DEPTH + 1];
 
 void
-move_init();
+move_init(void);
 
 void
-move_exit();
+move_exit(void);
 
 int
 compute_legal_moves(board_t *board, int ply);

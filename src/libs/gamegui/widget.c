@@ -28,7 +28,7 @@
 #include <gamegui/widget.h>
 #include <gamegui/dialog.h>
 
-gg_class_id gg_widget_get_class_id()
+gg_class_id gg_widget_get_class_id(void)
 {
     GG_CHILD(GG_CLASS_ID_NONE)
 }

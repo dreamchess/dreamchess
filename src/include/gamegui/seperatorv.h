@@ -35,12 +35,12 @@ typedef struct gg_seperatorv
 }
 gg_seperatorv_t;
 
-gg_class_id gg_seperatorv_get_class_id();
+gg_class_id gg_seperatorv_get_class_id(void);
 
 void gg_seperatorv_render(gg_widget_t *widget, int x, int y, int focus);
 
 void gg_seperatorv_init(gg_seperatorv_t *sep);
 
-gg_widget_t *gg_seperatorv_create();
+gg_widget_t *gg_seperatorv_create(void);
 
 #endif /* GAMEGUI_SEPERATORV_H */

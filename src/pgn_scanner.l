@@ -22,10 +22,11 @@
 %option nounput
 
 %{
+#include "pgn_scanner.h"
 #include "pgn_parser.h"
 
-static char *make_string();
-int yyparse();
+static char *make_string(void);
+int yyparse(void);
 
 int pgn_parse_file(char *filename)
 {
@@ -92,7 +93,7 @@ $[[:digit:]]+ {
 
 %%
 
-static char *make_string()
+static char *make_string(void)
 {
     int i;
     int len = 0;

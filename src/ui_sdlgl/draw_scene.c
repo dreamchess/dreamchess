@@ -22,7 +22,7 @@
 
 static float mouse_square;
 
-float get_mouse_square()
+float get_mouse_square(void)
 {
     return mouse_square;
 }

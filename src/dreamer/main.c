@@ -27,7 +27,7 @@
 #include "git_rev.h"
 #include "config.h"
 
-int engine();
+int engine(void);
 
 int main(int argc, char **argv)
 {

@@ -47,6 +47,7 @@ static int start_time;
 move_t pv[MAX_DEPTH][MAX_DEPTH];
 int pv_len[MAX_DEPTH];
 
+#if 0
 void
 print_board(board_t *board)
 /* Temporary! */
@@ -80,6 +81,7 @@ print_board(board_t *board)
 	}
 	e_comm_send(" ABCDEFGH\n");
 }
+#endif
 
 static inline void pv_term(int ply)
 {
@@ -130,7 +132,7 @@ static void pv_print(state_t *state, int depth, int score)
     e_comm_send("\n");
 }
 
-void pv_clear()
+void pv_clear(void)
 {
     pv_term(0);
 }
@@ -156,7 +158,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side);
 int
 is_check(board_t *board, int ply);
 
-void poll_abort(int ply)
+static void poll_abort(int ply)
 {
     if (pv_len[0] == 0)
         return;
@@ -165,7 +167,7 @@ void poll_abort(int ply)
         abort_search = 1;
 }
 
-int
+static int
 quiescence(board_t *board, int ply, int alpha, int beta, int side)
 {
     int eval;

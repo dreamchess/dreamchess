@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "msgbuf.h"
+
 /* Pointer to message that's being received.
 ** Note: message refers to a series of characters followed by a newline.
 */
@@ -91,7 +93,7 @@ char *msgbuf_process(char *buf)
     return NULL;
 }
 
-void msgbuf_exit()
+void msgbuf_exit(void)
 {
     if (msg)
         free(msg);

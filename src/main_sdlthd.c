@@ -33,7 +33,7 @@
 #include "engine.h"
 #include "pipe_mem.h"
 
-int engine();
+int engine(void);
 
 /* Message list from engine to ui. */
 char *to_ui;

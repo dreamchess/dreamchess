@@ -44,7 +44,7 @@ typedef struct w_entry
 }
 gg_entry_t;
 
-gg_class_id gg_entry_get_class_id();
+gg_class_id gg_entry_get_class_id(void);
 
 void gg_entry_render(gg_widget_t *widget, int x, int y, int focus);
 

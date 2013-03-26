@@ -63,7 +63,7 @@ static gg_colour_t col_grey2 =
         0.25f, 0.25f, 0.25f, 1.0f
     };
 
-gg_class_id gg_dialog_get_class_id()
+gg_class_id gg_dialog_get_class_id(void)
 {
     GG_CHILD(gg_bin_get_class_id())
 }
@@ -71,7 +71,7 @@ gg_class_id gg_dialog_get_class_id()
 static TAILQ_HEAD(dialogs_head, gg_dialog) dialogs = TAILQ_HEAD_INITIALIZER(dialogs);
 static TAILQ_HEAD(closed_dialogs_head, gg_dialog) closed_dialogs = TAILQ_HEAD_INITIALIZER(closed_dialogs);
 
-void gg_dialog_cleanup()
+void gg_dialog_cleanup(void)
 {
     while (!TAILQ_EMPTY(&closed_dialogs))
     {
@@ -102,13 +102,13 @@ static void gg_dialog_cls(gg_dialog_t *dialog)
 }
 
 /** @brief Closes the dialog that's on top of the dialog stack. */
-void gg_dialog_close()
+void gg_dialog_close(void)
 {
     if (!TAILQ_EMPTY(&dialogs))
         gg_dialog_cls(TAILQ_FIRST(&dialogs));
 }
 
-void gg_dialog_close_all()
+void gg_dialog_close_all(void)
 {
     while (!TAILQ_EMPTY(&dialogs))
         gg_dialog_cls(TAILQ_FIRST(&dialogs));
@@ -119,7 +119,7 @@ void gg_dialog_close_all()
  *  @return The dialog that's on top of the stack, or NULL if the stack is
  *          empty.
  */
-gg_dialog_t *gg_dialog_get_active()
+gg_dialog_t *gg_dialog_get_active(void)
 {
     return TAILQ_FIRST(&dialogs);
 }
@@ -235,14 +235,16 @@ static int dialog_trans_in;
 static int dialog_trans_reset;
 static int dialog_in_trans;
 
-void dialog_reset_transition(int in)
+#if 0
+static void dialog_reset_transition(int in)
 {
     dialog_trans_in = in;
     dialog_trans_reset = 1;
     dialog_in_trans = 1;
 }
+#endif
 
-float dialog_get_transition()
+static float dialog_get_transition(void)
 {
     float ticks = gg_system_get_ticks();
 
@@ -539,7 +541,7 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
     }
 }
 
-void gg_dialog_render_all()
+void gg_dialog_render_all(void)
 {
     gg_dialog_t *dialog;
 

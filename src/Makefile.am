@@ -1,6 +1,6 @@
 SUBDIRS = include libs dreamer ui_sdlgl gamegui_dialogs audio
 noinst_HEADERS = board.h comm.h debug.h dir.h dreamchess.h fen.h history.h \
-	ui.h credits.h
+	ui.h credits.h pgn_scanner.h
 EXTRA_DIST = win32.rc win32.ico beos.rdef macosx
 bin_PROGRAMS = dreamchess
 AM_CPPFLAGS = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include

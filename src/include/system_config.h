@@ -23,12 +23,12 @@
 
 #include "options.h"
 
-void config_init();
-void config_save();
+void config_init(void);
+void config_save(void);
 option_t *config_get_option(char *name);
-char *config_backup();
+char *config_backup(void);
 int config_restore(char *string);
-void config_set_failsafe_video();
+void config_set_failsafe_video(void);
 
 typedef struct config_resolution {
 	int w, h;

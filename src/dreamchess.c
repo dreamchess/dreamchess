@@ -41,6 +41,7 @@
 #include "git_rev.h"
 #include "audio.h"
 #include "system_config.h"
+#include "pgn_scanner.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
@@ -51,9 +52,6 @@
 #else
 #define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
 #endif
-
-/* FIXME */
-int pgn_parse_file(char *filename);
 
 typedef struct move_list
 {
@@ -124,7 +122,7 @@ static void move_list_view_prev(move_list_t *list)
         list->view--;
 }
 
-void game_view_next()
+void game_view_next(void)
 {
     history_view_next(history);
     move_list_view_next(&fullalg_list);
@@ -133,7 +131,7 @@ void game_view_next()
     ui->update(history->view->board, NULL);
 }
 
-void game_view_prev()
+void game_view_prev(void)
 {
     history_view_prev(history);
     move_list_view_prev(&fullalg_list);
@@ -142,7 +140,7 @@ void game_view_prev()
     ui->update(history->view->board, NULL);
 }
 
-void game_undo()
+void game_undo(void)
 {
     history_undo(history);
     move_list_undo(&fullalg_list);
@@ -157,7 +155,7 @@ void game_undo()
     ui->update(history->view->board, NULL);
 }
 
-void game_retract_move()
+void game_retract_move(void)
 {
     /* Make sure a user is on move and we can undo two moves. */
     if (config->player[history->last->board->turn] != PLAYER_UI)
@@ -170,7 +168,7 @@ void game_retract_move()
     comm_send("remove\n");
 }
 
-void game_move_now()
+void game_move_now(void)
 {
     /* Make sure engine is on move. */
     if (config->player[history->last->board->turn] != PLAYER_ENGINE)
@@ -179,7 +177,7 @@ void game_move_now()
     comm_send("?\n");
 }
 
-int game_want_move()
+int game_want_move(void)
 {
     return config->player[history->last->board->turn] == PLAYER_UI
            && history->last == history->view;
@@ -209,7 +207,7 @@ void game_set_engine_error(int err)
     engine_error = err;
 }
 
-int game_get_engine_error()
+int game_get_engine_error(void)
 {
     return engine_error;
 }
@@ -301,7 +299,7 @@ void game_make_move(move_t *move, int ui_update)
     }
 }
 
-void game_quit()
+void game_quit(void)
 {
     in_game = 0;
 }
@@ -404,7 +402,7 @@ int set_resolution(int init)
         return ui->resize(width, height, fs, ms);
 }
 
-static void init_resolution()
+static void init_resolution(void)
 {
     if (set_resolution(1)) {
         DBG_LOG("switching to failsafe video mode defaults");
@@ -417,7 +415,7 @@ static void init_resolution()
     }
 }
 
-void toggle_fullscreen()
+void toggle_fullscreen(void)
 {
 #ifdef _WIN32
     DBG_WARN("fullscreen toggling is currently not supported on win32");
@@ -547,7 +545,7 @@ static void set_cl_options(cl_options_t *cl_options)
 
 int dreamchess(void *data)
 {
-    cl_options_t cl_options = {};
+    cl_options_t cl_options = { 0 };
 
 #ifndef _arch_dreamcast
 

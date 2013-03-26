@@ -38,7 +38,7 @@ static char *read_opaque(mxml_node_t *top, char *name)
     return NULL;
 }
 
-playlist_t *playlist_create()
+playlist_t *playlist_create(void)
 {
 	playlist_t *playlist = malloc(sizeof(playlist_t));
 

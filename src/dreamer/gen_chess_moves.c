@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+#include "move_data.h"
+
 static int knight_moves[8][2] = {{-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}};
 static int king_moves[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
 static int white_pawn_captures[2][2] = {{-1, 1}, {1, 1}};
@@ -36,7 +38,7 @@ is_valid(int x, int y)
 
 #define generate_moves_single(FUNCNAME, MOVES, SIZE) \
 int ** \
-FUNCNAME() \
+FUNCNAME(void) \
 { \
 	int x, y, i; \
 \
@@ -71,7 +73,7 @@ FUNCNAME() \
 
 #define generate_moves_ray(FUNCNAME, MOVES, SIZE) \
 int *** \
-FUNCNAME() \
+FUNCNAME(void) \
 { \
 	int x, y, i; \
 \

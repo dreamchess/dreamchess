@@ -68,11 +68,11 @@ int gg_signal_register(gg_class_id class, char *name)
 	return signals_nr - 1;
 }
 
-void gg_signal_init()
+void gg_signal_init(void)
 {
 }
 
-void gg_signal_exit()
+void gg_signal_exit(void)
 {
 	free(signals);
 }

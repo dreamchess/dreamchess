@@ -53,7 +53,7 @@ gg_rect_t gg_clipping_rect(gg_rect_t *rect1, gg_rect_t *rect2)
 
 static clip_el_t *clip_stack;
 
-gg_rect_t *gg_clipping_get()
+gg_rect_t *gg_clipping_get(void)
 {
     if (clip_stack)
         return &clip_stack->rect;
@@ -79,7 +79,7 @@ void gg_clipping_adjust(gg_rect_t *rect)
     clip_stack = clip_new;
 }
 
-void gg_clipping_undo()
+void gg_clipping_undo(void)
 {
     clip_el_t *clip_new;
     if (clip_stack)

@@ -23,6 +23,7 @@
 #include <ctype.h>
 
 #include "board.h"
+#include "fen.h"
 
 /* FIXME: Add support for castling rights and move counters. */
 /* FIXME: Error checking. */

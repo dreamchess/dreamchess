@@ -43,7 +43,7 @@ static void add_resolution(option_t *option, int w, int h)
 		free(res);
 }
 
-void config_init()
+void config_init(void)
 {
 	option_t *option;
 	int i;
@@ -152,7 +152,7 @@ void config_init()
 	option_group_load_xml(config);
 }
 
-void config_set_failsafe_video()
+void config_set_failsafe_video(void)
 {
 	option_t *option = option_group_find_option(config, "resolution");
 	option_select_value_by_name(option, "640x480");
@@ -169,12 +169,12 @@ void config_set_failsafe_video()
 	option_select_value_by_name(option, "Off");
 }
 
-void config_save()
+void config_save(void)
 {
 	option_group_save_xml(config);
 }
 
-char *config_backup()
+char *config_backup(void)
 {
 	return option_group_save_string(config);
 }

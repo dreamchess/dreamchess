@@ -51,7 +51,7 @@ static int load_opaque(mxml_node_t *top, char *name, char **dest)
     return 1;
 }
 
-void theme_add_theme( char *xmlfile, option_t *option )
+static void theme_add_theme( char *xmlfile, option_t *option )
 {
     FILE *fp;
     mxml_node_t *tree=NULL, *theme=NULL;
@@ -196,7 +196,7 @@ static void add_music_pack(char *dir)
     TAILQ_INSERT_TAIL(&music_packs, music, entries);
 }
 
-static void find_music_packs()
+static void find_music_packs(void)
 {
     DIR *dir;
 
@@ -226,7 +226,7 @@ static void find_music_packs()
     }
 }
 
-void theme_find_music_packs()
+void theme_find_music_packs(void)
 {
     TAILQ_INIT(&music_packs);
 
@@ -266,7 +266,7 @@ void theme_find_music_packs()
 #endif
 }
 
-music_packs_t *theme_get_music_packs()
+music_packs_t *theme_get_music_packs(void)
 {
     return &music_packs;
 }

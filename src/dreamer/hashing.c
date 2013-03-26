@@ -28,7 +28,7 @@ unsigned long long ep_hash[64];
 unsigned long long black_to_move;
 
 unsigned long long
-random_rand_64()
+random_rand_64(void)
 {
     const unsigned long long mul_64 = 8LL * 893636665409536LL - 3LL;
     const unsigned long long add_64 = 4354685564936845319LL;
@@ -38,7 +38,7 @@ random_rand_64()
 }
 
 void
-init_hash()
+init_hash(void)
 {
     int i,j;
     for (i = 0; i < 12; i++)

@@ -34,7 +34,7 @@
 int last_mousex=0;
 int last_mousey=0;
 
-int get_move()
+int get_move(void)
 {
     int retval = -1;
     int mousex, mousey;
@@ -152,13 +152,6 @@ int get_move()
                 break;
             case 'r':
                 game_retract_move();
-                break;
-            case 's':
-                fen_encode(get_board());
-                /* game_save(); */
-                break;
-            case 'l':
-                /* load_game(); */
                 break;
             default:
                 break;

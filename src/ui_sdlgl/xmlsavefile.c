@@ -45,22 +45,12 @@ void set_slots( int slots )
     slots=slots;
 }
 
-int get_slots()
+int get_slots(void)
 {
     return slots;
 }
 
-int load_game( int slot )
-{
-    int retval=game_load( slot );
-
-    /*if (!retval)
-        show_message("PGN file loading failed.");*/
-
-    return retval;
-}
-
-const char *whitespace_cb(mxml_node_t *node, int where)
+static const char *whitespace_cb(mxml_node_t *node, int where)
 {
     const char *name;
     name = node->value.element.name;
@@ -82,18 +72,31 @@ const char *whitespace_cb(mxml_node_t *node, int where)
 }
 
 static int load_opaque(mxml_node_t *top, char *name, char *dest)
+
 {
+
     mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
+
     if (node)
+
     {
+
         node = mxmlWalkNext(node, node, MXML_DESCEND);
+
         if (node && node->type == MXML_OPAQUE)
+
         {
+
             strcpy(dest, node->value.opaque);
+
             return 0;
+
         }
+
     }
+
     return 1;
+
 }
 
 static void save_opaque(mxml_node_t *parent, char *name, char *value)

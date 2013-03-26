@@ -29,7 +29,7 @@ void pipe_win32_init(HANDLE in, HANDLE out, int console);
 ** Returns   : (void)
 */
 
-void pipe_win32_exit();
+void pipe_win32_exit(void);
 /* Exits the I/O library cleanly.
 ** Parameters: (void)
 ** Returns   : (void)

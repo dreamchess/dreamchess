@@ -192,7 +192,7 @@ static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
 
-static void setup_view()
+static void setup_view(void)
 {
     glLoadIdentity();
 
@@ -204,7 +204,7 @@ static void setup_view()
     glRotatef(z_rotation, 0, 0, 1);
 }
 
-int get_piece_moving_done()
+int get_piece_moving_done(void)
 {
     return piece_moving_done;
 }
@@ -248,7 +248,7 @@ static texture_t *load_piece_texture(char *filename)
     return tex;
 }
 
-mesh_t *dcm_load(char *filename)
+static mesh_t *dcm_load(char *filename)
 {
     FILE *f;
     mesh_t *mesh;
@@ -576,7 +576,7 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-void model_render(model_t *model, int specular, float alpha)
+static void model_render(model_t *model, int specular, float alpha)
 {
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -600,7 +600,7 @@ void model_render(model_t *model, int specular, float alpha)
     glDisable(GL_TEXTURE_2D);
 }
 
-void model_make_list(model_t *model)
+static void model_make_list(model_t *model)
 {
     int g;
     mesh_t *mesh = model->mesh;
@@ -697,7 +697,7 @@ void load_board(char *dcm_name, char *texture_name)
     model_make_list(&board);
 }
 
-void free_mesh(void *data)
+static void free_mesh(void *data)
 {
     mesh_t *mesh = data;
     int i;
@@ -713,7 +713,7 @@ void free_mesh(void *data)
     free(mesh);
 }
 
-void free_texture(void *data)
+static void free_texture(void *data)
 {
     texture_t *tex = data;
 
@@ -721,7 +721,7 @@ void free_texture(void *data)
     free(tex);
 }
 
-void freemodels()
+void freemodels(void)
 {
     data_col_free(&meshes, free_mesh);
     data_col_free(&textures, free_texture);
@@ -862,7 +862,7 @@ static void draw_board(int blend)
     model_render(&board, 0, 1.0f);
 }
 
-void draw_selector(float alpha)
+static void draw_selector(float alpha)
 {
     float bounce_offset = 0.0;
     float spin_offset = 0.0;
@@ -984,7 +984,7 @@ static void draw_board_center(float r, float g, float b, float a)
     glDisable(GL_TEXTURE_2D);
 }
 
-static void setup_stencil()
+static void setup_stencil(void)
 {
     float tc = 46 / 512.0f;
 
@@ -1120,7 +1120,7 @@ void move_selector(int direction)
     }
 }
 
-int get_selector()
+int get_selector(void)
 {
     return selector;
 }

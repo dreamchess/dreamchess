@@ -36,7 +36,7 @@ void reset_transition( int in )
     trans_reset=TRUE;
 }
 
-void transition_update()
+void transition_update(void)
 {
     float ticks=SDL_GetTicks();
 
@@ -54,7 +54,7 @@ void transition_update()
     transition.x=trans_amount-transition.y;   
 }
 
-float get_ui_trans_pos()
+float get_ui_trans_pos(void)
 {
     if ( trans_in )
         return -transition.x;
@@ -62,7 +62,7 @@ float get_ui_trans_pos()
         return -transition.y;
 }
 
-void draw_health_bar( coord3_t position, coord3_t size, int white )
+static void draw_health_bar( coord3_t position, coord3_t size, int white )
 {
     int health;
     float bar_len;
@@ -106,7 +106,7 @@ void draw_health_bar( coord3_t position, coord3_t size, int white )
     }
 }
 
-void draw_player_status( coord3_t offset, int white )
+static void draw_player_status( coord3_t offset, int white )
 {
     if (white) /* UGLY */
     {
@@ -148,7 +148,7 @@ void draw_player_status( coord3_t offset, int white )
     }
 }
 
-void draw_ui_elements()
+void draw_ui_elements(void)
 {
     int namew, nameh;
 
@@ -259,7 +259,7 @@ void draw_ui_elements()
 }
 
 /** @brief Renders the in-game backdrop. */
-void draw_backdrop()
+void draw_backdrop(void)
 {
     draw_texture( get_backdrop(), 0, 0, 640, 480, -1.0f, get_col(COL_WHITE) );
 }

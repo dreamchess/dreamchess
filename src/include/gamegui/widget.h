@@ -205,7 +205,7 @@ int gg_set_focus_pos(gg_widget_t *widget, int x, int y);
  *
  *  @return Unique class ID.
  */
-gg_class_id gg_widget_get_class_id();
+gg_class_id gg_widget_get_class_id(void);
 
 /** @brief Sets the allocated size of a widget.
  *

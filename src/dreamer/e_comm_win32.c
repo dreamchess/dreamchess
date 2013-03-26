@@ -27,9 +27,10 @@
 #include <windows.h>
 #include <stdio.h>
 
+#include "e_comm.h"
 #include "pipe_win32.h"
 
-void e_comm_init()
+void e_comm_init(void)
 {
     HANDLE h_in, h_out;
     DWORD mode;
@@ -46,7 +47,7 @@ void e_comm_init()
     pipe_win32_init(h_in, h_out, GetConsoleMode(h_in, &mode) != 0);
 }
 
-void e_comm_exit()
+void e_comm_exit(void)
 {
     pipe_win32_exit();
 }
@@ -56,7 +57,7 @@ void e_comm_send_str(const char *str)
     pipe_win32_send(str);
 }
 
-char *e_comm_poll()
+char *e_comm_poll(void)
 {
     int error;
     char *retval = pipe_win32_poll(&error);

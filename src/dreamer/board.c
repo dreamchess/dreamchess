@@ -256,7 +256,7 @@ int setup_board_fen(board_t *board, char *fen)
 	return 0;
 }
 
-void board_init()
+void board_init(void)
 {
     int i;
     for (i = 0; i < 64; i++)

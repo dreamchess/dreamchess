@@ -33,7 +33,7 @@ void
 add_count(move_t move, int side);
 
 void
-forget_history();
+forget_history(void);
 
 void
 best_first(int ply, move_t move);

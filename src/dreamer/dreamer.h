@@ -85,6 +85,7 @@ int my_turn(state_t *state);
 #define OPTION_POST 1
 #define OPTION_PONDER 2
 
+int engine(void);
 int check_game_state(board_t *board, int ply);
 void check_game_end(state_t *state);
 void do_move(state_t *state, move_t move);
@@ -92,9 +93,9 @@ void undo_move(state_t *state);
 int check_abort(int ply);
 int get_option(int option);
 void set_option(int option, int value);
-int get_time();
+int get_time(void);
 int is_check(board_t *board, int ply);
 void send_move(state_t *state, move_t move);
-void set_move_time();
+void set_move_time(void);
 
 #endif /* DREAMER_H */

@@ -28,7 +28,7 @@ void pipe_unix_init(int in, int out);
 ** Returns   : (void)
 */
 
-void pipe_unix_exit();
+void pipe_unix_exit(void);
 /* Exits the I/O library cleanly.
 ** Parameters: (void)
 ** Returns   : (void)

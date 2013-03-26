@@ -36,7 +36,7 @@ move_t
 find_best_move(state_t *state);
 
 void
-pv_clear();
+pv_clear(void);
 
 move_t
 ponder(state_t *state);

@@ -30,12 +30,12 @@ int is_repetition(board_t *board, int ply);
 
 int is_draw(board_t *board);
 
-void repetition_init();
+void repetition_init(board_t *board);
 
-void repetition_exit();
+void repetition_exit(void);
 
 void repetition_add(board_t *board, move_t move);
 
-void repetition_remove();
+void repetition_remove(void);
 
 #endif /* REPETITION_H */

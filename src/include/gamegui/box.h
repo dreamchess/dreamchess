@@ -36,7 +36,7 @@ typedef struct gg_box
 }
 gg_box_t;
 
-gg_class_id gg_box_get_class_id();
+gg_class_id gg_box_get_class_id(void);
 
 void gg_box_init(gg_box_t *box, int spacing);
 

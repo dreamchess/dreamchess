@@ -35,7 +35,7 @@ typedef struct gg_bin
 }
 gg_bin_t;
 
-gg_class_id gg_bin_get_class_id();
+gg_class_id gg_bin_get_class_id(void);
 
 gg_widget_t *gg_bin_get_child(gg_bin_t *bin);
 

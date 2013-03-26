@@ -36,7 +36,7 @@ typedef struct gg_image
 }
 gg_image_t;
 
-gg_class_id gg_image_get_class_id();
+gg_class_id gg_image_get_class_id(void);
 
 void gg_image_render(gg_widget_t *widget, int x, int y, int focus);
 

@@ -37,7 +37,7 @@ typedef struct gg_align
 }
 gg_align_t;
 
-gg_class_id gg_align_get_class_id();
+gg_class_id gg_align_get_class_id(void);
 
 void gg_align_init(gg_align_t *align);
 

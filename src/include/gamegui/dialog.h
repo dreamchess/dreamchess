@@ -156,7 +156,7 @@ gg_dialog_t;
 /** @brief Destroys all closed dialogs on the dialog stack and removes them
  *         from the stack.
  */
-void gg_dialog_cleanup();
+void gg_dialog_cleanup(void);
 
 /** @brief Opens a dialog by placing it on top of the dialog stack.
  *
@@ -165,15 +165,15 @@ void gg_dialog_cleanup();
 void gg_dialog_open(gg_dialog_t *dialog);
 
 /** @brief Closes the dialog that's on top of the dialog stack (if any). */
-void gg_dialog_close();
+void gg_dialog_close(void);
 
-void gg_dialog_close_all();
+void gg_dialog_close_all(void);
 
 /** @brief Returns the dialog that's on top of the dialog stack.
  *
  *  @return Dialog on top of stack, or NULL if stack is empty.
  */
-gg_dialog_t *gg_dialog_get_active();
+gg_dialog_t *gg_dialog_get_active(void);
 
 /** @brief Determines the screen position of a dialog.
  *
@@ -223,12 +223,14 @@ gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title,
 
 void gg_dialog_destroy(gg_widget_t *widget);
 
-gg_class_id gg_dialog_get_class_id();
+gg_class_id gg_dialog_get_class_id(void);
 
 void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size);
 
-void gg_dialog_render_all();
+void gg_dialog_render_all(void);
 
 void gg_dialog_set_active(gg_dialog_t *dialog);
+
+int gg_dialog_input(gg_widget_t *widget, gg_event_t event);
 
 #endif /* GAMEGUI_DIALOG_H */

@@ -35,12 +35,12 @@ typedef struct gg_seperatorh
 }
 gg_seperatorh_t;
 
-gg_class_id gg_seperatorh_get_class_id();
+gg_class_id gg_seperatorh_get_class_id(void);
 
 void gg_seperatorh_render(gg_widget_t *widget, int x, int y, int focus);
 
 void gg_seperatorh_init(gg_seperatorh_t *sep);
 
-gg_widget_t *gg_seperatorh_create();
+gg_widget_t *gg_seperatorh_create(void);
 
 #endif /* GAMEGUI_SEPERATORH_H */

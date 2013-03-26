@@ -30,7 +30,7 @@ int saveload_selected=0;
 int changing_slot=FALSE;
 int change_saving=FALSE;
 
-char xmlsquaretofont( int square )
+static char xmlsquaretofont( int square )
 {
 
     switch(PIECE(square))

@@ -132,7 +132,7 @@ lookup_best_move(board_t *board)
 }
 
 void
-clear_table()
+clear_table(void)
 {
     int i;
     for (i = 0; i < ENTRIES; i++)
@@ -166,7 +166,7 @@ void transposition_init(int megabytes)
     }
 }
 
-void transposition_exit()
+void transposition_exit(void)
 {
     free(table);
 }

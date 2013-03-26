@@ -21,6 +21,6 @@
 #ifndef _ENGINE_H
 #define _ENGINE_H
 
-int engine();
+int engine(void);
 
 #endif /* _ENGINE_H */

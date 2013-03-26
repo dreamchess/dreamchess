@@ -46,7 +46,7 @@ typedef struct gg_container
 }
 gg_container_t;
 
-gg_class_id gg_container_get_class_id();
+gg_class_id gg_container_get_class_id(void);
 
 void gg_container_destroy(gg_widget_t *widget);
 

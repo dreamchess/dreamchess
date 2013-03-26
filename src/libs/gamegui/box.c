@@ -20,7 +20,7 @@
 
 #include <gamegui/box.h>
 
-gg_class_id gg_box_get_class_id()
+gg_class_id gg_box_get_class_id(void)
 {
     GG_CHILD(gg_select_get_class_id())
 }

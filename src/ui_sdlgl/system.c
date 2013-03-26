@@ -23,13 +23,13 @@
 #ifdef _arch_dreamcast
 static float dc_z;
 
-float get_dc_z()
+float get_dc_z(void)
 {
     dc_z += 0.00001f;
     return dc_z;
 }
 
-void reset_dc_z()
+void reset_dc_z(void)
 {
     dc_z = 1.0f;
 }
@@ -42,17 +42,17 @@ static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
 
-float get_fps()
+float get_fps(void)
 {
     return fps;
 }
 
-void update_fps_time()
+void update_fps_time(void)
 {
     fps_time=SDL_GetTicks();
 }
 
-void toggle_show_fps()
+void toggle_show_fps(void)
 {
     fps_enabled = 1 - fps_enabled;
 }
@@ -64,7 +64,7 @@ static struct
 }
 mouse_pos;
 
-float get_zerodepth()
+float get_zerodepth(void)
 {
     return zerodepth;
 }
@@ -75,22 +75,22 @@ void set_mouse_pos( int x, int y )
     mouse_pos.y=y;
 }
 
-int get_true_mouse_x()
+int get_true_mouse_x(void)
 {
     return mouse_pos.x;
 }
 
-int get_true_mouse_y()
+int get_true_mouse_y(void)
 {
     return mouse_pos.y;
 }
 
-int get_mouse_x()
+int get_mouse_x(void)
 {
     return ((float)mouse_pos.x/(float)get_screen_width())*640;
 }
 
-int get_mouse_y()
+int get_mouse_y(void)
 {
     return ((float)mouse_pos.y/(float)get_screen_height())*480;
 }
@@ -123,7 +123,7 @@ void go_3d(int width, int height)
 }
 
 /** @brief Sets the OpenGL rendering options. */
-void init_gl()
+void init_gl(void)
 {
     /* Enable smooth shading */
     glShadeModel( GL_SMOOTH );
@@ -153,7 +153,9 @@ void init_gl()
     #endif /* _arch_dreamcast */
 
     glEnable(GL_BLEND);
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 
 /** @brief Resizes the OpenGL window.
@@ -176,7 +178,7 @@ void resize_window( int width, int height )
  *
  *  Also maintains the frames-per-second counter.
  */
-void gl_swap()
+void gl_swap(void)
 {
     static Uint32 last = 0;
     Uint32 now;

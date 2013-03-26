@@ -35,7 +35,7 @@ typedef struct gg_hbox
 }
 gg_hbox_t;
 
-gg_class_id gg_hbox_get_class_id();
+gg_class_id gg_hbox_get_class_id(void);
 
 void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus);
 

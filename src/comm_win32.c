@@ -125,7 +125,7 @@ int comm_init(char *engine)
     return 0;
 }
 
-void comm_exit()
+void comm_exit(void)
 {
     if (init_ok) {
         DBG_LOG("waiting for engine to exit");
@@ -148,7 +148,7 @@ void comm_send_str(char *str)
         pipe_win32_send(str);
 }
 
-char *comm_poll()
+char *comm_poll(void)
 {
     if (init_ok) {
         DWORD exit;

@@ -82,7 +82,7 @@ add_count(move_t move, int side)
 }
 
 void
-forget_history()
+forget_history(void)
 {
     int i,j,k;
     for (i = 0; i < 2; i++)

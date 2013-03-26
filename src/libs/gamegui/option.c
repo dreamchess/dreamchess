@@ -39,7 +39,7 @@ static gg_colour_t col_text =
         1.0f, 1.0f, 1.0f, 1.0f
     };
 
-gg_class_id gg_option_get_class_id()
+gg_class_id gg_option_get_class_id(void)
 {
     GG_CHILD(gg_select_get_class_id())
 }
@@ -181,7 +181,7 @@ void gg_option_init(gg_option_t *option)
  *
  *  @return The created widget.
  */
-gg_widget_t *gg_option_create()
+gg_widget_t *gg_option_create(void)
 {
     gg_option_t *option = malloc(sizeof(gg_option_t));
 

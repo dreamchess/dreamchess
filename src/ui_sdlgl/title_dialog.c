@@ -201,7 +201,7 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
     return GG_DIALOG(dialog);
 }
 
-gg_dialog_t *dialog_title_root_create()
+gg_dialog_t *dialog_title_root_create(void)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox;
@@ -233,7 +233,7 @@ gg_dialog_t *dialog_title_root_create()
     return GG_DIALOG(dialog);
 }
 
-void open_title_root_dialog()
+void open_title_root_dialog(void)
 {
     gg_dialog_t *title=dialog_title_root_create();
 

@@ -32,7 +32,7 @@ static gg_colour_t col_black =
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-gg_class_id gg_seperatorh_get_class_id()
+gg_class_id gg_seperatorh_get_class_id(void)
 {
     GG_CHILD(gg_widget_get_class_id())
 }
@@ -60,7 +60,7 @@ void gg_seperatorh_init(gg_seperatorh_t *sep)
     sep->height = GG_SEP_WIDTH + GG_SEP_SPACINGV * 2;
 }
 
-gg_widget_t *gg_seperatorh_create()
+gg_widget_t *gg_seperatorh_create(void)
 {
     gg_seperatorh_t *sep = malloc(sizeof(gg_seperatorh_t));
 

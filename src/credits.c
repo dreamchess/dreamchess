@@ -24,6 +24,8 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include "credits.h"
+
 static char* programming[] = { "Programming",
                                "Kris McAulay",
                                "Walter van Niftrik",
@@ -60,7 +62,7 @@ static char* music[] = { "Music",
 
 static char **credits[] = { copyright, programming, music, graphics, modelling, thanks, NULL };
 
-char ***get_credits()
+char ***get_credits(void)
 {
     return credits;
 }

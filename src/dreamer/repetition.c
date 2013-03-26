@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include "repetition.h"
 #include "board.h"
 #include "move.h"
 
@@ -44,7 +45,7 @@ void repetition_init(board_t *board)
     cur_list->head = 1;
 }
 
-void repetition_exit()
+void repetition_exit(void)
 {
     free(hist);
 }
@@ -63,7 +64,7 @@ void repetition_add(board_t *board, move_t move)
         cur_list->position[cur_list->head++] = board->hash_key;
 }
 
-void repetition_remove()
+void repetition_remove(void)
 {
     if (cur_list->head > 1)
         cur_list->head--;

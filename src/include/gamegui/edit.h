@@ -51,7 +51,7 @@ typedef struct w_edit
 }
 gg_edit_t;
 
-gg_class_id gg_edit_get_class_id();
+gg_class_id gg_edit_get_class_id(void);
 
 void gg_edit_render(gg_widget_t *widget, int x, int y, int focus);
 

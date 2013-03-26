@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "pipe_mem.h"
 #include "msgbuf.h"
 
 void pipe_mem_init(char **pipe)

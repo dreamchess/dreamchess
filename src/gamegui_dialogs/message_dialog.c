@@ -52,7 +52,7 @@ void show_message_dialog( char *message )
     gg_dialog_open(dialog_message_create(message));
 }
 
-gg_dialog_t *dialog_engine_error_create()
+gg_dialog_t *dialog_engine_error_create(void)
 {
     gg_widget_t *dialog;
     gg_widget_t *widget;

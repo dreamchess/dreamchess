@@ -22,7 +22,7 @@
 
 #include <gamegui/container.h>
 
-static list_t *list_create()
+static list_t *list_create(void)
 {
     list_t *list = malloc(sizeof(list_t));
 
@@ -58,7 +58,7 @@ static void list_destroy(list_t *list)
     free(list);
 }
 
-gg_class_id gg_container_get_class_id()
+gg_class_id gg_container_get_class_id(void)
 {
     GG_CHILD(gg_widget_get_class_id())
 }

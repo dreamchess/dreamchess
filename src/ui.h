@@ -53,7 +53,7 @@ extern ui_driver_t ui_sdl;
 extern ui_driver_t *ui_driver[];
 
 ui_driver_t *ui_find_driver(char *name);
-void ui_list_drivers();
+void ui_list_drivers(void);
 
 typedef enum ui_event
 {

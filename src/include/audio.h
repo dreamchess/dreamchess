@@ -34,11 +34,11 @@ typedef struct sound {
 
 typedef void (*audio_music_callback_t)(char *title, char *artist, char *album);
 
-void audio_init();
+void audio_init(void);
 
-void audio_exit();
+void audio_exit(void);
 
-void audio_play_music();
+void audio_play_music(void);
 
 void audio_poll(int title);
 

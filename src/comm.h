@@ -27,7 +27,7 @@ int comm_init(char *engine);
 ** Returns   : 1, on error. 0, otherwise.
 */
 
-void comm_exit();
+void comm_exit(void);
 /* Exits the I/O library cleanly.
 ** Parameters: (void)
 ** Returns   : (void)
@@ -45,7 +45,7 @@ void comm_send_str(const char *m);
 ** Returns   : (void)
 */
 
-char *comm_poll();
+char *comm_poll(void);
 /* Polls the I/O library for input from the xboard engine.
 ** Parameters: (void)
 ** Returns   : (char *), Message that was received from the xboard engine

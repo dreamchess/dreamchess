@@ -36,7 +36,7 @@ int comm_init(char *engine)
     return 0;
 }
 
-void comm_exit()
+void comm_exit(void)
 {
 }
 
@@ -47,7 +47,7 @@ void comm_send_str(char *str)
     SDL_mutexV(to_engine_mutex);
 }
 
-char *comm_poll()
+char *comm_poll(void)
 {
     char *retval;
 

@@ -21,7 +21,7 @@
 #ifndef DIR_H
 #define DIR_H
 
-int ch_datadir();
-int ch_userdir();
+int ch_datadir(void);
+int ch_userdir(void);
 
 #endif /* DIR_H */

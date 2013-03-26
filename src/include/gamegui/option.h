@@ -44,7 +44,7 @@ void gg_option_set_size(gg_widget_t *widget, int width, int height);
 
 void gg_option_init(gg_option_t *option);
 
-gg_widget_t *gg_option_create();
+gg_widget_t *gg_option_create(void);
 
 void gg_option_append(gg_option_t *option, gg_widget_t *child);
 
@@ -53,6 +53,6 @@ void gg_option_append_label(gg_option_t *option, char *text, float xalign, float
 int gg_option_get_selected(gg_option_t *option);
 void gg_option_set_selected(gg_option_t *option, int index);
 
-gg_class_id gg_option_get_class_id();
+gg_class_id gg_option_get_class_id(void);
 
 #endif /* GAMEGUI_OPTION_H */

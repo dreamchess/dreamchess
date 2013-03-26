@@ -45,7 +45,7 @@ int moves_start[MAX_DEPTH + 2];
 int moves_cur[MAX_DEPTH + 1];
 
 #define add_moves_ray(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-move_t * \
+static move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
@@ -108,7 +108,7 @@ FUNCNAME(board_t *board, move_t *move) \
 }
 
 #define add_moves_single(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-move_t * \
+static move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
@@ -163,7 +163,7 @@ FUNCNAME(board_t *board, move_t *move) \
 }
 
 #define add_pawn_moves(FUNCNAME, MOVES, INC, TEST1, TEST2, PLAYER, OPPONENT_FIND, LOOP) \
-move_t * \
+static move_t * \
 FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
@@ -276,7 +276,7 @@ add_pawn_moves(add_white_pawn_moves, white_pawn_capture_moves, +8, dest <= 55, !
 add_pawn_moves(add_black_pawn_moves, black_pawn_capture_moves, -8, dest >= 8, source >= 48,
 	SIDE_BLACK, find_white_piece, source = 55; source >= 8; source--)
 
-move_t *
+static move_t *
 add_white_castle_moves(board_t *board, move_t *move)
 {
 	/* Kingside castle. Check for empty squares. */
@@ -298,7 +298,7 @@ add_white_castle_moves(board_t *board, move_t *move)
 	return move;
 }
 
-move_t *
+static move_t *
 add_black_castle_moves(board_t *board, move_t *move)
 {
 	/* Kingside castle. Check for empty squares. */
@@ -371,6 +371,7 @@ move_t move_next(board_t *board, int ply)
 	return moves[moves_cur[ply]++];
 }
 
+#if 0
 void list_moves(int ply)
 {
     int i;
@@ -381,9 +382,10 @@ void list_moves(int ply)
         free(s);
     }
 }
+#endif
 
 void
-move_init()
+move_init(void)
 {
 	rook_moves = all_rook_moves();
 	knight_moves = all_knight_moves();
@@ -394,7 +396,7 @@ move_init()
 	black_pawn_capture_moves = all_black_pawn_capture_moves();
 }
 
-void
+static void
 free_moves_ray(int ***moves)
 {
 	int **ray;
@@ -413,7 +415,7 @@ free_moves_ray(int ***moves)
 	free(moves);
 }
 
-void
+static void
 free_moves_single(int **moves)
 {
 	int source;
@@ -427,7 +429,7 @@ free_moves_single(int **moves)
 }
 
 void
-move_exit()
+move_exit(void)
 {
 	free_moves_ray(queen_moves);
 	free_moves_ray(bishop_moves);

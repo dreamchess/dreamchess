@@ -49,7 +49,7 @@ static Mix_Chunk *wav_data[AUDIO_SOUNDS];
 
 static int sound_volume, music_volume;
 
-static void load_sounds()
+static void load_sounds(void)
 {
 	int i;
 
@@ -63,7 +63,7 @@ static void load_sounds()
 	}
 }
 
-static void free_sounds()
+static void free_sounds(void)
 {
 	int i;
 
@@ -71,12 +71,12 @@ static void free_sounds()
 		Mix_FreeChunk(wav_data[i]);
 }
 
-static void music_finished()
+static void music_finished(void)
 {
 	next_song = 1;
 }
 
-void audio_init()
+void audio_init(void)
 {
         music_packs_t *music_packs;
 	int audio_rate = 44100;
@@ -123,7 +123,7 @@ void audio_init()
 		have_songs = 0;
 }
 
-void audio_exit()
+void audio_exit(void)
 {
 	if (!have_audio)
 		return;
@@ -221,11 +221,11 @@ void audio_set_music_volume(int vol)
 
 /* FIXME */
 
-void audio_init()
+void audio_init(void)
 {
 }
 
-void audio_exit()
+void audio_exit(void)
 {
 }
 

@@ -29,7 +29,7 @@ typedef int gg_signal_t;
 
 gg_signal_t gg_signal_lookup(gg_class_id class, char *name);
 int gg_signal_register(gg_class_id class, char *name);
-void gg_signal_init();
-void gg_signal_exit();
+void gg_signal_init(void);
+void gg_signal_exit(void);
 
 #endif /* GAMEGUI_SIGNAL_H */

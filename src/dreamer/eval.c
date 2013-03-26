@@ -26,7 +26,7 @@
 #include "move_data.h"
 #include "eval.h"
 
-int
+static int
 min(int a, int b)
 {
     if (a < b)
@@ -35,7 +35,7 @@ min(int a, int b)
         return b;
 }
 
-int
+static int
 max(int a, int b)
 {
     if (a > b)
@@ -44,7 +44,7 @@ max(int a, int b)
         return b;
 }
 
-int
+static int
 eval_king_tropism(board_t *board, int side)
 {
     int score = 0;
@@ -114,7 +114,7 @@ eval_king_tropism(board_t *board, int side)
     return score;
 }
 
-int
+static int
 eval_rook_bonus(board_t *board, eval_data_t *eval_data, int side)
 {
     int score = 0;
@@ -179,7 +179,7 @@ eval_rook_bonus(board_t *board, eval_data_t *eval_data, int side)
     return 0;
 }
 
-int
+static int
 eval_development(board_t *board, int side)
 {
     int score = 0;
@@ -304,7 +304,7 @@ eval_development(board_t *board, int side)
     return score;
 }
 
-int
+static int
 eval_bad_bishops(board_t *board, eval_data_t *eval_data, int side)
 {
     int square;
@@ -336,7 +336,7 @@ eval_bad_bishops(board_t *board, eval_data_t *eval_data, int side)
     return 0;
 }
 
-int
+static int
 eval_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 {
     int score = 0;
@@ -382,7 +382,7 @@ eval_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
     return score;
 }
 
-void
+static void
 analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 {
     int i;
@@ -517,7 +517,7 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
     }
 }
 
-int
+static int
 board_eval_material(board_t *board, int side)
 {
     int mat_total;

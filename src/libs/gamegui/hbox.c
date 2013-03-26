@@ -23,7 +23,7 @@
 
 #include <gamegui/hbox.h>
 
-gg_class_id gg_hbox_get_class_id()
+gg_class_id gg_hbox_get_class_id(void)
 {
     GG_CHILD(gg_box_get_class_id())
 }

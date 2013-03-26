@@ -31,7 +31,7 @@
  *
  *  @return The clipping rectangle, or NULL if no clipping rectangle set.
  */
-gg_rect_t *gg_clipping_get();
+gg_rect_t *gg_clipping_get(void);
 
 /** @brief Adjusts the clipping rectangle. The clipping rectangle will be set
  *         to rect, clipped to the previous clipping rectangle (if any).
@@ -41,7 +41,7 @@ gg_rect_t *gg_clipping_get();
 void gg_clipping_adjust(gg_rect_t *rect);
 
 /** @brief Undoes the last clipping adjustment. */
-void gg_clipping_undo();
+void gg_clipping_undo(void);
 
 /** @brief Clips a rectangle to another rectangle.
  *

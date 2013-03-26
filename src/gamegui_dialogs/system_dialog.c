@@ -58,7 +58,7 @@ static int dialog_savegame_open(gg_widget_t *widget, gg_widget_t *emitter, void 
  *
  *  @return The created dialog.
  */
-gg_dialog_t *dialog_system_create()
+gg_dialog_t *dialog_system_create(void)
 {
     gg_widget_t *dialog;
     gg_widget_t *vbox = gg_vbox_create(0);

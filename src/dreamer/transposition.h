@@ -40,10 +40,10 @@ void
 set_best_move(board_t *board, move_t move);
 
 void
-clear_table();
+clear_table(void);
 
 void transposition_init(int megabytes);
-void transposition_exit();
+void transposition_exit(void);
 move_t lookup_best_move(board_t *board);
 
 #endif /* TRANSPOSITION_H */

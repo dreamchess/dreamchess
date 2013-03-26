@@ -26,10 +26,7 @@
 #include "board.h"
 #include "move.h"
 #include "commands.h"
-
-/* FIXME */
-extern int pgn_parse_file(char *filename);
-extern int parse_move(board_t *board, int ply, char *command, move_t *move);
+#include "pgn_scanner.h"
 
 typedef struct
 {
@@ -139,7 +136,7 @@ static void makebook_add(unsigned long long hash, move_t move)
    
 }
 
-void makebook_reset()
+void makebook_reset(void)
 {
     setup_board(&board);
     moves_done = 0;
@@ -164,7 +161,7 @@ void makebook_move(char *str)
     }
 }
 
-int compare(const void *p1, const void *p2)
+static int compare(const void *p1, const void *p2)
 {
     if (((makebook_move_data *) p1)->count > ((makebook_move_data *) p2)->count)
         return -1;
@@ -196,7 +193,7 @@ static void makebook_normalize_moves(makebook_entry *entry)
     entry->moves = i;
 }
 
-static void makebook_cleanup_moves()
+static void makebook_cleanup_moves(void)
 {
     int i;
 

@@ -31,6 +31,6 @@ typedef struct playlist_entry {
 
 typedef TAILQ_HEAD(playlist, playlist_entry) playlist_t;
 
-playlist_t *playlist_create();
+playlist_t *playlist_create(void);
 void playlist_destroy(playlist_t *playlist);
 void playlist_add_tracks(playlist_t *playlist, char *filename);

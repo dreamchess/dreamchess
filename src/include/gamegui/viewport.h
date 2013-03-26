@@ -42,7 +42,7 @@ typedef struct gg_viewport
 }
 gg_viewport_t;
 
-gg_class_id gg_viewport_get_class_id();
+gg_class_id gg_viewport_get_class_id(void);
 
 void gg_viewport_render(gg_widget_t *widget, int x, int y, int focus);
 

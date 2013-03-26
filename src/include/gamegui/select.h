@@ -36,7 +36,7 @@ typedef struct gg_select
 }
 gg_select_t;
 
-gg_class_id gg_select_get_class_id();
+gg_class_id gg_select_get_class_id(void);
 
 void gg_select_init(gg_select_t *select);
 

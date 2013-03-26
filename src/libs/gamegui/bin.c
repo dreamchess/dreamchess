@@ -20,7 +20,7 @@
 
 #include <gamegui/bin.h>
 
-gg_class_id gg_bin_get_class_id()
+gg_class_id gg_bin_get_class_id(void)
 {
     GG_CHILD(gg_container_get_class_id())
 }

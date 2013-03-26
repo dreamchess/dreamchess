@@ -22,6 +22,8 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include "dir.h"
+
 #ifdef _arch_dreamcast
 
 #include <stdlib.h>
@@ -61,7 +63,7 @@ int chdir(const char *path)
 #include "shlwapi.h"
 #include "shlobj.h"
 
-int ch_datadir()
+int ch_datadir(void)
 {
     char filename[MAX_PATH + 6];
 
@@ -72,7 +74,7 @@ int ch_datadir()
     return chdir(filename);
 }
 
-int ch_userdir()
+int ch_userdir(void)
 {
     char appdir[MAX_PATH];
 
@@ -95,12 +97,12 @@ int ch_userdir()
 
 #elif defined _arch_dreamcast
 
-int ch_datadir()
+int ch_datadir(void)
 {
     return chdir(DATADIR);
 }
 
-int ch_userdir()
+int ch_userdir(void)
 {
     return chdir("/ram");
 }
@@ -113,7 +115,7 @@ int ch_userdir()
 
 #define USERDIR "Library/Application Support/DreamChess"
 
-int ch_datadir()
+int ch_datadir(void)
 {
 	char temp1[200];
 	char temp2[200];
@@ -135,7 +137,7 @@ int ch_datadir()
 	return chdir(temp3);
 }
 
-int ch_userdir()
+int ch_userdir(void)
 {
     char *home = getenv("HOME");
 
@@ -165,12 +167,12 @@ int ch_userdir()
 #include <sys/stat.h>
 #include <sys/types.h>
 
-int ch_datadir()
+int ch_datadir(void)
 {
     return chdir(DATADIR);
 }
 
-int ch_userdir()
+int ch_userdir(void)
 {
     char *home = getenv("HOME");
 

@@ -256,7 +256,7 @@ find_white_piece(board_t *board, int square);
 */
 
 void
-board_init();
+board_init(void);
 /* Initialises the global array square_bit.
 ** Parameters: (void)
 ** Returns   : (void)

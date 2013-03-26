@@ -24,6 +24,7 @@
 #include <assert.h>
 
 #include "dreamer.h"
+#include "commands.h"
 #include "e_comm.h"
 #include "move.h"
 #include "history.h"

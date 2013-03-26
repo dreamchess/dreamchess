@@ -41,7 +41,7 @@ typedef struct gg_action
 }
 gg_action_t;
 
-gg_class_id gg_action_get_class_id();
+gg_class_id gg_action_get_class_id(void);
 
 void gg_action_render(gg_widget_t *widget, int x, int y, int focus);
 

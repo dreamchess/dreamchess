@@ -35,12 +35,18 @@ typedef struct gg_frame
 }
 gg_frame_t;
 
-gg_class_id gg_frame_get_class_id();
+gg_class_id gg_frame_get_class_id(void);
 
 void gg_frame_render(gg_widget_t *widget, int x, int y, int focus);
 
 void gg_frame_init(gg_frame_t *frame, gg_widget_t *child);
 
 gg_widget_t *gg_frame_create(gg_widget_t *child);
+
+gg_rect_t gg_frame_get_focus_pos(gg_widget_t *widget);
+
+int gg_frame_set_focus_pos(gg_widget_t *widget, int x, int y);
+
+int gg_frame_input(gg_widget_t *widget, gg_event_t event);
 
 #endif /* GAMEGUI_FRAME_H */

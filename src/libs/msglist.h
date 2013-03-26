@@ -48,7 +48,7 @@ void pipe_init(int in, int out);
 ** Returns   : (void)
 */
 
-void pipe_exit();
+void pipe_exit(void);
 /* Exits the I/O library cleanly.
 ** Parameters: (void)
 ** Returns   : (void)
@@ -60,14 +60,14 @@ void pipe_send(char *m);
 ** Returns   : (void)
 */
 
-int pipe_poll();
+int pipe_poll(void);
 /* Polls the I/O library for input.
 ** Parameters: (void)
 ** Returns   : 1, if a message is ready to be received with pipe_receive().
 **             0, otherwise.
 */
 
-char *pipe_receive();
+char *pipe_receive(void);
 /* Receives a message through the I/O library. May only be called after
 ** io_pipe_poll() returns 1.
 ** Parameters: (void)

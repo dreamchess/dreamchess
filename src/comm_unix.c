@@ -39,7 +39,7 @@
 
 static int init_ok = 0;
 
-void sigpipe_handler(int number)
+static void sigpipe_handler(int number)
 {
     pipe_unix_exit();
     init_ok = 0;
@@ -103,7 +103,7 @@ int comm_init(char *engine)
     return 0;
 }
 
-void comm_exit()
+void comm_exit(void)
 {
     if (init_ok) {
         int status;
@@ -123,7 +123,7 @@ void comm_send_str(const char *str)
         pipe_unix_send(str);
 }
 
-char *comm_poll()
+char *comm_poll(void)
 {
     if (init_ok) {
         int error;

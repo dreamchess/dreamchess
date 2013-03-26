@@ -20,7 +20,7 @@
 
 #include <gamegui/align.h>
 
-gg_class_id gg_align_get_class_id()
+gg_class_id gg_align_get_class_id(void)
 {
     GG_CHILD(gg_widget_get_class_id())
 }

@@ -29,11 +29,11 @@
 #define TRUE  1
 #define FALSE 0
 
-gg_dialog_style_t *get_ingame_style();
-gg_dialog_style_t *get_menu_style();
+gg_dialog_style_t *get_ingame_style(void);
+gg_dialog_style_t *get_menu_style(void);
 
 gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent);
-gg_dialog_t *dialog_system_create();
+gg_dialog_t *dialog_system_create(void);
 gg_dialog_t *dialog_quit_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_message_create(char *message);
 gg_dialog_t *dialog_promote_create(int colour);
@@ -42,9 +42,10 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
 void show_message_dialog( char *message );
 gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *message2);
-gg_dialog_t *dialog_engine_error_create();
+gg_dialog_t *dialog_engine_error_create(void);
 gg_dialog_t *dialog_time_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_chat_create(gg_dialog_t *parent);
+gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
 
 /* FIXME */
 void set_quit_to_menu( int menu );

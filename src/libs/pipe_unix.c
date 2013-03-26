@@ -25,6 +25,7 @@
 #include <string.h>
 #include <sys/select.h>
 
+#include "pipe_unix.h"
 #include "msgbuf.h"
 
 #define BUF_LEN 1024
@@ -41,7 +42,7 @@ void pipe_unix_init(int in, int out)
     fd_out = out;
 }
 
-void pipe_unix_exit()
+void pipe_unix_exit(void)
 {
     msgbuf_exit();
 }

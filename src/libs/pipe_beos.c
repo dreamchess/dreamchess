@@ -28,6 +28,7 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 
+#include "pipe_unix.h"
 #include "msgbuf.h"
 
 #define BUF_LEN 1024
@@ -45,7 +46,7 @@ void pipe_unix_init(int in, int out)
     fcntl(fd_in, F_SETFL, O_NONBLOCK);
 }
 
-void pipe_unix_exit()
+void pipe_unix_exit(void)
 {
     msgbuf_exit();
 }
@@ -55,7 +56,7 @@ void pipe_unix_send(char *m)
     write(fd_out, m, strlen(m));
 }
 
-char *pipe_unix_poll()
+char *pipe_unix_poll(void)
 {
     /* Repeat until no more data is available, or a full message has been
     ** received.

@@ -33,10 +33,10 @@ void
 random_init_64(unsigned long long seed);
 
 unsigned long long
-random_rand_64();
+random_rand_64(void);
 
 void
-init_hash();
+init_hash(void);
 
 unsigned long long
 hash_key(board_t *board);

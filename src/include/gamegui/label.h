@@ -39,7 +39,7 @@ typedef struct gg_label
 }
 gg_label_t;
 
-gg_class_id gg_label_get_class_id();
+gg_class_id gg_label_get_class_id(void);
 
 void gg_label_render(gg_widget_t *widget, int x, int y, int focus);
 

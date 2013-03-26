@@ -21,13 +21,13 @@
 #ifndef E_COMM_H
 #define E_COMM_H
 
-void e_comm_init();
+void e_comm_init(void);
 /* Initializes the I/O library for communication with an xboard ui.
 ** Parameters: (void)
 ** Returns   : (void)
 */
 
-void e_comm_exit();
+void e_comm_exit(void);
 /* Exits the I/O library cleanly.
 ** Parameters: (void)
 ** Returns   : (void)
@@ -45,7 +45,7 @@ void e_comm_send_str(const char *m);
 ** Returns   : (void)
 */
 
-char *e_comm_poll();
+char *e_comm_poll(void);
 /* Polls the I/O library for input from the xboard ui.
 ** Parameters: (void)
 ** Returns   : (char *), Message that was received from the I/O library (if

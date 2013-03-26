@@ -105,7 +105,7 @@ int text_width(char *text)
  *
  *  @return Font height in pixels.
  */
-int text_height()
+int text_height(void)
 {
     return text_characters['a'].height;
 }
@@ -159,7 +159,7 @@ void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, g
 }
 
 /** @brief Generates textures for the latin1 character set. */
-void generate_text_chars()
+void generate_text_chars(void)
 {
     int i, j;
     texture_t texture;

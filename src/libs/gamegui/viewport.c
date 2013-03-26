@@ -46,7 +46,7 @@ static void scroll_to_focus_pos(gg_viewport_t *viewport)
                             / (float) (child->height_a - viewport->height_a);
 }
 
-gg_class_id gg_viewport_get_class_id()
+gg_class_id gg_viewport_get_class_id(void)
 {
     GG_CHILD(gg_bin_get_class_id())
 }

@@ -56,12 +56,12 @@ static void music_callback(char *title, char *artist, char *album)
     DBG_LOG("now playing: %s - %s", artist, title);
 }
 
-int get_screen_width()
+int get_screen_width(void)
 {
     return screen_width;
 }
 
-int get_screen_height()
+int get_screen_height(void)
 {
     return screen_height;
 }
@@ -75,9 +75,9 @@ enum {
     MENU_STATE_RETURN
 };
 
-static void poll_move();
+static void poll_move(void);
 
-int get_egg_req()
+int get_egg_req(void)
 {
     return egg_req1;
 }
@@ -87,12 +87,12 @@ void set_show_egg( int set )
     show_egg=set;
 }
 
-int get_show_egg()
+int get_show_egg(void)
 {
     return show_egg;
 }
 
-int get_dialog_promote_piece()
+int get_dialog_promote_piece(void)
 {
     return dialog_promote_piece;
 }
@@ -122,14 +122,14 @@ void set_pgn_slot( int slot )
     pgn_slot=slot;
 }
 
-board_t *get_board()
+board_t *get_board(void)
 {
     return &board;
 }
 
 config_t config;
 
-config_t *get_config()
+config_t *get_config(void)
 {
     return &config;
 }
@@ -142,7 +142,7 @@ void set_switch_to_menu(int sw)
     switch_to_menu=sw;
 }
 
-int get_fading_out()
+int get_fading_out(void)
 {
     return fading_out;
 }
@@ -151,48 +151,46 @@ void set_fading_out(int fade)
 {
     fading_out=fade;
 }
-
-int get_game_stalemate()
+int get_game_stalemate(void)
 {
     return game_in_stalemate;
 }
 
-int get_white_in_check()
+int get_white_in_check(void)
 {
     return white_in_check;
 }
 
-int get_black_in_check()
+int get_black_in_check(void)
 {
     return black_in_check;
 }
-
-int get_white_in_checkmate()
+int get_white_in_checkmate(void)
 {
     return white_in_checkmate;
 }
 
-int get_black_in_checkmate()
+int get_black_in_checkmate(void)
 {
     return black_in_checkmate;
 }
 
-gg_dialog_style_t *get_ingame_style()
+gg_dialog_style_t *get_ingame_style(void)
 {
     return &style_ingame;
 }
 
-gg_dialog_style_t *get_menu_style()
+gg_dialog_style_t *get_menu_style(void)
 {
     return &style_menu;
 }
 
-int get_turn_counter()
+int get_turn_counter(void)
 {
     return turn_counter_start;
 }
 
-void reset_turn_counter()
+static void reset_turn_counter(void)
 {
     turn_counter_start=SDL_GetTicks();
 }
@@ -246,12 +244,10 @@ static config_t *do_menu(int *pgn)
     resize_window(screen_width, screen_height);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     engine_error_shown = 0;
     set_loading=FALSE;
     draw_credits(1);
     open_title_root_dialog();
-
     if (mode_set_failed) {
         gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults", NULL));
         mode_set_failed = 0;
@@ -389,8 +385,7 @@ static config_t *do_menu(int *pgn)
         gl_swap();
     }
 }
-
-static void free_menu_tex()
+static void free_menu_tex(void)
 {
     glDeleteTextures(1, &menu_title_tex.id);
     glDeleteTextures(1, &get_menu_mouse_cursor()->id);
@@ -398,13 +393,11 @@ static void free_menu_tex()
     glDeleteTextures(1, &get_text_character(0)->id);
 }
 
-static void load_menu_tex()
+static void load_menu_tex(void)
 {
     ch_datadir();
-
     /* For the menu.. */
     load_texture_png( &menu_title_tex, "menu_title.png" , 0, 1);
-
     /* New text stuff. */
     generate_text_chars();
 
@@ -424,10 +417,8 @@ static int set_video( int width, int height, int fullscreen, int ms )
     SDL_Surface *surface;
 
     video_flags = SDL_OPENGL;          /* Enable OpenGL in SDL */
-
     DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling",
             width, height, fullscreen ? "on" : "off", ms);
-
     if ( fullscreen )
         video_flags |= SDL_FULLSCREEN;
 
@@ -457,7 +448,6 @@ static int resize(int width, int height, int fullscreen, int ms)
 #ifdef _WIN32
     free_menu_tex();
 #endif
-
     if (!set_video(width, height, fullscreen, ms))
     {
 #ifdef _WIN32
@@ -484,7 +474,6 @@ static int resize(int width, int height, int fullscreen, int ms)
 #ifdef _WIN32
     load_menu_tex();
 #endif
-
     return 1;
 }
 
@@ -506,7 +495,6 @@ static int init_gui( int width, int height, int fullscreen, int ms)
         DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
         exit(1);
     }
-
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
 
@@ -551,7 +539,6 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_WM_SetCaption( "DreamChess", NULL );
 
     gg_system_init(get_gg_driver_sdlgl());
-
     style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
     style_ingame.hor_pad = 20;
     style_ingame.vert_pad = 10;
@@ -588,7 +575,6 @@ static void update(board_t *b, move_t *move)
 
     if ( move != NULL )
         start_piece_move( move->source, move->destination );
-
     if ( board.state == BOARD_STALEMATE )
     {
         game_in_stalemate=TRUE;
@@ -608,7 +594,6 @@ static void update(board_t *b, move_t *move)
         black_in_check=FALSE;
         white_in_check=FALSE;
     }
-
     if ( board.state == BOARD_CHECKMATE )
     {
         if (IS_WHITE(board.turn))
@@ -632,7 +617,6 @@ static void show_result(result_t *res)
 {
     gg_dialog_open(dialog_victory_create(res));
 }
-
 /** Implements ui_driver::init. */
 static int sdlgl_init(int width, int height, int fullscreen, int ms)
 {
@@ -640,7 +624,7 @@ static int sdlgl_init(int width, int height, int fullscreen, int ms)
 }
 
 /** Implements ui_driver::exit. */
-static int sdlgl_exit()
+static int sdlgl_exit(void)
 {
     audio_set_music_callback(NULL);
 
@@ -661,7 +645,7 @@ static void show_message (char *msg)
 }
 
 /** Implements ui_driver::poll. */
-static void poll_move()
+static void poll_move(void)
 {
     static int source = -1, dest = -1, needprom = 0;
     /* board_t *board = history->play->board; */
@@ -691,9 +675,7 @@ static void poll_move()
         set_fade_start(gg_system_get_ticks());
         quit_to_menu=FALSE;
     }
-
     input = get_move();
-
     /* FIXME */
     if (!engine_error_shown && game_get_engine_error())
     {

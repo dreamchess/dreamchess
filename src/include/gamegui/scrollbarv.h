@@ -35,7 +35,7 @@ typedef struct gg_scrollbarv
 }
 gg_scrollbarv_t;
 
-gg_class_id gg_scrollbarv_get_class_id();
+gg_class_id gg_scrollbarv_get_class_id(void);
 
 void gg_scrollbarv_render(gg_widget_t * widget, int x, int y, int focus);
 

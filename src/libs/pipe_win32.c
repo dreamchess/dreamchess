@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <windows.h>
 
+#include "pipe_win32.h"
 #include "msgbuf.h"
 
 #define BUF_LEN 1024
@@ -40,7 +41,7 @@ void pipe_win32_init(HANDLE in, HANDLE out, int console)
     console_mode = console;
 }
 
-void pipe_win32_exit()
+void pipe_win32_exit(void)
 {
     msgbuf_exit();
 }

@@ -31,47 +31,47 @@ static texture_t selector_tex;
 static char white_name[80];
 static char black_name[80];
 
-texture_t *get_menu_border()
+texture_t *get_menu_border(void)
 {
     return menu_border;
 }
 
-texture_t *get_border()
+texture_t *get_border(void)
 {
     return border;
 }
 
-texture_t *get_mouse_cursor()
+texture_t *get_mouse_cursor(void)
 {
     return &mouse_cursor;
 }
 
-texture_t *get_menu_mouse_cursor()
+texture_t *get_menu_mouse_cursor(void)
 {
     return &menu_mouse_cursor;
 }
 
-char *get_white_name()
+char *get_white_name(void)
 {
     return white_name;
 }
 
-char *get_black_name()
+char *get_black_name(void)
 {
     return black_name;
 }
 
-texture_t *get_backdrop()
+texture_t *get_backdrop(void)
 {
     return &backdrop;
 }
 
-texture_t *get_white_pieces()
+texture_t *get_white_pieces(void)
 {
     return white_pieces;
 }
 
-texture_t *get_black_pieces()
+texture_t *get_black_pieces(void)
 {
     return black_pieces;
 }
@@ -175,7 +175,7 @@ void load_theme(struct theme_struct *theme)
 }
 
 /** @brief Frees all textures of the currently loaded theme. */
-void unload_theme()
+void unload_theme(void)
 {
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);

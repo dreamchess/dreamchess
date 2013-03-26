@@ -64,7 +64,7 @@ void unload_border(texture_t border[9])
 }
 
 /** @brief Loads the textures for the chess pieces. */
-void load_pieces()
+void load_pieces(void)
 {
     int i, j;
     texture_t texture;

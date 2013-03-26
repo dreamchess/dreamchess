@@ -76,7 +76,7 @@ typedef struct music_pack
 } music_pack_t;
 
 void theme_find_themes(option_t *option);
-void theme_find_music_packs();
-music_packs_t *theme_get_music_packs();
+void theme_find_music_packs(void);
+music_packs_t *theme_get_music_packs(void);
 
 #endif
