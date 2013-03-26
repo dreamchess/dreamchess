@@ -150,8 +150,8 @@ int get_move()
             case 'n':
                 game_view_next();
                 break;
-            case 'u':
-                game_undo();
+            case 'r':
+                game_retract_move();
                 break;
             case 's':
                 fen_encode(get_board());
