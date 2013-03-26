@@ -22,7 +22,7 @@
 #define _PIPE_MEM_H
 
 void pipe_mem_init(char **pipe);
-void pipe_mem_send(char **pipe, char *msg);
+void pipe_mem_send(char **pipe, const char *msg);
 char *pipe_mem_poll(char **pipe);
 void pipe_mem_exit(char **pipe);
 

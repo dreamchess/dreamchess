@@ -27,7 +27,7 @@
 #include "git_rev.h"
 #include "config.h"
 
-int engine(void);
+int engine(void *data);
 
 int main(int argc, char **argv)
 {
@@ -40,5 +40,5 @@ int main(int argc, char **argv)
 
     /* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
 
-    return engine();
+    return engine(NULL);
 }

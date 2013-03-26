@@ -58,7 +58,7 @@
 
 #else
 
-void drm_sleep(unsigned long usec)
+static void drm_sleep(unsigned long usec)
 {
     struct timeval tv;
 
@@ -284,7 +284,7 @@ void send_move(state_t *state, move_t move)
     check_game_end(state);
 }
 
-int engine(void)
+int engine(void *data)
 {
     e_comm_init();
     set_start_time();

@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 #include "main_sdlthd.h"
+#include "comm.h"
 #include "pipe_mem.h"
 
 int comm_init(char *engine)
@@ -40,7 +41,7 @@ void comm_exit(void)
 {
 }
 
-void comm_send_str(char *str)
+void comm_send_str(const char *str)
 {
     SDL_mutexP(to_engine_mutex);
     pipe_mem_send(&to_engine, str);

@@ -33,8 +33,6 @@
 #include "engine.h"
 #include "pipe_mem.h"
 
-int engine(void);
-
 /* Message list from engine to ui. */
 char *to_ui;
 SDL_mutex *to_ui_mutex;

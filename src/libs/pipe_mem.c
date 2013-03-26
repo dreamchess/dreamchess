@@ -30,7 +30,7 @@ void pipe_mem_init(char **pipe)
     *pipe[0] = '\0';
 }
 
-void pipe_mem_send(char **pipe, char *msg)
+void pipe_mem_send(char **pipe, const char *msg)
 {
     *pipe = realloc(*pipe, strlen(*pipe) + strlen(msg) + 1);
     strcat(*pipe, msg);

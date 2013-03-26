@@ -85,7 +85,7 @@ int my_turn(state_t *state);
 #define OPTION_POST 1
 #define OPTION_PONDER 2
 
-int engine(void);
+int engine(void *data);
 int check_game_state(board_t *board, int ply);
 void check_game_end(state_t *state);
 void do_move(state_t *state, move_t move);
