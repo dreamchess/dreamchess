@@ -1,7 +1,7 @@
 DreamChess
-Version 0.2.0
+Version 0.2.1
 
-Copyright (C) 2003-2007  The DreamChess project
+Copyright (C) 2003-2013  The DreamChess project
 
 For the latest information, please check out our website:
 http://www.dreamchess.org
@@ -10,20 +10,10 @@ Index
 -----
 
 1 - About
-1.1 - License Information
-1.2 - Libraries
-2 - System Requirements
-2.1 - User Interface Drivers
-2.1.1 - sdlgl
-2.1.2 - sdl
-3 - Building
-3.1 - Microsoft Windows
-3.2 - Installing
-3.2.1 - Microsoft Windows
-4 - Subversion Repository
-5 - Running DreamChess
-5.1 - Running Dreamer
-6 - Acknowledgments
+2 - License Information
+3 - Mouse Controls
+4 - Keyboard Controls
+5 - Acknowledgments
 
 
 1 - About
@@ -39,207 +29,40 @@ be used with other xboard-compatible user interfaces such as xboard and
 Winboard (http://www.tim-mann.org/xboard.html) and recent editions of the
 commercial chess program Chessmaster (http://www.chessmaster.com/).
 
-1.1 - License Information
--------------------------
+
+2 - License Information
+-----------------------
 
 DreamChess is licensed under the GNU General Public License (see COPYING).
 
-1.2 - Libraries
----------------
 
-DreamChess uses the following libraries (note that not all libraries are
-used on all target platforms):
+3 - Mouse Controls
+------------------
 
-libSDL (http://www.libsdl.org/), licensed under the GNU Lesser General Public
-License (see doc/lesser.txt). Source code will be provided on request (see
-AUTHORS for contact information).
-
-SDL_image (http://www.libsdl.org/projects/SDL_image/), licensed under the GNU
-Lesser General Public License (see doc/lesser.txt). Source code will be
-provided on request (see AUTHORS for contact information).
-
-libjpeg (http://www.ijg.org/), this software is based in part on the work of
-the Independent JPEG Group.
-
-libpng (http://www.libpng.org/pub/png/libpng.html)
-
-zlib (http://www.zlib.net/)
-
-Mini-XML (http://minixml.org/)
-
-SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/), licensed under the GNU
-Lesser General Public License (see doc/lesser.txt). Source code will be
-provided on request (see AUTHORS for contact information).
-
-libogg (http://www.xiph.org/ogg/), see doc/ogg.txt.
-
-libvorbis (http://www.xiph.org/vorbis/), see doc/vorbis.txt.
-
-SDL MPEG Player Library (http://icculus.org/smpeg/), licensed under the GNU
-Lesser General Public License (see doc/lesser.txt). Source code will be
-provided on request (see AUTHORS for contact information).
-
-KallistiOS (http://cadcdev.sourceforge.net/softprj/kos/), licensed under the
-KOS license (see doc/kos.txt).
-
-newlib (http://sourceware.org/newlib/), various licenses
-(see doc/newlib.txt).
+Left mouse button:		Selects menu options or chess pieces/squares
+						To make a chess move, first click on a chess piece and then a
+						destination square
+Right mouse button:		Opens or closes the in-game menu
+Middle mouse button:	Hold down and move mouse to reorient the chess board
 
 
-2 - System Requirements
------------------------
-
-The following platforms are currently officially supported:
-
- * UNIX (Linux, FreeBSD, Solaris etc)
- * Microsoft Windows (95 and above)
-
-2.1 - User Interface Drivers
-----------------------------
-
-DreamChess supports several user interface drivers which can be selected at
-runtime. Requirements for these drivers vary and will be described per driver
-below.
-
-2.1.1 - sdlgl
--------------
-
-This driver uses SDL as well as OpenGL. To avoid performance issues it is
-recommended that you use a hardware-accelerated OpenGL library, if available.
-
-The following libraries are required for this driver:
-
- * SDL (http://www.libsdl.org/)
- * SDL_image (http://www.libsdl.org/projects/SDL_image/)
- * OpenGL
-
-
-3 - Building DreamChess
------------------------
-
-This chapter describes how to build and install DreamChess from source.
-Building essentially consists of two steps:
-
-   ./configure
-   make
-
-For more detailed information about this process, please read the INSTALL
-file.
-
-3.1 - Microsoft Windows
------------------------
-
-In order to build DreamChess in Windows you'll need to install the following:
-
- * MinGW (http://www.mingw.org/)
- * MSYS (http://www.mingw.org/msys.shtml)
-
-This provides the environment necessary to run the configure script and
-compile DreamChess.
-
-3.2 - Installing DreamChess
----------------------------
-
-You can use the following command to install DreamChess:
-
-   make install
-
-For more detailed information please read the INSTALL file. Note that this
-will install DreamChess in your build environment, which is probably not what
-you want if you're building for Windows or Dreamcast. Read the following two
-sections for additional information concerning those platforms.
-
-3.2.1 - Microsoft Windows
--------------------------
-
-On Windows DreamChess is installed by running an NSIS installer package. This
-section will describe how to create such an installer. Download and install:
-
- * NSIS (http://nsis.sourceforge.net/)
-
-Download the necessary runtime DLLs:
-
- * SDL (http://www.libsdl.org/)
- * SDL_image (http://www.libsdl.org/projects/SDL_image/)
- * SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
-
-Put the DLLs in the pkg/win32 directory. Run MakeNSISW and drag the
-dreamchess.nsi file from the pkg/win32 directory onto the window. You should
-now have an installer package in the pkg/win32 directory.
-
-4 - Subversion Repository
--------------------------
-
-The DreamChess project uses a Subversion repository. This is where the
-source code is kept as it gets updated between releases. If you want
-to try out recent improvements and can't wait for the next release, you can
-check out a copy of the source code and compile it. Note that the source code
-you obtain in this way has not gone through the regular testing phase that
-happens before each release. It is therefore not unlikely that it contains
-serious bugs.
-
-In order to check out source code from the Subversion repository and build
-it you need the following additional tools:
-
- * GNU automake (http://www.gnu.org/software/automake/)
- * GNU autoconf (http://www.gnu.org/software/autoconf/)
- * Subversion (http://subversion.tigris.org/)
- * GNU bison (http://www.gnu.org/software/bison/)
- * Flex (http://flex.sourceforge.net/)
-
-Change to a suitable directory and run the following command:
-
-   svn checkout svn://svn.berlios.de/dreamchess/dreamchess/trunk dreamchess
-
-This will check out the source code and place it in a dreamchess
-subdirectory. Now change to that directory and run:
-
-   autoreconf -i
-
-This should generate a configure script. You can now follow the regular build
-instructions in chapter 3.
-
-NOTE: Should you ever want to update this checkout you can do this:
-
-   svn up
-   autoreconf
-
-
-5 - Running DreamChess
-----------------------
-
-You can start the game by running the dreamchess executable. Here's an
-overview of the command-line options:
-
-Usage: dreamchess [options]
-
-An xboard-compatible chess interface.
-
-Options:
-  --help                -h              Show help.
-  --list-drivers        -l              List all available drivers.
-  --ui <drv>            -u<drv>         Use user interface driver <drv>.
-  --fullscreen          -f              Run in fullscreen.
-  --width <num>         -W<num>         Set screen width.
-  --height <num>        -H<num>         Set screen height.
-  --1st-engine <eng>    -1<eng>         Use <eng> as first chess engine.
-                                           Defaults to `dreamer'.
-
-NOTE: It's not possible to specify command-line arguments when running the
-Dreamcast version of DreamChess.
-
-Once DreamChess is running you can use ALT+ENTER or F11 to toggle fullscreen,
-and CTRL+F to toggle a FPS display (can only be used on the title screen).
-
-5.1 - Running Dreamer
+4 - Keyboard Controls
 ---------------------
 
-You generally don't want to run Dreamer directly. If you want to use Dreamer
-with another user interface, please consult that program's documentation on
-how to specify that the dreamer engine should be used.
+Arrow keys:				Changes currently highlighted menu item or chess piece/square
+Enter:					Selects currently highlighted menu item or chess piece/square
+						To make a chess move, first select a chess piece and then a
+						destination square
+Left ctrl+Arrow key:	Reorient chess board
+Escape:					Opens or closes the in-game menu
+'P' Key:				View previous move of game history
+'N' Key:				View next move of game history
+'R' Key:				Retract move (only when it's your turn)
+Alt+Enter or F11:		Toggle fullscreen mode
+Ctrl+F:					Toggle FPS display (only on title screen)
 
 
-6 - Acknowledgments
+5 - Acknowledgments
 --------------------
 
 Special thanks go out to the following people:
