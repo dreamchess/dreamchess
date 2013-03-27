@@ -57,7 +57,6 @@ esac
 dnl Check for SDL
 AC_ARG_WITH([sdl], [  --without-sdl           do not use SDL])
 AC_ARG_WITH([gl], [  --without-gl            do not use GL])
-AC_ARG_ENABLE([linked-engine], [  --enable-linked-engine  statically link with `dreamer' engine], [enable_linked_engine=yes])
 
 AC_DEFUN([AC_CHECK_SDL_HEADER],
 	OLD_CFLAGS="${CFLAGS}"
@@ -264,7 +263,7 @@ if test x"$with_mixer_sdl" = xyes; then
 	AC_DEFINE([WITH_MIXER_SDL], [1], [Define to 1 to enable music and sound effects through SDL_mixer.])
 fi
 
-if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$with_net_sdl" = xno -a x"$enable_linked_engine" != xyes; then
+if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$with_net_sdl" = xno; then
 	SDL_CFLAGS=""
 	SDL_LIBS=""
 fi
@@ -273,48 +272,38 @@ if test x"$with_ui_sdl" = xyes; then
 	AC_DEFINE([WITH_UI_SDL], [1], [Define to 1 if the sdl user interface driver should be compiled.])
 fi
 
-if test x"$enable_linked_engine" = xyes -a x"$have_sdl" = xyes -a x"$with_sdl" != xno; then
-	DREAMCHESS_LIBS="libs/libpipe_mem.a dreamer/libdreamer.a"
-	AC_SUBST(DREAMER_SDL_CFLAGS, $SDL_CFLAGS)
-	AC_SUBST(PIPE_LIB, "libpipe_mem.a")
-	AC_DEFINE([COMM_SDL_THREADS], [1], [Define to 1 if you want UI<->engine communication via SDL threads.])
-elif test x"$enable_linked_engine" = xyes; then
-	AC_MSG_ERROR([Option `--enable-linked-engine' requires SDL, which was not found or disabled.])
-else
-	AC_SUBST(DREAMER, "dreamer\$(EXEEXT)")
-	case $host_os in
-		mingw32*)
-			AC_SUBST(PIPE_LIB, "libpipe_win32.a")
-			AC_CHECK_TOOL(WINDRES, windres)
-			if test -n "$WINDRES"; then
-				AC_SUBST(WINDRES)
-				AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
-			fi
-			DREAMCHESS_LIBS="libs/libpipe_win32.a"
-			DREAMER_LIBS="../libs/libpipe_win32.a"
-			AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
-			;;
-		beos*)
-			AC_SUBST(PIPE_LIB, "libpipe_beos.a")
-			AC_CHECK_TOOL(RC, rc)
-			AC_CHECK_TOOL(XRES, xres)
-			if test -n "$RC" -a -n "$XRES"; then
-				AC_SUBST(RC)
-				AC_SUBST(XRES)
-				beos_rc="yes"
-			fi
-			DREAMCHESS_LIBS="libs/libpipe_beos.a"
-			DREAMER_LIBS="../libs/libpipe_beos.a"
-			AC_DEFINE([COMM_PIPE_UNIX], [1])
-			;;
-		*)
-			AC_SUBST(PIPE_LIB, "libpipe_unix.a")
-			DREAMCHESS_LIBS="libs/libpipe_unix.a"
-			DREAMER_LIBS="../libs/libpipe_unix.a"
-			AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
-			;;
-	esac
-fi
+case $host_os in
+	mingw32*)
+		AC_SUBST(PIPE_LIB, "libpipe_win32.a")
+		AC_CHECK_TOOL(WINDRES, windres)
+		if test -n "$WINDRES"; then
+			AC_SUBST(WINDRES)
+			AC_SUBST(WIN32_RC, "win32_rc.\$(OBJEXT)")
+		fi
+		DREAMCHESS_LIBS="libs/libpipe_win32.a"
+		DREAMER_LIBS="../libs/libpipe_win32.a"
+		AC_DEFINE([COMM_PIPE_WIN32], [1], [Define to 1 if you want UI<->engine communication via Win32 pipes.])
+		;;
+	beos*)
+		AC_SUBST(PIPE_LIB, "libpipe_beos.a")
+		AC_CHECK_TOOL(RC, rc)
+		AC_CHECK_TOOL(XRES, xres)
+		if test -n "$RC" -a -n "$XRES"; then
+			AC_SUBST(RC)
+			AC_SUBST(XRES)
+			beos_rc="yes"
+		fi
+		DREAMCHESS_LIBS="libs/libpipe_beos.a"
+		DREAMER_LIBS="../libs/libpipe_beos.a"
+		AC_DEFINE([COMM_PIPE_UNIX], [1])
+		;;
+	*)
+		AC_SUBST(PIPE_LIB, "libpipe_unix.a")
+		DREAMCHESS_LIBS="libs/libpipe_unix.a"
+		DREAMER_LIBS="../libs/libpipe_unix.a"
+		AC_DEFINE([COMM_PIPE_UNIX], [1], [Define to 1 if you want UI<->engine communication via UNIX pipes.])
+		;;
+esac
 
 AC_CHECK_LIB(pthread, pthread_create, [have_pthread="yes" PTHREAD_LIBS="-lpthread"], [have_pthread="no"])
 AC_CHECK_HEADER([mxml.h], [], [AC_MSG_ERROR([Cannot find Mini-XML header file.])])

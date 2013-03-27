@@ -8,10 +8,9 @@ AM_CFLAGS = $(CFLAGS) @DATADIR@ @SDL_CFLAGS@
 BUILT_SOURCES = pgn_parser.h
 AM_YFLAGS = -d
 
-dreamchess_SOURCES = board.c history.c ui.c comm_unix.c comm_sdlthd.c \
-	debug.c dreamchess.c fen.c main.c main_sdlthd.c dir.c comm.c \
-	comm_win32.c credits.c theme.c options.c pgn_parser.y pgn_scanner.l \
-	system_config.c
+dreamchess_SOURCES = board.c history.c ui.c comm_unix.c debug.c dreamchess.c \
+	fen.c main.c dir.c comm.c comm_win32.c credits.c theme.c options.c \
+	pgn_parser.y pgn_scanner.l system_config.c
 
 dreamchess_LDADD = @WIN32_RC@ @UI_LIBS@ audio/libaudio.a libs/libsan.a \
 	libs/gamegui/libgamegui.a @DREAMCHESS_LIBS@ @MXML_LIBS@ @SDL_LIBS@
@@ -29,6 +28,9 @@ DreamChess.app: dreamchess$(EXEEXT) dreamer/dreamer$(EXEEXT) macosx/makeapp.pl m
 	@$(srcdir)/macosx/makeapp.pl $(top_srcdir)
 
 all-local: @DREAMCHESS_APP@
+
+clean-local:
+	-rm -rf DreamChess.app
 
 if BEOS_RC
 dreamchess$(EXEEXT): $(dreamchess_OBJECTS) $(dreamchess_DEPENDENCIES) beos.rsrc

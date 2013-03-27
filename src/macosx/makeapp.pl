@@ -37,7 +37,7 @@ sub fixdeps {
   my($filename) = @_;
 
   foreach my $dep (keys(%deps)) {
-    system("install_name_tool -change $dep \@executable_path/../Frameworks/$deps{$dep} $filename");
+    system("install_name_tool -change \"$dep\" \"\@executable_path/../Frameworks/$deps{$dep}\" \"$filename\"");
   }
 }
 
@@ -46,7 +46,7 @@ sub copylibs {
     my $filename = "DreamChess.app/Contents/Frameworks/$deps{$dep}";
     print "Importing $dep\n";
     copy($dep, $filename);
-    system("install_name_tool -id \@executable_path/../Frameworks/$deps{$dep} $filename");
+    system("install_name_tool -id \"\@executable_path/../Frameworks/$deps{$dep}\" \"$filename\"");
     fixdeps($filename);
   }
 }
@@ -80,7 +80,7 @@ open(FH, ">$base/Info.plist") or die $!;
 print FH $plist;
 close(FH);
 
-system("cp -R $top_srcdir/data/* $base/Resources/");
-system("find $base/Resources/ -type d -name '.git' -print | xargs rm -rf");
-system("cp dreamer/dreamer $base/MacOS/");
+system("cp -R \"$top_srcdir/data/\"* \"$base/Resources/\"");
+system("cp dreamer/dreamer \"$base/MacOS/\"");
+system("find DreamChess.app -exec chmod u+w '{}' ';'");
 #system("cp -R ../../../music/trunk/data/music $base/Resources");
