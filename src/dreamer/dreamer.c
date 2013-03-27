@@ -43,11 +43,6 @@
 #include <windows.h>
 #define drm_sleep(M) Sleep(M)
 
-#elif defined _arch_dreamcast
-
-#include <kos/thread.h>
-#define drm_sleep(M) thd_sleep(M)
-
 #elif defined __BEOS__
 
 #define drm_sleep(M) snooze((M) * 1000)

@@ -122,33 +122,6 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
  *  @param zpos The z-coordinate.
  *  @param col The colour to render with.
  */
-#ifdef _arch_dreamcast
-void draw_texture( texture_t *texture, float xpos,
-                          float ypos, float width, float height, float zpos,
-                          gg_colour_t *col )
-{
-    zpos = get_dc_z();
-    glEnable( GL_TEXTURE_2D );
-
-    glColor4f( col->r, col->g, col->b, col->a );
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-
-    ypos = SCREEN_HEIGHT - ypos;
-
-    glBegin(GL_NT_QUADS);
-    glTexCoord2f(texture->u1, texture->v1);
-    glVertex3f( xpos, ypos-height, zpos );
-    glTexCoord2f(texture->u2, texture->v1);
-    glVertex3f( xpos+width,  ypos-height, zpos );
-    glTexCoord2f(texture->u2, texture->v2);
-    glVertex3f( xpos+width,  ypos, zpos );
-    glTexCoord2f(texture->u1, texture->v2);
-    glVertex3f( xpos, ypos, zpos );
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-}
-#else
 void draw_texture( texture_t *texture, float xpos,
                           float ypos, float width, float height, float zpos,
                           gg_colour_t *col )
@@ -171,40 +144,7 @@ void draw_texture( texture_t *texture, float xpos,
 
     glDisable(GL_TEXTURE_2D);
 }
-#endif
 
-#ifdef _arch_dreamcast
-void draw_texture_uv( texture_t *texture, float xpos,
-                             float ypos, float width, float height, float zpos,
-                             gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h,
-                             GLenum mode_v)
-{
-    zpos = get_dc_z();
-
-    glEnable( GL_TEXTURE_2D );
-
-    glColor4f( col->r, col->g, col->b, col->a );
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode_h);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode_v);
-
-    ypos = SCREEN_HEIGHT - ypos;
-
-    glBegin(GL_NT_QUADS);
-    glTexCoord2f(u1, v1);
-    glVertex3f( xpos, ypos-height, zpos );
-    glTexCoord2f(u2, v1);
-    glVertex3f( xpos+width,  ypos-height, zpos );
-    glTexCoord2f(u2, v2);
-    glVertex3f( xpos+width,  ypos, zpos );
-    glTexCoord2f(u1, v2);
-    glVertex3f( xpos, ypos, zpos );
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-}
-#else
 void draw_texture_uv( texture_t *texture, float xpos,
                              float ypos, float width, float height, float zpos,
                              gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
@@ -230,7 +170,6 @@ void draw_texture_uv( texture_t *texture, float xpos,
 
     glDisable(GL_TEXTURE_2D);
 }
-#endif
 
 
 /** @brief Loads a PNG file and turns it into a texture.

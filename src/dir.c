@@ -24,36 +24,6 @@
 
 #include "dir.h"
 
-#ifdef _arch_dreamcast
-
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <kos/fs.h>
-
-int chdir(const char *path)
-{
-    if (path[0] != '/')
-    {
-        const char *cur = fs_getwd();
-        int len = strlen(cur);
-        char *new = malloc(len + strlen(path) + 2);
-        strcpy(new, cur);
-        if (new[len - 1] != '/')
-        {
-            new[len] = '/';
-            new[len + 1] = '\0';
-        }
-        strcat(new, path);
-        fs_chdir(new);
-        return 0;
-    }
-    fs_chdir(path);
-    return 0;
-}
-
-#endif
-
 #ifdef __WIN32__
 
 #define USERDIR "DreamChess"
@@ -93,18 +63,6 @@ int ch_userdir(void)
     }
 
     return 0;
-}
-
-#elif defined _arch_dreamcast
-
-int ch_datadir(void)
-{
-    return chdir(DATADIR);
-}
-
-int ch_userdir(void)
-{
-    return chdir("/ram");
 }
 
 #elif defined __APPLE__
@@ -158,7 +116,7 @@ int ch_userdir(void)
     return 0;
 }
 
-#else /* !__WIN32__ && !_arch_dreamcast */
+#else /* !__WIN32__ */
 
 #define USERDIR ".dreamchess"
 

@@ -20,21 +20,6 @@
 
 #include "ui_sdlgl.h"
 
-#ifdef _arch_dreamcast
-static float dc_z;
-
-float get_dc_z(void)
-{
-    dc_z += 0.00001f;
-    return dc_z;
-}
-
-void reset_dc_z(void)
-{
-    dc_z = 1.0f;
-}
-#endif
-
 static float zerodepth=1.0f;
 
 static int fps_enabled = 0;
@@ -143,14 +128,12 @@ void init_gl(void)
     /* Really Nice Perspective Calculations */
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    #ifndef _arch_dreamcast 
     #ifndef __BEOS__
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glReadPixels(100, 100, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zerodepth);
     if ( zerodepth != 1.0f )
         DBG_WARN( "z depth should be 1.0f, but we got %f", zerodepth );
     #endif /* __BEOS__ */    
-    #endif /* _arch_dreamcast */
 
     glEnable(GL_BLEND);
 
@@ -204,8 +187,4 @@ void gl_swap(void)
         frames = 0;
         fps_time = now;
     }
-
-#ifdef _arch_dreamcast
-    reset_dc_z();
-#endif
 }

@@ -20,23 +20,6 @@
 
 #include "ui_sdlgl.h"
 
-#ifdef _arch_dreamcast
-/* FIXME */
-void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
-{
-    float zpos = get_dc_z();
-    y1 = SCREEN_HEIGHT - y1;
-    y2 = SCREEN_HEIGHT - y2;
-    y3 = SCREEN_HEIGHT - y3;
-    glColor4f(col->r, col->g, col->b, col->a);
-    glBegin(GL_NT_QUADS);
-    glVertex3f(x1, y1, zpos);
-    glVertex3f(x1, y1, zpos);
-    glVertex3f(x2, y2, zpos);
-    glVertex3f(x3, y3, zpos);
-    glEnd();
-}
-#else
 void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
@@ -46,7 +29,6 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
     glVertex3f(x3, y3, 1.0f);
     glEnd();
 }
-#endif
 
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 {
@@ -59,27 +41,6 @@ void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
     glEnd();
 }
 
-#ifdef _arch_dreamcast
-void draw_rect_fill_gradient(int x, int y, int w, int h,
-                             gg_colour_t *top_left,
-                             gg_colour_t *top_right,
-                             gg_colour_t *bottom_left,
-                             gg_colour_t *bottom_right)
-{
-    float zpos = get_dc_z();
-    y = SCREEN_HEIGHT - y;
-    glBegin(GL_NT_QUADS);
-    glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
-    glVertex3f(x, y, zpos);
-    glColor4f(top_right->r, top_right->g, top_right->b, top_right->a);
-    glVertex3f(x + w, y, zpos);
-    glColor4f(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a);
-    glVertex3f(x + w, y - h, zpos);
-    glColor4f(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a);
-    glVertex3f(x, y - h, zpos);
-    glEnd();
-}
-#else
 void draw_rect_fill_gradient(int x, int y, int w, int h,
                              gg_colour_t *top_left,
                              gg_colour_t *top_right,
@@ -97,7 +58,6 @@ void draw_rect_fill_gradient(int x, int y, int w, int h,
     glVertex3f(x, y + h, 1.0f);
     glEnd();
 }
-#endif
 
 void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
 {

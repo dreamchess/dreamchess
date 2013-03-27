@@ -89,19 +89,6 @@
 /** Focussed image enlargement speed in enlargements per second. */
 #define IMAGE_SPEED 2.0f
 
-#ifdef _arch_dreamcast
-#define AXIS_CURSOR_DISABLED
-#define AXIS_VIEW_X 0
-#define AXIS_VIEW_Y 1
-#else
-#define AXIS_CURSOR_X 0
-#define AXIS_CURSOR_Y 1
-#define AXIS_VIEW_X 2
-#define AXIS_VIEW_Y 3
-#endif
-
-#define DC_PI 3.14159265358979323846
-
 #define GUI_PIECE_PAWN     0
 #define GUI_PIECE_ROOK     3
 #define GUI_PIECE_BISHOP   2

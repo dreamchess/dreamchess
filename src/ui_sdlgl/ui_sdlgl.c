@@ -40,7 +40,6 @@ static int quit_to_menu=FALSE;
 static int title_process_retval;
 static int set_loading=FALSE;
 static int dialog_promote_piece;
-static SDL_Joystick *joy;
 static int show_egg;
 static int egg_req1=FALSE;
 static int screen_width=640;
@@ -236,9 +235,6 @@ static int poll_event(gg_event_t *event)
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
-#ifdef _arch_dreamcast
-    SDL_Joystick *joy1=SDL_JoystickOpen(0);
-#endif
     title_process_retval=2;
 
     resize_window(screen_width, screen_height);
@@ -255,10 +251,6 @@ static config_t *do_menu(int *pgn)
 
     set_fade_start(gg_system_get_ticks());
     set_show_egg(FALSE);
-
-#ifdef _arch_dreamcast
-    dc_draw_vmu_icon();
-#endif
 
     DBG_LOG("entering title menu");
 
@@ -301,11 +293,6 @@ static config_t *do_menu(int *pgn)
 
             if ( keystate[SDLK_UP] )
                 egg_req1=TRUE;
-
-#ifdef _arch_dreamcast
-            if ( SDL_JoystickGetAxis(joy1, 1) < 0 )
-                egg_req1=TRUE;
-#endif
 
             while (poll_event(&event))
                 gg_dialog_input_current(event);
@@ -355,9 +342,6 @@ static config_t *do_menu(int *pgn)
             if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
                     (!get_show_egg() && !draw_fade( FADE_OUT )))
             {
-                #ifdef _arch_dreamcast
-                dc_draw_vmu_icon();
-                #endif
                 set_fade_start(gg_system_get_ticks());
                 menu_state = MENU_STATE_RETURN;
                 return &config;
@@ -375,12 +359,10 @@ static config_t *do_menu(int *pgn)
         }
 
         /* Draw mouse cursor.. */
-#ifndef _arch_dreamcast
 #ifndef __BEOS__
         draw_texture( get_menu_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 #endif /* __BEOS __ */
-#endif /* _arch_dreamcast */
 
         gl_swap();
     }
@@ -404,11 +386,9 @@ static void load_menu_tex(void)
     chdir("styles");
     chdir("default");
     load_border(get_menu_border(), "border.png");
-#ifndef _arch_dreamcast
 #ifndef __BEOS__
     load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 #endif /* __BEOS__ */    
-#endif /* _arch_dreamcast */
 }
 
 static int set_video( int width, int height, int fullscreen, int ms )
@@ -514,10 +494,6 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_FreeSurface(icon);
 #endif
 
-#ifdef _arch_dreamcast
-    dc_draw_vmu_icon();
-#endif
-
     if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
         mode_set_failed = 1;
@@ -532,9 +508,6 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 #ifndef __BEOS__
     SDL_ShowCursor(SDL_DISABLE);
 #endif /* __BEOS__ */
-
-    if( SDL_NumJoysticks()>0 )
-        joy=SDL_JoystickOpen(0);
 
     SDL_WM_SetCaption( "DreamChess", NULL );
 
@@ -624,9 +597,6 @@ static int sdlgl_exit(void)
 
     gg_system_exit();
     free_menu_tex();
-
-    if (joy)
-        SDL_JoystickClose(joy);
 
     SDL_Quit();
     return 0;

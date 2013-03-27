@@ -93,11 +93,6 @@ static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void 
     else
         save_good=FALSE;
 
-#ifdef _arch_dreamcast
-    if (dc_store_savegames())
-        save_good=FALSE;
-#endif
-
     if ( save_good )
         show_message_dialog( "Save successful" );
     else
@@ -129,9 +124,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     /* Right side.. */
     if (!changing_slot)
     {
-#ifdef _arch_dreamcast
-        dc_restore_savegames();
-#endif
         for ( i=0; i<SAVEGAME_SLOTS; i++ )
             load_save_xml( i );
     }

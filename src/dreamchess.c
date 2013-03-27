@@ -426,7 +426,6 @@ void toggle_fullscreen(void)
 #endif
 }
 
-#ifndef _arch_dreamcast
 static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_options_t *cl_options)
 {
     int c;
@@ -512,7 +511,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
         }
     }
 }
-#endif
 
 static void set_cl_options(cl_options_t *cl_options)
 {
@@ -546,23 +544,14 @@ static void set_cl_options(cl_options_t *cl_options)
 int dreamchess(void *data)
 {
     cl_options_t cl_options = { 0 };
-
-#ifndef _arch_dreamcast
-
     arguments_t *arg = data;
-#endif
 
     ui = ui_driver[0];
 
     printf( "DreamChess " "v" PACKAGE_VERSION " (" GIT_REV ")\n" );
 
-#ifndef _arch_dreamcast
-
     parse_options(arg->argc, arg->argv, &ui, &cl_options);
-#endif
-
     config_init();
-
     set_cl_options(&cl_options);
 
     if (!ui)

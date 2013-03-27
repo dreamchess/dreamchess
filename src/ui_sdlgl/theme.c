@@ -97,11 +97,9 @@ static int ld_style(char *name)
     /* Theme! */
     load_texture_png( &backdrop, "backdrop.png", 0, 1 );
 
-    #ifndef _arch_dreamcast
     #ifndef __BEOS__
     load_texture_png( &mouse_cursor, "mouse_cursor.png", 1, 1 );
-	#endif /* __BEOS__ */
-    #endif /* _arch_dreamcast */
+    #endif /* __BEOS__ */
 
     load_border(border, "border.png");
     load_pieces();
