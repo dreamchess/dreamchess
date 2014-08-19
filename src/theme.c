@@ -200,12 +200,20 @@ static void find_music_packs(void)
 {
     DIR *dir;
 
+#ifdef PATH_MAX
     char cur_dir[PATH_MAX];
 
     if (!getcwd(cur_dir, PATH_MAX))
         DBG_ERROR("could not determine current directory");
+#else
+    /* PATH_MAX not defined, try getcwd extension */
+    char *cur_dir = getcwd(NULL, 0);
 
-    if ((dir=opendir("music")) != NULL)
+    if (!cur_dir)
+        DBG_ERROR("could not determine current directory");
+#endif
+
+    if ((dir = opendir("music")) != NULL)
     {
         struct dirent *entry;
         while ((entry = readdir(dir)) != NULL)
@@ -224,6 +232,10 @@ static void find_music_packs(void)
         }
         closedir(dir);
     }
+
+#ifndef PATH_MAX
+    free(cur_dir);
+#endif
 }
 
 void theme_find_music_packs(void)
