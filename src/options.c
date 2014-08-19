@@ -210,6 +210,7 @@ int option_group_load_xml(option_group_t *group)
 		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
 	else {
 		DBG_WARN("failed to open '%s'", filename);
+		free(filename);
 		return -1;
 	}
 
@@ -217,6 +218,7 @@ int option_group_load_xml(option_group_t *group)
 
 	if (!tree) {
 		DBG_ERROR("failed to parse '%s'", filename);
+		free(filename);
 		return -1;
 	}
 
@@ -225,7 +227,8 @@ int option_group_load_xml(option_group_t *group)
 	if (!node)
 		node = tree;
 
-        option_group_load(group, tree);
+	free(filename);
+	option_group_load(group, tree);
 
 	return 0;
 }
