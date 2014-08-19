@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.56)
-AC_INIT([dreamchess],[0.2.1-RC1])
+AC_INIT([dreamchess],[0.2.1-GIT])
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.c])
@@ -176,6 +176,7 @@ if test x"$have_sdl_image_h" = xyes -a \
 	x"$have_sdl_opengl_h" = xyes -a \
 	x"$have_sdl" = xyes -a \
 	x"$have_sdl_image" = xyes -a \
+	x"$have_m" = xyes -a \
 	x"$have_gl" = xyes; then supported_ui_sdlgl="yes"
 else supported_ui_sdlgl="no"
 fi
@@ -186,20 +187,6 @@ elif test x"$with_gl" = xno -o x"$with_sdl" = xno; then
 	with_ui_sdlgl="no"
 else
 	with_ui_sdlgl="yes"
-fi
-
-if test x"$have_sdl_image_h" = xyes -a \
-	x"$have_sdl" = xyes -a \
-	x"$have_sdl_image" = xyes; then supported_ui_sdl="yes"
-else supported_ui_sdl="no"
-fi
-
-if test x"$supported_ui_sdl" = xno; then
-	with_ui_sdl="no"
-elif test x"$with_sdl" = xno; then
-	with_ui_sdl="no"
-else
-	with_ui_sdl="no"
 fi
 
 AC_CHECK_SDL_HEADER([SDL_mixer.h], [have_sdl_mixer_h="yes"],
@@ -249,7 +236,7 @@ AC_DEFUN([AC_PRINT_LIB],
 	)
 
 if test x"$with_ui_sdlgl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS} ${OPENGL_LIBS}"
+	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS} ${OPENGL_LIBS} ${M_LIBS}"
 	AC_SUBST([UI_LIBS],"ui_sdlgl/libui_sdlgl.a gamegui_dialogs/libgamegui_dialogs.a")
 	AC_DEFINE([WITH_UI_SDLGL], [1], [Define to 1 if the sdlgl user interface driver should be compiled.])
 elif test x"$with_ui_sdl" = xyes; then
@@ -266,10 +253,6 @@ fi
 if test x"$with_ui_sdlgl" = xno -a x"$with_mixer_sdl" = xno -a x"$with_net_sdl" = xno; then
 	SDL_CFLAGS=""
 	SDL_LIBS=""
-fi
-
-if test x"$with_ui_sdl" = xyes; then
-	AC_DEFINE([WITH_UI_SDL], [1], [Define to 1 if the sdl user interface driver should be compiled.])
 fi
 
 case $host_os in
