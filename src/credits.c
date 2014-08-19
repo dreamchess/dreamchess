@@ -41,18 +41,18 @@ static char* graphics[] = { "Graphics",
                             NULL };
 
 static char* modelling[] = { "3D Modelling",
-                            "Walter van Niftrik",
-                            "Rogier van Schaijk",
-                            NULL };
+                             "Walter van Niftrik",
+                             "Rogier van Schaijk",
+                             NULL };
 
 static char* thanks[] = { "Special Thanks To",
-                          "François-Dominic Laramée",
-                          "Armando Hernández Marroquín",
+                          "Fran\xe7ois-Dominic Laram\xe9""e",
+                          "Armando Hern\xe1ndez Marroqu\xedn",
                           "Chris Noll (Christuserloeser)",
                           NULL };
 
 static char* copyright[] = { "DreamChess",
-                             "© 2003-2014",
+                             "\xa9 2003-2014",
                              "http://www.dreamchess.org",
                              NULL };
 
