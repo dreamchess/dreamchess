@@ -945,11 +945,11 @@ int find_square(int x, int y, float fd)
     gluUnProject(win.x, win.y, win.z, modelview, projection, viewport, &obj.x,
                  &obj.y, &obj.z);
 
-    if (obj.x < -4 || obj.x > 4 || obj.y < -4 || obj.y > 4)
-        /* TODO Check z? */
-        return -1;
+    /* TODO Check z? */
+    if (obj.x > -4.f && obj.x < 4.f && obj.y > -4.f && obj.y < 4.f)
+        return ((int)floor(obj.y) + 4) * 8 + (int)floor(obj.x) + 4;
 
-    return (floor(obj.y) + 4) * 8 + floor(obj.x) + 4;
+    return -1;
 }
 
 static void draw_board_center(float r, float g, float b, float a)
