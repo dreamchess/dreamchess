@@ -587,7 +587,6 @@ int dreamchess(void *data)
 			CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
 	
 			sprintf( temp2, "%s/contents/MacOS/dreamer", temp1 );
-			printf( "%s\n", temp2 );				
 		
 			game_set_engine_error(comm_init(temp2));
 		}

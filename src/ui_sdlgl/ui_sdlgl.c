@@ -415,7 +415,7 @@ static int set_video( int width, int height, int fullscreen, int ms )
     surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
     if ( !surface )
     {
-        DBG_WARN("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
+        DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
             width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
         return 1;
     }
