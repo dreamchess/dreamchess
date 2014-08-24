@@ -107,13 +107,11 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 
 	free(old_config);
 
-#ifndef _WIN32
 	if (config_get_option("multisampling")->selected->index != old_ms) {
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(),
-		"Notice: a DreamChess restart is required for the",
-		"new multisampling settings to take effect"));
+		"Notice: a DreamChess restart may be required for",
+		"the new multisampling settings to take effect"));
 	}
-#endif
 
 	return 1;
 }

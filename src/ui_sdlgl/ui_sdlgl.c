@@ -412,12 +412,21 @@ static int set_video( int width, int height, int fullscreen, int ms )
     }
     SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, ms );
 
-    surface = SDL_SetVideoMode( width, height, SCREEN_BPP, video_flags );
+    int bpp = SDL_VideoModeOK(width, height, SCREEN_BPP, video_flags);
+
+    if (!bpp)
+    {
+        DBG_ERROR("video mode not available: %ix%i; %i bpp; fullscreen %s; %ix multisampling",
+            width, height, SCREEN_BPP, fullscreen ? "on" : "off", ms);
+        return 1;
+    }
+
+    surface = SDL_SetVideoMode( width, height, bpp, video_flags );
     if ( !surface )
     {
-        DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
-            width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
-        return 1;
+        DBG_ERROR("failed to set video mode: %ix%i; %i bpp; fullscreen %s; %ix multisampling: %s",
+            width, height, bpp, fullscreen ? "on" : "off", ms, SDL_GetError());
+        exit(1);
     }
 
     return 0;
@@ -425,16 +434,13 @@ static int set_video( int width, int height, int fullscreen, int ms )
 
 static int resize(int width, int height, int fullscreen, int ms)
 {
-#ifdef _WIN32
+    /* We assume we lose the GL context here */
     free_menu_tex();
-#endif
+
     if (!set_video(width, height, fullscreen, ms))
     {
-#ifdef _WIN32
-        /* We lose the GL context on win32 */
         init_gl();
         load_menu_tex();
-#endif
         resize_window(width, height);
         screen_width=width;
         screen_height=height;
@@ -443,17 +449,7 @@ static int resize(int width, int height, int fullscreen, int ms)
         return 0;
     }
 
-    /* Have we now lost our original surface? */
-    if (set_video(screen_width, screen_height, screen_fs, screen_ms))
-    {
-        DBG_ERROR("failed to restore original video mode: %ix%i; %s; %ix multisampling",
-            screen_width, screen_height, screen_fs ? "full screen" : "", screen_ms);
-        exit(1);
-    }
-
-#ifdef _WIN32
     load_menu_tex();
-#endif
     return 1;
 }
 
