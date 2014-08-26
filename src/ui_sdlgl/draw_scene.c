@@ -52,7 +52,7 @@ void draw_scene( board_t *b, int reflections )
     go_3d(get_screen_width(), get_screen_height());
 
     render_scene_3d(b, reflections);
-    mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y(), get_zerodepth());
+    mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y());
 
     resize_window(get_screen_width(), get_screen_height());
 
