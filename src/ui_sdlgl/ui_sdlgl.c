@@ -612,6 +612,7 @@ static int sdlgl_exit(void)
 
     gg_system_exit();
     free_menu_tex();
+    deinit_fbo();
 
     SDL_Quit();
     return 0;
