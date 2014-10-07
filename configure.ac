@@ -141,7 +141,6 @@ if test x"$have_sdl_image" = xyes -a x"$have_jpeg" = xyes; then
 fi
 
 have_gl="no"
-
 case $host_os in
 	mingw32*)
 		AC_CHECK_LIB(shlwapi, main, [],
@@ -172,12 +171,17 @@ case $host_os in
 			) ;;
 esac
 
+AC_CHECK_HEADER([GL/glew.h], [have_gl_glew_h="yes"], [have_gl_glew_h="no"])
+AC_CHECK_LIB([GLEW], [glewInit], [GLEW_LIBS="-lGLEW" have_glew="yes"], [have_glew="no"])
+
 if test x"$have_sdl_image_h" = xyes -a \
 	x"$have_sdl_opengl_h" = xyes -a \
+	x"$have_gl_glew_h" = xyes -a \
 	x"$have_sdl" = xyes -a \
 	x"$have_sdl_image" = xyes -a \
 	x"$have_m" = xyes -a \
-	x"$have_gl" = xyes; then supported_ui_sdlgl="yes"
+	x"$have_gl" = xyes -a \
+	x"$have_glew" = xyes; then supported_ui_sdlgl="yes"
 else supported_ui_sdlgl="no"
 fi
 
@@ -236,11 +240,9 @@ AC_DEFUN([AC_PRINT_LIB],
 	)
 
 if test x"$with_ui_sdlgl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS} ${OPENGL_LIBS} ${M_LIBS}"
+	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS} ${GLEW_LIBS} ${OPENGL_LIBS} ${M_LIBS}"
 	AC_SUBST([UI_LIBS],"ui_sdlgl/libui_sdlgl.a gamegui_dialogs/libgamegui_dialogs.a")
 	AC_DEFINE([WITH_UI_SDLGL], [1], [Define to 1 if the sdlgl user interface driver should be compiled.])
-elif test x"$with_ui_sdl" = xyes; then
-	SDL_LIBS="${SDL_IMAGE_LIBS} ${SDL_LIBS}"
 fi
 
 AM_CONDITIONAL([UI_SDLGL], test x"$with_ui_sdlgl" = xyes)
@@ -348,10 +350,12 @@ sdlgl
 ------------------------
 "SDL_image.h"  |  $have_sdl_image_h
 "SDL_opengl.h" |  $have_sdl_opengl_h
+"GL/glew.h"    |  $have_gl_glew_h
 _ACEOF
 AC_PRINT_LIB([libSDL         ], [$have_sdl], [$SDL_OLD_LIBS])
 AC_PRINT_LIB([libSDL_image   ], [$have_sdl_image], [$SDL_IMAGE_LIBS])
 AC_PRINT_LIB([libGL          ], [$have_gl], [$OPENGL_LIBS])
+AC_PRINT_LIB([libGLEW        ], [$have_glew], [$GLEW_LIBS])
 
 cat <<_ACEOF
 

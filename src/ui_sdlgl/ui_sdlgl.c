@@ -20,6 +20,7 @@
 
 #include "ui_sdlgl.h"
 #include "git_rev.h"
+#include <GL/glew.h>
 #include "audio.h"
 #include "options.h"
 #include "theme.h"
@@ -436,10 +437,12 @@ static int resize(int width, int height, int fullscreen, int ms)
 {
     /* We assume we lose the GL context here */
     free_menu_tex();
+    deinit_fbo();
 
     if (!set_video(width, height, fullscreen, ms))
     {
         init_gl();
+        init_fbo();
         load_menu_tex();
         resize_window(width, height);
         screen_width=width;
@@ -449,6 +452,7 @@ static int resize(int width, int height, int fullscreen, int ms)
         return 0;
     }
 
+    init_fbo();
     load_menu_tex();
     return 1;
 }
@@ -460,6 +464,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_Surface *icon;
 #endif
     int i;
+    int err;
 
     screen_width=width;
     screen_height=height;
@@ -497,7 +502,21 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     }
 
     init_gl();
+    err = glewInit();
+    if (err != GLEW_OK)
+    {
+        DBG_ERROR("failed to initialize GLEW: %s", glewGetErrorString(err));
+        exit(1);
+    }
+
+    if (!glewIsSupported("GL_EXT_framebuffer_object"))
+    {
+        DBG_ERROR("OpenGL extension GL_EXT_framebuffer_object not supported");
+        exit(1);
+    }
+
     resize_window(width, height);
+    init_fbo();
 
     load_menu_tex();
 
@@ -593,6 +612,7 @@ static int sdlgl_exit(void)
 
     gg_system_exit();
     free_menu_tex();
+    deinit_fbo();
 
     SDL_Quit();
     return 0;

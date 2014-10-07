@@ -32,9 +32,6 @@
 #define TRUE  1
 #define FALSE 0
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-
 #include "board.h"
 #include "ui_sdlgl.h"
 #include "ui_sdlgl_3d.h"
@@ -154,6 +151,7 @@ static data_col_t meshes;
 #define SEL_HEIGHT 0.003f
 static theme_selector_t sel;
 static texture_t sel_tex;
+static GLuint fb, colourpicking_tex, depth_rb;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -191,6 +189,42 @@ static float piece_moving_dest_xpos;
 static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
+
+void init_fbo(void)
+{
+    int width = power_of_two(get_screen_width());
+    int height = power_of_two(get_screen_height());
+
+    glGenTextures(1, &colourpicking_tex);
+    glBindTexture(GL_TEXTURE_2D, colourpicking_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+    glGenFramebuffersEXT(1, &fb);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colourpicking_tex, 0);
+
+    glGenRenderbuffersEXT(1, &depth_rb);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+
+    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
+    {
+        DBG_ERROR("failed to set up FBO");
+        exit(1);
+    }
+
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+}
+
+void deinit_fbo(void)
+{
+    glDeleteTextures(1, &colourpicking_tex);
+    glDeleteRenderbuffersEXT(1, &depth_rb);
+    glDeleteFramebuffersEXT(1, &fb);
+}
 
 static void setup_view(void)
 {
@@ -600,6 +634,12 @@ static void model_render(model_t *model, int specular, float alpha)
     glDisable(GL_TEXTURE_2D);
 }
 
+static void model_render_cp(model_t *model, GLubyte colour)
+{
+    glColor3ub(colour, 0.0f, 0.0f);
+    glCallList(model->mesh->list);
+}
+
 static void model_make_list(model_t *model)
 {
     int g;
@@ -740,6 +780,17 @@ static int moving_piece_render;
 static int moving_piece_model;
 static int moving_piece_grab;
 
+static inline unsigned char square_to_colour(unsigned char square)
+{
+    /* Add one to square to leave room for empty space */
+    return square + 1;
+}
+
+static inline unsigned char colour_to_square(unsigned char colour)
+{
+    return colour - 1;
+}
+
 static void draw_pieces(board_t *board, int flip)
 {
     int i,j,k;
@@ -856,6 +907,23 @@ static void draw_pieces(board_t *board, int flip)
         }
 }
 
+static void draw_pieces_cp(board_t *board)
+{
+    int i,j,k;
+
+    /* Draw the pieces.. */
+    for (i = 7; i >= 0; i--)
+        for (j = 0; j < 8; j++)
+        {
+            if ((k = board->square[i * 8 + j]) != NONE)
+            {
+                setup_view();
+                glTranslatef(-3.5f + j, -3.5f + i, 0.001);
+                model_render_cp(&model[k], square_to_colour(i * 8 + j));
+            }
+        }
+}
+
 static void draw_board(int blend)
 {
     setup_view();
@@ -923,33 +991,19 @@ static void draw_selector(float alpha)
     glDisable(GL_TEXTURE_2D);
 }
 
-int find_square(int x, int y, float fd)
+int find_square(int x, int y)
 {
-    coord3d_t obj;
-    coord3_t win;
+    GLubyte col;
     GLint viewport[4];
-    GLdouble modelview[16];
-    GLdouble projection[16];
 
     setup_view();
-
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    win.x = x;
-    win.y = viewport[3] - y;
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &col);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-    glReadPixels(win.x, win.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &win.z);
-    win.z /= fd;
-    gluUnProject(win.x, win.y, win.z, modelview, projection, viewport, &obj.x,
-                 &obj.y, &obj.z);
-
-    /* TODO Check z? */
-    if (obj.x > -4.f && obj.x < 4.f && obj.y > -4.f && obj.y < 4.f)
-        return ((int)floor(obj.y) + 4) * 8 + (int)floor(obj.x) + 4;
-
-    return -1;
+    return col - 1;
 }
 
 static void draw_board_center(float r, float g, float b, float a)
@@ -982,6 +1036,26 @@ static void draw_board_center(float r, float g, float b, float a)
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+}
+
+static void draw_board_center_cp()
+{
+    setup_view();
+    int row, col;
+
+    for (row = 0; row < 8; ++row)
+    {
+        for (col = 0; col < 8; ++col)
+        {
+            glBegin(GL_QUADS);
+            glColor3ub(square_to_colour(row * 8 + col), 0, 0);
+            glVertex3f(-4.0f + col, -4.0f + row, 0.0f);
+            glVertex3f(-3.0f + col, -4.0f + row, 0.0f);
+            glVertex3f(-3.0f + col, -3.0f + row, 0.0f);
+            glVertex3f(-4.0f + col, -3.0f + row, 0.0f);
+            glEnd();
+        }
+    }
 }
 
 static void setup_stencil(void)
@@ -1057,6 +1131,20 @@ void render_scene_3d(board_t *board, int reflections)
         draw_selector(1.0f);
     else if (ticks < selector_hide_time + 1000)
         draw_selector(1.0f - ((ticks - selector_hide_time) / 1000.0f));
+
+    /* Render FBO for colour picking */
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    draw_board_center_cp();
+    if (!is_2d)
+        draw_pieces_cp(board);
+
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
 }
 
 void move_camera(float x, float z)
