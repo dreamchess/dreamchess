@@ -1,5 +1,5 @@
 SUBDIRS = desktop doc src man m4 pkg
-EXTRA_DIST = data Info.plist COPYRIGHT
+EXTRA_DIST = data COPYRIGHT
 ACLOCAL_AMFLAGS = -I m4
 
 INSTALL_DIRS = `find $(srcdir)/data -name '.git' -prune -o -name 'data' -o -type d -printf '/%P\n'`

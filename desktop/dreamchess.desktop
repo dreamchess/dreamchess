@@ -4,5 +4,5 @@ Version=1.0
 Encoding=UTF-8
 Name=DreamChess
 Exec=dreamchess
-Icon=dreamchess.png
+Icon=dreamchess
 Categories=Application;Game;
