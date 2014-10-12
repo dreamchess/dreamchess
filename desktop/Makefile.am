@@ -1,5 +1,5 @@
 SUBDIRS = 48 256
 EXTRA_DIST = dreamchess.desktop
 
-applicationsdir = $(datadir)/applications
+applicationsdir = $(datarootdir)/applications
 applications_DATA = dreamchess.desktop
