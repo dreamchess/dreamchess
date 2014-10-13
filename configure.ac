@@ -172,7 +172,12 @@ case $host_os in
 esac
 
 AC_CHECK_HEADER([GL/glew.h], [have_gl_glew_h="yes"], [have_gl_glew_h="no"])
-AC_CHECK_LIB([GLEW], [glewInit], [GLEW_LIBS="-lGLEW" have_glew="yes"], [have_glew="no"])
+case $host_os in
+	mingw32*)
+		AC_CHECK_LIB([glew32s], [main], [GLEW_LIBS="-lglew32s" have_glew="yes"], [have_glew="no"]) ;;
+	*)
+		AC_CHECK_LIB([GLEW], [glewInit], [GLEW_LIBS="-lGLEW" have_glew="yes"], [have_glew="no"]) ;;
+esac
 
 if test x"$have_sdl_image_h" = xyes -a \
 	x"$have_sdl_opengl_h" = xyes -a \

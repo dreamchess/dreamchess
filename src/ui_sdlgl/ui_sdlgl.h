@@ -35,7 +35,12 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_thread.h"
+
+#ifdef __WIN32__
+#define GLEW_STATIC
+#endif
 #include <GL/glew.h>
+
 #define NO_SDL_GLEXT
 #include "SDL_opengl.h"
 #include "SDL_joystick.h"
