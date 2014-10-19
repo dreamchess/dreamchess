@@ -20,6 +20,7 @@
 
 #include "ui_sdlgl.h"
 #include "git_rev.h"
+#include <SDL_syswm.h>
 #include <GL/glew.h>
 #include "audio.h"
 #include "options.h"
@@ -457,12 +458,37 @@ static int resize(int width, int height, int fullscreen, int ms)
     return 1;
 }
 
+#ifdef __WIN32__
+static void load_icon()
+{
+    HMODULE handle = GetModuleHandle(NULL);
+    HICON ico = LoadIcon(handle, "icon");
+    if (ico) {
+        SDL_SysWMinfo wminfo;
+        SDL_VERSION(&wminfo.version);
+        if (SDL_GetWMInfo(&wminfo))
+            SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
+    }
+}
+#elif !defined(__APPLE__)
+static void load_icon()
+{
+    SDL_Surface *icon = IMG_Load("icon.png");
+
+    if (!icon)
+    {
+        DBG_ERROR("failed to load icon: %s", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_WM_SetIcon(icon, NULL);
+    SDL_FreeSurface(icon);
+}
+#endif
+
 /** Implements ui_driver::init. */
 static int init_gui( int width, int height, int fullscreen, int ms)
 {
-#ifndef __APPLE__
-    SDL_Surface *icon;
-#endif
     int i;
     int err;
 
@@ -480,20 +506,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_EnableUNICODE(1);
 
     ch_datadir();
-    
-#ifndef __APPLE__
-    
-    icon = IMG_Load("icon.png");
-
-    if (!icon)
-    {
-        DBG_ERROR("failed to load icon: %s", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_WM_SetIcon(icon, NULL);
-    SDL_FreeSurface(icon);
-#endif
+    load_icon();
 
     if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
