@@ -1,16 +1,15 @@
-!define VERSION "0.2.0"
+!define VERSION "0.2.1"
 
-!include "MUI.nsh"
+!include "MUI2.nsh"
 !include "Library.nsh"
 
 Name "DreamChess ${VERSION}"
 OutFile "dreamchess-${VERSION}-win32.exe"
 InstallDir "$PROGRAMFILES\DreamChess"
+RequestExecutionLevel admin
 
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_UNFINISHPAGE_NOAUTOCLOSE
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp" 
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp" 
 !define MUI_ABORTWARNING
@@ -73,16 +72,20 @@ FunctionEnd
 !insertmacro MUI_LANGUAGE "English"
 
 Section
-  SetOutPath $INSTDIR
-
-  File ..\..\src\DreamChess.exe
-  File ..\..\src\dreamer\Dreamer.exe
+  SetOutPath "$INSTDIR"
+  File /oname=DreamChess.exe ..\..\build\src\dreamchess.exe
+  File /oname=Dreamer.exe ..\..\build\src\dreamer\dreamer.exe
+  File ..\..\build\src\*.dll
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
   File /oname=Copying.txt ..\..\COPYING
   File /oname=Copyright.txt ..\..\COPYRIGHT
-  File /r /x .* ..\..\data
-  File /r /x .* ..\..\doc
+
+  SetOutPath "$INSTDIR\Data"
+  File /r /x .* ..\..\data\*
+
+  SetOutPath "$INSTDIR\Doc"
+  File /r /x .* ..\..\doc\*
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -90,25 +93,13 @@ Section
     StrCpy $ALREADY_INSTALLED 1
   new_installation:
 
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL.dll $SYSDIR\SDL.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_image.dll $SYSDIR\SDL_image.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED jpeg.dll $SYSDIR\jpeg.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libtiff-3.dll $SYSDIR\libtiff-3.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libpng12-0.dll $SYSDIR\libpng12-0.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED zlib1.dll $SYSDIR\zlib1.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED smpeg.dll $SYSDIR\smpeg.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libogg-0.dll $SYSDIR\libogg-0.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libvorbis-0.dll $SYSDIR\libvorbis-0.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED libvorbisfile-3.dll $SYSDIR\libvorbisfile-3.dll $SYSDIR
-  !insertmacro InstallLib DLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED SDL_mixer.dll $SYSDIR\SDL_mixer.dll $SYSDIR
-
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\DreamChess.lnk" "$INSTDIR\DreamChess.exe"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme.lnk" "$INSTDIR\Readme.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Authors.lnk" "$INSTDIR\Authors.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copying.txt"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copyright.txt"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copyright.lnk" "$INSTDIR\Copyright.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -121,7 +112,7 @@ Section
 SectionEnd
 
 Section "Uninstall"
-  RMDir /r /REBOOTOK $INSTDIR
+  RMDir /r "$INSTDIR"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
@@ -133,18 +124,6 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\Copyright.lnk"
 
   Delete "$DESKTOP\DreamChess.lnk"
-
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_image.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\jpeg.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libtiff-3.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libpng12-0.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\zlib1.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\smpeg.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libogg-0.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libvorbis-0.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\libvorbisfile-3.dll
-  !insertmacro UnInstallLib DLL SHARED REBOOT_NOTPROTECTED $SYSDIR\SDL_mixer.dll
 
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  
