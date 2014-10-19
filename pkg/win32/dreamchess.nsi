@@ -75,7 +75,21 @@ Section
   SetOutPath "$INSTDIR"
   File /oname=DreamChess.exe ..\..\build\src\dreamchess.exe
   File /oname=Dreamer.exe ..\..\build\src\dreamer\dreamer.exe
-  File ..\..\build\src\*.dll
+  File ..\..\build\src\SDL.dll
+  File ..\..\build\src\libtiff-5.dll
+  File ..\..\build\src\SDL_image.dll
+  File ..\..\build\src\libvorbis-0.dll
+  File ..\..\build\src\SDL_mixer.dll
+  File ..\..\build\src\libvorbisfile-3.dll
+  File ..\..\build\src\libFLAC-8.dll
+  File ..\..\build\src\libwebp-2.dll
+  File ..\..\build\src\libjpeg-8.dll
+  File ..\..\build\src\libwinpthread-1.dll
+  File ..\..\build\src\libmikmod-2.dll
+  File ..\..\build\src\smpeg.dll
+  File ..\..\build\src\libogg-0.dll
+  File ..\..\build\src\zlib1.dll
+  File ..\..\build\src\libpng15-15.dll
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
   File /oname=Copying.txt ..\..\COPYING
@@ -112,7 +126,33 @@ Section
 SectionEnd
 
 Section "Uninstall"
-  RMDir /r "$INSTDIR"
+  Delete "$INSTDIR\DreamChess.exe"
+  Delete "$INSTDIR\Dreamer.exe"
+  Delete "$INSTDIR\SDL.dll"
+  Delete "$INSTDIR\libtiff-5.dll"
+  Delete "$INSTDIR\SDL_image.dll"
+  Delete "$INSTDIR\libvorbis-0.dll"
+  Delete "$INSTDIR\SDL_mixer.dll"
+  Delete "$INSTDIR\libvorbisfile-3.dll"
+  Delete "$INSTDIR\libFLAC-8.dll"
+  Delete "$INSTDIR\libwebp-2.dll"
+  Delete "$INSTDIR\libjpeg-8.dll"
+  Delete "$INSTDIR\libwinpthread-1.dll"
+  Delete "$INSTDIR\libmikmod-2.dll"
+  Delete "$INSTDIR\smpeg.dll"
+  Delete "$INSTDIR\libogg-0.dll"
+  Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\libpng15-15.dll"
+  Delete "$INSTDIR\Readme.txt"
+  Delete "$INSTDIR\Authors.txt"
+  Delete "$INSTDIR\Copying.txt"
+  Delete "$INSTDIR\Copyright.txt"
+
+  RMDir /r "$INSTDIR\Data"
+  RMDir /r "$INSTDIR\Doc"
+
+  Delete "$INSTDIR\Uninstall.exe"
+  RMDir "$INSTDIR"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
