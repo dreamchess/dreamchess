@@ -329,7 +329,6 @@ AC_CONFIG_FILES([Makefile
 		desktop/Makefile
 		desktop/48/Makefile
 		desktop/256/Makefile
-		doc/Makefile
 		man/Makefile
 		m4/Makefile
 		pkg/Makefile
