@@ -3,10 +3,87 @@
 !include "MUI2.nsh"
 !include "Library.nsh"
 
+!ifndef SDL_ROOT
+!error "Please set SDL_ROOT"
+!endif
+
+!ifndef SDL_IMAGE_ROOT
+!error "Please set SDL_IMAGE_ROOT"
+!endif
+
+!ifndef SDL_MIXER_ROOT
+!error "Please set SDL_MIXER_ROOT"
+!endif
+
+!ifndef GLEW_ROOT
+!error "Please set GLEW_ROOT"
+!endif
+
+!ifndef MINGW_ROOT
+!error "Please set MINGW_ROOT"
+!endif
+
 Name "DreamChess ${VERSION}"
 OutFile "dreamchess-${VERSION}-win32.exe"
 InstallDir "$PROGRAMFILES\DreamChess"
 RequestExecutionLevel admin
+
+Function unix2dos
+    ; strips all CRs
+    ; and then converts all LFs into CRLFs
+    ; (this is roughly equivalent to "cat file | dos2unix | unix2dos")
+    ;
+    ; usage:
+    ;    Push "infile"
+    ;    Push "outfile"
+    ;    Call unix2dos
+    ;
+    ; beware that this function destroys $0 $1 $2
+
+    ClearErrors
+
+    Pop $2
+    FileOpen $1 $2 w
+
+    Pop $2
+    FileOpen $0 $2 r
+
+    Push $2 ; save name for deleting
+
+    IfErrors unix2dos_done
+
+    ; $0 = file input (opened for reading)
+    ; $1 = file output (opened for writing)
+
+unix2dos_loop:
+    ; read a byte (stored in $2)
+    FileReadByte $0 $2
+    IfErrors unix2dos_done ; EOL
+    ; skip CR
+    StrCmp $2 13 unix2dos_loop
+    ; if LF write an extra CR
+    StrCmp $2 10 unix2dos_cr unix2dos_write
+
+unix2dos_cr:
+    FileWriteByte $1 13
+
+unix2dos_write:
+    ; write byte
+    FileWriteByte $1 $2
+    ; read next byte
+    Goto unix2dos_loop
+
+unix2dos_done:
+
+    ; close files
+    FileClose $0
+    FileClose $1
+
+    ; delete original
+    Pop $0
+    Delete $0
+
+FunctionEnd
 
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
@@ -75,31 +152,33 @@ Section
   SetOutPath "$INSTDIR"
   File /oname=DreamChess.exe ..\..\build\src\dreamchess.exe
   File /oname=Dreamer.exe ..\..\build\src\dreamer\dreamer.exe
-  File ..\..\build\src\SDL.dll
-  File ..\..\build\src\libtiff-5.dll
-  File ..\..\build\src\SDL_image.dll
-  File ..\..\build\src\libvorbis-0.dll
-  File ..\..\build\src\SDL_mixer.dll
-  File ..\..\build\src\libvorbisfile-3.dll
-  File ..\..\build\src\libFLAC-8.dll
-  File ..\..\build\src\libwebp-2.dll
-  File ..\..\build\src\libjpeg-8.dll
-  File ..\..\build\src\libwinpthread-1.dll
-  File ..\..\build\src\libmikmod-2.dll
-  File ..\..\build\src\smpeg.dll
-  File ..\..\build\src\libogg-0.dll
-  File ..\..\build\src\zlib1.dll
-  File ..\..\build\src\libpng15-15.dll
+
   File /oname=Readme.txt ..\..\README
   File /oname=Authors.txt ..\..\AUTHORS
   File /oname=Copying.txt ..\..\COPYING
   File /oname=Copyright.txt ..\..\COPYRIGHT
+ 
+  ; DLLs
+  File "${SDL_ROOT}\SDL.dll"
+  File "${SDL_IMAGE_ROOT}\*.dll"
+  File "${SDL_MIXER_ROOT}\*.dll"
+  File "${MINGW_ROOT}\bin\libwinpthread-1.dll"
+
+  ; Licenses
+  SetOutPath "$INSTDIR\Licenses"
+  File /oname=LICENSE.SDL.txt "${SDL_ROOT}\README-SDL.txt"
+  File "${SDL_IMAGE_ROOT}\LICENSE.*.txt"
+  File /oname=LICENSE.SDL_image.txt "${SDL_IMAGE_ROOT}\README.txt"
+  File "${SDL_MIXER_ROOT}\LICENSE*.txt"
+  File /oname=LICENSE.SDL_mixer.txt "${SDL_MIXER_ROOT}\README.txt"
+  File /oname=LICENSE.winpthreads "${MINGW_ROOT}\share\licenses\winpthreads\COPYING"
+  Push "$INSTDIR\Licenses\LICENSE.winpthreads"
+  Push "$INSTDIR\Licenses\LICENSE.winpthreads.txt"
+  Call unix2dos
+  File /oname=LICENSE.glew.txt "${GLEW_ROOT}\LICENSE.txt"
 
   SetOutPath "$INSTDIR\Data"
   File /r /x .* ..\..\data\*
-
-  SetOutPath "$INSTDIR\Doc"
-  File /r /x .* ..\..\doc\*
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -111,9 +190,6 @@ Section
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\DreamChess.lnk" "$INSTDIR\DreamChess.exe"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme.lnk" "$INSTDIR\Readme.txt"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Authors.lnk" "$INSTDIR\Authors.txt"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copying.lnk" "$INSTDIR\Copying.txt"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Copyright.lnk" "$INSTDIR\Copyright.txt"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -128,28 +204,14 @@ SectionEnd
 Section "Uninstall"
   Delete "$INSTDIR\DreamChess.exe"
   Delete "$INSTDIR\Dreamer.exe"
-  Delete "$INSTDIR\SDL.dll"
-  Delete "$INSTDIR\libtiff-5.dll"
-  Delete "$INSTDIR\SDL_image.dll"
-  Delete "$INSTDIR\libvorbis-0.dll"
-  Delete "$INSTDIR\SDL_mixer.dll"
-  Delete "$INSTDIR\libvorbisfile-3.dll"
-  Delete "$INSTDIR\libFLAC-8.dll"
-  Delete "$INSTDIR\libwebp-2.dll"
-  Delete "$INSTDIR\libjpeg-8.dll"
-  Delete "$INSTDIR\libwinpthread-1.dll"
-  Delete "$INSTDIR\libmikmod-2.dll"
-  Delete "$INSTDIR\smpeg.dll"
-  Delete "$INSTDIR\libogg-0.dll"
-  Delete "$INSTDIR\zlib1.dll"
-  Delete "$INSTDIR\libpng15-15.dll"
+  Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\Readme.txt"
   Delete "$INSTDIR\Authors.txt"
   Delete "$INSTDIR\Copying.txt"
   Delete "$INSTDIR\Copyright.txt"
 
   RMDir /r "$INSTDIR\Data"
-  RMDir /r "$INSTDIR\Doc"
+  RMDir /r "$INSTDIR\Licenses"
 
   Delete "$INSTDIR\Uninstall.exe"
   RMDir "$INSTDIR"
@@ -159,9 +221,6 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\DreamChess.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Readme.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\Authors.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\Copying.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\Copyright.lnk"
 
   Delete "$DESKTOP\DreamChess.lnk"
 
