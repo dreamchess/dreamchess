@@ -470,7 +470,11 @@ static void load_icon()
             SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
     }
 }
-#elif !defined(__APPLE__)
+#elif defined(__APPLE__)
+static void load_icon()
+{
+}
+#else
 static void load_icon()
 {
     SDL_Surface *icon = IMG_Load("icon.png");

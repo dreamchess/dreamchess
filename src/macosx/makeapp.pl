@@ -21,7 +21,7 @@ sub finddeps {
     if (/:$/) {
       next;
     }
-    if (/^\t(\/System)|(\/usr\/lib)|($filename)/) {
+    if (/^\t((\/System)|(\/usr\/lib)|($filename))/) {
       next;
     }
     (my $orglib = $_) =~ s/^\t([^ ]*) .*$/$1/;
