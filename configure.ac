@@ -331,8 +331,6 @@ AC_CONFIG_FILES([Makefile
 		desktop/256/Makefile
 		man/Makefile
 		m4/Makefile
-		pkg/Makefile
-		pkg/win32/Makefile
 		src/Makefile
 		src/audio/Makefile
 		src/libs/Makefile

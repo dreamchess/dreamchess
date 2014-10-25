@@ -1,4 +1,4 @@
-SUBDIRS = desktop src man m4 pkg
+SUBDIRS = desktop src man m4
 EXTRA_DIST = data COPYRIGHT
 ACLOCAL_AMFLAGS = -I m4
 
