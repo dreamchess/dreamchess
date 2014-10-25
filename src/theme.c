@@ -275,6 +275,11 @@ void theme_find_music_packs(void)
         chdir(data);
         find_music_packs();
     }
+#elif defined(__APPLE__)
+    {
+        if (chdir("/Library/Application Support/DreamChess") == 0)
+            find_music_packs();
+    }
 #endif
 }
 
