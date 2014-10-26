@@ -477,7 +477,7 @@ static void load_icon()
 #else
 static void load_icon()
 {
-    SDL_Surface *icon = IMG_Load("icon.png");
+   /* SDL_Surface *icon = IMG_Load("icon.png");
 
     if (!icon)
     {
@@ -486,7 +486,7 @@ static void load_icon()
     }
 
     SDL_WM_SetIcon(icon, NULL);
-    SDL_FreeSurface(icon);
+    SDL_FreeSurface(icon);*/
 }
 #endif
 
