@@ -458,38 +458,6 @@ static int resize(int width, int height, int fullscreen, int ms)
     return 1;
 }
 
-#ifdef __WIN32__
-static void load_icon()
-{
-    HMODULE handle = GetModuleHandle(NULL);
-    HICON ico = LoadIcon(handle, "icon");
-    if (ico) {
-        SDL_SysWMinfo wminfo;
-        SDL_VERSION(&wminfo.version);
-        if (SDL_GetWMInfo(&wminfo))
-            SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
-    }
-}
-#elif defined(__APPLE__)
-static void load_icon()
-{
-}
-#else
-static void load_icon()
-{
-   /* SDL_Surface *icon = IMG_Load("icon.png");
-
-    if (!icon)
-    {
-        DBG_ERROR("failed to load icon: %s", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_WM_SetIcon(icon, NULL);
-    SDL_FreeSurface(icon);*/
-}
-#endif
-
 /** Implements ui_driver::init. */
 static int init_gui( int width, int height, int fullscreen, int ms)
 {
@@ -510,7 +478,19 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_EnableUNICODE(1);
 
     ch_datadir();
-    load_icon();
+
+#ifdef __WIN32__
+    {
+        HMODULE handle = GetModuleHandle(NULL);
+        HICON ico = LoadIcon(handle, "icon");
+        if (ico) {
+            SDL_SysWMinfo wminfo;
+            SDL_VERSION(&wminfo.version);
+            if (SDL_GetWMInfo(&wminfo))
+                SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
+        }
+    }
+#endif
 
     if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
