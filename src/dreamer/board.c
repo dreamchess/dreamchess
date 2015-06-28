@@ -196,7 +196,7 @@ int setup_board_fen(board_t *board, char *fen)
 	board->castle_flags = 0;
 
 	if (fen[i] != '-')
-		while ((fen[i] != ' ') && (i < len))
+		while ((i < len) && (fen[i] != ' '))
 			switch (fen[i++])
 			{
 			case 'K':
