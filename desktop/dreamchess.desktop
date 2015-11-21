@@ -1,8 +1,12 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Encoding=UTF-8
 Name=DreamChess
+GenericName=Chess game
+GenericName[fr]=Jeu d'échec
+Comment=a 3D chess game
+Comment[de]=ein Schachspiel in 3D
 Exec=dreamchess
 Icon=dreamchess
-Categories=Application;Game;
+Categories=Game;BoardGame;
+Keywords=chess;board;strategy;
