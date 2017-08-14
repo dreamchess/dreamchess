@@ -263,8 +263,6 @@ void init_gl(void);
 float get_fps(void);
 void update_fps_time(void);
 int power_of_two(int input);
-float get_dc_z(void);
-void reset_dc_z(void);
 
 /* texture.c */
 texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);
