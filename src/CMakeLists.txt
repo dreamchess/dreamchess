@@ -103,7 +103,7 @@ if(WIN32)
 endif()
 
 if(UNIX)
-    add_definitions(-DDATADIR=${CMAKE_INSTALL_FULL_DATADIR}/dreamchess)
+    add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/dreamchess")
 endif()
 
 add_executable(dreamchess ${DREAMCHESS_SRCS})
