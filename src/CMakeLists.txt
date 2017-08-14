@@ -23,6 +23,10 @@ find_package(MXML REQUIRED)
 
 include_directories(
     ${SDL_INCLUDE_DIR}
+    ${SDL_IMAGE_INCLUDE_DIR}
+    ${SDL_MIXER_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIR}
     ${MXML_INCLUDE_DIRS}
 )
 
