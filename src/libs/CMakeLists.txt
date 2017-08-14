@@ -1,7 +1,5 @@
 include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-string(SUBSTRING ${GIT_SHA1} 0 7 GIT_SHA1)
-git_get_exact_tag(GIT_TAG)
+git_describe(GIT_DESC)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/git_rev.c.in" "${CMAKE_CURRENT_BINARY_DIR}/git_rev.c" @ONLY)
 
 BISON_TARGET(SanParser san_parse.y ${CMAKE_CURRENT_BINARY_DIR}/san_parse.c COMPILE_FLAGS "-p san")
