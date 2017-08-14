@@ -20,6 +20,13 @@
 
 #include "ui_sdlgl.h"
 #include "git_rev.h"
+
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
+
 #include <SDL_syswm.h>
 #include <GL/glew.h>
 #include "audio.h"

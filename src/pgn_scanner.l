@@ -20,6 +20,8 @@
 
 %option noyywrap
 %option nounput
+%option nounistd
+%option never-interactive
 
 %{
 #include "pgn_scanner.h"

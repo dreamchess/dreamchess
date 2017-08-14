@@ -21,10 +21,12 @@
 #include <mxml.h>
 #include <dirent.h>
 #include <limits.h>
-#include <unistd.h>
 
 #ifdef _WIN32
 #include <windows.h>
+#include <direct.h>
+#else
+#include <unistd.h>
 #endif
 
 #include "dreamchess.h"

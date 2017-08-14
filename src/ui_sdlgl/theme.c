@@ -20,6 +20,12 @@
 
 #include "ui_sdlgl.h"
 
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
+
 static texture_t backdrop;
 static texture_t border[9];
 static texture_t menu_border[9];

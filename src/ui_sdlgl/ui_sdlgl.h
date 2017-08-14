@@ -23,10 +23,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <string.h>
-#include <unistd.h>
 #include <math.h>
 #include <assert.h>
 #include <time.h>

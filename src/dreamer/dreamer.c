@@ -20,8 +20,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/time.h>
 #include <sys/types.h>
 
 #include "dreamer.h"
@@ -45,6 +43,9 @@
 #define drm_sleep(M) usleep((M) * 1000)
 
 #else
+
+#include <unistd.h>
+#include <sys/time.h>
 
 static void drm_sleep(unsigned long usec)
 {

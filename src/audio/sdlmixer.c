@@ -20,7 +20,12 @@
 
 #include "audio.h"
 
+#ifdef _WIN32
+#include <direct.h>
+#else
 #include <unistd.h>
+#endif
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 
