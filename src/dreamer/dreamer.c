@@ -35,7 +35,7 @@
 #include "transposition.h"
 #include "config.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 
 #include <windows.h>
 #define drm_sleep(M) Sleep(M)

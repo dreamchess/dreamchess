@@ -20,7 +20,7 @@
 
 #include "dir.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 
 #define USERDIR "DreamChess"
 
@@ -111,7 +111,7 @@ int ch_userdir(void)
     return 0;
 }
 
-#else /* !__WIN32__ */
+#else /* !_WIN32 */
 
 #define USERDIR ".dreamchess"
 

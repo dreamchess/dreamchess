@@ -464,7 +464,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     ch_datadir();
 
-#ifdef __WIN32__
+#ifdef _WIN32
     {
         HMODULE handle = GetModuleHandle(NULL);
         HICON ico = LoadIcon(handle, "icon");

@@ -36,7 +36,7 @@
 #include "SDL_image.h"
 #include "SDL_thread.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #define GLEW_STATIC
 #endif
 #include <GL/glew.h>
