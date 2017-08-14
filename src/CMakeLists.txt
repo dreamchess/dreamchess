@@ -5,6 +5,8 @@ option(ENGINE_ONLY "Only build the Dreamer chess engine")
 find_package(BISON)
 find_package(FLEX)
 
+include(GNUInstallDirs)
+
 add_subdirectory(libs)
 add_subdirectory(dreamer)
 
@@ -100,5 +102,22 @@ if(WIN32)
     list(APPEND DREAMCHESS_LIBS shlwapi)
 endif()
 
+if(UNIX)
+    add_definitions(-DDATADIR=${CMAKE_INSTALL_FULL_DATADIR}/dreamchess)
+endif()
+
 add_executable(dreamchess ${DREAMCHESS_SRCS})
 target_link_libraries(dreamchess ${DREAMCHESS_LIBS})
+
+if(WIN32)
+    install(TARGETS dreamchess DESTINATION .)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION .)
+    install(FILES  DESTINATION .)
+elseif(UNIX)
+    install(TARGETS dreamchess DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES ${CMAKE_SOURCE_DIR}/man/dreamchess.6 DESTINATION ${CMAKE_INSTALL_MANDIR})
+    install(FILES ${CMAKE_SOURCE_DIR}/desktop/dreamchess.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/desktop/48/dreamchess.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps)
+    install(FILES ${CMAKE_SOURCE_DIR}/desktop/256/dreamchess.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CMAKE_INSTALL_DATADIR}/dreamchess)
+endif()

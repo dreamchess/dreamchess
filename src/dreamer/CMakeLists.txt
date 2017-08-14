@@ -34,3 +34,10 @@ add_executable(dreamer ${DREAMER_SRCS})
 target_link_libraries(dreamer
     common
 )
+
+if(WIN32)
+    install(TARGETS dreamer DESTINATION .)
+elseif(UNIX)
+    install(TARGETS dreamer DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES ${CMAKE_SOURCE_DIR}/man/dreamer.6 DESTINATION ${CMAKE_INSTALL_MANDIR})
+endif()
