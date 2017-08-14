@@ -248,7 +248,7 @@ void theme_find_music_packs(void)
     ch_userdir();
     find_music_packs();
 
-#ifdef __WIN32
+#ifdef _WIN32
     {
         HKEY key;
         char data[PATH_MAX];
