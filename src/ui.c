@@ -18,22 +18,13 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
-
 #include <string.h>
 
 #include "ui.h"
 
 ui_driver_t *ui_driver[] =
     {
-#ifdef WITH_UI_SDLGL
         &ui_sdlgl,
-#endif /* WITH_UI_SDLGL */
-#ifdef WITH_UI_SDL
-        &ui_sdl,
-#endif /* WITH_UI_SDL */
         NULL
     };
 

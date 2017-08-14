@@ -65,7 +65,7 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
+void text_draw_string( float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
 {
     int i;
     int xposition=xpos;
@@ -74,7 +74,7 @@ void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colou
         xposition+=text_draw_char( xposition, ypos, scale, text[i], col );
 }
 
-static int text_width_n(char *text, int n)
+static int text_width_n(const char *text, int n)
 {
     int retval = 0, i;
 
@@ -96,7 +96,7 @@ static int text_width_n(char *text, int n)
  *  @param text String to compute width of.
  *  @return Width of string in pixels.
  */
-int text_width(char *text)
+int text_width(const char *text)
 {
     return text_width_n(text, strlen(text));
 }
@@ -118,7 +118,7 @@ int text_height(void)
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
+void text_draw_string_right( float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
 {
     text_draw_string(xpos - text_width(text) * scale, ypos, text, scale, col);
 }
@@ -134,7 +134,7 @@ void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col)
+void text_draw_string_bouncy( float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
 {
     int i;
     int xposition=xpos;

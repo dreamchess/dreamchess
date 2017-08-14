@@ -33,10 +33,7 @@
 #include "commands.h"
 #include "repetition.h"
 #include "transposition.h"
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #ifdef __WIN32__
 

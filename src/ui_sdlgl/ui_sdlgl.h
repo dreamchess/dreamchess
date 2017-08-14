@@ -283,12 +283,12 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col);
 
 /* text.c */
 int text_draw_char( float xpos, float ypos, float scale, int character, gg_colour_t *col );
-void text_draw_string( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
-void text_draw_string_right( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
-void text_draw_string_bouncy( float xpos, float ypos, char *text, float scale, gg_colour_t *col);
+void text_draw_string( float xpos, float ypos, const char *text, float scale, gg_colour_t *col);
+void text_draw_string_right( float xpos, float ypos, const char *text, float scale, gg_colour_t *col);
+void text_draw_string_bouncy( float xpos, float ypos, const char *text, float scale, gg_colour_t *col);
 texture_t *get_text_character( int index );
 void generate_text_chars(void);
-int text_width(char *text);
+int text_width(const char *text);
 int text_height(void);
 
 /* colours.c */

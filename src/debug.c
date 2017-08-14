@@ -22,10 +22,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
 #include "debug.h"
 
 static int dbg_level = 1;

@@ -18,10 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
 #include "audio.h"
-
-#ifdef WITH_MIXER_SDL
 
 #include <unistd.h>
 #include <SDL.h>
@@ -216,37 +213,3 @@ void audio_set_music_volume(int vol)
 		next_song = 1;
 	}
 }
-
-#else
-
-/* FIXME */
-
-void audio_init(void)
-{
-}
-
-void audio_exit(void)
-{
-}
-
-void audio_poll(int title)
-{
-}
-
-void audio_set_music_callback(audio_music_callback_t callback)
-{
-}
-
-void audio_play_sound(int id)
-{
-}
-
-void audio_set_sound_volume(int vol)
-{
-}
-
-void audio_set_music_volume(int vol)
-{
-}
-
-#endif

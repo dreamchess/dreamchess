@@ -18,15 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
-
-#ifdef WITH_UI_SDLGL
 #include "SDL.h"
-#endif
-
-#ifndef COMM_SDL_THREADS
 
 #include <stdio.h>
 
@@ -41,5 +33,3 @@ int main(int argc, char **argv)
 
     return dreamchess(&arg);
 }
-
-#endif /* !COMM_SDL_THREADS */

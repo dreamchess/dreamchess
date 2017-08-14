@@ -18,12 +18,6 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
-#ifdef COMM_PIPE_WIN32
-
 #include <windows.h>
 #include <stdio.h>
 
@@ -172,5 +166,3 @@ char *comm_poll(void)
 
     return NULL;
 }
-
-#endif /* COMM_PIPE_WIN32 */

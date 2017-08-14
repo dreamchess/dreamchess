@@ -25,13 +25,12 @@
 #include "move.h"
 #include "transposition.h"
 #include "git_rev.h"
-#include "config.h"
 
 int engine(void *data);
 
 int main(int argc, char **argv)
 {
-    fprintf(stderr, "Dreamer v" PACKAGE_VERSION " (" GIT_REV ")\n");
+    fprintf(stderr, "Dreamer %s\n", g_version);
 
     board_init();
     init_hash();

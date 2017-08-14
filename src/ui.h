@@ -21,10 +21,6 @@
 #ifndef _UI_H
 #define _UI_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
-
 #include "board.h"
 #include "dreamchess.h"
 
@@ -42,14 +38,7 @@ typedef struct ui_driver
 }
 ui_driver_t;
 
-#ifdef WITH_UI_SDLGL
 extern ui_driver_t ui_sdlgl;
-#endif /* WITH_UI_SDLGL */
-
-#ifdef WITH_UI_SDL
-extern ui_driver_t ui_sdl;
-#endif /* WITH_UI_SDL */
-
 extern ui_driver_t *ui_driver[];
 
 ui_driver_t *ui_find_driver(char *name);

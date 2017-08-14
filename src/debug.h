@@ -18,9 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #ifdef HAVE_C99_VARARGS_MACROS
 #define DBG_ERROR(...) do {dbg_error(__FILE__, __LINE__, __VA_ARGS__);} while (0)

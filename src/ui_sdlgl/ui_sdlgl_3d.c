@@ -18,12 +18,6 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
-
-#ifdef WITH_UI_SDLGL
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "debug.h"
@@ -1264,5 +1258,3 @@ void reset_3d(int flip)
 
     glEnable(GL_LIGHT0);
 }
-
-#endif /* WITH_UI_SDLGL */

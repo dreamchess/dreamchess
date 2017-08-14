@@ -28,7 +28,6 @@
 #include "system_config.h"
 #include "gamegui_dialogs.h"
 
-static gg_dialog_style_t style_ingame, style_menu;
 static int turn_counter_start=0;
 static texture_t menu_title_tex;
 static int game_in_stalemate;
@@ -176,16 +175,6 @@ int get_black_in_checkmate(void)
     return black_in_checkmate;
 }
 
-gg_dialog_style_t *get_ingame_style(void)
-{
-    return &style_ingame;
-}
-
-gg_dialog_style_t *get_menu_style(void)
-{
-    return &style_menu;
-}
-
 int get_turn_counter(void)
 {
     return turn_counter_start;
@@ -273,7 +262,7 @@ static config_t *do_menu(int *pgn)
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        text_draw_string_right(620, 20, "v" PACKAGE_VERSION " (" GIT_REV ")", 0.75f, get_col(COL_WHITE));
+        text_draw_string_right(620, 20, g_version, 0.75f, get_col(COL_WHITE));
 
         /*if (get_show_egg())
             text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/
@@ -524,20 +513,20 @@ static int init_gui( int width, int height, int fullscreen, int ms)
     SDL_WM_SetCaption( "DreamChess", NULL );
 
     gg_system_init(get_gg_driver_sdlgl());
-    style_ingame.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
-    style_ingame.hor_pad = 20;
-    style_ingame.vert_pad = 10;
+    get_ingame_style()->fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);
+    get_ingame_style()->hor_pad = 20;
+    get_ingame_style()->vert_pad = 10;
 
     for (i = 0; i < 9; i++)
-        style_ingame.border.image[i] = &get_border()[i];
+        get_ingame_style()->border.image[i] = &get_border()[i];
 
-    style_menu.textured = 1;
-    style_menu.fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
-    style_menu.hor_pad = 20;
-    style_menu.vert_pad = 10;
+    get_menu_style()->textured = 1;
+    get_menu_style()->fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.0f);
+    get_menu_style()->hor_pad = 20;
+    get_menu_style()->vert_pad = 10;
 
     for (i = 0; i < 9; i++)
-        style_menu.border.image[i] = &get_menu_border()[i];
+        get_menu_style()->border.image[i] = &get_menu_border()[i];
 
     ch_datadir();
     audio_init();

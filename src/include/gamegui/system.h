@@ -22,10 +22,6 @@
  *  @brief Core gamegui system header file.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifndef GG_SYSTEM_H
 #define GG_SYSTEM_H
 

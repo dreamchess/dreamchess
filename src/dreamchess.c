@@ -18,9 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -548,7 +546,7 @@ int dreamchess(void *data)
 
     ui = ui_driver[0];
 
-    printf( "DreamChess " "v" PACKAGE_VERSION " (" GIT_REV ")\n" );
+    printf( "DreamChess %s\n", g_version );
 
     parse_options(arg->argc, arg->argv, &ui, &cl_options);
     config_init();
