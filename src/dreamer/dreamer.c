@@ -20,7 +20,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 
 #include "dreamer.h"
 #include "board.h"
@@ -40,12 +39,15 @@
 
 #elif defined HAVE_USLEEP
 
+#include <unistd.h>
+
 #define drm_sleep(M) usleep((M) * 1000)
 
 #else
 
-#include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 static void drm_sleep(unsigned long usec)
 {
