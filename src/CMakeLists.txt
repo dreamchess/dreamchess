@@ -2,8 +2,8 @@ include_directories(include ${CMAKE_CURRENT_SOURCE_DIR})
 
 option(ENGINE_ONLY "Only build the Dreamer chess engine")
 
-find_package(BISON)
-find_package(FLEX)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
 
 include(GNUInstallDirs)
 
