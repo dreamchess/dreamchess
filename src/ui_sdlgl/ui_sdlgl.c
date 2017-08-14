@@ -350,10 +350,8 @@ static config_t *do_menu(int *pgn)
         }
 
         /* Draw mouse cursor.. */
-#ifndef __BEOS__
         draw_texture( get_menu_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
-#endif /* __BEOS __ */
 
         gl_swap();
     }
@@ -377,9 +375,7 @@ static void load_menu_tex(void)
     chdir("styles");
     chdir("default");
     load_border(get_menu_border(), "border.png");
-#ifndef __BEOS__
     load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
-#endif /* __BEOS__ */    
 }
 
 static int set_video( int width, int height, int fullscreen, int ms )
@@ -506,9 +502,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     load_menu_tex();
 
-#ifndef __BEOS__
     SDL_ShowCursor(SDL_DISABLE);
-#endif /* __BEOS__ */
 
     SDL_WM_SetCaption( "DreamChess", NULL );
 

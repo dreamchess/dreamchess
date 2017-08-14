@@ -40,10 +40,6 @@
 #include <windows.h>
 #define drm_sleep(M) Sleep(M)
 
-#elif defined __BEOS__
-
-#define drm_sleep(M) snooze((M) * 1000)
-
 #elif defined HAVE_USLEEP
 
 #define drm_sleep(M) usleep((M) * 1000)

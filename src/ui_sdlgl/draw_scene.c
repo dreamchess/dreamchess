@@ -90,9 +90,7 @@ void draw_scene( board_t *b, int reflections )
     }
 
     /* Draw mouse cursor.. */
-    #ifndef __BEOS__
     draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
-    #endif /* __BEOS__ */
 
     /* Draw it to the screen */
     gl_swap();
