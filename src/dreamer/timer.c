@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include "timer.h"
 
+#ifdef _MSC_VER
+
 #define _W32_FT_OFFSET (116444736000000000ULL)
 
 int gettimeofday(struct timeval *tp, void *tzp)
@@ -40,6 +42,8 @@ int gettimeofday(struct timeval *tp, void *tzp)
 
 	return 0;
 }
+
+#endif
 
 /* Borrowed from libc.info */
 static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
