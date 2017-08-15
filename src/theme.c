@@ -19,7 +19,6 @@
 */
 
 #include <mxml.h>
-#include <dirent.h>
 #include <limits.h>
 
 #ifdef _WIN32
@@ -27,6 +26,7 @@
 #include <direct.h>
 #else
 #include <unistd.h>
+#include <dirent.h>
 #endif
 
 #include "dreamchess.h"
@@ -158,6 +158,31 @@ static void theme_add_theme( char *xmlfile, option_t *option )
     mxmlDelete(tree);
 }
 
+#ifdef _WIN32
+
+static void find_themes(option_t *option)
+{
+    HANDLE hFind;
+    WIN32_FIND_DATA ffd;
+
+    hFind = FindFirstFile("themes\\*.xml", &ffd);
+
+    if (hFind == INVALID_HANDLE_VALUE)
+        return;
+
+    do {
+        char *filename = malloc(strlen(ffd.cFileName) + 7 + 1);
+        strcpy(filename, "themes\\");
+        strcat(filename, ffd.cFileName);
+        theme_add_theme(filename, option);
+        free(filename);
+    } while (FindNextFile(hFind, &ffd) != 0);
+
+    FindClose(hFind);
+}
+
+#else
+
 static void find_themes(option_t *option)
 {
     DIR* themedir;
@@ -178,6 +203,8 @@ static void find_themes(option_t *option)
     }
 }
 
+#endif
+
 void theme_find_themes(option_t *option)
 {
     ch_datadir();
@@ -197,6 +224,42 @@ static void add_music_pack(char *dir)
 
     TAILQ_INSERT_TAIL(&music_packs, music, entries);
 }
+
+#ifdef _WIN32
+
+static void find_music_packs(void)
+{
+    char *cur_dir = getcwd(NULL, 0);
+
+    if (!cur_dir)
+        DBG_ERROR("could not determine current directory");
+
+    HANDLE hFind;
+    WIN32_FIND_DATA ffd;
+
+    hFind = FindFirstFile("music\\*", &ffd);
+
+    if (hFind == INVALID_HANDLE_VALUE)
+        return;
+
+    do {
+        if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && ffd.cFileName[0] != '.') {
+            char *dirname = malloc(strlen(cur_dir) + 7 + strlen(ffd.cFileName) + 1);
+
+            strcpy(dirname, cur_dir);
+            strcat(dirname, "\\music\\");
+            strcat(dirname, ffd.cFileName);
+
+            add_music_pack(dirname);
+            free(dirname);
+        }
+    } while (FindNextFile(hFind, &ffd) != 0);
+
+    FindClose(hFind);
+    free(cur_dir);
+}
+
+#else
 
 static void find_music_packs(void)
 {
@@ -240,6 +303,8 @@ static void find_music_packs(void)
 #endif
 }
 
+#endif
+
 void theme_find_music_packs(void)
 {
     TAILQ_INIT(&music_packs);
@@ -253,8 +318,8 @@ void theme_find_music_packs(void)
 #ifdef _WIN32
     {
         HKEY key;
-        char data[PATH_MAX];
-        DWORD size = PATH_MAX - 1;
+        char data[MAX_PATH];
+        DWORD size = MAX_PATH - 1;
 
         if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
             "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\DreamChess Music",
