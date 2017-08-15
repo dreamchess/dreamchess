@@ -90,6 +90,10 @@ else()
     list(APPEND DREAMCHESS_SRCS comm_unix.c)
 endif()
 
+if(MSVC)
+    list(APPEND DREAMCHESS_SRCS msvc/getopt.c)
+endif()
+
 if(MINGW)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>") 
 endif(MINGW)

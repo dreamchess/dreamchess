@@ -26,6 +26,8 @@
 #include <string.h>
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#elif defined(_MSC_VER)
+#include "msvc/getopt.h"
 #endif /* HAVE_GETOPT_H */
 #include <errno.h>
 
