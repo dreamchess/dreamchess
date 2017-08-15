@@ -86,6 +86,7 @@ set(DREAMCHESS_SRCS
 
 if(WIN32)
     list(APPEND DREAMCHESS_SRCS comm_win32.c win32.rc)
+    set_source_files_properties(win32.rc PROPERTIES OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/win32.ico;${CMAKE_CURRENT_SOURCE_DIR}/dpi.manifest")
 else()
     list(APPEND DREAMCHESS_SRCS comm_unix.c)
 endif()
@@ -119,6 +120,13 @@ endif()
 
 add_executable(dreamchess ${DREAMCHESS_SRCS})
 target_link_libraries(dreamchess ${DREAMCHESS_LIBS})
+
+if(MSVC)
+    set_target_properties(dreamchess PROPERTIES LINK_FLAGS_DEBUG "/MANIFEST:NO")
+    set_target_properties(dreamchess PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
+    set_target_properties(dreamchess PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
+    set_target_properties(dreamchess PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
+endif()
 
 if(WIN32)
     install(TARGETS dreamchess DESTINATION .)
