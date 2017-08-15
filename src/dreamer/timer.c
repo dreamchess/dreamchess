@@ -19,9 +19,27 @@
 */
 
 #include <assert.h>
-#include <sys/time.h>
 #include <stdlib.h>
 #include "timer.h"
+
+#define _W32_FT_OFFSET (116444736000000000ULL)
+
+int gettimeofday(struct timeval *tp, void *tzp)
+{
+	union {
+		unsigned long long ns100;
+		FILETIME ft;
+	}  _now;
+
+	if (tp)
+	{
+		GetSystemTimeAsFileTime(&_now.ft);
+		tp->tv_usec = (long)((_now.ns100 / 10ULL) % 1000000ULL);
+		tp->tv_sec = (long)((_now.ns100 - _W32_FT_OFFSET) / 10000000ULL);
+	}
+
+	return 0;
+}
 
 /* Borrowed from libc.info */
 static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
@@ -87,4 +105,3 @@ void timer_init(timer *c, int down)
 	timer_set(c, 0);
 	c->flags = (down? TIMER_DOWN : 0);
 }
-

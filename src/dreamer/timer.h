@@ -18,7 +18,17 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef _MSC_VER
+/* Temporary hack for gettimeofday() */
+
+#include <Winsock2.h>
+#undef min
+#undef max
+
+int gettimeofday(struct timeval *tp, void *tzp);
+#else
 #include <sys/time.h>
+#endif
 
 #ifndef TIMER_H
 #define TIMER_H
