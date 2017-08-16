@@ -33,7 +33,7 @@
 #include "options.h"
 #include "theme.h"
 #include "system_config.h"
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 
 static int turn_counter_start=0;
 static texture_t menu_title_tex;

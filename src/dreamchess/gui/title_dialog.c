@@ -21,7 +21,7 @@
 #include "ui_sdlgl.h"
 #include "options.h"
 #include "system_config.h"
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 
 static void create_option_values(gg_option_t *widget, option_t *option)
 {

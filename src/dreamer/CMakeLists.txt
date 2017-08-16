@@ -1,39 +1,50 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 BISON_TARGET(PgnParserBook pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c COMPILE_FLAGS "-p pgn_")
 FLEX_TARGET(PgnScannerBook pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c COMPILE_FLAGS "-P pgn_")
 ADD_FLEX_BISON_DEPENDENCY(PgnScannerBook PgnParserBook)
 
-set(DREAMER_SRCS
+add_executable(dreamer
     board.c
+    board.h
     commands.c
+    commands.h
     dreamer.c
+    dreamer.h
     e_comm.c
+    e_comm.h
     eval.c
+    eval.h
     gen_chess_moves.c
     hashing.c
+    hashing.h
     history.c
+    history.h
     main.c
     makebook.c
+    makebook.h
+    move_data.h
     move.c
+    move.h
     repetition.c
+    repetition.h
     search.c
+    search.h
     timer.c
+    timer.h
     transposition.c
+    transposition.h
     ${BISON_PgnParserBook_OUTPUTS}
     ${FLEX_PgnScannerBook_OUTPUTS}
 )
 
 if(WIN32)
-    list(APPEND DREAMER_SRCS e_comm_win32.c)
+    target_sources(dreamer PRIVATE e_comm_win32.c)
 else()
-    list(APPEND DREAMER_SRCS e_comm_unix.c)
+    target_sources(dreamer PRIVATE e_comm_unix.c)
 endif()
 
-add_executable(dreamer ${DREAMER_SRCS})
-
-target_link_libraries(dreamer
-    common
-)
+target_link_libraries(dreamer common)
+# We need this for building the bison output file in the binary dir
+target_include_directories(dreamer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(WIN32)
     install(TARGETS dreamer DESTINATION .)

@@ -22,7 +22,7 @@
 #include <string.h>
 
 #include "dreamchess.h"
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 #include "options.h"
 #include "system_config.h"
 #include "audio.h"

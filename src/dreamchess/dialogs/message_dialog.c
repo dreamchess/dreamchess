@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {

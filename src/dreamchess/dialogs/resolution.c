@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 #include "system_config.h"
 
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;

@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 
 /** @brief Quits the current game.
  *

@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gamegui_dialogs.h"
+#include "dialogs.h"
 
 /** The in-game dialog. Provides a set of gameplay-related actions to the
  *  user.
