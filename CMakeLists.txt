@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.7)
 project(DreamChess)
 
+option(BUILD_DREAMCHESS "Build DreamChess GUI" ON)
+option(BUILD_DREAMER "Build Dreamer chess engine" ON)
+
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-option(ENGINE_ONLY "Only build the Dreamer chess engine")
+include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CheckIncludeFiles)
@@ -19,7 +22,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 add_subdirectory(src/common)
-add_subdirectory(src/dreamer)
-if(NOT ENGINE_ONLY)
+if(BUILD_DREAMCHESS)
     add_subdirectory(src/dreamchess)
+endif()
+if(BUILD_DREAMER)
+    add_subdirectory(src/dreamer)
 endif()

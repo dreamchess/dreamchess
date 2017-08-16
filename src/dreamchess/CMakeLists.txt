@@ -5,8 +5,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(MXML REQUIRED)
 
-include(GNUInstallDirs)
-
 BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c)
 FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c)
 ADD_FLEX_BISON_DEPENDENCY(PgnScanner PgnParser)
