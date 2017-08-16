@@ -19,12 +19,13 @@ try_compile(HAVE_C99_VARARGS_MACROS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_D
 try_compile(HAVE_GNUC_VARARGS_MACROS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/test_gnuc_varargs.c)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 add_subdirectory(src/common)
+
 if(BUILD_DREAMCHESS)
     add_subdirectory(src/dreamchess)
 endif()
+
 if(BUILD_DREAMER)
     add_subdirectory(src/dreamer)
 endif()

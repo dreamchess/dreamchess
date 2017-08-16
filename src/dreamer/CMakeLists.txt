@@ -43,8 +43,12 @@ else()
 endif()
 
 target_link_libraries(dreamer common)
-# We need this for building the bison output file in the binary dir
-target_include_directories(dreamer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_include_directories(dreamer
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+)
 
 if(WIN32)
     install(TARGETS dreamer DESTINATION .)
