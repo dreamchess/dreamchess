@@ -1,0 +1,15 @@
+language: c
+
+addons:
+  apt:
+    packages:
+    - gcc
+    - bison
+    - flex
+    - libmxml-dev
+    - libsdl1.2-dev
+    - libsdl-image1.2-dev
+    - libsdl-mixer1.2-dev
+    - libglew-dev
+
+script: mkdir build && cd build && cmake .. && make
