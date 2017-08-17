@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAKEBOOK_H
-#define MAKEBOOK_H
+#ifndef DREAMER_MAKEBOOK_H
+#define DREAMER_MAKEBOOK_H
 
 #define MAKEBOOK_KNIGHT 0
 #define MAKEBOOK_BISHOP 1

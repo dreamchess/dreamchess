@@ -44,4 +44,4 @@ void gg_image_init(gg_image_t *image, void *texture);
 
 gg_widget_t *gg_image_create(void *texture);
 
-#endif /* GAMEGUI_IMAGE_H */
+#endif

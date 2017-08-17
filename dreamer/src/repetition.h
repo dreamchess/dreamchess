@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REPETITION_H
-#define REPETITION_H
+#ifndef DREAMER_REPETITION_H
+#define DREAMER_REPETITION_H
 
 #include "board.h"
 
@@ -38,4 +38,4 @@ void repetition_add(board_t *board, move_t move);
 
 void repetition_remove(void);
 
-#endif /* REPETITION_H */
+#endif

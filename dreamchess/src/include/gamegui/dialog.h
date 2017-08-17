@@ -233,4 +233,4 @@ void gg_dialog_set_active(gg_dialog_t *dialog);
 
 int gg_dialog_input(gg_widget_t *widget, gg_event_t event);
 
-#endif /* GAMEGUI_DIALOG_H */
+#endif

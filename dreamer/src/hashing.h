@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HASHING_H
-#define HASHING_H
+#ifndef DREAMER_HASHING_H
+#define DREAMER_HASHING_H
 
 #include "board.h"
 
@@ -41,4 +41,4 @@ init_hash(void);
 unsigned long long
 hash_key(board_t *board);
 
-#endif /* HASHING_H */
+#endif

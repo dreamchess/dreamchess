@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MOVE_H
-#define MOVE_H
+#ifndef DREAMER_MOVE_H
+#define DREAMER_MOVE_H
 
 #include "board.h"
 #include "dreamer.h"
@@ -78,4 +78,4 @@ compute_legal_moves(board_t *board, int ply);
 move_t
 move_next(board_t *board, int ply);
 
-#endif /* MOVE_H */
+#endif

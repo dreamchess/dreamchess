@@ -49,4 +49,4 @@ int gg_frame_set_focus_pos(gg_widget_t *widget, int x, int y);
 
 int gg_frame_input(gg_widget_t *widget, gg_event_t event);
 
-#endif /* GAMEGUI_FRAME_H */
+#endif

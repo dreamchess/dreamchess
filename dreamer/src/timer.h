@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DREAMER_TIMER_H
+#define DREAMER_TIMER_H
+
 #ifdef _MSC_VER
 /* Temporary hack for gettimeofday() */
 
@@ -29,9 +32,6 @@ int gettimeofday(struct timeval *tp, void *tzp);
 #else
 #include <sys/time.h>
 #endif
-
-#ifndef TIMER_H
-#define TIMER_H
 
 #define TIMER_DOWN (1 << 0)
 #define TIMER_RUNNING (1 << 1)
@@ -49,4 +49,4 @@ void timer_start(timer *c);
 void timer_stop(timer *c);
 void timer_init(timer *c, int down);
 
-#endif /* TIMER_H */
+#endif

@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _SAN_H
-#define _SAN_H
+#ifndef COMMON_SAN_H
+#define COMMON_SAN_H
 
 #define SAN_PAWN 0
 #define SAN_KNIGHT 1
@@ -52,4 +52,4 @@ typedef struct san_move
 san_move_t *san_parse(char *s);
 char *san_string(san_move_t *move);
 
-#endif /* _SAN_H */
+#endif

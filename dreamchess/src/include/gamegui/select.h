@@ -44,4 +44,4 @@ int gg_select_prev(gg_select_t *select, int input, int enabled);
 
 int gg_select_next(gg_select_t *select, int input, int enabled);
 
-#endif /* GAMEGUI_SELECT_H */
+#endif

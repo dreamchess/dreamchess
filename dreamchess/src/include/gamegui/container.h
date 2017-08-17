@@ -58,4 +58,4 @@ int gg_container_get_size(gg_container_t *container);
 
 gg_widget_t *gg_container_get_child(gg_container_t *container, int index);
 
-#endif /* GAMEGUI_CONTAINER_H */
+#endif

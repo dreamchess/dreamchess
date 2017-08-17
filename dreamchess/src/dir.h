@@ -18,10 +18,10 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DIR_H
-#define DIR_H
+#ifndef DREAMCHESS_DIR_H
+#define DREAMCHESS_DIR_H
 
 int ch_datadir(void);
 int ch_userdir(void);
 
-#endif /* DIR_H */
+#endif

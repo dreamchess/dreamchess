@@ -22,8 +22,8 @@
  *  @brief Core gamegui system header file.
  */
 
-#ifndef GG_SYSTEM_H
-#define GG_SYSTEM_H
+#ifndef GAMEGUI_SYSTEM_H
+#define GAMEGUI_SYSTEM_H
 
 /** No children should get focus. */
 #define GG_FOCUS_NONE 0
@@ -160,4 +160,4 @@ gg_colour_t gg_colour (float r, float g, float b, float a);
 
 gg_rect_t gg_rect (int x, int y, int w, int h);
 
-#endif /* GG_SYSTEM_H */
+#endif

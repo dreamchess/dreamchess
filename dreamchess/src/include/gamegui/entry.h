@@ -60,5 +60,5 @@ int gg_entry_set_text(gg_entry_t *entry, char *text);
 
 void gg_entry_set_max_len(gg_entry_t *entry, int len);
 
-#endif /* GAMEGUI_ENTRY_H */
+#endif
 

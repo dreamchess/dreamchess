@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_H
-#define DREAMCHESS_H
+#ifndef DREAMCHESS_DREAMCHESS_H
+#define DREAMCHESS_DREAMCHESS_H
 
 #include "board.h"
 
@@ -61,4 +61,4 @@ void game_set_engine_error(int err);
 int set_resolution(int init);
 void toggle_fullscreen(void);
 
-#endif /* DREAMCHESS_H */
+#endif

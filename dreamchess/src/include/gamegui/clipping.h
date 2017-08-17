@@ -22,8 +22,8 @@
  *  @brief Gamegui clipping.
  */
 
-#ifndef GG_CLIPPING_H
-#define GG_CLIPPING_H
+#ifndef GAMEGUI_CLIPPING_H
+#define GAMEGUI_CLIPPING_H
 
 #include <gamegui/system.h>
 
@@ -51,4 +51,4 @@ void gg_clipping_undo(void);
  */
 gg_rect_t gg_clipping_rect(gg_rect_t *rect1, gg_rect_t *rect2);
 
-#endif /* GG_CLIPPING_H */
+#endif

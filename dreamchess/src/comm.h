@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMM_H
-#define COMM_H
+#ifndef DREAMCHESS_COMM_H
+#define DREAMCHESS_COMM_H
 
 int comm_init(char *engine);
 /* Initializes the I/O library for communication with an xboard engine.
@@ -53,4 +53,4 @@ char *comm_poll(void);
 **             NULL, otherwise.
 */
 
-#endif /* COMM_H */
+#endif

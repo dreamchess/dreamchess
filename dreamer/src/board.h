@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef DREAMER_BOARD_H
+#define DREAMER_BOARD_H
 
 /* Chess pieces. Also used for indexing the bitboard array. */
 #define PAWN 0
@@ -301,4 +301,4 @@ unmake_move(board_t *board, move_t move, bitboard_t old_en_passant,
 
 int setup_board_fen(board_t *board, char *fen);
 
-#endif /* BOARD_H */
+#endif

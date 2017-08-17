@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TRANSPOSITION_H
-#define TRANSPOSITION_H
+#ifndef DREAMER_TRANSPOSITION_H
+#define DREAMER_TRANSPOSITION_H
 
 #include "board.h"
 
@@ -46,4 +46,4 @@ void transposition_init(int megabytes);
 void transposition_exit(void);
 move_t lookup_best_move(board_t *board);
 
-#endif /* TRANSPOSITION_H */
+#endif

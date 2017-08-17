@@ -18,4 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DREAMCHESS_CREDITS_H
+#define DREAMCHESS_CREDITS_H
+
 char ***get_credits(void);
+
+#endif

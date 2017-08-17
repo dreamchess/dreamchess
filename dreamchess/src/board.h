@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef DREAMCHESS_BOARD_H
+#define DREAMCHESS_BOARD_H
 
 #include <stdio.h>
 
@@ -122,4 +122,4 @@ int move_is_valid(board_t *b, move_t *move);
 char *move_to_san(board_t *board, move_t *move);
 char* san_to_fan(board_t *board, char *move_s);
 
-#endif /* BOARD_H */
+#endif

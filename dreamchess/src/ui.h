@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _UI_H
-#define _UI_H
+#ifndef DREAMCHESS_UI_H
+#define DREAMCHESS_UI_H
 
 #include "board.h"
 #include "dreamchess.h"
@@ -64,4 +64,4 @@ typedef enum ui_event
 }
 ui_event_t;
 
-#endif /* _UI_H */
+#endif

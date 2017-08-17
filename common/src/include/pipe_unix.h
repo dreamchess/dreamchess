@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _PIPE_UNIX_H
-#define _PIPE_UNIX_H
+#ifndef COMMON_PIPE_UNIX_H
+#define COMMON_PIPE_UNIX_H
 
 void pipe_unix_init(int in, int out);
 /* Initializes the I/O library with file descriptors for input and output.
@@ -48,4 +48,4 @@ char *pipe_unix_poll(int *error);
 **             NULL, otherwise.
 */
 
-#endif /* _PIPE_UNIX_H */
+#endif

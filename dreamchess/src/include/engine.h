@@ -18,9 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _ENGINE_H
-#define _ENGINE_H
+#ifndef DREAMCHESS_ENGINE_H
+#define DREAMCHESS_ENGINE_H
 
 int engine(void *data);
 
-#endif /* _ENGINE_H */
+#endif

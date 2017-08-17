@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SYSTEM_CONFIG_H
-#define SYSTEM_CONFIG_H
+#ifndef DREAMCHESS_SYSTEM_CONFIG_H
+#define DREAMCHESS_SYSTEM_CONFIG_H
 
 #include "options.h"
 

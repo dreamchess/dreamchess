@@ -43,4 +43,4 @@ void gg_seperatorh_init(gg_seperatorh_t *sep);
 
 gg_widget_t *gg_seperatorh_create(void);
 
-#endif /* GAMEGUI_SEPERATORH_H */
+#endif

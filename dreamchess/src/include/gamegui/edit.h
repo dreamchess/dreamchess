@@ -65,5 +65,5 @@ int gg_edit_add_line(gg_edit_t *edit, char *text);
 
 void gg_edit_append(gg_edit_t *edit, char *text);
 
-#endif /* GAMEGUI_EDIT_H */
+#endif
 

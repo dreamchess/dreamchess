@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef AUDIO_PLAYLIST_H
+#define AUDIO_PLAYLIST_H
+
 #include "gamegui/queue.h"
 
 typedef struct playlist_entry {
@@ -34,3 +37,5 @@ typedef TAILQ_HEAD(playlist, playlist_entry) playlist_t;
 playlist_t *playlist_create(void);
 void playlist_destroy(playlist_t *playlist);
 void playlist_add_tracks(playlist_t *playlist, char *filename);
+
+#endif

@@ -240,4 +240,4 @@ int gg_widget_subscribe_signal_name(gg_widget_t *widget, gg_class_id id, char *n
 void gg_widget_subscribe_signal(gg_widget_t *widget, gg_signal_t signal, gg_widget_cb_t callback, void *extra_data);
 void gg_widget_emit_signal(gg_widget_t *widget, gg_widget_t *emitter, gg_signal_t signal, void *data);
 
-#endif /* GAMEGUI_WIDGET_H */
+#endif

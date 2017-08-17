@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMER_H
-#define DREAMER_H
+#ifndef DREAMER_DREAMER_H
+#define DREAMER_DREAMER_H
 
 #include "board.h"
 #include "timer.h"
@@ -98,4 +98,4 @@ int is_check(board_t *board, int ply);
 void send_move(state_t *state, move_t move);
 void set_move_time(void);
 
-#endif /* DREAMER_H */
+#endif

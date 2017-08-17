@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVAL_H
-#define EVAL_H
+#ifndef DREAMER_EVAL_H
+#define DREAMER_EVAL_H
 
 #include "board.h"
 
@@ -41,4 +41,4 @@ board_eval_quick(board_t *board, int side);
 int
 board_eval_complete(board_t *board, int side, int alpha, int beta);
 
-#endif /* EVAL_H */
+#endif

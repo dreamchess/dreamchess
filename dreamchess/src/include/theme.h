@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THEME_H
-#define THEME_H
+#ifndef DREAMCHESS_THEME_H
+#define DREAMCHESS_THEME_H
 
 #include "gamegui/queue.h"
 #include "options.h"

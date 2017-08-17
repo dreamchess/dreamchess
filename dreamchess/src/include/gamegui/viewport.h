@@ -62,4 +62,4 @@ int gg_viewport_input(gg_widget_t *widget, gg_event_t event);
 
 gg_widget_t *gg_viewport_create(gg_widget_t *widget, int width, int height);
 
-#endif /* GAMEGUI_VIEWPORT_H */
+#endif

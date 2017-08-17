@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __SDLGL_3D_H
-#define __SDLGL_3D_H
+#ifndef GUI_UI_SDLGL_3D_H
+#define GUI_UI_SDLGL_3D_H
 
 #define SELECTOR_UP 0
 #define SELECTOR_DOWN 1

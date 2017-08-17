@@ -45,4 +45,4 @@ void gg_scrollbarv_init(gg_scrollbarv_t * scrollbarv, int height);
 
 gg_widget_t *gg_scrollbarv_create(int height);
 
-#endif /* GAMEGUI_SCROLLBARV_H */
+#endif

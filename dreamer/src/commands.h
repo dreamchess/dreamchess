@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#ifndef DREAMER_COMMANDS_H
+#define DREAMER_COMMANDS_H
 
 #include "dreamer.h"
 
@@ -32,4 +32,4 @@ char *coord_move_str(move_t move);
 
 int parse_move(board_t *board, int ply, char *command, move_t *move);
 
-#endif /* COMMANDS_H */
+#endif

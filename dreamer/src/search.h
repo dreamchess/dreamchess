@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef DREAMER_SEARCH_H
+#define DREAMER_SEARCH_H
 
 #include "dreamer.h"
 
@@ -41,4 +41,4 @@ pv_clear(void);
 move_t
 ponder(state_t *state);
 
-#endif /* SEARCH_H */
+#endif

@@ -53,4 +53,4 @@ void gg_hbox_init(gg_hbox_t *hbox, int spacing);
 
 gg_widget_t *gg_hbox_create(int spacing);
 
-#endif /* GAMEGUI_HBOX_H */
+#endif

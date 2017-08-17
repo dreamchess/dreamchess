@@ -32,4 +32,4 @@ int gg_signal_register(gg_class_id class, char *name);
 void gg_signal_init(void);
 void gg_signal_exit(void);
 
-#endif /* GAMEGUI_SIGNAL_H */
+#endif

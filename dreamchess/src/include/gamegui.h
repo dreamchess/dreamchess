@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEGUI_H
-#define GAMEGUI_H
+#ifndef GAMEGUI_GAMEGUI_H
+#define GAMEGUI_GAMEGUI_H
 
 #include <gamegui/system.h>
 #include <gamegui/action.h>
@@ -44,4 +44,4 @@
 #include <gamegui/edit.h>
 #include <gamegui/scrollbarv.h>
 
-#endif /* GAMEGUI_H */
+#endif

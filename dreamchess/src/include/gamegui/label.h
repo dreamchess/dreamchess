@@ -53,4 +53,4 @@ void gg_label_init(gg_label_t *label, char *text);
 
 gg_widget_t *gg_label_create(char *string);
 
-#endif /* GAMEGUI_LABEL_H */
+#endif

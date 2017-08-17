@@ -593,4 +593,4 @@ struct {								\
 	QMD_TRACE_ELEM(&(elm)->field);					\
 } while (0)
 
-#endif /* !GAMEGUI_QUEUE_H */
+#endif

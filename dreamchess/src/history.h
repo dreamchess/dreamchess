@@ -22,8 +22,8 @@
  *  @brief Game history header.
  */
 
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef DREAMCHESS_HISTORY_H
+#define DREAMCHESS_HISTORY_H
 
 #include "board.h"
 
@@ -120,4 +120,4 @@ int history_view_prev(history_t *hist);
  */
 int history_save_pgn(history_t *hist, char *filename);
 
-#endif /* HISTORY_H */
+#endif

@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef AUDIO_AUDIO_H
+#define AUDIO_AUDIO_H
+
 #include "gamegui/queue.h"
 
 enum {
@@ -49,3 +52,5 @@ void audio_play_sound(int id);
 void audio_set_sound_volume(int vol);
 
 void audio_set_music_volume(int vol);
+
+#endif

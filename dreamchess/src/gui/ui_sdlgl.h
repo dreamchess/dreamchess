@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __UI_SDLGL_H
-#define __UI_SDLGL_H
+#ifndef GUI_UI_SDLGL_H
+#define GUI_UI_SDLGL_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -294,4 +294,4 @@ gg_colour_t *get_col( int colour );
 
 #define SAVEGAME_SLOTS 15
 
-#endif /* __UI_SDLGL_H */
+#endif

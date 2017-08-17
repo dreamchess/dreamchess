@@ -55,4 +55,4 @@ void gg_option_set_selected(gg_option_t *option, int index);
 
 gg_class_id gg_option_get_class_id(void);
 
-#endif /* GAMEGUI_OPTION_H */
+#endif

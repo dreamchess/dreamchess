@@ -53,4 +53,4 @@ gg_widget_t *gg_action_create(gg_widget_t *widget);
 
 gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign);
 
-#endif /* GAMEGUI_ACTION_H */
+#endif

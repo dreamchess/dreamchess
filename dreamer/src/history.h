@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef DREAMER_HISTORY_H
+#define DREAMER_HISTORY_H
 
 #include "board.h"
 
@@ -38,4 +38,4 @@ forget_history(void);
 void
 best_first(int ply, move_t move);
 
-#endif /* HISTORY_H */
+#endif

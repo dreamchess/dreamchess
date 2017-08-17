@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DIALOGS_DIALOGS_H
+#define DIALOGS_DIALOGS_H
+
 #include "dreamchess.h"
 #include "gamegui.h"
 #include "debug.h"
@@ -49,3 +52,5 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
 
 /* FIXME */
 void set_quit_to_menu( int menu );
+
+#endif

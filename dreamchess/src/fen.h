@@ -18,8 +18,13 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DREAMCHESS_FEN_H
+#define DREAMCHESS_FEN_H
+
 #include "board.h"
 
 char *fen_encode(board_t *board);
 
 board_t *fen_decode(char *fen);
+
+#endif

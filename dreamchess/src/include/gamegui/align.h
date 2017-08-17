@@ -43,4 +43,4 @@ void gg_align_init(gg_align_t *align);
 
 void gg_align_set_alignment(gg_align_t *align, float xalign, float yalign);
 
-#endif /* GAMEGUI_ALIGN_H */
+#endif

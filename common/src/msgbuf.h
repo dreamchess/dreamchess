@@ -18,6 +18,10 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef COMMON_MSGBUF_H
+#define COMMON_MSGBUF_H
+
 char *msgbuf_process(char *buf);
 void msgbuf_exit(void);
 
+#endif

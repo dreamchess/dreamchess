@@ -18,4 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DREAMCHESS_PGN_SCANNER_H
+#define DREAMCHESS_PGN_SCANNER_H
+
 int pgn_parse_file(char *filename);
+
+#endif

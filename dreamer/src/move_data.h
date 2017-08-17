@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MOVE_DATA_H
-#define MOVE_DATA_H
+#ifndef DREAMER_MOVE_DATA_H
+#define DREAMER_MOVE_DATA_H
 
 int **all_knight_moves(void);
 int **all_king_moves(void);
@@ -29,4 +29,4 @@ int ***all_queen_moves(void);
 int **all_white_pawn_capture_moves(void);
 int **all_black_pawn_capture_moves(void);
 
-#endif /* MOVE_DATA_H */
+#endif

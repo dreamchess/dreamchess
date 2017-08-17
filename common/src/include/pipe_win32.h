@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _PIPE_WIN32_H
-#define _PIPE_WIN32_H
+#ifndef COMMON_PIPE_WIN32_H
+#define COMMON_PIPE_WIN32_H
 
 void pipe_win32_init(HANDLE in, HANDLE out, int console);
 /* Initializes the I/O library with handles for input and output.
@@ -49,4 +49,4 @@ char *pipe_win32_poll(int *error);
 **             NULL, otherwise.
 */
 
-#endif /* _PIPE_WIN32_H */
+#endif

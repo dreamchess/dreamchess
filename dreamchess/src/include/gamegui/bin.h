@@ -47,4 +47,4 @@ int gg_bin_input(gg_widget_t *widget, gg_event_t event);
 
 void gg_bin_init(gg_bin_t *bin, gg_widget_t *child);
 
-#endif /* GAMEGUI_BIN_H */
+#endif

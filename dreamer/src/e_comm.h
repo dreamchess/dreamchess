@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef E_COMM_H
-#define E_COMM_H
+#ifndef DREAMER_E_COMM_H
+#define DREAMER_E_COMM_H
 
 void e_comm_init(void);
 /* Initializes the I/O library for communication with an xboard ui.
@@ -53,4 +53,4 @@ char *e_comm_poll(void);
 **             NULL, otherwise.
 */
 
-#endif /* E_COMM_H */
+#endif

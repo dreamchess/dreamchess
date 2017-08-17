@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DREAMCHESS_DEBUG_H
+#define DREAMCHESS_DEBUG_H
+
 #include "config.h"
 
 #ifdef HAVE_C99_VARARGS_MACROS
@@ -47,4 +50,6 @@ void dbg_log(char *file, int line, const char *fmt, ...);
 void dbg_error(const char *fmt, ...);
 void dbg_warn(const char *fmt, ...);
 void dbg_log(const char *fmt, ...);
+#endif
+
 #endif
