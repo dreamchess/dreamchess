@@ -1,5 +1,7 @@
 # DreamChess
 
+[![Build status](https://travis-ci.org/dreamchess/dreamchess.svg?branch=master)](https://travis-ci.org/dreamchess/dreamchess)
+
 ## About
 
 DreamChess is an open source chess game. It comes with its own
