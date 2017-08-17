@@ -7,7 +7,9 @@ option(BUILD_DREAMER "Build Dreamer chess engine" ON)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-include(GNUInstallDirs)
+if(UNIX)
+    include(GNUInstallDirs)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CheckIncludeFiles)
@@ -20,12 +22,12 @@ try_compile(HAVE_GNUC_VARARGS_MACROS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-add_subdirectory(src/common)
+add_subdirectory(common/src)
 
 if(BUILD_DREAMCHESS)
-    add_subdirectory(src/dreamchess)
+    add_subdirectory(dreamchess/src)
 endif()
 
 if(BUILD_DREAMER)
-    add_subdirectory(src/dreamer)
+    add_subdirectory(dreamer/src)
 endif()

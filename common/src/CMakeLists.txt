@@ -11,13 +11,11 @@ add_library(common STATIC
     msgbuf.h
 )
 
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/include)
-
 target_sources(common
     PUBLIC
-    ${CMAKE_SOURCE_DIR}/src/include/san.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/san.h
     INTERFACE
-    ${INCLUDE_DIR}/git_rev.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/git_rev.h
 )
 
 if(WIN32)
@@ -25,15 +23,15 @@ if(WIN32)
         PRIVATE
         pipe_win32.c
         PUBLIC
-        ${INCLUDE_DIR}/pipe_win32.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pipe_win32.h
     )
 else()
     target_sources(common
         PRIVATE
         pipe_unix.c
         PUBLIC
-        ${INCLUDE_DIR}/pipe_unix.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pipe_unix.h
     )
 endif()
 
-target_include_directories(common PUBLIC ${INCLUDE_DIR})
+target_include_directories(common PUBLIC include)
