@@ -1,10 +1,7 @@
 *** 2017-??-?? - DreamChess v0.3.0 ***
 
-2013 marked the 10-year anniversary of DreamChess. While we haven't been able
-to spend a lot of time on the project in recent years, we have decided to
-do a maintenance release to fix some of the issues that have been reported.
-
 Most important changes:
+- CMake build system
 - Fixed issue with chess piece selection on some AMD GPUs
 - Fixed issue with rotating chess board on some Linux machines
 - Fixed issue with changing resolution on some operating systems
