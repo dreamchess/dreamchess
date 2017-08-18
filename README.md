@@ -1,7 +1,7 @@
 # DreamChess
 
 [![Build status](https://travis-ci.org/dreamchess/dreamchess.svg?branch=master)](https://travis-ci.org/dreamchess/dreamchess)
-[![Build status](https://ci.appveyor.com/api/projects/status/9c30h9u3p9bywpf0?svg=true)](https://ci.appveyor.com/project/waltervn/dreamchess)
+[![Build status](https://ci.appveyor.com/api/projects/status/9c30h9u3p9bywpf0/branch/master?svg=true)](https://ci.appveyor.com/project/waltervn/dreamchess/branch/master)
 
 ## About
 
