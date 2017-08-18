@@ -1,64 +1,108 @@
-os: Visual Studio 2017
+image: Visual Studio 2017
+environment:
+  VC_PREFIX: C:\vc-libs
+  MSYS2_PREFIX: C:\msys2-libs
+  matrix:
+    - COMPILER: msvc
+    - COMPILER: msys2
+      MSYS2_BASH: C:\msys64\usr\bin\bash -lc
 cache:
-  - c:\vc-libs
-before_build:
-  - set VC_PREFIX=C:\vc-libs
-  - if exist %VC_PREFIX% set NEEDDEPENDS=rem
+  - '%VC_PREFIX%'
+  - '%MSYS2_PREFIX%'
+install:
   - |-
-    %NEEDDEPENDS% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
-    %NEEDDEPENDS% mkdir %VC_PREFIX%\include\SDL
-    %NEEDDEPENDS% mkdir %VC_PREFIX%\include\GL
-    %NEEDDEPENDS% mkdir %VC_PREFIX%\lib
-    %NEEDDEPENDS% mkdir %VC_PREFIX%\bin
-    %NEEDDEPENDS% cd %TEMP%
+    if %COMPILER% NEQ msvc set VC_BUILD=rem
+    if %COMPILER% NEQ msvc set VC_DEPENDS=rem
+    if exist %VC_PREFIX% set VC_DEPENDS=rem
+  - |-
+    if %COMPILER% NEQ msys2 set MSYS2_BUILD=rem
+    if %COMPILER% NEQ msys2 set MSYS2_DEPENDS=rem
+    if exist %MSYS2_PREFIX% set MSYS2_DEPENDS=rem
+  - |-
+    %VC_DEPENDS% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
+    %VC_DEPENDS% mkdir %VC_PREFIX%\include\SDL
+    %VC_DEPENDS% mkdir %VC_PREFIX%\include\GL
+    %VC_DEPENDS% mkdir %VC_PREFIX%\lib
+    %VC_DEPENDS% mkdir %VC_PREFIX%\bin
+    %VC_DEPENDS% cd %TEMP%
+  - |-
+    %MSYS2_DEPENDS% mkdir %MSYS2_PREFIX%\include
+    %MSYS2_DEPENDS% mkdir %MSYS2_PREFIX%\lib
   # flex / bison
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v.2.4.9/win_flex_bison-2.4.9.zip
-    %NEEDDEPENDS% 7z x win_flex_bison-2.4.9.zip -o%VC_PREFIX%\win_flex_bison > nul
+    %VC_DEPENDS% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v.2.4.9/win_flex_bison-2.4.9.zip
+    %VC_DEPENDS% 7z x win_flex_bison-2.4.9.zip -o%VC_PREFIX%\win_flex_bison > nul
   # SDL
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL-1.2.15.zip
-    %NEEDDEPENDS% 7z x SDL-1.2.15.zip > nul
-    %NEEDDEPENDS% %DEVENV% /Upgrade SDL-1.2.15\VisualC\SDL.sln
-    %NEEDDEPENDS% msbuild SDL-1.2.15\VisualC\SDL.sln /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
-    %NEEDDEPENDS% copy SDL-1.2.15\include\* %VC_PREFIX%\include\SDL > nul
-    %NEEDDEPENDS% copy SDL-1.2.15\VisualC\SDLmain\Release\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy SDL-1.2.15\VisualC\Release\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy SDL-1.2.15\VisualC\SDL\Release\*.dll %VC_PREFIX%\bin > nul
+    %VC_DEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL-1.2.15.zip
+    %VC_DEPENDS% 7z x SDL-1.2.15.zip > nul
+    %VC_DEPENDS% %DEVENV% /Upgrade SDL-1.2.15\VisualC\SDL.sln
+    %VC_DEPENDS% msbuild SDL-1.2.15\VisualC\SDL.sln /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
+    %VC_DEPENDS% copy SDL-1.2.15\include\* %VC_PREFIX%\include\SDL > nul
+    %VC_DEPENDS% copy SDL-1.2.15\VisualC\SDLmain\Release\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy SDL-1.2.15\VisualC\Release\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy SDL-1.2.15\VisualC\SDL\Release\*.dll %VC_PREFIX%\bin > nul
   # SDL_image
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL_image-devel-1.2.12-VC.zip
-    %NEEDDEPENDS% 7z x SDL_image-devel-1.2.12-VC.zip > nul
-    %NEEDDEPENDS% copy SDL_image-1.2.12\include\* %VC_PREFIX%\include\SDL > nul
-    %NEEDDEPENDS% copy SDL_image-1.2.12\lib\x86\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy SDL_image-1.2.12\lib\x86\*.dll %VC_PREFIX%\bin > nul
+    %VC_DEPENDS% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL_image-devel-1.2.12-VC.zip
+    %VC_DEPENDS% 7z x SDL_image-devel-1.2.12-VC.zip > nul
+    %VC_DEPENDS% copy SDL_image-1.2.12\include\* %VC_PREFIX%\include\SDL > nul
+    %VC_DEPENDS% copy SDL_image-1.2.12\lib\x86\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy SDL_image-1.2.12\lib\x86\*.dll %VC_PREFIX%\bin > nul
   # SDL_mixer
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-devel-1.2.12-VC.zip
-    %NEEDDEPENDS% 7z x SDL_mixer-devel-1.2.12-VC.zip > nul
-    %NEEDDEPENDS% copy SDL_mixer-1.2.12\include\* %VC_PREFIX%\include\SDL > nul
-    %NEEDDEPENDS% copy SDL_mixer-1.2.12\lib\x86\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy SDL_mixer-1.2.12\lib\x86\*.dll %VC_PREFIX%\bin > nul
+    %VC_DEPENDS% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-devel-1.2.12-VC.zip
+    %VC_DEPENDS% 7z x SDL_mixer-devel-1.2.12-VC.zip > nul
+    %VC_DEPENDS% copy SDL_mixer-1.2.12\include\* %VC_PREFIX%\include\SDL > nul
+    %VC_DEPENDS% copy SDL_mixer-1.2.12\lib\x86\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy SDL_mixer-1.2.12\lib\x86\*.dll %VC_PREFIX%\bin > nul
   # GLEW
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
-    %NEEDDEPENDS% 7z x glew-2.0.0-win32.zip > nul
-    %NEEDDEPENDS% copy glew-2.0.0\include\GL\* %VC_PREFIX%\include\GL > nul
-    %NEEDDEPENDS% copy glew-2.0.0\lib\Release\Win32\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy glew-2.0.0\bin\Release\Win32\*.dll %VC_PREFIX%\bin > nul
+    %VC_DEPENDS% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
+    %VC_DEPENDS% 7z x glew-2.0.0-win32.zip > nul
+    %VC_DEPENDS% copy glew-2.0.0\include\GL\* %VC_PREFIX%\include\GL > nul
+    %VC_DEPENDS% copy glew-2.0.0\lib\Release\Win32\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy glew-2.0.0\bin\Release\Win32\*.dll %VC_PREFIX%\bin > nul
   # Mini-XML
   - |-
-    %NEEDDEPENDS% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
-    %NEEDDEPENDS% 7z x mxml-2.10.tar.gz > nul
-    %NEEDDEPENDS% 7z x mxml-2.10.tar > nul
-    %NEEDDEPENDS% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
-    %NEEDDEPENDS% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
-    %NEEDDEPENDS% copy mxml-2.10\mxml.h %VC_PREFIX%\include > nul
-    %NEEDDEPENDS% copy mxml-2.10\vcnet\*.lib %VC_PREFIX%\lib > nul
-    %NEEDDEPENDS% copy mxml-2.10\vcnet\*.dll %VC_PREFIX%\bin > nul
-build_script:
+    %VC_DEPENDS% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
+    %VC_DEPENDS% 7z x mxml-2.10.tar.gz > nul
+    %VC_DEPENDS% 7z x mxml-2.10.tar > nul
+    %VC_DEPENDS% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
+    %VC_DEPENDS% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
+    %VC_DEPENDS% copy mxml-2.10\mxml.h %VC_PREFIX%\include > nul
+    %VC_DEPENDS% copy mxml-2.10\vcnet\*.lib %VC_PREFIX%\lib > nul
+    %VC_DEPENDS% copy mxml-2.10\vcnet\*.dll %VC_PREFIX%\bin > nul
+  # MSYS2
+  - |-
+    %MSYS2_BUILD% %MSYS2_BASH% "pacman -Syu --noconfirm pacman pacman-mirrors"
+    %MSYS2_BUILD% %MSYS2_BASH% "pacman -S --needed --noconfirm flex bison"
+    %MSYS2_BUILD% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-SDL mingw-w64-x86_64-SDL_image mingw-w64-x86_64-SDL_mixer mingw-w64-x86_64-glew"
+  # Temporary fix for missing cmake dep
+  - |-
+    %MSYS2_BUILD% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-x86_64-libidn2"
+  # Build mxml
+  - |-
+    %MSYS2_DEPENDS% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
+    %MSYS2_DEPENDS% 7z x mxml-2.10.tar.gz > nul
+    %MSYS2_DEPENDS% 7z x mxml-2.10.tar > nul
+    %MSYS2_DEPENDS% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%'/mxml-2.10 && ./configure && make libmxml.a"
+    %MSYS2_DEPENDS% copy mxml-2.10\mxml.h %MSYS2_PREFIX%\include > nul
+    %MSYS2_DEPENDS% copy mxml-2.10\libmxml.a %MSYS2_PREFIX%\lib > nul
+before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
-    cmake -DCMAKE_PREFIX_PATH=%VC_PREFIX% -DCMAKE_PROGRAM_PATH=%VC_PREFIX%\win_flex_bison ..
-    cmake --build . --config Release
+  # Visual Studio
+  - |-
+    %VC_BUILD% cmake -DCMAKE_PREFIX_PATH=%VC_PREFIX% -DCMAKE_PROGRAM_PATH=%VC_PREFIX%\win_flex_bison ..
+  # MSYS2
+  - |-
+    %MSYS2_BUILD% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%' && cmake -DCMAKE_PREFIX_PATH='%MSYS2_PREFIX%' -G'MSYS Makefiles' .."
+build_script:
+  # Visual Studio
+  - |-
+    %VC_BUILD% cmake --build . --config Release
+  # MSYS2
+  - |-
+    %MSYS2_BUILD% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%' && make"
