@@ -64,26 +64,20 @@ install:
     %MSVC% %DEP% copy glew-2.0.0\include\GL\* %PREFIX%\include\GL > nul
     %MSVC% %DEP% copy glew-2.0.0\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
     %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
-  # Mini-XML
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
-    %MSVC% %DEP% 7z x mxml-2.10.tar.gz > nul
-    %MSVC% %DEP% 7z x mxml-2.10.tar > nul
-    %MSVC% %DEP% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
-    %MSVC% %DEP% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
-    %MSVC% %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
-    %MSVC% %DEP% copy mxml-2.10\vcnet\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy mxml-2.10\vcnet\*.dll %PREFIX%\bin > nul
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm flex mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL mingw-w64-%MSYS2_PLATFORM%-SDL_image mingw-w64-%MSYS2_PLATFORM%-SDL_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
+    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL mingw-w64-%MSYS2_PLATFORM%-SDL_image mingw-w64-%MSYS2_PLATFORM%-SDL_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
   # Mini-XML
   - |-
-    %MSYS2% %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
-    %MSYS2% %DEP% 7z x mxml-2.10.tar.gz > nul
-    %MSYS2% %DEP% 7z x mxml-2.10.tar > nul
+    %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
+    %DEP% 7z x mxml-2.10.tar.gz > nul
+    %DEP% 7z x mxml-2.10.tar > nul
+    %MSVC% %DEP% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
+    %MSVC% %DEP% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
     %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%'/mxml-2.10 && ./configure && make libmxml.a"
-    %MSYS2% %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
+    %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
+    %MSVC% %DEP% copy mxml-2.10\vcnet\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy mxml-2.10\vcnet\*.dll %PREFIX%\bin > nul
     %MSYS2% %DEP% copy mxml-2.10\libmxml.a %PREFIX%\lib > nul
 before_build:
   - |-
