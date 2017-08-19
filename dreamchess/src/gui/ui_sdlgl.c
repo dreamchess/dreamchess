@@ -57,7 +57,7 @@ static int screen_ms=0;
 static int reflections=1;
 static int mode_set_failed=0;
 static int engine_error_shown;
-SDL_Window *sdlWindow;
+SDL_Window *sdl_window;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -386,80 +386,74 @@ static void load_menu_tex(void)
     load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 }
 
-static int set_video( int width, int height, int fullscreen, int ms )
-{
-    int video_flags;
-    //SDL_Surface *surface;
+static void update_window_size() {
+    SDL_GetWindowSize(sdl_window, &screen_width, &screen_height);    
+}
 
-    video_flags = SDL_WINDOW_OPENGL;          /* Enable OpenGL in SDL */
+static int create_window(int width, int height, int fullscreen, int ms)
+{
+    int video_flags = SDL_WINDOW_OPENGL;
+
     DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling",
             width, height, fullscreen ? "on" : "off", ms);
-    if ( fullscreen )
-        video_flags |= SDL_WINDOW_FULLSCREEN;
 
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-    SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
+    if (fullscreen)
+        video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-    if (ms) {
-        SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
-    } else {
-        SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 0 );
-    }
-    SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, ms );
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 
-	sdlWindow = SDL_CreateWindow("Dreamchess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-		width, height, video_flags);
-	SDL_GL_CreateContext(sdlWindow);
+    if (ms)
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    else
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
 
-	if (!sdlWindow)
-	{
-		DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
-			width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
-		exit(1);
-	}
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, ms);
 
-    /*int bpp = SDL_VideoModeOK(width, height, SCREEN_BPP, video_flags);
+    sdl_window = SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+        width, height, video_flags);
 
-    if (!bpp)
-    {
-        DBG_ERROR("video mode not available: %ix%i; %i bpp; fullscreen %s; %ix multisampling",
-            width, height, SCREEN_BPP, fullscreen ? "on" : "off", ms);
+    if (!sdl_window) {
+        DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
+                  width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
         return 1;
     }
 
-    surface = SDL_SetVideoMode( width, height, bpp, video_flags );
-    if ( !surface )
-    {
-        DBG_ERROR("failed to set video mode: %ix%i; %i bpp; fullscreen %s; %ix multisampling: %s",
-            width, height, bpp, fullscreen ? "on" : "off", ms, SDL_GetError());
+	if (!SDL_GL_CreateContext(sdl_window)) {
+        DBG_ERROR("failed to create GL context: %s", SDL_GetError());
         exit(1);
-    }*/
+    }
 
+    update_window_size();
+
+    return 0;
+}
+
+static int set_window_size(int width, int height) {
+    SDL_SetWindowSize(sdl_window, width, height);
+    update_window_size();
+    return 0;
+}
+
+static int set_fullscreen(int fullscreen) {
+    if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) > 0) {
+        DBG_ERROR("failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
+        return 1;
+    }
+    update_window_size();
     return 0;
 }
 
 static int resize(int width, int height, int fullscreen, int ms)
 {
-    /* We assume we lose the GL context here */
-    free_menu_tex();
-    deinit_fbo();
+    set_fullscreen(fullscreen);
 
-    if (!set_video(width, height, fullscreen, ms))
-    {
-        init_gl();
-        init_fbo();
-        load_menu_tex();
-        resize_window(width, height);
-        screen_width=width;
-        screen_height=height;
-        screen_fs=fullscreen;
-        screen_ms=ms;
-        return 0;
-    }
+    if (screen_width != width || screen_height != height)
+        set_window_size(width, height);
 
-    init_fbo();
-    load_menu_tex();
-    return 1;
+    resize_window(screen_width, screen_height);
+
+    return 0;
 }
 
 /** Implements ui_driver::init. */
@@ -483,7 +477,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     ch_datadir();
 
-    if (set_video( screen_width, screen_height, fullscreen, ms ))
+    if (create_window(screen_width, screen_height, fullscreen, ms))
     {
         mode_set_failed = 1;
         return 1;
@@ -496,7 +490,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 		if (ico) {
 			SDL_SysWMinfo wminfo;
 			SDL_VERSION(&wminfo.version);
-			if (SDL_GetWindowWMInfo(sdlWindow, &wminfo)) {
+			if (SDL_GetWindowWMInfo(sdl_window, &wminfo)) {
 				SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
 			}
 		}
