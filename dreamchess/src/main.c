@@ -18,7 +18,6 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sdl.h"
 #include <stdio.h>
 
 #include "dreamchess.h"
