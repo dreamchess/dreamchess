@@ -8,7 +8,7 @@ platform:
   - x86
   - x64
 cache:
-  - '%PREFIX%' -> .appveyor.yml
+  - '%PREFIX% -> .appveyor.yml'
 install:
   - |-
     if %COMPILER% NEQ msvc set MSVC=rem
