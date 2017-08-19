@@ -27,7 +27,7 @@
 #include <unistd.h>
 #endif
 
-#include <SDL_syswm.h>
+#include <SDL2/SDL_syswm.h>
 #include <GL/glew.h>
 #include "audio.h"
 #include "options.h"
@@ -57,6 +57,7 @@ static int screen_ms=0;
 static int reflections=1;
 static int mode_set_failed=0;
 static int engine_error_shown;
+SDL_Window *sdlWindow;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -257,7 +258,7 @@ static config_t *do_menu(int *pgn)
         Uint8 *keystate;
         gg_event_t event;
 
-        keystate = SDL_GetKeyState(NULL);
+        keystate = SDL_GetKeyboardState(NULL);
 
         egg_req1=FALSE;
 
@@ -289,7 +290,7 @@ static config_t *do_menu(int *pgn)
 
         case MENU_STATE_IN_MENU:
 
-            if ( keystate[SDLK_UP] )
+            if ( keystate[SDL_SCANCODE_UP] )
                 egg_req1=TRUE;
 
             while (poll_event(&event))
@@ -388,13 +389,13 @@ static void load_menu_tex(void)
 static int set_video( int width, int height, int fullscreen, int ms )
 {
     int video_flags;
-    SDL_Surface *surface;
+    //SDL_Surface *surface;
 
-    video_flags = SDL_OPENGL;          /* Enable OpenGL in SDL */
+    video_flags = SDL_WINDOW_OPENGL;          /* Enable OpenGL in SDL */
     DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling",
             width, height, fullscreen ? "on" : "off", ms);
     if ( fullscreen )
-        video_flags |= SDL_FULLSCREEN;
+        video_flags |= SDL_WINDOW_FULLSCREEN;
 
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 1 );
@@ -406,7 +407,18 @@ static int set_video( int width, int height, int fullscreen, int ms )
     }
     SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, ms );
 
-    int bpp = SDL_VideoModeOK(width, height, SCREEN_BPP, video_flags);
+	sdlWindow = SDL_CreateWindow("Dreamchess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+		width, height, video_flags);
+	SDL_GL_CreateContext(sdlWindow);
+
+	if (!sdlWindow)
+	{
+		DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
+			width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
+		exit(1);
+	}
+
+    /*int bpp = SDL_VideoModeOK(width, height, SCREEN_BPP, video_flags);
 
     if (!bpp)
     {
@@ -421,7 +433,7 @@ static int set_video( int width, int height, int fullscreen, int ms )
         DBG_ERROR("failed to set video mode: %ix%i; %i bpp; fullscreen %s; %ix multisampling: %s",
             width, height, bpp, fullscreen ? "on" : "off", ms, SDL_GetError());
         exit(1);
-    }
+    }*/
 
     return 0;
 }
@@ -466,29 +478,30 @@ static int init_gui( int width, int height, int fullscreen, int ms)
         DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
         exit(1);
     }
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-    SDL_EnableUNICODE(1);
+    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    //SDL_EnableUNICODE(1);
 
     ch_datadir();
-
-#ifdef _WIN32
-    {
-        HMODULE handle = GetModuleHandle(NULL);
-        HICON ico = LoadIcon(handle, "icon");
-        if (ico) {
-            SDL_SysWMinfo wminfo;
-            SDL_VERSION(&wminfo.version);
-            if (SDL_GetWMInfo(&wminfo))
-                SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
-        }
-    }
-#endif
 
     if (set_video( screen_width, screen_height, fullscreen, ms ))
     {
         mode_set_failed = 1;
         return 1;
     }
+
+#ifdef _WIN32
+	{
+		HMODULE handle = GetModuleHandle(NULL);
+		HICON ico = LoadIcon(handle, "icon");
+		if (ico) {
+			SDL_SysWMinfo wminfo;
+			SDL_VERSION(&wminfo.version);
+			if (SDL_GetWindowWMInfo(sdlWindow, &wminfo)) {
+				SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
+			}
+		}
+	}
+#endif
 
     init_gl();
     err = glewInit();
@@ -511,7 +524,7 @@ static int init_gui( int width, int height, int fullscreen, int ms)
 
     SDL_ShowCursor(SDL_DISABLE);
 
-    SDL_WM_SetCaption( "DreamChess", NULL );
+    //SDL_WM_SetCaption( "DreamChess", NULL );
 
     gg_system_init(get_gg_driver_sdlgl());
     get_ingame_style()->fade_col = gg_colour(0.0f, 0.0f, 0.0f, 0.5f);

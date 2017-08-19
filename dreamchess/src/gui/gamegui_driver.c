@@ -33,13 +33,13 @@ gg_event_t convert_event(SDL_Event *event)
         switch (event->key.keysym.sym)
         {
         case SDLK_RIGHT:
-            gg_event.key = GG_KEY_RIGHT;
+			gg_event.key = GG_KEY_RIGHT;
             break;
         case SDLK_LEFT:
             gg_event.key = GG_KEY_LEFT;
             break;
         case SDLK_UP:
-            gg_event.key = GG_KEY_UP;
+			gg_event.key = GG_KEY_UP;
             break;
         case SDLK_DOWN:
             gg_event.key = GG_KEY_DOWN;
@@ -60,9 +60,9 @@ gg_event_t convert_event(SDL_Event *event)
             gg_event.key = GG_KEY_DELETE;
             break;
         default:
-            if (event->key.keysym.unicode <= 0xff)
+            if (event->key.keysym.scancode <= 0xff)
             {
-                gg_event.key = event->key.keysym.unicode;
+                gg_event.key = event->key.keysym.sym;
             }
             else
             {
@@ -90,9 +90,6 @@ gg_event_t convert_event(SDL_Event *event)
         gg_event.mouse.x = ((float)event->motion.x/(float)get_screen_width())*640;
         gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)event->motion.y/(float)get_screen_height())*480;
     }
-
-    /*    if ((event->type == SDL_KEYDOWN) && (event->key.keysym.unicode <= 0xff))
-            gg_event.key = event->key.keysym.unicode;*/
 
     return gg_event;
 }

@@ -27,6 +27,8 @@ static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
 
+extern SDL_Window *sdlWindow;
+
 float get_fps(void)
 {
     return fps;
@@ -169,7 +171,7 @@ void gl_swap(void)
         text_draw_string(10, 10, fps_s, 1, get_col(COL_RED));
     }
 
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(sdlWindow);
     now = SDL_GetTicks();
     if (now - last < 1000 / FPS)
         SDL_Delay(1000 / FPS - (now - last));

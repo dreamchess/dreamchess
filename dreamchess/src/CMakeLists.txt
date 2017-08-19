@@ -1,6 +1,6 @@
-find_package(SDL REQUIRED)
-find_package(SDL_image REQUIRED)
-find_package(SDL_mixer REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(MXML REQUIRED)
@@ -173,9 +173,9 @@ endif()
 
 target_include_directories(dreamchess
     PRIVATE
-    ${SDL_INCLUDE_DIR}
-    ${SDL_IMAGE_INCLUDE_DIR}
-    ${SDL_MIXER_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_IMAGE_INCLUDE_DIR}
+    ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
     ${MXML_INCLUDE_DIRS}
@@ -187,9 +187,9 @@ target_include_directories(dreamchess
 target_link_libraries(dreamchess
     common
     ${GLEW_LIBRARY}
-    ${SDL_IMAGE_LIBRARY}
-    ${SDL_MIXER_LIBRARY}
-    ${SDL_LIBRARY}
+    ${SDL2_IMAGE_LIBRARY}
+    ${SDL2_MIXER_LIBRARY}
+    ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${MXML_LIBRARY}
 )

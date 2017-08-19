@@ -39,7 +39,7 @@ int get_move(void)
     int retval = -1;
     int mousex, mousey;
     SDL_Event event;
-    Uint8 *keystate = SDL_GetKeyState(NULL);
+    Uint8 *keystate = SDL_GetKeyboardState(NULL);
     Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
 
     if( mousestate & SDL_BUTTON_MIDDLE )
@@ -54,15 +54,15 @@ int get_move(void)
         last_mousey=mousey;
     }
 
-    if (keystate[SDLK_LCTRL])
+    if (keystate[SDL_SCANCODE_LCTRL])
     {
-        if (keystate[SDLK_DOWN])
+        if (keystate[SDL_SCANCODE_DOWN])
             move_camera(-KEYBOARD_CAM_SPEED, 0.0f);
-        if (keystate[SDLK_LEFT])
+        if (keystate[SDL_SCANCODE_LEFT])
             move_camera(0.0f, -KEYBOARD_CAM_SPEED);
-        if (keystate[SDLK_RIGHT])
+        if (keystate[SDL_SCANCODE_RIGHT])
             move_camera(0.0f, KEYBOARD_CAM_SPEED);
-        if (keystate[SDLK_UP])
+        if (keystate[SDL_SCANCODE_UP])
             move_camera(KEYBOARD_CAM_SPEED, 0.0f);
 
         while (SDL_PollEvent( &event ))

@@ -55,7 +55,7 @@ static int load_opaque(mxml_node_t *top, char *name, char **dest)
 
 static void theme_add_theme( char *xmlfile, option_t *option )
 {
-    FILE *fp;
+    FILE *fp = NULL;
     mxml_node_t *tree=NULL, *theme=NULL;
 
     fp = fopen(xmlfile, "r");

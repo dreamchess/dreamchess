@@ -36,9 +36,9 @@
 
 #include <GL/glew.h>
 
-#define NO_SDL_GLEXT
-#include "SDL_opengl.h"
-#include "SDL_joystick.h"
+//#define NO_SDL_GLEXT
+//#include "SDL_opengl.h"
+//#include "SDL_joystick.h"
 
 #include "dreamchess.h"
 #include "debug.h"
