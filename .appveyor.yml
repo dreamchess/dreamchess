@@ -9,9 +9,6 @@ environment:
 platform:
   - x86
   - x64
-matrix:
-  exclude:
-    - COMPILER: msys2
 cache:
   - '%PREFIX% -> .appveyor.yml'
 install:
