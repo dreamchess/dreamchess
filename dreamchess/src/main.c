@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 
+#include "SDL.h"
+
 #include "dreamchess.h"
 
 int main(int argc, char **argv)
