@@ -1,10 +1,12 @@
 image: Visual Studio 2017
 environment:
+  PREFIX: C:\Deps
   matrix:
     - COMPILER: msvc
-      PREFIX: C:\vc-libs
     - COMPILER: msys2
-      PREFIX: C:\msys2-libs
+platform:
+  - x86
+  - x64
 cache:
   - '%PREFIX%'
 install:
@@ -12,6 +14,13 @@ install:
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
     if exist %PREFIX% set DEP=rem
+  - |-
+    if %PLATFORM%==x86 (set MSVC_PLATFORM=Win32) else set MSVC_PLATFORM=%PLATFORM%
+    if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
+    if %MSVC_PLATFORM%==x64 set MSVC_SDL_PLATFORM=%MSVC_PLATFORM%
+  - |-
+    if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
+    if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
   - |-
     %DEP% cd %TEMP%
     %DEP% mkdir %PREFIX%\bin
@@ -29,51 +38,51 @@ install:
     %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL-1.2.15.zip
     %MSVC% %DEP% 7z x SDL-1.2.15.zip > nul
     %MSVC% %DEP% %DEVENV% /Upgrade SDL-1.2.15\VisualC\SDL.sln
-    %MSVC% %DEP% msbuild SDL-1.2.15\VisualC\SDL.sln /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
+    %MSVC% %DEP% msbuild SDL-1.2.15\VisualC\SDL.sln /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
     %MSVC% %DEP% copy SDL-1.2.15\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL-1.2.15\VisualC\SDLmain\Release\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL-1.2.15\VisualC\Release\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL-1.2.15\VisualC\SDLmain\%MSVC_SDL_PLATFORM%\Release\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL-1.2.15\VisualC\%MSVC_SDL_PLATFORM%\Release\*.lib %PREFIX%\lib > nul
     %MSVC% %DEP% copy SDL-1.2.15\VisualC\SDL\Release\*.dll %PREFIX%\bin > nul
   # SDL_image
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL_image-devel-1.2.12-VC.zip
     %MSVC% %DEP% 7z x SDL_image-devel-1.2.12-VC.zip > nul
     %MSVC% %DEP% copy SDL_image-1.2.12\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL_image-1.2.12\lib\x86\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL_image-1.2.12\lib\x86\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% copy SDL_image-1.2.12\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL_image-1.2.12\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # SDL_mixer
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-devel-1.2.12-VC.zip
     %MSVC% %DEP% 7z x SDL_mixer-devel-1.2.12-VC.zip > nul
     %MSVC% %DEP% copy SDL_mixer-1.2.12\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\x86\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\x86\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # GLEW
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
     %MSVC% %DEP% 7z x glew-2.0.0-win32.zip > nul
     %MSVC% %DEP% copy glew-2.0.0\include\GL\* %PREFIX%\include\GL > nul
-    %MSVC% %DEP% copy glew-2.0.0\lib\Release\Win32\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy glew-2.0.0\bin\Release\Win32\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% copy glew-2.0.0\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
   # Mini-XML
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
     %MSVC% %DEP% 7z x mxml-2.10.tar.gz > nul
     %MSVC% %DEP% 7z x mxml-2.10.tar > nul
     %MSVC% %DEP% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
-    %MSVC% %DEP% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release
+    %MSVC% %DEP% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
     %MSVC% %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
     %MSVC% %DEP% copy mxml-2.10\vcnet\*.lib %PREFIX%\lib > nul
     %MSVC% %DEP% copy mxml-2.10\vcnet\*.dll %PREFIX%\bin > nul
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm flex mingw-w64-x86_64-cmake mingw-w64-x86_64-SDL mingw-w64-x86_64-SDL_image mingw-w64-x86_64-SDL_mixer mingw-w64-x86_64-glew"
+    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm flex mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL mingw-w64-%MSYS2_PLATFORM%-SDL_image mingw-w64-%MSYS2_PLATFORM%-SDL_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
   # Mini-XML
   - |-
     %MSYS2% %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
     %MSYS2% %DEP% 7z x mxml-2.10.tar.gz > nul
     %MSYS2% %DEP% 7z x mxml-2.10.tar > nul
-    %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%'/mxml-2.10 && ./configure && make libmxml.a"
+    %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%'/mxml-2.10 && ./configure && make libmxml.a"
     %MSYS2% %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
     %MSYS2% %DEP% copy mxml-2.10\libmxml.a %PREFIX%\lib > nul
 before_build:
@@ -82,14 +91,14 @@ before_build:
     cd %APPVEYOR_BUILD_FOLDER%\build
   # Visual Studio
   - |-
-    %MSVC% cmake -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_PROGRAM_PATH=%PREFIX%\win_flex_bison ..
+    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_PROGRAM_PATH=%PREFIX%\win_flex_bison ..
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%' && cmake -DCMAKE_PREFIX_PATH='%PREFIX%' -G'MSYS Makefiles' .."
+    %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && cmake -DCMAKE_PREFIX_PATH='%PREFIX%' -G'MSYS Makefiles' .."
 build_script:
   # Visual Studio
   - |-
     %MSVC% cmake --build . --config Release
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "MSYSTEM=MINGW64 . /etc/profile && cd '%CD%' && make"
+    %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && make"
