@@ -17,9 +17,9 @@ addons:
     - bison
     - flex
     - libmxml-dev
-    - libsdl1.2-dev
-    - libsdl-image1.2-dev
-    - libsdl-mixer1.2-dev
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-mixer-dev
     - libglew-dev
   coverity_scan:
     project:
