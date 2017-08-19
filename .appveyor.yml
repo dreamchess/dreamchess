@@ -11,7 +11,7 @@ platform:
   - x64
 matrix:
   exclude:
-    - COMPILER: msvc
+    - COMPILER: msys2
 cache:
   - '%PREFIX% -> .appveyor.yml'
 install:
@@ -29,7 +29,7 @@ install:
   - |-
     %DEP% cd %TEMP%
     %DEP% mkdir %PREFIX%\bin
-    %DEP% mkdir %PREFIX%\include\SDL
+    %DEP% mkdir %PREFIX%\include\SDL2
     %DEP% mkdir %PREFIX%\include\GL
     %DEP% mkdir %PREFIX%\lib
     %MSVC% %DEP% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
@@ -40,28 +40,25 @@ install:
     %MSVC% %DEP% 7z x win_flex_bison-2.4.9.zip -o%PREFIX%\win_flex_bison > nul
   # SDL
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL-1.2.15.zip
-    %MSVC% %DEP% 7z x SDL-1.2.15.zip > nul
-    %MSVC% %DEP% %DEVENV% /Upgrade SDL-1.2.15\VisualC\SDL.sln
-    %MSVC% %DEP% msbuild SDL-1.2.15\VisualC\SDL.sln /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
-    %MSVC% %DEP% copy SDL-1.2.15\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL-1.2.15\VisualC\SDLmain\%MSVC_SDL_PLATFORM%\Release\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL-1.2.15\VisualC\%MSVC_SDL_PLATFORM%\Release\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL-1.2.15\VisualC\SDL\Release\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
+    %MSVC% %DEP% 7z x SDL2-devel-2.0.5-VC.zip > nul
+    %MSVC% %DEP% copy SDL2-2.0.5\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # SDL_image
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL_image-devel-1.2.12-VC.zip
-    %MSVC% %DEP% 7z x SDL_image-devel-1.2.12-VC.zip > nul
-    %MSVC% %DEP% copy SDL_image-1.2.12\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL_image-1.2.12\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL_image-1.2.12\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-VC.zip
+    %MSVC% %DEP% 7z x SDL2_image-devel-2.0.1-VC.zip > nul
+    %MSVC% %DEP% copy SDL2_image-2.0.1\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # SDL_mixer
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-devel-1.2.12-VC.zip
-    %MSVC% %DEP% 7z x SDL_mixer-devel-1.2.12-VC.zip > nul
-    %MSVC% %DEP% copy SDL_mixer-1.2.12\include\* %PREFIX%\include\SDL > nul
-    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL_mixer-1.2.12\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.1-VC.zip
+    %MSVC% %DEP% 7z x SDL2_mixer-devel-2.0.1-VC.zip > nul
+    %MSVC% %DEP% copy SDL2_mixer-2.0.1\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # GLEW
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
