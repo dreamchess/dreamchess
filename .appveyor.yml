@@ -3,10 +3,15 @@ environment:
   PREFIX: C:\Deps
   matrix:
     - COMPILER: msvc
+      SDL2: 1
     - COMPILER: msys2
+      SDL2: 1
 platform:
   - x86
   - x64
+matrix:
+  exclude:
+    - COMPILER: msvc
 cache:
   - '%PREFIX% -> .appveyor.yml'
 install:
@@ -66,7 +71,7 @@ install:
     %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL mingw-w64-%MSYS2_PLATFORM%-SDL_image mingw-w64-%MSYS2_PLATFORM%-SDL_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
+    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
   # Mini-XML
   - |-
     %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
