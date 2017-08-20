@@ -57,26 +57,13 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
         exit(0);
     }
 
-    /* Save the alpha blending attributes */
-    /*saved_flags = surface->flags&(SDL_SRCALPHA|SDL_RLEACCELOK);  //FIXMESDL2
-    saved_alpha = surface->format->alpha;
-    if ( (saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA )
-    {
-        SDL_SetAlpha(surface, 0, 0);
-    }*/
-
     /* Copy the surface into the GL texture image */
     dest.x = 0;
     dest.y = 0;
     dest.w = area->w;
     dest.h = area->h;
+    SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
     SDL_BlitSurface(surface, area, image, &dest);
-
-    /* Restore the alpha blending attributes */ 
-   /* if ( (saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) //FIXMESDL2
-    {
-        SDL_SetAlpha(surface, saved_flags, saved_alpha);
-    }*/
 
     /* Create an OpenGL texture for the image */
     glGenTextures(1, &texture.id);
