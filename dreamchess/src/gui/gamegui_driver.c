@@ -20,6 +20,20 @@
 
 #include "ui_sdlgl.h"
 
+static unsigned int utf8_to_utf32(const char *utf8) {
+    unsigned int char_utf32 = 0;
+    char *utf32 = SDL_iconv_string("UTF-32LE", "UTF-8", utf8, strlen(utf8) + 1);
+
+    if (utf32) {
+        char_utf32 = ((unsigned char)utf32[3] << 24) | ((unsigned char)utf32[2] << 16)
+                     | ((unsigned char)utf32[1] << 8) | ((unsigned char)utf32[0]);
+        DBG_LOG("%04x", char_utf32);
+        SDL_free(utf32);
+    }
+
+    return char_utf32;
+}
+
 gg_event_t convert_event(SDL_Event *event)
 {
     gg_event_t gg_event;
@@ -60,13 +74,18 @@ gg_event_t convert_event(SDL_Event *event)
             gg_event.key = GG_KEY_DELETE;
             break;
         default:
-            if (event->key.keysym.scancode <= 0xff)
-            {
-                gg_event.key = event->key.keysym.sym;
-            }
-            else
-            {
-                gg_event.type = GG_EVENT_NONE;
+            gg_event.type = GG_EVENT_NONE;
+            return gg_event;
+        }
+        break;
+
+    case SDL_TEXTINPUT:
+        {
+            unsigned int utf32 = utf8_to_utf32(event->text.text);
+
+            if (utf32 > 0 && utf32 <= 0xff) {
+                gg_event.type = GG_EVENT_CHAR;
+                gg_event.key = utf32 & 0xff;
                 return gg_event;
             }
         }

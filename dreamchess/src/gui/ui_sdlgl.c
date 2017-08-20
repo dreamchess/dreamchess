@@ -446,7 +446,8 @@ static int set_fullscreen(int fullscreen) {
 
 static int resize(int width, int height, int fullscreen, int ms)
 {
-    set_fullscreen(fullscreen);
+    if (set_fullscreen(fullscreen))
+        return 1;
 
     if (screen_width != width || screen_height != height)
         set_window_size(width, height);

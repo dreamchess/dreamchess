@@ -35,6 +35,7 @@ enum
 {
     GG_EVENT_NONE,
     GG_EVENT_KEY,
+    GG_EVENT_CHAR,
     GG_EVENT_MOUSE
 };
 

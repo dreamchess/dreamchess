@@ -118,8 +118,6 @@ static void set_viewport(int width, int height)
 
 void go_3d(int width, int height)
 {
-    set_viewport(width, height);
-
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
     gluPerspective(45.0f, 640.0f/480.0f, 1.0f, 100.0f);

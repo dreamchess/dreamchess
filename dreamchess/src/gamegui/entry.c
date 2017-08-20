@@ -158,21 +158,23 @@ int gg_entry_input(gg_widget_t * widget, gg_event_t event)
             gg_widget_emit_signal(widget, widget, entry->action_pressed, NULL);
         }
         else
+            return 0;
+    }
+
+    if (event.type == GG_EVENT_CHAR) {
+        if ((event.key > 0) && (event.key <= 255))
         {
-            if ((event.key > 0) && (event.key <= 255))
-            {
-                int i;
+            int i;
 
-                if (len >= entry->max_len)
-                    return 1;
+            if (len >= entry->max_len)
+                return 1;
 
-                for (i = len; i >= entry->cursor_pos; i--)
-                    entry->text[i + 1] = entry->text[i];
-                entry->text[entry->cursor_pos++] = event.key;
-            }
-            else
-                return 0;
+            for (i = len; i >= entry->cursor_pos; i--)
+                entry->text[i + 1] = entry->text[i];
+            entry->text[entry->cursor_pos++] = event.key;
         }
+        else
+            return 0;
     }
 
     if (event.type == GG_EVENT_MOUSE
