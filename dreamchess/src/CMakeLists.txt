@@ -203,6 +203,8 @@ if(MSVC)
     set_target_properties(dreamchess PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
     set_target_properties(dreamchess PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
     set_target_properties(dreamchess PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS /MANIFEST:NO")
+elseif(MINGW)
+    set_target_properties(dreamchess PROPERTIES LINK_FLAGS_DEBUG "-mconsole")
 endif()
 
 if(WIN32)
