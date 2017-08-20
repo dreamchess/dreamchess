@@ -27,7 +27,6 @@ static unsigned int utf8_to_utf32(const char *utf8) {
     if (utf32) {
         char_utf32 = ((unsigned char)utf32[3] << 24) | ((unsigned char)utf32[2] << 16)
                      | ((unsigned char)utf32[1] << 8) | ((unsigned char)utf32[0]);
-        DBG_LOG("%04x", char_utf32);
         SDL_free(utf32);
     }
 
