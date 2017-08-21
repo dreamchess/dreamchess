@@ -152,8 +152,6 @@ void resize_window( int width, int height )
 }
 
 /** @brief Swaps the OpenGL buffer.
- *
- *  Also maintains the frames-per-second counter.
  */
 void gl_swap(void)
 {
@@ -170,8 +168,8 @@ void gl_swap(void)
 
     SDL_GL_SwapWindow(sdl_window);
     now = SDL_GetTicks();
-    if (now - last < 1000 / FPS)
-        SDL_Delay(1000 / FPS - (now - last));
+//    if (now - last < 1000 / FPS)
+//        SDL_Delay(1000 / FPS - (now - last));
     last = SDL_GetTicks();
 
     frames++;

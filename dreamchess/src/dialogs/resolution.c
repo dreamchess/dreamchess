@@ -25,7 +25,6 @@
 #include "system_config.h"
 
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;
-static int old_ms;
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
@@ -106,12 +105,6 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 	}
 
 	free(old_config);
-
-	if (config_get_option("multisampling")->selected->index != old_ms) {
-		gg_dialog_open(dialog_error_create(gg_dialog_get_active(),
-		"Notice: a DreamChess restart may be required for",
-		"the new multisampling settings to take effect"));
-	}
 
 	return 1;
 }
@@ -225,7 +218,6 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_container_append(GG_CONTAINER(vbox2), widget);
 
     option = config_get_option("multisampling");
-    old_ms = option->selected->index;
     widget = gg_option_create();
     create_option_values(GG_OPTION(widget), option);
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", multisampling_changed, NULL);

@@ -186,8 +186,8 @@ static float piece_moving_ypos;
 
 void init_fbo(void)
 {
-    int width = power_of_two(get_screen_width());
-    int height = power_of_two(get_screen_height());
+    const int width = 1920;
+    const int height = 1080;
 
     glGenTextures(1, &colourpicking_tex);
     glBindTexture(GL_TEXTURE_2D, colourpicking_tex);

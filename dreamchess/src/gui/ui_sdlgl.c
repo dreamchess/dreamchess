@@ -58,7 +58,9 @@ static int reflections=1;
 static int mode_set_failed=0;
 static int engine_error_shown;
 SDL_Window *sdl_window;
-static GLuint screen_fb, screen_tex, screen_color_rb, screen_depth_stencil_rb;
+static GLuint screen_fb, screen_temp_fb, screen_tex, screen_color_rb, screen_temp_color_rb, screen_depth_stencil_rb;
+static const int max_width = 1920;
+static const int max_height = 1080;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -234,42 +236,74 @@ static int poll_event(gg_event_t *event)
     return 0;
 }
 
-static void init_screen_fbo(void)
-{
-    // Allocate worst-case size
-    const int width = 1920;
-    const int height = 1080;
-
-    glGenFramebuffers(1, &screen_fb);
+static int init_screen_fbo_ms(int ms) {
+    glGetError();
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
-
-    glGenRenderbuffers(1, &screen_color_rb);
     glBindRenderbuffer(GL_RENDERBUFFER, screen_color_rb);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 0, GL_RGBA8, width, height);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, max_width, max_height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_color_rb);
 
-    glGenRenderbuffers(1, &screen_depth_stencil_rb);
+    if (glGetError()) {
+        DBG_ERROR("failed to set up screen FBO with %dx multisampling", ms);
+        return 1;
+    }
+
     glBindRenderbuffer(GL_RENDERBUFFER, screen_depth_stencil_rb);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 0, GL_DEPTH24_STENCIL8, width, height);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_DEPTH24_STENCIL8, max_width, max_height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screen_depth_stencil_rb);
+    
+    if (glGetError() || glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        DBG_ERROR("failed to set up screen FBO with %dx multisampling", ms);
+        return 1;
+    }
+
+    return 0;
+}
+
+static int init_screen_fbo(int ms)
+{
+    glGenFramebuffers(1, &screen_fb);
+    glGenRenderbuffers(1, &screen_color_rb);
+    glGenRenderbuffers(1, &screen_depth_stencil_rb);
+
+    if (init_screen_fbo_ms(ms))
+        return 1;        
+
+    glGenFramebuffers(1, &screen_temp_fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
+
+    glGenRenderbuffers(1, &screen_temp_color_rb);
+    glBindRenderbuffer(GL_RENDERBUFFER, screen_temp_color_rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, max_width, max_height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_temp_color_rb);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        DBG_ERROR("failed to set up screen FBO");
-        exit(1);
+        DBG_ERROR("failed to set up temp FBO");
+        return 1;
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return 0;
 }
 
 static void blit_fbo()
 {
+    int width, height;
+    SDL_GetWindowSize(sdl_window, &width, &height);
+
     glBindFramebuffer(GL_READ_FRAMEBUFFER, screen_fb);
+
+    // Add check for multisampling here
+    if (width != get_screen_width() || height != get_screen_height()) {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screen_temp_fb);
+        glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), 0, 0, get_screen_width(), get_screen_height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, screen_temp_fb);
+    }
+
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     /* 4:3 letterboxing */
     int start_x = 0, start_y = 0;
-    int width, height;
-    SDL_GetWindowSize(sdl_window, &width, &height);
     int new_width = width;
     int new_height = height;
    
@@ -281,7 +315,7 @@ static void blit_fbo()
         start_y = (height - new_height) >> 1;
     }
 
-    glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
 /** Implements ui_driver::menu */
@@ -445,8 +479,63 @@ static void load_menu_tex(void)
     load_texture_png( get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1 );
 }
 
-static int create_window(int width, int height, int fullscreen, int ms)
+static int set_fullscreen(int fullscreen) {
+    if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) > 0) {
+        DBG_ERROR("failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
+        return 1;
+    }
+    return 0;
+}
+
+static int resize(int width, int height, int fullscreen, int ms)
 {
+    DBG_LOG("resizing video mode to %ix%i; fullscreen %s; %ix multisampling",
+            width, height, fullscreen ? "on" : "off", ms);
+
+    if (fullscreen != screen_fs && set_fullscreen(fullscreen))
+        return 1;
+
+    if (screen_width != width || screen_height != height)
+        SDL_SetWindowSize(sdl_window, width, height);
+
+    if (ms != screen_ms && init_screen_fbo_ms(ms)) {
+        DBG_WARN("failed to set video mode, trying to recover");
+
+        if (screen_width != width || screen_height != height)
+            SDL_SetWindowSize(sdl_window, screen_width, screen_height);
+
+        if (fullscreen != screen_fs && set_fullscreen(screen_fs)) {
+            DBG_ERROR("failed to recover original fullscreen mode");
+            exit(1);
+        }
+
+        // Assume that multisample errored out on the first
+        // glRenderbufferStorageMultisample and no actual
+        // change was made
+
+        return 1;
+    }
+
+    screen_width = width;
+    screen_height = height;
+    screen_fs = fullscreen;
+    screen_ms = ms;
+
+    resize_window(screen_width, screen_height);
+
+    return 0;
+}
+
+/** Implements ui_driver::create_window. */
+static int create_window( int width, int height, int fullscreen, int ms)
+{
+    int i, err;
+
+    screen_width=width;
+    screen_height=height;
+    screen_fs=fullscreen;
+    screen_ms=ms;
+
     int video_flags = SDL_WINDOW_OPENGL;
 
     DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling",
@@ -458,104 +547,23 @@ static int create_window(int width, int height, int fullscreen, int ms)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 
-
-    if (ms)
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    else
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, ms);
-
     sdl_window = SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
         width, height, video_flags);
 
     if (!sdl_window) {
         DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s",
-                  width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
-        return 1;
-    }
-
-	if (!SDL_GL_CreateContext(sdl_window)) {
-        DBG_ERROR("failed to create GL context: %s", SDL_GetError());
-        exit(1);
-    }
-
-    screen_width = width;
-    screen_height = height;
-
-    return 0;
-}
-
-static int set_window_size(int width, int height) {
-    SDL_SetWindowSize(sdl_window, width, height);
-    screen_width = width;
-    screen_height = height;
-    return 0;
-}
-
-static int set_fullscreen(int fullscreen) {
-    if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) > 0) {
-        DBG_ERROR("failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
-        return 1;
-    }
-    return 0;
-}
-
-static int resize(int width, int height, int fullscreen, int ms)
-{
-    if (set_fullscreen(fullscreen))
-        return 1;
-
-    if (screen_width != width || screen_height != height)
-        set_window_size(width, height);
-
-    resize_window(screen_width, screen_height);
-
-    return 0;
-}
-
-/** Implements ui_driver::init. */
-static int init_gui( int width, int height, int fullscreen, int ms)
-{
-    int i;
-    int err;
-
-    screen_width=width;
-    screen_height=height;
-    screen_fs=fullscreen;
-    screen_ms=ms;
-
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
-    {
-        DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
-        exit(1);
-    }
-    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-    //SDL_EnableUNICODE(1);
-
-    ch_datadir();
-
-    if (create_window(screen_width, screen_height, fullscreen, ms))
-    {
+                    width, height, fullscreen ? "on" : "off", ms, SDL_GetError());
         mode_set_failed = 1;
         return 1;
     }
 
-#ifdef _WIN32
-	{
-		HMODULE handle = GetModuleHandle(NULL);
-		HICON ico = LoadIcon(handle, "icon");
-		if (ico) {
-			SDL_SysWMinfo wminfo;
-			SDL_VERSION(&wminfo.version);
-			if (SDL_GetWindowWMInfo(sdl_window, &wminfo)) {
-				SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
-			}
-		}
-	}
-#endif
+    if (!SDL_GL_CreateContext(sdl_window)) {
+        DBG_ERROR("failed to create GL context: %s", SDL_GetError());
+        SDL_DestroyWindow(sdl_window);
+        mode_set_failed = 1;
+        return 1;
+    }
 
-    init_gl();
     err = glewInit();
     if (err != GLEW_OK)
     {
@@ -575,8 +583,27 @@ static int init_gui( int width, int height, int fullscreen, int ms)
         exit(1);
     }
 
+#ifdef _WIN32
+	{
+		HMODULE handle = GetModuleHandle(NULL);
+		HICON ico = LoadIcon(handle, "icon");
+		if (ico) {
+			SDL_SysWMinfo wminfo;
+			SDL_VERSION(&wminfo.version);
+			if (SDL_GetWindowWMInfo(sdl_window, &wminfo)) {
+				SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
+			}
+		}
+	}
+#endif
+
+    init_gl();
     init_fbo();
-    init_screen_fbo();
+    if (init_screen_fbo(ms)) {
+        SDL_DestroyWindow(sdl_window);
+        mode_set_failed = 1;
+        return 1;
+    }
 
     load_menu_tex();
 
@@ -657,10 +684,17 @@ static void show_result(result_t *res)
 {
     gg_dialog_open(dialog_victory_create(res));
 }
+
 /** Implements ui_driver::init. */
-static int sdlgl_init(int width, int height, int fullscreen, int ms)
+static void sdlgl_init(void)
 {
-    return init_gui(width,height,fullscreen,ms);
+    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE ) < 0 )
+    {
+        DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
+        exit(1);
+    }
+
+    ch_datadir();    
 }
 
 /** Implements ui_driver::exit. */
@@ -693,7 +727,8 @@ static void poll_move(void)
     audio_poll(0);
     draw_scene(&board, screen_fb, reflections);
     blit_fbo();
-
+    gl_swap();
+    
     if (switch_to_menu == TRUE)
     {
         quit_to_menu = 0;
@@ -793,6 +828,7 @@ ui_driver_t ui_sdlgl =
     {
         "sdlgl",
         sdlgl_init,
+        create_window,
         resize,
         sdlgl_exit,
         do_menu,

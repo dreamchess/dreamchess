@@ -383,7 +383,7 @@ int set_resolution(int init)
     option = config_get_option("multisampling");
 
     ms = option->selected->index * 2;
-
+    
     if (res) {
         width = res->w;
         height = res->h;
@@ -397,7 +397,7 @@ int set_resolution(int init)
     }
 
     if (init)
-        return ui->init(width, height, fs, ms);
+        return ui->create_window(width, height, fs, ms);
     else
         return ui->resize(width, height, fs, ms);
 }
@@ -417,13 +417,9 @@ static void init_resolution(void)
 
 void toggle_fullscreen(void)
 {
-#ifdef _WIN32
-    DBG_WARN("fullscreen toggling is currently not supported on win32");
-#else
     option_t *option = config_get_option("full_screen");
     option_select_value_by_index(option, 1 - option->selected->index);
     set_resolution(0);
-#endif
 }
 
 static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_options_t *cl_options)
@@ -559,6 +555,8 @@ int dreamchess(void *data)
         DBG_ERROR("failed to find a user interface driver");
         exit(1);
     }
+
+    ui->init();
 
     init_resolution();
 
