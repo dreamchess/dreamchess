@@ -291,30 +291,31 @@ static void blit_fbo()
     int width, height;
     SDL_GetWindowSize(sdl_window, &width, &height);
 
+    /* 4:3 letterboxing for fullscreen */
+    int start_x = 0, start_y = 0;
+    int new_width = width;
+    int new_height = height;
+
+    if (screen_fs) {
+        if (new_height * 4 < new_width * 3) {
+            new_width = new_height * 4 / 3;
+            start_x = (width - new_width) >> 1;
+        } else if (new_width * 3 < new_height * 4) {
+           new_height = new_width * 3 / 4;
+           start_y = (height - new_height) >> 1;
+        }
+    }
+
     glBindFramebuffer(GL_READ_FRAMEBUFFER, screen_fb);
 
-    // Add check for multisampling here
-    if (width != get_screen_width() || height != get_screen_height()) {
+    // Multisampled buffer requires a same-dimension blit to resolve
+    if (screen_ms && (new_width != get_screen_width() || new_height != get_screen_height())) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screen_temp_fb);
         glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), 0, 0, get_screen_width(), get_screen_height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, screen_temp_fb);
     }
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-    /* 4:3 letterboxing */
-    int start_x = 0, start_y = 0;
-    int new_width = width;
-    int new_height = height;
-   
-    if (new_height * 4 < new_width * 3) {
-        new_width = new_height * 4 / 3;
-        start_x = (width - new_width) >> 1;
-    } else if (new_width * 3 < new_height * 4) {
-        new_height = new_width * 3 / 4;
-        start_y = (height - new_height) >> 1;
-    }
-
     glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
