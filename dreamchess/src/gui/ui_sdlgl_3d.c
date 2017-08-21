@@ -195,29 +195,29 @@ void init_fbo(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 
-    glGenFramebuffersEXT(1, &fb);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
-    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colourpicking_tex, 0);
+    glGenFramebuffers(1, &fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourpicking_tex, 0);
 
-    glGenRenderbuffersEXT(1, &depth_rb);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth_rb);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
-    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth_rb);
+    glGenRenderbuffers(1, &depth_rb);
+    glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
 
-    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         DBG_ERROR("failed to set up FBO");
         exit(1);
     }
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void deinit_fbo(void)
 {
     glDeleteTextures(1, &colourpicking_tex);
-    glDeleteRenderbuffersEXT(1, &depth_rb);
-    glDeleteFramebuffersEXT(1, &fb);
+    glDeleteRenderbuffers(1, &depth_rb);
+    glDeleteFramebuffers(1, &fb);
 }
 
 static void setup_view(void)
@@ -993,9 +993,9 @@ int find_square(int x, int y)
     setup_view();
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
     glReadPixels(x, viewport[3] - y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &col);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     return col - 1;
 }
@@ -1129,14 +1129,14 @@ void render_scene_3d(board_t *board, int reflections)
     /* Render FBO for colour picking */
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     draw_board_center_cp();
     if (!is_2d)
         draw_pieces_cp(board);
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 }

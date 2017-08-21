@@ -506,9 +506,15 @@ static int init_gui( int width, int height, int fullscreen, int ms)
         exit(1);
     }
 
-    if (!glewIsSupported("GL_EXT_framebuffer_object"))
+    if (!glewIsSupported("GL_ARB_framebuffer_object"))
     {
-        DBG_ERROR("OpenGL extension GL_EXT_framebuffer_object not supported");
+        DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
+        exit(1);
+    }
+
+    if (!glewIsSupported("GL_ARB_texture_non_power_of_two"))
+    {
+        DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
         exit(1);
     }
 
