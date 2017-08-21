@@ -74,8 +74,14 @@ gg_event_t convert_event(SDL_Event *event)
         case SDLK_DELETE:
             gg_event.key = GG_KEY_DELETE;
             break;
+        case SDLK_ESCAPE:
+            gg_event.key = GG_KEY_ESCAPE;
+            break;
         default:
-            gg_event.type = GG_EVENT_NONE;
+            if (event->key.keysym.sym >= 32 || event->key.keysym.sym < 255)
+                gg_event.key = event->key.keysym.sym;
+            else
+                gg_event.type = GG_EVENT_NONE;
             return gg_event;
         }
         break;

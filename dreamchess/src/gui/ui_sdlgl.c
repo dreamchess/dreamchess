@@ -217,13 +217,15 @@ static int poll_event(gg_event_t *event)
             continue;
         }
 
-        gg_event = convert_event(&sdl_event);
-
-        if (gg_event.type == GG_EVENT_KEY && gg_event.key == 0x06)
+        if ( (sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_CTRL &&
+            sdl_event.key.keysym.sym == SDLK_f) )
         {
+            DBG_LOG( "toggled fps counter" );
             toggle_show_fps();
             continue;
         }
+
+        gg_event = convert_event(&sdl_event);
 
         *event = gg_event;
         return 1;
