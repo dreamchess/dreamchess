@@ -311,7 +311,7 @@ static config_t *do_menu(int *pgn)
 
     while ( 1 )
     {
-        Uint8 *keystate;
+        const Uint8 *keystate;
         gg_event_t event;
 
         keystate = SDL_GetKeyboardState(NULL);

@@ -39,7 +39,7 @@ int get_move(void)
     int retval = -1;
     int mousex, mousey;
     SDL_Event event;
-    Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
 
     if( mousestate & SDL_BUTTON_MIDDLE )
