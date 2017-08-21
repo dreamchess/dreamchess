@@ -33,6 +33,8 @@ static unsigned int utf8_to_utf32(const char *utf8) {
     return char_utf32;
 }
 
+extern SDL_Window *sdl_window;
+
 gg_event_t convert_event(SDL_Event *event)
 {
     gg_event_t gg_event;
@@ -92,21 +94,35 @@ gg_event_t convert_event(SDL_Event *event)
 
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEBUTTONUP:
-        set_mouse_pos( event->motion.x, event->motion.y );
-        gg_event.type = GG_EVENT_MOUSE;
-        gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN
-                               ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
-        gg_event.mouse.button = event->button.button - 1;
-        gg_event.mouse.x = ((float)event->motion.x/(float)get_screen_width())*640;
-        gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)event->motion.y/(float)get_screen_height())*480;
+        {
+            int width, height;
+            int mouse_x, mouse_y;
+            SDL_GetWindowSize(sdl_window, &width, &height);
+            mouse_x = event->motion.x * get_screen_width() / width;
+            mouse_y = event->motion.y * get_screen_height() / height;
+            set_mouse_pos( mouse_x, mouse_y );
+            gg_event.type = GG_EVENT_MOUSE;
+            gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN
+                                ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
+            gg_event.mouse.button = event->button.button - 1;
+            gg_event.mouse.x = ((float)mouse_x/(float)get_screen_width())*640;
+            gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y/(float)get_screen_height())*480;
+        }
         break;
 
     case SDL_MOUSEMOTION:
-        set_mouse_pos( event->motion.x, event->motion.y );
-        gg_event.type = GG_EVENT_MOUSE;
-        gg_event.mouse.type = GG_MOUSE_MOVE;
-        gg_event.mouse.x = ((float)event->motion.x/(float)get_screen_width())*640;
-        gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)event->motion.y/(float)get_screen_height())*480;
+        {
+            int width, height;
+            int mouse_x, mouse_y;
+            SDL_GetWindowSize(sdl_window, &width, &height);
+            mouse_x = event->motion.x * get_screen_width() / width;
+            mouse_y = event->motion.y * get_screen_height() / height;
+            set_mouse_pos( mouse_x, mouse_y );
+            gg_event.type = GG_EVENT_MOUSE;
+            gg_event.mouse.type = GG_MOUSE_MOVE;
+            gg_event.mouse.x = ((float)mouse_x/(float)get_screen_width())*640;
+            gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y/(float)get_screen_height())*480;
+        }
     }
 
     return gg_event;

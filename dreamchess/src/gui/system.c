@@ -98,24 +98,6 @@ int power_of_two(int input)
     return value;
 }
 
-static void set_viewport(int width, int height)
-{
-    /* 4:3 letterboxing */
-    int start_x = 0, start_y = 0;
-    int new_width = width;
-    int new_height = height;
-
-    if (height * 4 < width * 3) {
-        new_width = height * 4 / 3;
-        start_x = (width - new_width) >> 1;
-    } else if (width * 3 < height * 4) {
-        new_height = width * 3 / 4;
-        start_y = (height - new_height) >> 1;
-    }    
-
-    glViewport( start_x, start_y, new_width, new_height );
-}
-
 void go_3d(int width, int height)
 {
     glMatrixMode( GL_PROJECTION );
@@ -161,8 +143,7 @@ void init_gl(void)
  */
 void resize_window( int width, int height )
 {
-    set_viewport(width, height);
-    
+    glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
     glOrtho(0, 640, 0, 480, -1, 1);

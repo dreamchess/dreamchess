@@ -211,7 +211,7 @@ texture_t *get_border(void);
 void unload_theme(void);
 
 /* draw_scene.c */
-void draw_scene( board_t *b, int reflections );
+void draw_scene( board_t *b, GLuint fb, int reflections );
 float get_mouse_square(void);
 
 /* credits.c */

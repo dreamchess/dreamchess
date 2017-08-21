@@ -35,7 +35,7 @@ typedef struct coord3
 coord3_t;
 
 void move_camera(float x, float z);
-void render_scene_3d(board_t *board, int reflections);
+void render_scene_3d(board_t *board, GLuint target_fb, int reflections);
 void move_selector(int direction);
 int get_selector(void);
 void select_piece(int square);

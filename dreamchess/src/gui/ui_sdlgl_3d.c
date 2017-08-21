@@ -1090,12 +1090,13 @@ static void setup_stencil(void)
     glEnable(GL_LIGHTING);
 }
 
-void render_scene_3d(board_t *board, int reflections)
+void render_scene_3d(board_t *board, GLuint target_fb, int reflections)
 {
   int ticks = SDL_GetTicks();
 
      //
 
+    glBindFramebuffer(GL_FRAMEBUFFER, target_fb);
     glEnable(GL_LIGHTING);
 
     glEnable(GL_CULL_FACE);
@@ -1136,7 +1137,7 @@ void render_scene_3d(board_t *board, int reflections)
     if (!is_2d)
         draw_pieces_cp(board);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, target_fb);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 }

@@ -31,11 +31,13 @@ float get_mouse_square(void)
  *
  *  @param b Board configuration to render.
  */
-void draw_scene( board_t *b, int reflections )
+void draw_scene( board_t *b, GLuint fb, int reflections )
 {
     char temp[80];
     int clock_seconds=0;
     int clock_minutes=0;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
     transition_update();
 
@@ -51,9 +53,10 @@ void draw_scene( board_t *b, int reflections )
 
     go_3d(get_screen_width(), get_screen_height());
 
-    render_scene_3d(b, reflections);
+    render_scene_3d(b, fb, reflections);
     mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y());
 
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
     resize_window(get_screen_width(), get_screen_height());
 
     glPushMatrix();
