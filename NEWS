@@ -1,10 +1,10 @@
 *** 2017-??-?? - DreamChess v0.3.0 ***
 
 Most important changes:
+- Now uses SDL2 instead of SDL1
 - CMake build system
 - Fixed issue with chess piece selection on some AMD GPUs
 - Fixed issue with rotating chess board on some Linux machines
-- Fixed issue with changing resolution on some operating systems
 - DreamChess no longer auto-exits when audio fails to open
 - Board is automatically flipped when playing with black
 - Pondering support in Dreamer chess engine
