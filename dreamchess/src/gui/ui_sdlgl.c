@@ -61,6 +61,7 @@ SDL_Window *sdl_window;
 static GLuint screen_fb, screen_temp_fb, screen_tex, screen_color_rb, screen_temp_color_rb, screen_depth_stencil_rb;
 static const int max_width = 1920;
 static const int max_height = 1080;
+static int max_samples;
 
 static void music_callback(char *title, char *artist, char *album)
 {
@@ -236,28 +237,20 @@ static int poll_event(gg_event_t *event)
     return 0;
 }
 
-static int init_screen_fbo_ms(int ms) {
-    glGetError();
+static void init_screen_fbo_ms(int ms) {
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
     glBindRenderbuffer(GL_RENDERBUFFER, screen_color_rb);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, max_width, max_height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_color_rb);
 
-    if (glGetError()) {
-        DBG_ERROR("failed to set up screen FBO with %dx multisampling", ms);
-        return 1;
-    }
-
     glBindRenderbuffer(GL_RENDERBUFFER, screen_depth_stencil_rb);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_DEPTH24_STENCIL8, max_width, max_height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screen_depth_stencil_rb);
     
-    if (glGetError() || glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         DBG_ERROR("failed to set up screen FBO with %dx multisampling", ms);
-        return 1;
+        exit(1);
     }
-
-    return 0;
 }
 
 static int init_screen_fbo(int ms)
@@ -266,8 +259,7 @@ static int init_screen_fbo(int ms)
     glGenRenderbuffers(1, &screen_color_rb);
     glGenRenderbuffers(1, &screen_depth_stencil_rb);
 
-    if (init_screen_fbo_ms(ms))
-        return 1;        
+    init_screen_fbo_ms(ms);
 
     glGenFramebuffers(1, &screen_temp_fb);
     glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
@@ -493,29 +485,17 @@ static int resize(int width, int height, int fullscreen, int ms)
     DBG_LOG("resizing video mode to %ix%i; fullscreen %s; %ix multisampling",
             width, height, fullscreen ? "on" : "off", ms);
 
+    if (ms > max_samples)
+        return 1;
+
     if (fullscreen != screen_fs && set_fullscreen(fullscreen))
         return 1;
 
     if (screen_width != width || screen_height != height)
         SDL_SetWindowSize(sdl_window, width, height);
 
-    if (ms != screen_ms && init_screen_fbo_ms(ms)) {
-        DBG_WARN("failed to set video mode, trying to recover");
-
-        if (screen_width != width || screen_height != height)
-            SDL_SetWindowSize(sdl_window, screen_width, screen_height);
-
-        if (fullscreen != screen_fs && set_fullscreen(screen_fs)) {
-            DBG_ERROR("failed to recover original fullscreen mode");
-            exit(1);
-        }
-
-        // Assume that multisample errored out on the first
-        // glRenderbufferStorageMultisample and no actual
-        // change was made
-
-        return 1;
-    }
+    if (ms != screen_ms)
+        init_screen_fbo_ms(ms);
 
     screen_width = width;
     screen_height = height;
@@ -584,6 +564,8 @@ static int create_window( int width, int height, int fullscreen, int ms)
         exit(1);
     }
 
+    glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
+
 #ifdef _WIN32
 	{
 		HMODULE handle = GetModuleHandle(NULL);
@@ -600,11 +582,14 @@ static int create_window( int width, int height, int fullscreen, int ms)
 
     init_gl();
     init_fbo();
-    if (init_screen_fbo(ms)) {
+
+    if (ms > max_samples) {
         SDL_DestroyWindow(sdl_window);
         mode_set_failed = 1;
         return 1;
     }
+
+    init_screen_fbo(ms);
 
     load_menu_tex();
 
