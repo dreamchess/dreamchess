@@ -196,7 +196,7 @@ void generate_text_chars(void)
         {
             texture_t c;
             c.width = width[i*16+j];
-            c.height = texture.height / 16;
+            c.height = texture.height / 16 - 1;
             c.u1 = xpos / (float) tex_width;
             c.v1 = ypos / (float) tex_height;
             xpos += width[i*16+j];
@@ -208,6 +208,6 @@ void generate_text_chars(void)
 
             text_characters[i*16+j] = c;
         }
-        ypos += texture.height / 16 + 1;
+        ypos += texture.height / 16;
     }
 }
