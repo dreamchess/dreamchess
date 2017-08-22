@@ -3,9 +3,7 @@ environment:
   PREFIX: C:\Deps
   matrix:
     - COMPILER: msvc
-      SDL2: 1
     - COMPILER: msys2
-      SDL2: 1
 platform:
   - x86
   - x64
