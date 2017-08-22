@@ -569,22 +569,6 @@ static int create_window( int width, int height, int fullscreen, int ms)
     }
 
     glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
-
-#ifdef _WIN32
-	{
-		HMODULE handle = GetModuleHandle(NULL);
-		HICON ico = LoadIcon(handle, "icon");
-		if (ico) {
-			SDL_SysWMinfo wminfo;
-			SDL_VERSION(&wminfo.version);
-			if (SDL_GetWindowWMInfo(sdl_window, &wminfo)) {
-				SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
-			}
-		}
-	}
-#endif
-
-    init_gl();
     init_fbo();
 
     if (ms > max_samples) {
@@ -595,6 +579,7 @@ static int create_window( int width, int height, int fullscreen, int ms)
 
     init_screen_fbo(ms);
 
+    init_gl();
     load_menu_tex();
 
     SDL_ShowCursor(SDL_DISABLE);
