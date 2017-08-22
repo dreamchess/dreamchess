@@ -166,6 +166,7 @@ void gl_swap(void)
         text_draw_string(10, 10, fps_s, 1, get_col(COL_RED));
     }
 
+    blit_fbo();
     SDL_GL_SwapWindow(sdl_window);
     now = SDL_GetTicks();
 //    if (now - last < 1000 / FPS)

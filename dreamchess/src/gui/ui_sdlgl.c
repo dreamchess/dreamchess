@@ -238,7 +238,6 @@ static int poll_event(gg_event_t *event)
 }
 
 static void init_screen_fbo_ms(int ms) {
-    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
     glBindRenderbuffer(GL_RENDERBUFFER, screen_color_rb);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, max_width, max_height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_color_rb);
@@ -253,9 +252,11 @@ static void init_screen_fbo_ms(int ms) {
     }
 }
 
-static int init_screen_fbo(int ms)
+static void init_screen_fbo(int ms)
 {
-    glGenFramebuffers(1, &screen_fb);
+    glGenFramebuffers(1, &screen_fb); // Our default-bound framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
+    
     glGenRenderbuffers(1, &screen_color_rb);
     glGenRenderbuffers(1, &screen_depth_stencil_rb);
 
@@ -271,14 +272,13 @@ static int init_screen_fbo(int ms)
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         DBG_ERROR("failed to set up temp FBO");
-        return 1;
+        exit(1);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    return 0;
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
 }
 
-static void blit_fbo()
+void blit_fbo()
 {
     int width, height;
     SDL_GetWindowSize(sdl_window, &width, &height);
@@ -298,8 +298,6 @@ static void blit_fbo()
         }
     }
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, screen_fb);
-
     // Multisampled buffer requires a same-dimension blit to resolve
     if (screen_ms && (new_width != get_screen_width() || new_height != get_screen_height())) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, screen_temp_fb);
@@ -309,14 +307,14 @@ static void blit_fbo()
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBlitFramebuffer(0, 0, get_screen_width(), get_screen_height(), start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);    
 }
 
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
     title_process_retval=2;
-
-    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
 
     resize_window(screen_width, screen_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -348,7 +346,6 @@ static config_t *do_menu(int *pgn)
         gg_dialog_cleanup();
 
         /* Draw the menu.. */
-        glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
         draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
@@ -445,7 +442,6 @@ static config_t *do_menu(int *pgn)
         draw_texture( get_menu_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 
-        blit_fbo();
         gl_swap();
     }
 }
@@ -477,6 +473,7 @@ static int set_fullscreen(int fullscreen) {
         DBG_ERROR("failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
         return 1;
     }
+
     return 0;
 }
 
@@ -503,6 +500,13 @@ static int resize(int width, int height, int fullscreen, int ms)
     screen_ms = ms;
 
     resize_window(screen_width, screen_height);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     return 0;
 }
@@ -712,7 +716,6 @@ static void poll_move(void)
 
     audio_poll(0);
     draw_scene(&board, screen_fb, reflections);
-    blit_fbo();
     gl_swap();
     
     if (switch_to_menu == TRUE)

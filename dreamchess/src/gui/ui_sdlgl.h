@@ -184,6 +184,7 @@ int get_move(void);
 /* ui_sdlgl.c */
 int get_fading_out(void);
 void set_fading_out(int fade);
+void blit_fbo(void);
 
 /* ingame_ui.c */
 void draw_name_dialog( float xpos, float ypos, char* name, int left, int white );
