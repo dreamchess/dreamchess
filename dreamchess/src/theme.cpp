@@ -285,7 +285,7 @@ static void find_music_packs(void)
         {
             if (entry->d_name[0] != '.')
             {
-                char *dirname = malloc(strlen(cur_dir) + strlen(entry->d_name) + 8);
+                char *dirname = (char *)malloc(strlen(cur_dir) + strlen(entry->d_name) + 8);
 
                 strcpy(dirname, cur_dir);
                 strcat(dirname, "/music/");
