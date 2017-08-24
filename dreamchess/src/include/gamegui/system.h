@@ -122,7 +122,7 @@ gg_class_id gg_register_class (gg_class_id parent);
 int gg_is_parent (gg_class_id parent, gg_class_id child);
 
 struct gg_widget *gg_check_cast (struct gg_widget *widget, gg_class_id id,
-				 char *file, int line, char *type);
+				 const char *file, int line, const char *type);
 
 void gg_system_init (gg_driver_t * d);
 
@@ -149,9 +149,9 @@ void gg_system_get_image_size (void *image, int *width, int *height);
 
 void gg_system_get_char_size (int c, int *width, int *height);
 
-void gg_system_get_string_size (char *s, int *width, int *height);
+void gg_system_get_string_size (const char *s, int *width, int *height);
 
-void gg_system_draw_string (char *s, int x, int y, gg_colour_t * colour,
+void gg_system_draw_string (const char *s, int x, int y, gg_colour_t * colour,
 			    int bounce, float align);
 
 unsigned int gg_system_get_ticks (void);

@@ -105,10 +105,10 @@ promo   : 'Q'                     { san_move.promotion_piece = SAN_QUEEN; }
 
 #include "san.h"
 
-char* move;
+const char* move;
 int ptr;
 
-san_move_t *san_parse(char *s)
+san_move_t *san_parse(const char *s)
 {
     move = s;
     ptr = strlen(move) - 1;
@@ -123,7 +123,7 @@ san_move_t *san_parse(char *s)
 
     if (!yyparse())
     {
-        san_move_t *retval = malloc(sizeof(san_move_t));
+        san_move_t *retval = (san_move_t *)malloc(sizeof(san_move_t));
         *retval = san_move;
         return retval;
     }
@@ -154,7 +154,7 @@ static void add_piece(char *s, int piece)
 
 char *san_string(san_move_t *move)
 {
-    char *s = malloc(8);
+    char *s = (char *)malloc(8);
     int i = 0;
 
     switch (move->type)

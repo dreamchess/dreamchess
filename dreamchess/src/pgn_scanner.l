@@ -104,7 +104,7 @@ static char *make_string(void)
     /* We need at least yyleng bytes, plus 1 for the '\0' and minus 2 for the
      * opening and closing quotes that will be removed.
      */
-    string = malloc(yyleng - 1);
+    string = (char *)malloc(yyleng - 1);
 
     /* Skip quotes. */
     for (i = 1; i < yyleng - 1; i++)

@@ -23,13 +23,13 @@
 
 #include "dreamer.h"
 
-void command_handle(state_t *state, char *command);
-int command_check_abort(state_t *state, int ply, char *command);
-int command_usermove(state_t *state, char *command);
+void command_handle(state_t *state, const char *command);
+int command_check_abort(state_t *state, int ply, const char *command);
+int command_usermove(state_t *state, const char *command);
 
 char *san_move_str(board_t *board, int ply, move_t move);
 char *coord_move_str(move_t move);
 
-int parse_move(board_t *board, int ply, char *command, move_t *move);
+int parse_move(board_t *board, int ply, const char *command, move_t *move);
 
 #endif

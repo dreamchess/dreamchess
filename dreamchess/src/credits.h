@@ -21,6 +21,6 @@
 #ifndef DREAMCHESS_CREDITS_H
 #define DREAMCHESS_CREDITS_H
 
-char ***get_credits(void);
+const char ***get_credits(void);
 
 #endif

@@ -1,45 +1,45 @@
-BISON_TARGET(PgnParserBook pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c COMPILE_FLAGS "-p pgn_")
-FLEX_TARGET(PgnScannerBook pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c COMPILE_FLAGS "-P pgn_")
+BISON_TARGET(PgnParserBook pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.cpp COMPILE_FLAGS "-p pgn_")
+FLEX_TARGET(PgnScannerBook pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.cpp COMPILE_FLAGS "-P pgn_")
 ADD_FLEX_BISON_DEPENDENCY(PgnScannerBook PgnParserBook)
 
 add_executable(dreamer
-    board.c
+    board.cpp
     board.h
-    commands.c
+    commands.cpp
     commands.h
-    dreamer.c
+    dreamer.cpp
     dreamer.h
-    e_comm.c
+    e_comm.cpp
     e_comm.h
-    eval.c
+    eval.cpp
     eval.h
-    gen_chess_moves.c
-    hashing.c
+    gen_chess_moves.cpp
+    hashing.cpp
     hashing.h
-    history.c
+    history.cpp
     history.h
-    main.c
-    makebook.c
+    main.cpp
+    makebook.cpp
     makebook.h
     move_data.h
-    move.c
+    move.cpp
     move.h
-    repetition.c
+    repetition.cpp
     repetition.h
-    search.c
+    search.cpp
     search.h
-    timer.c
+    timer.cpp
     timer.h
-    transposition.c
+    transposition.cpp
     transposition.h
     ${BISON_PgnParserBook_OUTPUTS}
     ${FLEX_PgnScannerBook_OUTPUTS}
 )
 
 if(WIN32)
-    target_sources(dreamer PRIVATE e_comm_win32.c)
+    target_sources(dreamer PRIVATE e_comm_win32.cpp)
 else()
-    target_sources(dreamer PRIVATE e_comm_unix.c)
+    target_sources(dreamer PRIVATE e_comm_unix.cpp)
 endif()
 
 target_link_libraries(dreamer common)

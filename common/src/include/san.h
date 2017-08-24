@@ -49,7 +49,7 @@ typedef struct san_move
     int promotion_piece;
 } san_move_t;
 
-san_move_t *san_parse(char *s);
+san_move_t *san_parse(const char *s);
 char *san_string(san_move_t *move);
 
 #endif

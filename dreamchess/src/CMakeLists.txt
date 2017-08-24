@@ -5,8 +5,8 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(MXML REQUIRED)
 
-BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c)
-FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c)
+BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.cpp)
+FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.cpp)
 ADD_FLEX_BISON_DEPENDENCY(PgnScanner PgnParser)
 
 if(MINGW)
@@ -14,27 +14,27 @@ if(MINGW)
 endif(MINGW)
 
 add_executable(dreamchess
-    board.c
+    board.cpp
     board.h
-    comm.c
+    comm.cpp
     comm.h
-    credits.c
+    credits.cpp
     credits.h
-    debug.c
+    debug.cpp
     debug.h
-    dir.c
+    dir.cpp
     dir.h
-    dreamchess.c
+    dreamchess.cpp
     dreamchess.h
-    fen.c
+    fen.cpp
     fen.h
-    history.c
+    history.cpp
     history.h
-    main.c
-    options.c
-    system_config.c
-    theme.c
-    ui.c
+    main.cpp
+    options.cpp
+    system_config.cpp
+    theme.cpp
+    ui.cpp
     ui.h
     ${BISON_PgnParser_OUTPUTS}
     ${FLEX_PgnScanner_OUTPUTS}
@@ -45,10 +45,10 @@ add_executable(dreamchess
 )
 
 if(WIN32)
-    target_sources(dreamchess PRIVATE comm_win32.c win32.rc)
+    target_sources(dreamchess PRIVATE comm_win32.cpp win32.rc)
     set_source_files_properties(win32.rc PROPERTIES OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/win32.ico;${CMAKE_CURRENT_SOURCE_DIR}/dpi.manifest")
 else()
-    target_sources(dreamchess PRIVATE comm_unix.c)
+    target_sources(dreamchess PRIVATE comm_unix.cpp)
 endif()
 
 if(MSVC)
@@ -57,56 +57,56 @@ endif()
 
 target_sources(dreamchess
     PRIVATE
-    audio/playlist.c
+    audio/playlist.cpp
     audio/playlist.h
-    audio/sdlmixer.c
+    audio/sdlmixer.cpp
     include/audio.h
 )
 
-source_group("Source Files\\audio" REGULAR_EXPRESSION /audio/.*.c$)
+source_group("Source Files\\audio" REGULAR_EXPRESSION "/audio/.*.cpp$")
 source_group("Header Files\\audio" REGULAR_EXPRESSION /audio/.*.h$)
 
 target_sources(dreamchess
     PRIVATE
-    dialogs/configuration.c
-    dialogs/ingame_dialog.c
-    dialogs/message_dialog.c
-    dialogs/quit_dialog.c
-    dialogs/resolution.c
-    dialogs/styles.c
-    dialogs/system_dialog.c
-    dialogs/time.c
+    dialogs/configuration.cpp
+    dialogs/ingame_dialog.cpp
+    dialogs/message_dialog.cpp
+    dialogs/quit_dialog.cpp
+    dialogs/resolution.cpp
+    dialogs/styles.cpp
+    dialogs/system_dialog.cpp
+    dialogs/time.cpp
     include/dialogs.h
 )
 
-source_group("Source Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.c$)
+source_group("Source Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.cpp$)
 source_group("Header Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.h$)
 
 target_sources(dreamchess
     PRIVATE
-    gamegui/action.c
-    gamegui/align.c
-    gamegui/bin.c
-    gamegui/box.c
-    gamegui/clipping.c
-    gamegui/container.c
-    gamegui/dialog.c
-    gamegui/edit.c
-    gamegui/entry.c
-    gamegui/frame.c
-    gamegui/hbox.c
-    gamegui/image.c
-    gamegui/label.c
-    gamegui/option.c
-    gamegui/scrollbarv.c
-    gamegui/select.c
-    gamegui/seperatorh.c
-    gamegui/seperatorv.c
-    gamegui/signal.c
-    gamegui/system.c
-    gamegui/vbox.c
-    gamegui/viewport.c
-    gamegui/widget.c
+    gamegui/action.cpp
+    gamegui/align.cpp
+    gamegui/bin.cpp
+    gamegui/box.cpp
+    gamegui/clipping.cpp
+    gamegui/container.cpp
+    gamegui/dialog.cpp
+    gamegui/edit.cpp
+    gamegui/entry.cpp
+    gamegui/frame.cpp
+    gamegui/hbox.cpp
+    gamegui/image.cpp
+    gamegui/label.cpp
+    gamegui/option.cpp
+    gamegui/scrollbarv.cpp
+    gamegui/select.cpp
+    gamegui/seperatorh.cpp
+    gamegui/seperatorv.cpp
+    gamegui/signal.cpp
+    gamegui/system.cpp
+    gamegui/vbox.cpp
+    gamegui/viewport.cpp
+    gamegui/widget.cpp
     include/gamegui.h
     include/gamegui/action.h
     include/gamegui/align.h
@@ -134,37 +134,37 @@ target_sources(dreamchess
     include/gamegui/widget.h
 )
 
-source_group("Source Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.c$)
+source_group("Source Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.cpp$)
 source_group("Header Files\\gamegui" REGULAR_EXPRESSION /include/gamegui/.*.h$)
 
 target_sources(dreamchess
     PRIVATE
-    gui/colours.c
-    gui/credits.c
-    gui/draw_scene.c
-    gui/draw_shape.c
-    gui/gamegui_driver.c
-    gui/get_move.c
-    gui/ingame_ui.c
-    gui/load_data.c
-    gui/promote_dialog.c
-    gui/saveload_dialog.c
-    gui/system.c
-    gui/text.c
-    gui/texture.c
-    gui/theme.c
-    gui/title_dialog.c
-    gui/transitions.c
-    gui/ui_sdlgl_3d.c
+    gui/colours.cpp
+    gui/credits.cpp
+    gui/draw_scene.cpp
+    gui/draw_shape.cpp
+    gui/gamegui_driver.cpp
+    gui/get_move.cpp
+    gui/ingame_ui.cpp
+    gui/load_data.cpp
+    gui/promote_dialog.cpp
+    gui/saveload_dialog.cpp
+    gui/system.cpp
+    gui/text.cpp
+    gui/texture.cpp
+    gui/theme.cpp
+    gui/title_dialog.cpp
+    gui/transitions.cpp
+    gui/ui_sdlgl_3d.cpp
     gui/ui_sdlgl_3d.h
-    gui/ui_sdlgl.c
+    gui/ui_sdlgl.cpp
     gui/ui_sdlgl.h
-    gui/victory_dialog.c
-    gui/vkeyboard.c
-    gui/xmlsavefile.c
+    gui/victory_dialog.cpp
+    gui/vkeyboard.cpp
+    gui/xmlsavefile.cpp
 )
 
-source_group("Source Files\\gui" REGULAR_EXPRESSION /gui/.*.c$)
+source_group("Source Files\\gui" REGULAR_EXPRESSION /gui/.*.cpp$)
 source_group("Header Files\\gui" REGULAR_EXPRESSION /gui/.*.h$)
 
 if(UNIX)
