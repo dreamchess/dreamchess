@@ -26,6 +26,7 @@
 
 #include <windows.h>
 #include <io.h>
+#include <direct.h>
 #include "shlwapi.h"
 #include "shlobj.h"
 
