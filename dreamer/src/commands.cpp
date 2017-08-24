@@ -670,7 +670,7 @@ void command_handle(state_t *state, const char *command)
 
     if (!strncmp(command, "sd", 2))
     {
-        char *number = strchr(command, ' ');
+        const char *number = strchr(command, ' ');
         char *end;
         if (number && (*(number + 1) != '\0'))
         {
