@@ -25,7 +25,7 @@
 
 %{
 #include "pgn_scanner.h"
-#include "pgn_parser.h"
+#include "pgn_parser.hpp"
 
 static char *make_string(void);
 extern int pgn_parse(void);
