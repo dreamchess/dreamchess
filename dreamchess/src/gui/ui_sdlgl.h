@@ -51,6 +51,7 @@
 #include <gamegui.h>
 #include "options.h"
 #include "theme.h"
+#include "dialogs.h"
 
 #define GAME_TYPE_HUMAN_VS_CPU      0
 #define GAME_TYPE_CPU_VS_HUMAN      1
@@ -133,17 +134,6 @@ int get_egg_req(void);
 int get_screen_width(void);
 int get_screen_height(void);
 
-/* dialogs */
-gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
-gg_dialog_t *dialog_system_create(void);
-gg_dialog_t *dialog_quit_create(gg_dialog_t *parent);
-gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent);
-gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
-gg_dialog_t *dialog_message_create(char *message);
-gg_dialog_t *dialog_promote_create(int colour);
-gg_dialog_t *dialog_victory_create(result_t *result);
-void show_message_dialog( char *message );
-
 /* title_dialog.c */
 gg_dialog_t *dialog_title_root_create(void);
 gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent);
@@ -175,7 +165,7 @@ void set_theme(struct theme_struct *theme, texture_t texture);
 
 /* load_data.c */
 void load_pieces(void);
-void load_border(texture_t border[9], char *filename);
+void load_border(texture_t border[9], const char *filename);
 void unload_border(texture_t border[9]);
 
 /* get_move.c */
@@ -266,7 +256,7 @@ void draw_texture_uv( texture_t *texture, float xpos, float ypos, float width, f
     float zpos, gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v);
 void draw_texture( texture_t *texture, float xpos,float ypos, float width, float height, 
     float zpos, gg_colour_t *col );
-void load_texture_png( texture_t *texture, char *filename, int alpha, int clamp );
+void load_texture_png( texture_t *texture, const char *filename, int alpha, int clamp );
 
 /* draw_shape.c */
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col);

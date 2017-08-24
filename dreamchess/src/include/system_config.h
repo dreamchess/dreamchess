@@ -25,7 +25,7 @@
 
 void config_init(void);
 void config_save(void);
-option_t *config_get_option(char *name);
+option_t *config_get_option(const char *name);
 char *config_backup(void);
 int config_restore(char *string);
 void config_set_failsafe_video(void);

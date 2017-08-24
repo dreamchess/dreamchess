@@ -32,7 +32,7 @@ enum {
 
 typedef struct sound {
 	int id;
-	char *filename;
+	const char *filename;
 } sound_t;
 
 typedef void (*audio_music_callback_t)(char *title, char *artist, char *album);

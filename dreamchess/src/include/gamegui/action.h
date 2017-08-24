@@ -51,6 +51,6 @@ void gg_action_init(gg_action_t *action, gg_widget_t *widget);
 
 gg_widget_t *gg_action_create(gg_widget_t *widget);
 
-gg_widget_t *gg_action_create_with_label(char *text, float xalign, float yalign);
+gg_widget_t *gg_action_create_with_label(const char *text, float xalign, float yalign);
 
 #endif

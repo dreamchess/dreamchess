@@ -26,7 +26,7 @@
 
 typedef struct ui_driver
 {
-    char *name;
+    const char *name;
     void (* init) (void);
     int (* create_window) (int height, int width, int fullscreen, int ms);
     int (* resize) (int height, int width, int fullscreen, int ms);
