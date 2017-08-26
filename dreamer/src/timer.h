@@ -21,32 +21,58 @@
 #ifndef DREAMER_TIMER_H
 #define DREAMER_TIMER_H
 
-#ifdef _MSC_VER
-/* Temporary hack for gettimeofday() */
+#include <chrono>
 
-#include <Winsock2.h>
-#undef min
-#undef max
+/** Timer with unit centiseconds. */
 
-int gettimeofday(struct timeval *tp, void *tzp);
-#else
-#include <sys/time.h>
-#endif
+class Timer {
+public:
+	/** Timer direction. */
+	enum class Direction {
+		Up,  ///< Increase timer value
+		Down ///< Decrease timer value
+	};
 
-#define TIMER_DOWN (1 << 0)
-#define TIMER_RUNNING (1 << 1)
+	Timer() : _value(0), _state(State::Stopped) { }
 
-typedef struct
-{
-	int flags;
-	int val; /* Current value */
-	struct timeval start_time; /* Time when clock was started */
-} timer;
+	/**
+	 * Starts the timer.
+	 *
+	 * @param dir Indicates whether the timer value should increase or decrease
+	 */
+	void start(const Direction dir);
 
-int timer_get(timer *c);
-void timer_set(timer *c, int val);
-void timer_start(timer *c);
-void timer_stop(timer *c);
-void timer_init(timer *c, int down);
+	/**
+	 * Stops the timer.
+	 */
+	void stop();
 
-#endif
+	/**
+	 * Gets the current timer value.
+	 *
+	 * @return Current timer value in centiseconds
+	 */
+	int get() const;
+
+	/**
+	 * Sets the current timer value and stops the timer
+	 *
+	 * @param value The value in centiseconds to set the timer to
+	 */
+	void set(const int value);
+
+private:
+	enum class State {
+		Stopped,
+		CountingDown,
+		CountingUp
+	};
+
+	int getTimePassed() const;
+
+	int _value;
+	State _state;
+	std::chrono::time_point<std::chrono::steady_clock> _startTime;
+};
+
+#endif // DREAMER_TIMER_H

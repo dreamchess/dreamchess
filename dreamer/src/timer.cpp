@@ -18,94 +18,36 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <assert.h>
-#include <stdlib.h>
 #include "timer.h"
 
-#ifdef _MSC_VER
+int Timer::getTimePassed() const {
+	auto diff = std::chrono::steady_clock::now() - _startTime;
+	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff);
+	return (ms.count() + 5) / 10;
+}
 
-#define _W32_FT_OFFSET (116444736000000000ULL)
-
-int gettimeofday(struct timeval *tp, void *tzp)
-{
-	union {
-		unsigned long long ns100;
-		FILETIME ft;
-	}  _now;
-
-	if (tp)
-	{
-		GetSystemTimeAsFileTime(&_now.ft);
-		tp->tv_usec = (long)((_now.ns100 / 10ULL) % 1000000ULL);
-		tp->tv_sec = (long)((_now.ns100 - _W32_FT_OFFSET) / 10000000ULL);
+int Timer::get() const {
+	switch (_state) {
+	case State::Stopped:
+		return _value;
+	case State::CountingDown:
+		return _value - getTimePassed();
+	case State::CountingUp:
+		return _value + getTimePassed();
 	}
-
-	return 0;
 }
 
-#endif
-
-/* Borrowed from libc.info */
-static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
-{
-	/* Perform the carry for the later subtraction by updating y. */
-	if (x->tv_usec < y->tv_usec) {
-		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-		y->tv_usec -= 1000000 * nsec;
-		y->tv_sec += nsec;
-	}
-	if (x->tv_usec - y->tv_usec > 1000000) {
-		int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-		y->tv_usec += 1000000 * nsec;
-		y->tv_sec -= nsec;
-	}
-
-	/* Compute the time remaining to wait.
-		tv_usec is certainly positive. */
-	result->tv_sec = x->tv_sec - y->tv_sec;
-	result->tv_usec = x->tv_usec - y->tv_usec;
-
-	/* Return 1 if result is negative. */
-	return x->tv_sec < y->tv_sec;
+void Timer::set(const int value) {
+	stop();
+	_value = value;
 }
 
-static int get_time(timer *c)
-{
-	struct timeval tv;
-
-	if (!(c->flags & TIMER_RUNNING))
-		return 0;
-
-	gettimeofday(&tv, NULL);
-	timeval_subtract(&tv, &tv, &c->start_time);
-
-	return tv.tv_sec * 100 + tv.tv_usec / 10000;
+void Timer::start(const Direction dir) {
+	_startTime = std::chrono::steady_clock::now();
+	_state = (dir == Direction::Up ? State::CountingUp : State::CountingDown);
 }
 
-int timer_get(timer *c)
-{
-	return c->val + (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
-}
-
-void timer_set(timer *c, int val)
-{
-	timer_stop(c);
-	c->val = val;
-}
-
-void timer_start(timer *c)
-{
-        gettimeofday(&c->start_time, NULL);
-	c->flags |= TIMER_RUNNING;
-}
-
-void timer_stop(timer *c)
-{	c->val += (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
-	c->flags &= ~TIMER_RUNNING;
-}
-
-void timer_init(timer *c, int down)
-{
-	timer_set(c, 0);
-	c->flags = (down? TIMER_DOWN : 0);
+void Timer::stop() {
+	_value = get();
+	_state = State::Stopped;
 }

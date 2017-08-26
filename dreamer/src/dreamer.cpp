@@ -18,6 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <thread>
+#include <chrono>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -61,7 +64,7 @@ static void drm_sleep(unsigned long usec)
 #endif
 
 static int start_time;
-static state_t state;
+static state_t *state;
 
 int my_turn(state_t *state)
 {
@@ -119,13 +122,13 @@ int check_game_state(board_t *board, int ply)
 
 int get_option(int option)
 {
-    return state.options & (1 << option);
+    return state->options & (1 << option);
 }
 
 void set_option(int option, int value)
 {
-    state.options &= ~(1 << option);
-    state.options |= (value << option);
+    state->options &= ~(1 << option);
+    state->options |= (value << option);
 }
 
 void check_game_end(state_t *state)
@@ -166,13 +169,13 @@ int check_abort(int ply)
 {
     char *s;
 
-    if (!(state.flags & FLAG_PONDER) && (timer_get(&state.move_time) <= 0))
+    if (!(state->flags & FLAG_PONDER) && (state->moveTime.get() <= 0))
         return 1;
 
     s = e_comm_poll();
     if (!s)
         return 0;
-    return command_check_abort(&state, ply, s);
+    return command_check_abort(state, ply, s);
 }
 
 void do_move(state_t *state, move_t move)
@@ -210,41 +213,30 @@ void undo_move(state_t *state)
 
 static void set_start_time(void)
 {
-    struct timeval tv;
-
-    gettimeofday(&tv, NULL);
-
-    start_time = tv.tv_sec;
+    state->searchTime.set(0);
+    state->searchTime.start(Timer::Direction::Up);
 }
 
 void set_move_time(void)
 {
-    int safe_time = timer_get(&state.engine_time) - 1000;
-
-    timer_init(&state.move_time, 1);
+    int safe_time = state->engineTime.get() - 1000;
 
     if (safe_time > 0)
     {
-        if (state.time.mps == 0)
-            timer_set(&state.move_time, safe_time / 30 + state.time.inc);
+        if (state->time.mps == 0)
+            state->moveTime.set(safe_time / 30 + state->time.inc);
         else {
-            int moves_left = state.time.mps - (state.moves / 2) % state.time.mps;
-            timer_set(&state.move_time, safe_time / moves_left + state.time.inc);
+            int moves_left = state->time.mps - (state->moves / 2) % state->time.mps;
+            state->moveTime.set(safe_time / moves_left + state->time.inc);
         }
     }
     else
-        timer_set(&state.move_time, 0);
+        state->moveTime.set(0);
 }
 
 int get_time(void)
 {
-    struct timeval tv;
-
-    gettimeofday(&tv, NULL);
-
-    tv.tv_sec -= start_time;
-
-    return tv.tv_sec * 100 + tv.tv_usec / 10000;
+    return state->searchTime.get();
 }
 
 static void update_clock(state_t *state)
@@ -254,14 +246,14 @@ static void update_clock(state_t *state)
     if (state->time.mps == 0)
         return;
 
-    val = timer_get(&state->engine_time);
+    val = state->engineTime.get();
 
     if ((((state->moves  + 1) / 2) % state->time.mps) == 0)
         val += state->time.base;
 
     val += state->time.inc;
 
-    timer_set(&state->engine_time, val);
+    state->engineTime.set(val);
 }
 
 void send_move(state_t *state, move_t move)
@@ -269,7 +261,7 @@ void send_move(state_t *state, move_t move)
     char *str = coord_move_str(move);
     do_move(state, move);
     e_comm_send("move %s\n", str);
-    timer_stop(&state->move_time);
+    state->moveTime.stop();
     update_clock(state);
     free(str);
     check_game_end(state);
@@ -277,19 +269,21 @@ void send_move(state_t *state, move_t move)
 
 int engine(void *data)
 {
+    state = new state_t();
+
     e_comm_init();
     set_start_time();
 
-    state.time.mps = 40;
-    state.time.base = 5;
-    state.time.inc = 0;
+    state->time.mps = 40;
+    state->time.base = 5;
+    state->time.inc = 0;
     set_option(OPTION_QUIESCE, 1);
     set_option(OPTION_PONDER, 0);
     set_option(OPTION_POST, 0);
 
-    command_handle(&state, "new");
+    command_handle(state, "new");
 
-    while (state.mode != MODE_QUIT)
+    while (state->mode != MODE_QUIT)
     {
         char *s;
         move_t move;
@@ -297,64 +291,65 @@ int engine(void *data)
         s = e_comm_poll();
 
         if (!s)
-            drm_sleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         else
         {
-            command_handle(&state, s);
+            command_handle(state, s);
             free(s);
         }
 
-        if (state.mode != MODE_IDLE && state.mode != MODE_FORCE && !state.done)
+        if (state->mode != MODE_IDLE && state->mode != MODE_FORCE && !state->done)
         {
-            if (my_turn(&state))
+            if (my_turn(state))
             {
-                state.flags = 0;
+                state->flags = 0;
                 set_move_time();
 
-		timer_start(&state.engine_time);
-                move = find_best_move(&state);
+                state->engineTime.start(Timer::Direction::Down);
+                move = find_best_move(state);
 
-                if (state.flags & FLAG_NEW_GAME)
-                    command_handle(&state, "new");
+                if (state->flags & FLAG_NEW_GAME)
+                    command_handle(state, "new");
                 else if (MOVE_IS_REGULAR(move))
                 {
-                    send_move(&state, move);
-		    timer_stop(&state.engine_time);
+                    send_move(state, move);
+                    state->engineTime.stop();
                     if (get_option(OPTION_PONDER))
-                        state.flags |= FLAG_PONDER;
+                        state->flags |= FLAG_PONDER;
                 }
             }
-            else if (state.flags & FLAG_PONDER)
+            else if (state->flags & FLAG_PONDER)
             {
-                move = ponder(&state);
+                move = ponder(state);
 
-                if (state.flags & FLAG_NEW_GAME)
-                    command_handle(&state, "new");
-                else if (!my_turn(&state))
+                if (state->flags & FLAG_NEW_GAME)
+                    command_handle(state, "new");
+                else if (!my_turn(state))
                 {
                     if (move != NO_MOVE) {
                         /* We are done pondering, but opponent hasn't moved yet. */
-                        state.ponder_my_move = move;
-                        state.flags = 0;
+                        state->ponder_my_move = move;
+                        state->flags = 0;
                     }
                     else
                     {
                         /* Opponent made an illegal move, continue pondering. */
                         if (get_option(OPTION_PONDER))
-                            state.flags |= FLAG_PONDER;
+                            state->flags |= FLAG_PONDER;
                     }
                 }
                 else if (MOVE_IS_REGULAR(move))
                 {
                     /* Opponent made the expected move. */
-                    send_move(&state, move);
+                    send_move(state, move);
                     if (get_option(OPTION_PONDER))
-                        state.flags |= FLAG_PONDER;
+                        state->flags |= FLAG_PONDER;
                 }
             }
         }
     }
 
     transposition_exit();
+    delete state;
     return 0;
 }
