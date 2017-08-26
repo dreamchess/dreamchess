@@ -386,7 +386,7 @@ find_best_move(state_t *state)
     abort_search = 0;
     pv_len[0] = 0;
 
-    timer_start(&state->move_time);
+    state->moveTime.start(Timer::Direction::Down);
 
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {

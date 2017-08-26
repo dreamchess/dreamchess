@@ -65,8 +65,9 @@ typedef struct state
     int moves;
     int options;
     struct time_control time;
-    timer engine_time;
-    timer move_time;
+    Timer engineTime;
+    Timer moveTime;
+    Timer searchTime;
     move_t hint;
     move_t ponder_opp_move;
     move_t ponder_my_move;

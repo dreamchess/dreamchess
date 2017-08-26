@@ -440,7 +440,7 @@ static int parse_time_control(state_t *state, const char *s)
         return 1;
 
     state->time = t;
-    timer_set(&state->engine_time, t.base);
+    state->engineTime.set(t.base);
     return 0;
 }
 
@@ -467,7 +467,7 @@ static int command_always(state_t *state, const char *command)
         if (errno || *end != 0)
             BADPARAM(command);
         else
-            timer_set(&state->engine_time, time);
+            state->engineTime.set(time);
         return 1;
     }
 
@@ -516,7 +516,7 @@ int command_usermove(state_t *state, const char *command)
         }
 
 	if (state->mode == MODE_WHITE || state->mode == MODE_BLACK)
-		timer_start(&state->engine_time);
+		state->engineTime.start(Timer::Direction::Down);
 
         do_move(state, move);
         check_game_end(state);
@@ -604,9 +604,7 @@ void command_handle(state_t *state, const char *command)
 	state->undo_data = NULL;
 
 	state->moves = 0;
-	timer_init(&state->engine_time, 1);
-	timer_set(&state->engine_time, state->time.base * 60 * 100);
-	timer_init(&state->move_time, 1);
+	state->engineTime.set(state->time.base * 60 * 100);
 
         state->hint = NO_MOVE;
         state->ponder_opp_move = NO_MOVE;
@@ -854,7 +852,7 @@ int command_check_abort(state_t *state, int ply, const char *command)
             }
 
             /* Start our timer */
-            timer_start(&state->engine_time);
+            state->engineTime.start(Timer::Direction::Down);
 
             if (move == state->ponder_opp_move)
             {
