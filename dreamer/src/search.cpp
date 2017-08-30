@@ -28,7 +28,7 @@
 #include "eval.h"
 #include "history.h"
 #include "repetition.h"
-#include "transposition.h"
+#include "ttable.h"
 #include "hashing.h"
 #include "dreamer.h"
 #include "e_comm.h"
@@ -146,7 +146,7 @@ static void pv_store_ht(board_t *board, int index)
     if (index == pv_len[0])
         return;
 
-    set_best_move(board, pv[0][index]);
+    g_transTable->setBestMove(*board, pv[0][index]);
     execute_move(board, pv[0][index]);
     pv_store_ht(board, index + 1);
     unmake_move(board, pv[0][index], en_passant, castle_flags, fifty_moves);
@@ -258,7 +258,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
 {
     int eval;
     int best_move_score;
-    int eval_type = EVAL_UPPERBOUND;
+    TTable::EvalType evalType = TTable::EvalType::Upperbound;
     long long en_passant;
     int castle_flags;
     int fifty_moves;
@@ -287,16 +287,16 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         return 0;
     }
 
-    switch (lookup_board(board, depth, ply, &eval))
+    switch (g_transTable->lookupBoard(*board, depth, ply, eval))
     {
-    case EVAL_ACCURATE:
+    case TTable::EvalType::Accurate:
         pv_term(ply);
         return eval;
-    case EVAL_LOWERBOUND:
+    case TTable::EvalType::Lowerbound:
         if (eval >= beta)
             return beta;
         break;
-    case EVAL_UPPERBOUND:
+    case TTable::EvalType::Upperbound:
         if (eval <= alpha)
             return alpha;
     }
@@ -327,14 +327,14 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         if (score == -ALPHABETA_ILLEGAL)
             continue;
         if (score >= beta) {
-                store_board(board, beta, EVAL_LOWERBOUND, depth, ply,
+                g_transTable->storeBoard(*board, beta, TTable::EvalType::Lowerbound, depth, ply,
                             0 /* FIXME moves_made */, move);
                 add_count(move, board->current_player);
                 return beta;
         }
         if (score > best_move_score) {
             if (score > alpha) {
-                eval_type = EVAL_ACCURATE;
+                evalType = TTable::EvalType::Accurate;
                 alpha = score;
                 pv_copy(ply, move);
             }
@@ -365,7 +365,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         }
     }
 
-    store_board(board, alpha, eval_type, depth, ply, 0 /* FIXME moves_made */, best_move);
+    g_transTable->storeBoard(*board, alpha, evalType, depth, ply, 0 /* FIXME moves_made */, best_move);
 
     return alpha;
 }
@@ -479,7 +479,7 @@ find_best_move(state_t *state)
     {
         /* Try to get hint move from hash table. */
         execute_move(board, best_move);
-        state->hint = lookup_best_move(board);
+        state->hint = g_transTable->lookupBestMove(*board);
         unmake_move(board, best_move, en_passant, castle_flags, fifty_moves);
     }
 
