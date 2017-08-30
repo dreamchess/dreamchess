@@ -30,8 +30,8 @@ add_executable(dreamer
     search.h
     timer.cpp
     timer.h
-    transposition.cpp
-    transposition.h
+    ttable.cpp
+    ttable.h
     ${BISON_PgnParserBook_OUTPUTS}
     ${FLEX_PgnScannerBook_OUTPUTS}
 )

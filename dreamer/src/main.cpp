@@ -23,7 +23,7 @@
 #include "board.h"
 #include "hashing.h"
 #include "move.h"
-#include "transposition.h"
+#include "ttable.h"
 #include "git_rev.h"
 
 int engine(void *data);
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     board_init();
     init_hash();
     move_init();
-    transposition_init(128);
+    g_transTable = new TTable(64);
 
     /* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
 

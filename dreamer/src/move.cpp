@@ -23,7 +23,7 @@
 
 #include "board.h"
 #include "move.h"
-#include "transposition.h"
+#include "ttable.h"
 #include "move_data.h"
 #include "dreamer.h"
 #include "history.h"
@@ -361,7 +361,7 @@ move_t move_next(board_t *board, int ply)
 		return NO_MOVE;
 
 	if (moves_cur[ply] == moves_start[ply]) {
-		move_t move = lookup_best_move(board);
+		move_t move = g_transTable->lookupBestMove(*board);
 
 		if (move != NO_MOVE)
 			best_first(ply, move);

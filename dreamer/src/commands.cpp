@@ -29,7 +29,7 @@
 #include "move.h"
 #include "history.h"
 #include "repetition.h"
-#include "transposition.h"
+#include "ttable.h"
 #include "git_rev.h"
 #include "search.h"
 #include "san.h"
@@ -591,7 +591,7 @@ void command_handle(state_t *state, const char *command)
     {
         setup_board(&state->board);
         forget_history();
-        clear_table();
+        g_transTable->clear();
         pv_clear();
         repetition_init(&state->board);
         state->done = 0;
@@ -750,7 +750,7 @@ void command_handle(state_t *state, const char *command)
 
         state->board = board;
         forget_history();
-        clear_table();
+        g_transTable->clear();
         repetition_init(&state->board);
         state->done = 0;
         return;

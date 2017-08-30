@@ -32,7 +32,7 @@
 #include "e_comm.h"
 #include "commands.h"
 #include "repetition.h"
-#include "transposition.h"
+#include "ttable.h"
 #include "config.h"
 
 #ifdef _WIN32
@@ -349,7 +349,7 @@ int engine(void *data)
         }
     }
 
-    transposition_exit();
+    delete g_transTable;
     delete state;
     return 0;
 }
