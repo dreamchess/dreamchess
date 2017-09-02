@@ -16,8 +16,6 @@ add_executable(dreamer
     gen_chess_moves.cpp
     hashing.cpp
     hashing.h
-    history.cpp
-    history.h
     main.cpp
     makebook.cpp
     makebook.h

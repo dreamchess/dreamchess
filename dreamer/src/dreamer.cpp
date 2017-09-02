@@ -78,7 +78,7 @@ int is_check(board_t *board, int ply)
 {
     /* FIXME */
     board->current_player = OPPONENT(board->current_player);
-    if (compute_legal_moves(board, ply) < 0)
+    if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
     {
         /* We're in check. */
         board->current_player = OPPONENT(board->current_player);
@@ -92,9 +92,9 @@ int check_game_state(board_t *board, int ply)
 {
     move_t move;
     int mate = STATE_MATE;
-    compute_legal_moves(board, ply);
+    g_moveGenerator->computeLegalMoves(board, ply);
 
-    while ((move = move_next(board, ply)) != NO_MOVE)
+    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
     {
         bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;

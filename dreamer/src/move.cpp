@@ -26,27 +26,12 @@
 #include "ttable.h"
 #include "move_data.h"
 #include "dreamer.h"
-#include "history.h"
 #include "commands.h"
 #include "e_comm.h"
 
-/* Global move tables. */
-int ***rook_moves;
-int ***bishop_moves;
-int ***queen_moves;
-int **knight_moves;
-int **king_moves;
-int **white_pawn_capture_moves;
-int **black_pawn_capture_moves;
-
-/* Global move list. Add 1 for in_check function */
-move_t moves[(MAX_DEPTH + 1) * 256];
-int moves_start[MAX_DEPTH + 2];
-int moves_cur[MAX_DEPTH + 1];
-
-#define add_moves_ray(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-static move_t * \
-FUNCNAME(board_t *board, move_t *move) \
+#define ADD_RAY_MOVES_FUNC(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
+move_t * \
+MoveGenerator::FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PIECE + PLAYER]; \
@@ -107,9 +92,9 @@ FUNCNAME(board_t *board, move_t *move) \
 	return move; \
 }
 
-#define add_moves_single(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
-static move_t * \
-FUNCNAME(board_t *board, move_t *move) \
+#define ADD_SINGLE_MOVES_FUNC(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
+move_t * \
+MoveGenerator::FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PIECE + PLAYER]; \
@@ -162,9 +147,9 @@ FUNCNAME(board_t *board, move_t *move) \
 	return move; \
 }
 
-#define add_pawn_moves(FUNCNAME, MOVES, INC, TEST1, TEST2, PLAYER, OPPONENT_FIND, LOOP) \
-static move_t * \
-FUNCNAME(board_t *board, move_t *move) \
+#define ADD_PAWN_MOVES_FUNC(FUNCNAME, MOVES, INC, TEST1, TEST2, PLAYER, OPPONENT_FIND, LOOP) \
+move_t * \
+MoveGenerator::FUNCNAME(board_t *board, move_t *move) \
 { \
 	int source; \
 	bitboard_t bitboard = board->bitboard[PAWN + PLAYER]; \
@@ -251,34 +236,32 @@ FUNCNAME(board_t *board, move_t *move) \
 	return move; \
 }
 
-add_moves_ray(add_black_rook_moves, rook_moves, ROOK, SIDE_BLACK,
+ADD_RAY_MOVES_FUNC(addBlackRookMoves, _rookMoves, ROOK, SIDE_BLACK,
 	find_white_piece, source = 63; source >= 0; source--)
-add_moves_ray(add_white_rook_moves, rook_moves, ROOK, SIDE_WHITE,
- find_black_piece, source = 0; source < 64; source++)
-add_moves_ray(add_black_bishop_moves, bishop_moves, BISHOP, SIDE_BLACK,
-	find_white_piece, source = 63; source >= 0; source--)
-add_moves_ray(add_white_bishop_moves, bishop_moves, BISHOP, SIDE_WHITE,
+ADD_RAY_MOVES_FUNC(addWhiteRookMoves, _rookMoves, ROOK, SIDE_WHITE,
 	find_black_piece, source = 0; source < 64; source++)
-add_moves_ray(add_white_queen_moves, queen_moves, QUEEN, SIDE_WHITE,
-	find_black_piece, source = 0; source < 64; source++)
-add_moves_ray(add_black_queen_moves, queen_moves, QUEEN, SIDE_BLACK,
+ADD_RAY_MOVES_FUNC(addBlackBishopMoves, _bishopMoves, BISHOP, SIDE_BLACK,
 	find_white_piece, source = 63; source >= 0; source--)
-add_moves_single(add_white_knight_moves, knight_moves, KNIGHT, SIDE_WHITE,
+ADD_RAY_MOVES_FUNC(addWhiteBishopMoves, _bishopMoves, BISHOP, SIDE_WHITE,
 	find_black_piece, source = 0; source < 64; source++)
-add_moves_single(add_black_knight_moves, knight_moves, KNIGHT, SIDE_BLACK,
-	find_white_piece, source = 63; source >= 0; source--)
-add_moves_single(add_white_king_moves, king_moves, KING, SIDE_WHITE,
+ADD_RAY_MOVES_FUNC(addWhiteQueenMoves, _queenMoves, QUEEN, SIDE_WHITE,
 	find_black_piece, source = 0; source < 64; source++)
-add_moves_single(add_black_king_moves, king_moves, KING, SIDE_BLACK,
+ADD_RAY_MOVES_FUNC(addBlackQueenMoves, _queenMoves, QUEEN, SIDE_BLACK,
 	find_white_piece, source = 63; source >= 0; source--)
-add_pawn_moves(add_white_pawn_moves, white_pawn_capture_moves, +8, dest <= 55, !(source & ~15),
+ADD_SINGLE_MOVES_FUNC(addWhiteKnightMoves, _knightMoves, KNIGHT, SIDE_WHITE,
+	find_black_piece, source = 0; source < 64; source++)
+ADD_SINGLE_MOVES_FUNC(addBlackKnightMoves, _knightMoves, KNIGHT, SIDE_BLACK,
+	find_white_piece, source = 63; source >= 0; source--)
+ADD_SINGLE_MOVES_FUNC(addWhiteKingMoves, _kingMoves, KING, SIDE_WHITE,
+	find_black_piece, source = 0; source < 64; source++)
+ADD_SINGLE_MOVES_FUNC(addBlackKingMoves, _kingMoves, KING, SIDE_BLACK,
+	find_white_piece, source = 63; source >= 0; source--)
+ADD_PAWN_MOVES_FUNC(addWhitePawnMoves, _whitePawnCaptureMoves, +8, dest <= 55, !(source & ~15),
 	SIDE_WHITE, find_black_piece, source = 8; source <= 55; source++)
-add_pawn_moves(add_black_pawn_moves, black_pawn_capture_moves, -8, dest >= 8, source >= 48,
+ADD_PAWN_MOVES_FUNC(addBlackPawnMoves, _blackPawnCaptureMoves, -8, dest >= 8, source >= 48,
 	SIDE_BLACK, find_white_piece, source = 55; source >= 8; source--)
 
-static move_t *
-add_white_castle_moves(board_t *board, move_t *move)
-{
+move_t *MoveGenerator::addWhiteCastleMoves(board_t *board, move_t *move) {
 	/* Kingside castle. Check for empty squares. */
 	if ((board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
@@ -298,9 +281,7 @@ add_white_castle_moves(board_t *board, move_t *move)
 	return move;
 }
 
-static move_t *
-add_black_castle_moves(board_t *board, move_t *move)
-{
+move_t *MoveGenerator::addBlackCastleMoves(board_t *board, move_t *move) {
 	/* Kingside castle. Check for empty squares. */
 	if ((board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
@@ -320,122 +301,147 @@ add_black_castle_moves(board_t *board, move_t *move)
 	return move;
 }
 
-int
-compute_legal_moves(board_t *board, int ply)
-{
-	move_t *move = &moves[moves_start[ply]];
+MoveGenerator::MoveGenerator() :
+		_moves{},
+		_movesStart{},
+		_movesCur{} {
+	_rookMoves = all_rook_moves();
+	_bishopMoves = all_bishop_moves();
+	_queenMoves = all_queen_moves();
+	_knightMoves = all_knight_moves();
+	_kingMoves = all_king_moves();
+	_whitePawnCaptureMoves = all_white_pawn_capture_moves();
+	_blackPawnCaptureMoves = all_black_pawn_capture_moves();
+	clearHistory();
+}
+
+MoveGenerator::~MoveGenerator() {
+	freeRayMoves(_rookMoves);
+	freeRayMoves(_bishopMoves);
+	freeRayMoves(_queenMoves);
+	freeSingleMoves(_knightMoves);
+	freeSingleMoves(_kingMoves);
+	freeSingleMoves(_whitePawnCaptureMoves);
+	freeSingleMoves(_blackPawnCaptureMoves);
+}
+
+void MoveGenerator::freeRayMoves(int ***moves) {
+	for (unsigned int source = 0; source < 64; source++) {
+		/* Iterate over rays. */
+		for (int **ray = moves[source]; *ray; ray++)
+			free(*ray);
+		free (moves[source]);
+	}
+
+	free(moves);
+}
+
+void MoveGenerator::freeSingleMoves(int **moves) {
+	for (unsigned int source = 0; source < 64; source++)
+		free (moves[source]);
+
+	free(moves);
+}
+
+int MoveGenerator::computeLegalMoves(board_t *board, int ply) {
+	move_t *move = &_moves[_movesStart[ply]];
 
 	if (board->current_player == SIDE_WHITE)
 	{
-		move = add_white_castle_moves(board, move);
+		move = addWhiteCastleMoves(board, move);
 
-		if (!(move = add_white_king_moves(board, move))
-			|| !(move = add_white_queen_moves(board, move))
-			|| !(move = add_white_rook_moves(board, move))
-			|| !(move = add_white_bishop_moves(board, move))
-			|| !(move = add_white_knight_moves(board, move))
-			|| !(move = add_white_pawn_moves(board, move)))
+		if (!(move = addWhiteKingMoves(board, move))
+			|| !(move = addWhiteQueenMoves(board, move))
+			|| !(move = addWhiteRookMoves(board, move))
+			|| !(move = addWhiteBishopMoves(board, move))
+			|| !(move = addWhiteKnightMoves(board, move))
+			|| !(move = addWhitePawnMoves(board, move)))
 			return -1;
 	}
 	else
 	{
-		move = add_black_castle_moves(board, move);
+		move = addBlackCastleMoves(board, move);
 
-		if (!(move = add_black_king_moves(board, move))
-			|| !(move = add_black_queen_moves(board, move))
-			|| !(move = add_black_rook_moves(board, move))
-			|| !(move = add_black_bishop_moves(board, move))
-			|| !(move = add_black_knight_moves(board, move))
-			|| !(move = add_black_pawn_moves(board, move)))
+		if (!(move = addBlackKingMoves(board, move))
+			|| !(move = addBlackQueenMoves(board, move))
+			|| !(move = addBlackRookMoves(board, move))
+			|| !(move = addBlackBishopMoves(board, move))
+			|| !(move = addBlackKnightMoves(board, move))
+			|| !(move = addBlackPawnMoves(board, move)))
 			return -1;
 	}
 
-	moves_start[ply + 1] = moves_start[ply] + move - &moves[moves_start[ply]];
-	moves_cur[ply] = moves_start[ply];
+	_movesStart[ply + 1] = _movesStart[ply] + move - &_moves[_movesStart[ply]];
+	_movesCur[ply] = _movesStart[ply];
 	return 0;
 }
 
-move_t move_next(board_t *board, int ply)
-{
-	if (moves_cur[ply] == moves_start[ply + 1])
+move_t MoveGenerator::getNextMove(board_t *board, int ply) {
+	if (_movesCur[ply] == _movesStart[ply + 1])
 		return NO_MOVE;
 
-	if (moves_cur[ply] == moves_start[ply]) {
+	if (_movesCur[ply] == _movesStart[ply]) {
 		move_t move = g_transTable->lookupBestMove(*board);
 
 		if (move != NO_MOVE)
-			best_first(ply, move);
+			swapMoveWithFirst(ply, move);
 	} else
-		sort_next(ply, board->current_player);
+		sortMove(ply, board->current_player);
 
-	return moves[moves_cur[ply]++];
+	return _moves[_movesCur[ply]++];
 }
 
-#if 0
-void list_moves(int ply)
-{
-    int i;
-    for (i = moves_start[ply]; i < moves_start[ply + 1]; i++)
-    {
-        char *s = coord_move_str(moves[i]);
-        e_comm_send("%i %s\n", i, s);
-        free(s);
-    }
-}
-#endif
+int MoveGenerator::compareMoves(move_t move1, move_t move2, int current_side) {
+	if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+		return -1;
 
-void
-move_init(void)
-{
-	rook_moves = all_rook_moves();
-	knight_moves = all_knight_moves();
-	king_moves = all_king_moves();
-	bishop_moves = all_bishop_moves();
-	queen_moves = all_queen_moves();
-	white_pawn_capture_moves = all_white_pawn_capture_moves();
-	black_pawn_capture_moves = all_black_pawn_capture_moves();
+	if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+		return 1;
+
+	if (getHistoryCounter(move1, current_side) > getHistoryCounter(move2, current_side))
+		return -1;
+	else
+		return 1;
 }
 
-static void
-free_moves_ray(int ***moves)
-{
-	int **ray;
-	int source;
-
-	for (source = 0; source < 64; source++)
-	{
-
-		/* Iterate over rays. */
-		for (ray = moves[source]; *ray; ray++)
-			free(*ray);
-
-		free (moves[source]);
-	}
-
-	free(moves);
+void MoveGenerator::swapMoveWithFirst(int ply, move_t move) {
+	for (unsigned int i = _movesStart[ply]; i < _movesStart[ply + 1]; i++)
+		if (move == _moves[i])
+		{
+			move_t swap = _moves[_movesStart[ply]];
+			_moves[_movesStart[ply]] = _moves[i];
+			_moves[i] = swap;
+			return;
+		}
 }
 
-static void
-free_moves_single(int **moves)
-{
-	int source;
+void MoveGenerator::sortMove(int ply, int side) {
+	unsigned int min = _movesCur[ply];
 
-	for (source = 0; source < 64; source++)
-	{
-		free (moves[source]);
-	}
+	for (unsigned int i = _movesCur[ply] + 1; i < _movesStart[ply + 1]; i++)
+	   if (compareMoves(_moves[i], _moves[min], side) < 0)
+		  min = i;
 
-	free(moves);
+	move_t swap = _moves[_movesCur[ply]];
+	_moves[_movesCur[ply]] = _moves[min];
+	_moves[min] = swap;
 }
 
-void
-move_exit(void)
-{
-	free_moves_ray(queen_moves);
-	free_moves_ray(bishop_moves);
-	free_moves_ray(rook_moves);
-	free_moves_single(knight_moves);
-	free_moves_single(king_moves);
-	free_moves_single(white_pawn_capture_moves);
-	free_moves_single(black_pawn_capture_moves);
+void MoveGenerator::incHistoryCounter(move_t move, int side) {
+	_history[side << 12 | MOVE_GET(move, SOURCE) << 6 | MOVE_GET(move, DEST)]++;
 }
+
+unsigned int MoveGenerator::getHistoryCounter(move_t move, int side) {
+	return _history[side << 12 | MOVE_GET(move, SOURCE) << 6 | MOVE_GET(move, DEST)];
+}
+
+void MoveGenerator::clearHistory() {
+	_history = {};
+}
+
+void MoveGenerator::ageHistory() {
+	for (auto &i : _history)
+		i >>= 8;
+}
+
+MoveGenerator *g_moveGenerator;

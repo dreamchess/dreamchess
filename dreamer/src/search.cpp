@@ -26,7 +26,6 @@
 #include "move.h"
 #include "search.h"
 #include "eval.h"
-#include "history.h"
 #include "repetition.h"
 #include "ttable.h"
 #include "hashing.h"
@@ -186,7 +185,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
         return 0;
 
     /* Needed to catch illegal moves at sd 1 */
-    if (compute_legal_moves(board, ply) < 0)
+    if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
 
     eval = board_eval_complete(board, side, alpha, beta);
@@ -204,7 +203,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    while ((move = move_next(board, ply)) != NO_MOVE)
+    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
     {
         if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT | MOVE_PROMOTION_MASK))
         {
@@ -215,7 +214,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
                 continue;
             if (eval >= beta)
             {
-                add_count(move, board->current_player);
+                g_moveGenerator->incHistoryCounter(move, board->current_player);
                 return beta;
             }
             if (eval > alpha)
@@ -233,7 +232,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
         ** checkmated.
         */
         board->current_player = OPPONENT(board->current_player);
-        if (compute_legal_moves(board, ply) < 0)
+        if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
@@ -278,7 +277,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
 
     if (board->fifty_moves == 100)
     {
-        if (compute_legal_moves(board, ply) < 0)
+        if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
             return ALPHABETA_ILLEGAL;
 
         pv_term(ply);
@@ -306,7 +305,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         return quiescence(board, ply, alpha, beta, side);
     }
 
-    if (compute_legal_moves(board, ply) < 0)
+    if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
 
     best_move = NO_MOVE;
@@ -316,7 +315,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    while ((move = move_next(board, ply)) != NO_MOVE)
+    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
     {
         int score;
         execute_move(board, move);
@@ -329,7 +328,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         if (score >= beta) {
                 g_transTable->storeBoard(*board, beta, TTable::EvalType::Lowerbound, depth, ply,
                             0 /* FIXME moves_made */, move);
-                add_count(move, board->current_player);
+                g_moveGenerator->incHistoryCounter(move, board->current_player);
                 return beta;
         }
         if (score > best_move_score) {
@@ -387,16 +386,17 @@ find_best_move(state_t *state)
     pv_len[0] = 0;
 
     state->moveTime.start(Timer::Direction::Down);
+    g_moveGenerator->ageHistory();
 
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
         int alpha = ALPHABETA_MIN;
 	move_t move;
 
-        compute_legal_moves(board, 0);
+        g_moveGenerator->computeLegalMoves(board, 0);
 
         /* e_comm_send("------------------\n"); */
-        while ((move = move_next(board, 0)) != NO_MOVE)
+        while ((move = g_moveGenerator->getNextMove(board, 0)) != NO_MOVE)
         {
             int score;
             /* char *s = coord_move_str(move);
@@ -459,7 +459,7 @@ find_best_move(state_t *state)
         ** checkmated.
         */
         board->current_player = OPPONENT(board->current_player);
-        if (compute_legal_moves(board, 0) < 0)
+        if (g_moveGenerator->computeLegalMoves(board, 0) < 0)
         {
             /* We're checkmated. */
             board->current_player = OPPONENT(board->current_player);
