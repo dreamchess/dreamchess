@@ -13,13 +13,11 @@ add_executable(dreamer
     e_comm.h
     eval.cpp
     eval.h
-    gen_chess_moves.cpp
     hashing.cpp
     hashing.h
     main.cpp
     makebook.cpp
     makebook.h
-    move_data.h
     move.cpp
     move.h
     repetition.cpp

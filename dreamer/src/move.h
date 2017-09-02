@@ -90,7 +90,16 @@ private:
 	move_t *addBlackPawnMoves(board_t *board, move_t *move);
 	move_t *addWhiteCastleMoves(board_t *board, move_t *move);
 	move_t *addBlackCastleMoves(board_t *board, move_t *move);
-	
+
+	template<size_t SIZE>
+	using Steps = std::array<std::pair<int, int>, SIZE>;
+
+	template<std::size_t SIZE>
+	int ***generateRayMoves(const Steps<SIZE> &steps);
+
+	template<std::size_t SIZE>
+	int **generateSingleMoves(const Steps<SIZE> &steps);
+
 	void freeRayMoves(int ***moves);
 	void freeSingleMoves(int **moves);
 
