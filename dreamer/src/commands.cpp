@@ -27,7 +27,6 @@
 #include "commands.h"
 #include "e_comm.h"
 #include "move.h"
-#include "history.h"
 #include "repetition.h"
 #include "ttable.h"
 #include "git_rev.h"
@@ -133,10 +132,10 @@ static move_t get_san_move(board_t *board, int ply, san_move_t *san)
     else
         piece = convert_piece(san->piece) + board->current_player;
 
-    compute_legal_moves(board, ply);
+    g_moveGenerator->computeLegalMoves(board, ply);
 
     /* Look for move in list. */
-    while ((move = move_next(board, ply)) != NO_MOVE)
+    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
     {
         int move_piece;
 
@@ -205,10 +204,10 @@ static move_t get_coord_move(board_t *board, int ply, const char *ms)
     source = (ms[0] - 'a') + 8 * (ms[1] - '1');
     dest = (ms[2] - 'a') + 8 * (ms[3] - '1');
 
-    compute_legal_moves(board, ply);
+    g_moveGenerator->computeLegalMoves(board, ply);
 
     /* Look for move in list. */
-    while ((move = move_next(board, ply)) != NO_MOVE)
+    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
     {
         if ((MOVE_GET(move, SOURCE) == source) && (MOVE_GET(move, DEST) == dest))
         {
@@ -590,7 +589,7 @@ void command_handle(state_t *state, const char *command)
     if (!strcmp(command, "new"))
     {
         setup_board(&state->board);
-        forget_history();
+        g_moveGenerator->clearHistory();
         g_transTable->clear();
         pv_clear();
         repetition_init(&state->board);
@@ -749,7 +748,7 @@ void command_handle(state_t *state, const char *command)
         }
 
         state->board = board;
-        forget_history();
+        g_moveGenerator->clearHistory();
         g_transTable->clear();
         repetition_init(&state->board);
         state->done = 0;

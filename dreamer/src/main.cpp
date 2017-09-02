@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
     board_init();
     init_hash();
-    move_init();
+    g_moveGenerator = new MoveGenerator();
     g_transTable = new TTable(64);
 
     /* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
