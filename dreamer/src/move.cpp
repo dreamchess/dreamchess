@@ -24,10 +24,108 @@
 #include "board.h"
 #include "move.h"
 #include "ttable.h"
-#include "move_data.h"
 #include "dreamer.h"
 #include "commands.h"
 #include "e_comm.h"
+
+static bool is_valid(int x, int y) {
+	return (x >= 0 && x <= 7 && y >= 0 && y <= 7);
+}
+
+template<std::size_t SIZE>
+int ***MoveGenerator::generateRayMoves(const Steps<SIZE> &steps) {
+	int x, y, i;
+
+	int ***move_table;
+	move_table = (int ***)malloc(64 * sizeof(int **));
+	for (y = 0; y < 8; y++)
+		for (x = 0; x < 8; x++) {
+			int rays = 0;
+			int curray = 0;
+			int source = y * 8 + x;
+
+			/* Determine number of non-zero length rays for this source square. */
+			for (i = 0; i < SIZE; i++)
+				if (is_valid(x + steps[i].first, y + steps[i].second)) rays++;
+
+			move_table[source] = (int **)malloc((rays + 1) * sizeof(int *));
+
+			for (i = 0; i < SIZE; i++) {
+				int raylen = 0;
+				int curraypos = 1;
+				int xinc, yinc;
+
+				/* Determine length of current ray. */
+				xinc = steps[i].first;
+				yinc = steps[i].second;
+
+				while (is_valid(x + xinc, y + yinc)) {
+					raylen++;
+					xinc += steps[i].first;
+					yinc += steps[i].second;
+				}
+
+				/* If this ray has length 0, skip it. */
+				if (!raylen) continue;
+
+				move_table[source][curray] = (int *)malloc((raylen + 1) * sizeof(int));
+
+				/* Store ray length in element 0 of the ray. */
+				move_table[source][curray][0] = raylen;
+
+				xinc = steps[i].first;
+				yinc = steps[i].second;
+
+				/* Print ray elements. */
+				while (is_valid(x + xinc, y + yinc)) {
+					int dest = source + yinc * 8 + xinc;
+					move_table[source][curray][curraypos] = dest;
+					curraypos++;
+					xinc += steps[i].first;
+					yinc += steps[i].second;
+				}
+
+				curray++;
+			}
+
+			/* Add a NULL pointer as sentinel. */
+			move_table[source][rays] = NULL;
+		}
+	return move_table;
+}
+
+template<std::size_t SIZE>
+int **MoveGenerator::generateSingleMoves(const Steps<SIZE> &steps) {
+	int x, y, i;
+
+	int **move_table;
+	move_table = (int **)malloc(64 * sizeof(int *));
+	for (y = 0; y < 8; y++)
+		for (x = 0; x < 8; x++) {
+			int count = 0;
+			int source = y * 8 + x;
+
+			/* Determine possible moves from this source square. */
+			for (unsigned int i = 0; i < SIZE; i++)
+				if (is_valid(x + steps[i].first, y + steps[i].second)) count++;
+
+			move_table[source] = (int *)malloc((count + 1) * sizeof(int));
+
+			/* Store number of moves in first element of array. */
+			move_table[source][0] = count;
+
+			/* Print moves. */
+			count = 1;
+			for (i = 0; i < SIZE; i++) {
+				if (is_valid(x + steps[i].first, y + steps[i].second)) {
+					int dest = source + steps[i].second * 8 + steps[i].first;
+					move_table[source][count] = dest;
+					count++;
+				}
+			}
+		}
+	return move_table;
+}
 
 #define ADD_RAY_MOVES_FUNC(FUNCNAME, MOVES, PIECE, PLAYER, OPPONENT_FIND, LOOP) \
 move_t * \
@@ -305,13 +403,13 @@ MoveGenerator::MoveGenerator() :
 		_moves{},
 		_movesStart{},
 		_movesCur{} {
-	_rookMoves = all_rook_moves();
-	_bishopMoves = all_bishop_moves();
-	_queenMoves = all_queen_moves();
-	_knightMoves = all_knight_moves();
-	_kingMoves = all_king_moves();
-	_whitePawnCaptureMoves = all_white_pawn_capture_moves();
-	_blackPawnCaptureMoves = all_black_pawn_capture_moves();
+	_rookMoves = generateRayMoves(Steps<4>{{{0, -1}, {-1, 0}, {1, 0}, {0, 1}}});
+	_bishopMoves = generateRayMoves(Steps<4>{{{-1, -1}, {1, -1}, {-1, 1}, {1, 1}}});
+	_queenMoves = generateRayMoves(Steps<8>{{{0, -1}, {-1, 0}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}}});
+	_knightMoves = generateSingleMoves(Steps<8>{{{-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}}});
+	_kingMoves = generateSingleMoves(Steps<8>{{{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}});
+	_whitePawnCaptureMoves = generateSingleMoves(Steps<2>{{{-1, 1}, {1, 1}}});
+	_blackPawnCaptureMoves = generateSingleMoves(Steps<2>{{{-1, -1}, {1, -1}}});
 	clearHistory();
 }
 
