@@ -67,38 +67,16 @@
 class MoveGenerator {
 public:
 	MoveGenerator();
-	~MoveGenerator();
 
-	int computeLegalMoves(board_t *board, int ply);
-	move_t getNextMove(board_t *board, int ply);
+	int computeLegalMoves(const board_t *board, int ply);
+	move_t getNextMove(const board_t *board, int ply);
 	void clearHistory();
 	void ageHistory();
 	void incHistoryCounter(move_t move, int side);
 
 private:
-	move_t *addWhiteRookMoves(board_t *board, move_t *move);
-	move_t *addBlackRookMoves(board_t *board, move_t *move);
-	move_t *addWhiteBishopMoves(board_t *board, move_t *move);
-	move_t *addBlackBishopMoves(board_t *board, move_t *move);
-	move_t *addWhiteQueenMoves(board_t *board, move_t *move);
-	move_t *addBlackQueenMoves(board_t *board, move_t *move);
-	move_t *addWhiteKnightMoves(board_t *board, move_t *move);
-	move_t *addBlackKnightMoves(board_t *board, move_t *move);
-	move_t *addWhiteKingMoves(board_t *board, move_t *move);
-	move_t *addBlackKingMoves(board_t *board, move_t *move);
-	move_t *addWhitePawnMoves(board_t *board, move_t *move);
-	move_t *addBlackPawnMoves(board_t *board, move_t *move);
-	move_t *addWhiteCastleMoves(board_t *board, move_t *move);
-	move_t *addBlackCastleMoves(board_t *board, move_t *move);
-
-	template<size_t SIZE>
-	using Steps = std::array<std::pair<int, int>, SIZE>;
-
-	template<std::size_t SIZE>
-	int ***generateRayMoves(const Steps<SIZE> &steps);
-
-	template<std::size_t SIZE>
-	int **generateSingleMoves(const Steps<SIZE> &steps);
+	void addWhiteCastleMoves(const board_t *board, move_t *&move);
+	void addBlackCastleMoves(const board_t *board, move_t *&move);
 
 	void freeRayMoves(int ***moves);
 	void freeSingleMoves(int **moves);
@@ -108,14 +86,6 @@ private:
 	void sortMove(int ply, int side);
 
 	unsigned int getHistoryCounter(move_t move, int side);
-
-	int ***_rookMoves;
-	int ***_bishopMoves;
-	int ***_queenMoves;
-	int **_knightMoves;
-	int **_kingMoves;
-	int **_whitePawnCaptureMoves;
-	int **_blackPawnCaptureMoves;
 
 	// Add 1 for in_check function
 	std::array<move_t, (MAX_DEPTH + 1) * 256> _moves;

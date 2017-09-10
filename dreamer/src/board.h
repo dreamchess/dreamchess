@@ -255,6 +255,33 @@ find_white_piece(board_t *board, int square);
 **                 of the rook.
 */
 
+template<int SIDE>
+int find_piece(const board_t *board, int square)
+{
+    bitboard_t mask = square_bit[square];
+
+    /* We need to check kings first because a fake king might be on the
+    ** same square as a rook. In that case we want to find the king so
+    ** that the illegality of the previous move can be detected.
+    */
+    if (board->bitboard[KING + SIDE] & square_bit[square])
+        return KING + SIDE;
+
+    /* Check for other pieces in order of frequency. */
+    if (board->bitboard[PAWN + SIDE] & mask)
+        return PAWN + SIDE;
+    if (board->bitboard[KNIGHT + SIDE] & mask)
+        return KNIGHT + SIDE;
+    if (board->bitboard[BISHOP + SIDE] & mask)
+        return BISHOP + SIDE;
+    if (board->bitboard[ROOK + SIDE] & mask)
+        return ROOK + SIDE;
+    if (board->bitboard[QUEEN + SIDE] & mask)
+        return QUEEN + SIDE;
+
+    return NONE;
+}
+
 void
 board_init(void);
 /* Initialises the global array square_bit.
