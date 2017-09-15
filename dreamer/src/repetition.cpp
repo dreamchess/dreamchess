@@ -50,9 +50,9 @@ void repetition_exit(void)
     free(hist);
 }
 
-void repetition_add(board_t *board, move_t move)
+void repetition_add(board_t *board, Move move)
 {
-    if ((MOVE_GET(move, TYPE) != NORMAL_MOVE) || ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN))
+    if ((move.getType() != NORMAL_MOVE) || (move.getPieceKind() == PAWN))
     {
         hist_idx++;
         hist = (rep_list_t *)realloc(hist, sizeof(rep_list_t) * (hist_idx + 1));

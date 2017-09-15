@@ -58,7 +58,7 @@ public:
 	 * @param move     The best move for #board
 	 */
 	void storeBoard(const board_t &board, int eval, const EvalType evalType, const int depth,
-					const int ply, const int timestamp, const move_t move);
+					const int ply, const int timestamp, const Move move);
 
 	/**
 	 * Updates the best move for a board position. If the board is not
@@ -67,7 +67,7 @@ public:
 	 * @param board The evaluated board
 	 * @param move  The best move for #board
 	 */
-	void setBestMove(const board_t &board, const move_t move);
+	void setBestMove(const board_t &board, const Move move);
 
 	/**
 	 * Looks up a board evaluation in the transposition table.
@@ -88,7 +88,7 @@ public:
 	 *
 	 * @return The best move, or NO_MOVE if no entry was found
 	 */
-	move_t lookupBestMove(const board_t &board) const;
+	Move lookupBestMove(const board_t &board) const;
 
 	/** Clears the transposition table. */
 	void clear();
@@ -100,7 +100,7 @@ private:
 		int depth;
 		unsigned long long hashKey;
 		int timestamp;
-		move_t move;
+		Move move;
 	};
 
 	Entry *_table;

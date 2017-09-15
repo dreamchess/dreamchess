@@ -28,6 +28,64 @@
 #include "commands.h"
 #include "e_comm.h"
 
+Move::Move() : _data(NO_MOVE) { }
+
+Move::Move(unsigned int piece, unsigned int source, unsigned int dest, unsigned int type, unsigned int captured) {
+	_data = MOVE(piece, source, dest, type, captured);
+}
+
+bool Move::operator==(Move &rhs) const {
+	return _data == rhs._data;
+}
+
+unsigned int Move::getPiece() const {
+	return MOVE_GET(_data, PIECE);
+}
+
+unsigned int Move::getPieceKind() const {
+	return getPiece() & PIECE_MASK;
+}
+
+unsigned int Move::getPieceColour() const {
+	return getPiece() & 1;
+}
+
+unsigned int Move::getSource() const {
+	return MOVE_GET(_data, SOURCE);
+}
+
+unsigned int Move::getDest() const {
+	return MOVE_GET(_data, DEST);
+}
+
+unsigned int Move::getType() const {
+	return _data & MOVE_NO_PROMOTION_MASK;
+}
+
+unsigned int Move::getPromotionType() const {
+	return _data & MOVE_PROMOTION_MASK;
+}
+
+unsigned int Move::getCapturedPiece() const {
+	return MOVE_GET(_data, CAPTURED);
+}
+
+bool Move::doesCapture() const {
+	return _data & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT);
+}
+
+bool Move::doesPromotion() const {
+	return _data & MOVE_PROMOTION_MASK;
+}
+
+bool Move::isRegular() const {
+	return MOVE_IS_REGULAR(_data);
+}
+
+bool Move::isNone() const {
+	return _data == NO_MOVE;
+}
+
 enum class MoveResult {
 	Clear,
 	Obstruction,
@@ -35,7 +93,7 @@ enum class MoveResult {
 };
 
 template<int PIECE, int PLAYER>
-MoveResult doSingleMove(const board_t *board, move_t *&move, const int source, const int dest) {
+MoveResult doSingleMove(const board_t *board, Move *&move, const int source, const int dest) {
 	// If there's a player piece at the destination, skip this possible move.
 	if (board->bitboard[ALL + PLAYER] & square_bit[dest])
 		return MoveResult::Obstruction;
@@ -48,17 +106,17 @@ MoveResult doSingleMove(const board_t *board, move_t *&move, const int source, c
 		if (piece == KING + OPPONENT(PLAYER))
 			return MoveResult::Illegal;
 
-		*move++ = MOVE(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece);
+		*move++ = Move(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece);
 		return MoveResult::Obstruction;
 	} else {
 		// Normal move.
-		*move++ = MOVE(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0);
+		*move++ = Move(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0);
 		return MoveResult::Clear;
 	}
 }
 
 template<int PIECE, int PLAYER>
-bool doRayMoves(const board_t *board, move_t *&move, const int source, const int step, int count) {
+bool doRayMoves(const board_t *board, Move *&move, const int source, const int step, int count) {
 	int dest = source;
 
 	while (count-- != 0) {
@@ -78,7 +136,7 @@ bool doRayMoves(const board_t *board, move_t *&move, const int source, const int
 }
 
 template<int PIECE, int PLAYER>
-bool generateMoves(const board_t *board, move_t *&move) {
+bool generateMoves(const board_t *board, Move *&move) {
 	bitboard_t bitboard = board->bitboard[PIECE + PLAYER];
 
 	constexpr int sourceStart = (PLAYER == SIDE_WHITE ? 0 : 63);
@@ -172,7 +230,7 @@ bool generateMoves(const board_t *board, move_t *&move) {
 }
 
 template<int PLAYER>
-bool generatePawnCaptures(const board_t *board, move_t *&move, const int source, const int dest) {
+bool generatePawnCaptures(const board_t *board, Move *&move, const int source, const int dest) {
 	// If there's not an opponent piece at the destination, skip this possible move. */
 	if (board->bitboard[ALL + OPPONENT(PLAYER)] & square_bit[dest]) {
 		const int piece = find_piece<OPPONENT(PLAYER)>(board, dest);
@@ -183,23 +241,23 @@ bool generatePawnCaptures(const board_t *board, move_t *&move, const int source,
 
 		// The move is legal.
 		if (PLAYER == SIDE_WHITE ? dest <= 55 : dest >= 8) {
-			*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE, piece);
 		} else {
-			*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_QUEEN, piece);
-			*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_ROOK, piece);
-			*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_BISHOP, piece);
-			*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_KNIGHT, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_QUEEN, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_ROOK, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_BISHOP, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_KNIGHT, piece);
 		}
 	} else if (board->en_passant & square_bit[dest]) {
 		// En passant capture.
-		*move++ = MOVE(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSANT, PAWN + OPPONENT(PLAYER));
+		*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSANT, PAWN + OPPONENT(PLAYER));
 	}
 
 	return true;
 }
 
 template<int PLAYER>
-bool generatePawnMoves(const board_t *board, move_t *&move) {
+bool generatePawnMoves(const board_t *board, Move *&move) {
 	bitboard_t bitboard = board->bitboard[PAWN + PLAYER];
 	const bitboard_t bitboard_all = board->bitboard[WHITE_ALL] | board->bitboard[BLACK_ALL];
 
@@ -220,21 +278,21 @@ bool generatePawnMoves(const board_t *board, move_t *&move) {
 		if (!(bitboard_all & square_bit[dest])) {
 			if (PLAYER == SIDE_WHITE ? dest <= 55 : dest >= 8) {
 				// Normal move.
-				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
 
 				if (PLAYER == SIDE_WHITE ? source <= 15 : source >= 48) {
 					dest += step;
 					if (!(bitboard_all & square_bit[dest])) {
 						// Double push.
-						*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
+						*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
 					}
 				}
 			} else {
 				// Pawn promotion.
-				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_QUEEN, 0);
-				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_ROOK, 0);
-				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_BISHOP, 0);
-				*move++ = MOVE(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_KNIGHT, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_QUEEN, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_ROOK, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_BISHOP, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_KNIGHT, 0);
 			}
 		}
 
@@ -255,44 +313,44 @@ bool generatePawnMoves(const board_t *board, move_t *&move) {
 }
 
 template<>
-bool generateMoves<PAWN, SIDE_WHITE>(const board_t *board, move_t *&move) {
+bool generateMoves<PAWN, SIDE_WHITE>(const board_t *board, Move *&move) {
 	return generatePawnMoves<SIDE_WHITE>(board, move);
 }
 
 template<>
-bool generateMoves<PAWN, SIDE_BLACK>(const board_t *board, move_t *&move) {
+bool generateMoves<PAWN, SIDE_BLACK>(const board_t *board, Move *&move) {
 	return generatePawnMoves<SIDE_BLACK>(board, move);
 }
 
-void MoveGenerator::addWhiteCastleMoves(const board_t *board, move_t *&move) {
+void MoveGenerator::addWhiteCastleMoves(const board_t *board, Move *&move) {
 	// Kingside castle. Check for empty squares.
 	if ((board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_KINGSIDE))) {
-		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_G1, CASTLING_MOVE_KINGSIDE, 0); \
+		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_G1, CASTLING_MOVE_KINGSIDE, 0); \
 	}
 
 	// Queenside castle. Check for empty squares.
 	if ((board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_QUEENSIDE))) {
-		*move++ = MOVE(WHITE_KING, SQUARE_E1, SQUARE_C1, CASTLING_MOVE_QUEENSIDE, 0); \
+		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_C1, CASTLING_MOVE_QUEENSIDE, 0); \
 	}
 }
 
-void MoveGenerator::addBlackCastleMoves(const board_t *board, move_t *&move) {
+void MoveGenerator::addBlackCastleMoves(const board_t *board, Move *&move) {
 	/* Kingside castle. Check for empty squares. */
 	if ((board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_KINGSIDE))) {
-		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_G8, CASTLING_MOVE_KINGSIDE, 0);
+		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_G8, CASTLING_MOVE_KINGSIDE, 0);
 	}
 
 	/* Queenside castle. Check for empty squares. */
 	if ((board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_QUEENSIDE))) {
-		*move++ = MOVE(BLACK_KING, SQUARE_E8, SQUARE_C8, CASTLING_MOVE_QUEENSIDE, 0);
+		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_C8, CASTLING_MOVE_QUEENSIDE, 0);
 	}
 }
 
@@ -304,7 +362,7 @@ MoveGenerator::MoveGenerator() :
 }
 
 int MoveGenerator::computeLegalMoves(const board_t *board, int ply) {
-	move_t *move = &_moves[_movesStart[ply]];
+	Move *move = &_moves[_movesStart[ply]];
 
 	if (board->current_player == SIDE_WHITE) {
 		addWhiteCastleMoves(board, move);
@@ -333,14 +391,14 @@ int MoveGenerator::computeLegalMoves(const board_t *board, int ply) {
 	return 0;
 }
 
-move_t MoveGenerator::getNextMove(const board_t *board, int ply) {
+Move MoveGenerator::getNextMove(const board_t *board, int ply) {
 	if (_movesCur[ply] == _movesStart[ply + 1])
-		return NO_MOVE;
+		return Move();
 
 	if (_movesCur[ply] == _movesStart[ply]) {
-		move_t move = g_transTable->lookupBestMove(*board);
+		Move move = g_transTable->lookupBestMove(*board);
 
-		if (move != NO_MOVE)
+		if (!move.isNone())
 			swapMoveWithFirst(ply, move);
 	} else
 		sortMove(ply, board->current_player);
@@ -348,11 +406,11 @@ move_t MoveGenerator::getNextMove(const board_t *board, int ply) {
 	return _moves[_movesCur[ply]++];
 }
 
-int MoveGenerator::compareMoves(move_t move1, move_t move2, int current_side) {
-	if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+int MoveGenerator::compareMoves(Move move1, Move move2, int current_side) {
+	if (move1.doesCapture() && !move2.doesCapture())
 		return -1;
 
-	if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+	if (!move1.doesCapture() && move2.doesCapture())
 		return 1;
 
 	if (getHistoryCounter(move1, current_side) > getHistoryCounter(move2, current_side))
@@ -361,11 +419,11 @@ int MoveGenerator::compareMoves(move_t move1, move_t move2, int current_side) {
 		return 1;
 }
 
-void MoveGenerator::swapMoveWithFirst(int ply, move_t move) {
+void MoveGenerator::swapMoveWithFirst(int ply, Move move) {
 	for (unsigned int i = _movesStart[ply]; i < _movesStart[ply + 1]; i++)
 		if (move == _moves[i])
 		{
-			move_t swap = _moves[_movesStart[ply]];
+			Move swap = _moves[_movesStart[ply]];
 			_moves[_movesStart[ply]] = _moves[i];
 			_moves[i] = swap;
 			return;
@@ -379,17 +437,17 @@ void MoveGenerator::sortMove(int ply, int side) {
 	   if (compareMoves(_moves[i], _moves[min], side) < 0)
 		  min = i;
 
-	move_t swap = _moves[_movesCur[ply]];
+	Move swap = _moves[_movesCur[ply]];
 	_moves[_movesCur[ply]] = _moves[min];
 	_moves[min] = swap;
 }
 
-void MoveGenerator::incHistoryCounter(move_t move, int side) {
-	_history[side << 12 | MOVE_GET(move, SOURCE) << 6 | MOVE_GET(move, DEST)]++;
+void MoveGenerator::incHistoryCounter(Move move, int side) {
+	_history[side << 12 | move.getSource() << 6 | move.getDest()]++;
 }
 
-unsigned int MoveGenerator::getHistoryCounter(move_t move, int side) {
-	return _history[side << 12 | MOVE_GET(move, SOURCE) << 6 | MOVE_GET(move, DEST)];
+unsigned int MoveGenerator::getHistoryCounter(Move move, int side) {
+	return _history[side << 12 | move.getSource() << 6 | move.getDest()];
 }
 
 void MoveGenerator::clearHistory() {

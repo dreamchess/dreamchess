@@ -105,15 +105,15 @@ static int san_piece(int piece)
     assert(0);
 }
 
-static move_t get_san_move(board_t *board, int ply, san_move_t *san)
+static Move get_san_move(board_t *board, int ply, san_move_t *san)
 {
-    move_t move;
+    Move move;
     int piece;
     bitboard_t en_passant = board->en_passant;
     int castle_flags = board->castle_flags;
     int fifty_moves = board->fifty_moves;
     int found = 0;
-    move_t found_move;
+    Move found_move;
 
     if (san->type == SAN_QUEENSIDE_CASTLE)
     {
@@ -135,45 +135,45 @@ static move_t get_san_move(board_t *board, int ply, san_move_t *san)
     g_moveGenerator->computeLegalMoves(board, ply);
 
     /* Look for move in list. */
-    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
+    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
         int move_piece;
 
-        if (MOVE_GET(move, DEST) != san->destination)
+        if (move.getDest() != san->destination)
             continue;
 
         if (board->current_player == SIDE_WHITE)
-            move_piece = find_white_piece(board, MOVE_GET(move, SOURCE));
+            move_piece = find_white_piece(board, move.getSource());
         else
-            move_piece = find_black_piece(board, MOVE_GET(move, SOURCE));
+            move_piece = find_black_piece(board, move.getSource());
 
         if (move_piece != piece)
             continue;
 
         if (san->source_file != SAN_NOT_SPECIFIED)
-            if (san->source_file != MOVE_GET(move, SOURCE) % 8)
+            if (san->source_file != move.getSource() % 8)
                 continue;
 
         if (san->source_rank != SAN_NOT_SPECIFIED)
-            if (san->source_rank != MOVE_GET(move, SOURCE) / 8)
+            if (san->source_rank != move.getSource() / 8)
                 continue;
 
         if (san->type == SAN_CAPTURE)
         {
             /* TODO verify en passant capture? */
-            if (!(move & (CAPTURE_MOVE_EN_PASSANT | CAPTURE_MOVE)))
+            if (!move.doesCapture())
                     continue;
         }
 
-        if ((move & PROMOTION_MOVE_QUEEN) && (san->promotion_piece != SAN_QUEEN))
+        if ((move.getPromotionType() & PROMOTION_MOVE_QUEEN) && (san->promotion_piece != SAN_QUEEN))
             continue;
-        if ((move & PROMOTION_MOVE_ROOK) && (san->promotion_piece != SAN_ROOK))
+        if ((move.getPromotionType() & PROMOTION_MOVE_ROOK) && (san->promotion_piece != SAN_ROOK))
             continue;
-        if ((move & PROMOTION_MOVE_BISHOP) && (san->promotion_piece != SAN_BISHOP))
+        if ((move.getPromotionType() & PROMOTION_MOVE_BISHOP) && (san->promotion_piece != SAN_BISHOP))
             continue;
-        if ((move & PROMOTION_MOVE_KNIGHT) && (san->promotion_piece != SAN_KNIGHT))
+        if ((move.getPromotionType() & PROMOTION_MOVE_KNIGHT) && (san->promotion_piece != SAN_KNIGHT))
             continue;
-        if (!(move & MOVE_PROMOTION_MASK) && (san->promotion_piece != SAN_NOT_SPECIFIED))
+        if (!move.getPromotionType() && san->promotion_piece != SAN_NOT_SPECIFIED)
             continue;
 
         /* TODO verify check and checkmate flags? */
@@ -191,15 +191,30 @@ static move_t get_san_move(board_t *board, int ply, san_move_t *san)
     }
 
     if (found != 1)
-        return NO_MOVE;
+        return Move();
 
     return found_move;
 }
 
-static move_t get_coord_move(board_t *board, int ply, const char *ms)
+static char get_promotion_char(Move move) {
+    switch (move.getPromotionType()) {
+    case PROMOTION_MOVE_QUEEN:
+        return 'q';
+    case PROMOTION_MOVE_ROOK:
+        return 'r';
+    case PROMOTION_MOVE_KNIGHT:
+        return 'n';
+    case PROMOTION_MOVE_BISHOP:
+        return 'b';
+    default:
+        return 0;
+    }
+}
+
+static Move get_coord_move(board_t *board, int ply, const char *ms)
 {
     int source, dest;
-    move_t move;
+    Move move;
 
     source = (ms[0] - 'a') + 8 * (ms[1] - '1');
     dest = (ms[2] - 'a') + 8 * (ms[3] - '1');
@@ -207,10 +222,20 @@ static move_t get_coord_move(board_t *board, int ply, const char *ms)
     g_moveGenerator->computeLegalMoves(board, ply);
 
     /* Look for move in list. */
-    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
+    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
-        if ((MOVE_GET(move, SOURCE) == source) && (MOVE_GET(move, DEST) == dest))
+        if ((move.getSource() == source) && (move.getDest() == dest))
         {
+            if (move.doesPromotion())
+            {
+                if (strlen(ms) != 5 || ms[4] != get_promotion_char(move))
+                    continue;
+            } 
+            else if (strlen(ms) != 4)
+            {
+                 continue;
+            }
+
             bitboard_t en_passant = board->en_passant;
             int castle_flags = board->castle_flags;
             int fifty_moves = board->fifty_moves;
@@ -228,49 +253,18 @@ static move_t get_coord_move(board_t *board, int ply, const char *ms)
             unmake_move(board, move, en_passant, castle_flags, fifty_moves);
         }
     }
-    if (move != NO_MOVE)
-    {
-        if (move & MOVE_PROMOTION_MASK)
-        {
-            /* Set correct promotion piece. */
-            move &= ~MOVE_PROMOTION_MASK;
-            if (strlen(ms) == 5)
-                switch(ms[4])
-                {
-                case 'q':
-                    move |= PROMOTION_MOVE_QUEEN;
-                    break;
-                case 'r':
-                    move |= PROMOTION_MOVE_ROOK;
-                    break;
-                case 'n':
-                    move |= PROMOTION_MOVE_KNIGHT;
-                    break;
-                case 'b':
-                    move |= PROMOTION_MOVE_BISHOP;
-                }
-            else
-            {
-                /* No promotion piece specified. */
-                return NO_MOVE;
-            }
-            return move;
-        }
-        if (strlen(ms) == 4)
-            return move;
-    }
-    return NO_MOVE;
+    return move;
 }
 
-char *coord_move_str(move_t move)
+char *coord_move_str(Move move)
 {
     char *ret = (char *)malloc(6);
     ret[5] = '\0';
-    ret[0] = 'a' + MOVE_GET(move, SOURCE) % 8;
-    ret[1] = '1' + MOVE_GET(move, SOURCE) / 8;
-    ret[2] = 'a' + MOVE_GET(move, DEST) % 8;
-    ret[3] = '1' + MOVE_GET(move, DEST) / 8;
-    switch (move & MOVE_PROMOTION_MASK)
+    ret[0] = 'a' + move.getSource() % 8;
+    ret[1] = '1' + move.getSource() / 8;
+    ret[2] = 'a' + move.getDest() % 8;
+    ret[3] = '1' + move.getDest() / 8;
+    switch (move.getPromotionType())
     {
     case PROMOTION_MOVE_QUEEN:
         ret[4] = 'q';
@@ -290,7 +284,7 @@ char *coord_move_str(move_t move)
     return ret;
 }
 
-char *san_move_str(board_t *board, int ply, move_t move)
+char *san_move_str(board_t *board, int ply, Move move)
 {
     san_move_t san_move;
     int state;
@@ -315,7 +309,7 @@ char *san_move_str(board_t *board, int ply, move_t move)
         san_move.state = SAN_STATE_NORMAL;
     }
 
-    switch (MOVE_GET(move, TYPE))
+    switch (move.getType())
     {
     case CASTLING_MOVE_QUEENSIDE:
         san_move.type = SAN_QUEENSIDE_CASTLE;
@@ -332,45 +326,45 @@ char *san_move_str(board_t *board, int ply, move_t move)
     }
 
     if (board->current_player == SIDE_WHITE)
-        move_piece = find_white_piece(board, MOVE_GET(move, SOURCE)) & PIECE_MASK;
+        move_piece = find_white_piece(board, move.getSource()) & PIECE_MASK;
     else
-        move_piece = find_black_piece(board, MOVE_GET(move, SOURCE)) & PIECE_MASK;
+        move_piece = find_black_piece(board, move.getSource()) & PIECE_MASK;
 
     san_move.piece = san_piece(move_piece);
 
-    if (MOVE_GET(move, TYPE) & MOVE_PROMOTION_MASK)
-        san_move.promotion_piece = san_piece(MOVE_GET(move, CAPTURED) & PIECE_MASK);
+    if (move.doesPromotion())
+        san_move.promotion_piece = san_piece(move.getCapturedPiece() & PIECE_MASK); // FIXME, this can't be right
     else
         san_move.promotion_piece = SAN_NOT_SPECIFIED;
 
     san_move.source_file = SAN_NOT_SPECIFIED;
     san_move.source_rank = SAN_NOT_SPECIFIED;
-    san_move.destination = MOVE_GET(move, DEST);
+    san_move.destination = move.getDest();
 
     if (san_move.piece == SAN_PAWN)
     {
-        if (MOVE_GET(move, SOURCE) % 8 != MOVE_GET(move, DEST) % 8)
-            san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+        if (move.getSource() % 8 != move.getDest() % 8)
+            san_move.source_file = move.getSource() % 8;
     }
     else
     {
-        move_t u_move;
+        Move u_move;
         u_move = get_san_move(board, ply, &san_move);
 
-        if (u_move == NO_MOVE)
+        if (u_move.isNone())
         {
-            san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+            san_move.source_file = move.getSource() % 8;
             u_move = get_san_move(board, ply, &san_move);
-            if (u_move == NO_MOVE)
+            if (u_move.isNone())
             {
                 san_move.source_file = SAN_NOT_SPECIFIED;
-                san_move.source_rank = MOVE_GET(move, SOURCE) / 8;
+                san_move.source_rank = move.getSource() / 8;
                 u_move = get_san_move(board, ply, &san_move);
-                if (u_move == NO_MOVE)
+                if (u_move.isNone())
                 {
-                    san_move.source_file = MOVE_GET(move, SOURCE) % 8;
+                    san_move.source_file = move.getSource() % 8;
                     u_move = get_san_move(board, ply, &san_move);
-                    if (!u_move)
+                    if (u_move.isNone())
                     {
                         char *move_s = coord_move_str(move);
 
@@ -476,7 +470,7 @@ static int command_always(state_t *state, const char *command)
     return 0;
 }
 
-int parse_move(board_t *board, int ply, const char *command, move_t *move)
+int parse_move(board_t *board, int ply, const char *command, Move *move)
 {
     san_move_t *san;
 
@@ -499,11 +493,11 @@ int parse_move(board_t *board, int ply, const char *command, move_t *move)
 
 int command_usermove(state_t *state, const char *command)
 {
-    move_t move;
+    Move move;
 
     if (!parse_move(&state->board, 0, command, &move))
     {
-        if (move == NO_MOVE) {
+        if (move.isNone()) {
             e_comm_send("Illegal move: %s\n", command);
             return 0;
         }
@@ -524,15 +518,15 @@ int command_usermove(state_t *state, const char *command)
             state->mode = (state->board.current_player == SIDE_WHITE?
                            MODE_WHITE : MODE_BLACK);
 
-        if (state->ponder_my_move != NO_MOVE) {
+        if (!state->ponder_my_move.isNone()) {
             /* We already have a possible answer to this move from pondering. */
-            if (move == state->ponder_opp_move && MOVE_IS_REGULAR(state->ponder_my_move))
+            if (move == state->ponder_opp_move && state->ponder_my_move.isRegular())
             {
                 /* User made the expected move. */
                 send_move(state, state->ponder_my_move);
             }
 
-            state->ponder_my_move = NO_MOVE;
+            state->ponder_my_move = Move();
         }
 
         return 0;
@@ -605,10 +599,10 @@ void command_handle(state_t *state, const char *command)
 	state->moves = 0;
 	state->engineTime.set(state->time.base * 60 * 100);
 
-        state->hint = NO_MOVE;
-        state->ponder_opp_move = NO_MOVE;
-        state->ponder_my_move = NO_MOVE;
-        state->ponder_actual_move = NO_MOVE;
+        state->hint = Move();
+        state->ponder_opp_move = Move();
+        state->ponder_my_move = Move();
+        state->ponder_actual_move = Move();
         return;
     }
 
@@ -764,7 +758,7 @@ void command_handle(state_t *state, const char *command)
     if (!strcmp(command, "easy"))
     {
         set_option(OPTION_PONDER, 0);
-        state->ponder_my_move = NO_MOVE;
+        state->ponder_my_move = Move();
         return;
     }
 
@@ -778,7 +772,7 @@ void command_handle(state_t *state, const char *command)
 
     if (!strcmp(command, "hint"))
     {
-        if (state->hint != NO_MOVE)
+        if (!state->hint.isNone())
         {
             char *str = coord_move_str(state->hint);
             e_comm_send("Hint: %s\n", str);
@@ -822,7 +816,7 @@ int command_check_abort(state_t *state, int ply, const char *command)
         if (state->flags & FLAG_PONDER)
         {
             state->flags = FLAG_IGNORE_MOVE;
-            state->ponder_actual_move = NO_MOVE;
+            state->ponder_actual_move = Move();
         }
         command_handle(state, command);
         return 1;
@@ -841,11 +835,11 @@ int command_check_abort(state_t *state, int ply, const char *command)
 
     if (state->flags & FLAG_PONDER)
     {
-        move_t move;
+        Move move;
 
         if (!parse_move(&state->root_board, ply, command, &move))
         {
-            if (move == NO_MOVE) {
+            if (move.isNone()) {
                 e_comm_send("Illegal move: %s\n", command);
                 return 0;
             }

@@ -43,7 +43,7 @@ static int total_nodes;
 static int start_time;
 
 /* Principal variation */
-move_t pv[MAX_DEPTH][MAX_DEPTH];
+Move pv[MAX_DEPTH][MAX_DEPTH];
 int pv_len[MAX_DEPTH];
 
 #if 0
@@ -87,10 +87,11 @@ static inline void pv_term(int ply)
     pv_len[ply] = 0;
 }
 
-static inline void pv_copy(int ply, move_t move)
+static inline void pv_copy(int ply, Move move)
 {
     pv[ply][0] = move;
-    memcpy(&pv[ply][1], &pv[ply + 1][0], pv_len[ply + 1] * sizeof(move_t));
+    for (unsigned i = 0; i < pv_len[ply + 1]; ++i)
+        pv[ply][1 + i] = pv[ply + 1][0 + i];
     pv_len[ply] = pv_len[ply + 1] + 1;
 }
 
@@ -173,7 +174,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
     bitboard_t en_passant;
     int castle_flags;
     int fifty_moves;
-    move_t move;
+    Move move;
 
     if ((total_nodes++) % 10000 == 0)
         poll_abort(ply);
@@ -203,9 +204,9 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
+    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
-        if (move & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT | MOVE_PROMOTION_MASK))
+        if (move.doesCapture() || move.doesPromotion())
         {
             execute_move(board, move);
             eval = -quiescence(board, ply + 1, -beta, -alpha, side);
@@ -261,8 +262,8 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     long long en_passant;
     int castle_flags;
     int fifty_moves;
-    move_t best_move;
-    move_t move;
+    Move best_move;
+    Move move;
 
     if ((total_nodes++) % 10000 == 0)
         poll_abort(ply);
@@ -308,14 +309,14 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
         return ALPHABETA_ILLEGAL;
 
-    best_move = NO_MOVE;
+    best_move = Move();
     best_move_score = ALPHABETA_ILLEGAL;
 
     en_passant = board->en_passant;
     castle_flags = board->castle_flags;
     fifty_moves = board->fifty_moves;
 
-    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
+    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
         int score;
         execute_move(board, move);
@@ -342,7 +343,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         }
     }
 
-    if (best_move == NO_MOVE)
+    if (best_move.isNone())
     {
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
@@ -369,12 +370,12 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     return alpha;
 }
 
-move_t
+Move
 find_best_move(state_t *state)
 {
     int depth = state->depth;
     board_t *board = &state->board;
-    move_t best_move = NO_MOVE;
+    Move best_move;
     int cur_depth;
     long long en_passant = board->en_passant;
     int castle_flags = board->castle_flags;
@@ -391,12 +392,12 @@ find_best_move(state_t *state)
     for (cur_depth = 0; cur_depth < depth; cur_depth++)
     {
         int alpha = ALPHABETA_MIN;
-	move_t move;
+	    Move move;
 
         g_moveGenerator->computeLegalMoves(board, 0);
 
         /* e_comm_send("------------------\n"); */
-        while ((move = g_moveGenerator->getNextMove(board, 0)) != NO_MOVE)
+        while (!(move = g_moveGenerator->getNextMove(board, 0)).isNone())
         {
             int score;
             /* char *s = coord_move_str(move);
@@ -409,7 +410,7 @@ find_best_move(state_t *state)
             if (abort_search)
             {
                 if (state->flags & FLAG_IGNORE_MOVE)
-                    return NO_MOVE;
+                    return Move();
                 break;
             }
             if (score == -ALPHABETA_ILLEGAL)
@@ -447,9 +448,9 @@ find_best_move(state_t *state)
             break;
     }
 
-    if (best_move == NO_MOVE)
+    if (best_move.isNone())
     {
-	state->hint = NO_MOVE;
+	state->hint = Move();
 
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
@@ -463,13 +464,13 @@ find_best_move(state_t *state)
         {
             /* We're checkmated. */
             board->current_player = OPPONENT(board->current_player);
-            return RESIGN_MOVE;
+            return Move(0, 0, 0, RESIGN_MOVE, 0);
         }
         else
         {
             /* We're stalemated. */
             board->current_player = OPPONENT(board->current_player);
-            return STALEMATE_MOVE;
+            return Move(0, 0, 0, STALEMATE_MOVE, 0);
         }
     }
 
@@ -486,16 +487,16 @@ find_best_move(state_t *state)
     return best_move;
 }
 
-move_t
+Move
 ponder(state_t *state)
 {
-	move_t move;
+	Move move;
 
-	if (state->hint == NO_MOVE)
-		return NO_MOVE;
+	if (state->hint.isNone())
+		return Move();
 
         state->root_board = state->board;
-	state->ponder_actual_move = NO_MOVE;
+	state->ponder_actual_move = Move();
 	state->ponder_opp_move = state->hint;
 	do_move(state, state->ponder_opp_move);
         state->flags = FLAG_DELAY_MOVE;
@@ -506,20 +507,20 @@ ponder(state_t *state)
 	move = find_best_move(state);
 
 	if (state->mode == MODE_QUIT || (state->flags & FLAG_NEW_GAME))
-		return NO_MOVE;
+		return Move();
 
-	if (move == NO_MOVE)
+	if (move.isNone())
         {
 		/* Player did not play the move we expected */
 		/* or pondering was switched off. */
 		undo_move(state);
-                if (state->ponder_actual_move != NO_MOVE)
+                if (!state->ponder_actual_move.isNone())
                 {
                     do_move(state, state->ponder_actual_move);
                     check_game_end(state);
                 }
 
-		return NO_MOVE;
+		return Move();
         }
 
         if (state->flags & FLAG_DELAY_MOVE)
