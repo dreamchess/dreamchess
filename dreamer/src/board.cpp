@@ -328,7 +328,7 @@ int find_white_piece(board_t *board, int square)
     return NONE;
 }
 
-void execute_move(board_t *board, move_t move)
+void execute_move(board_t *board, Move move)
 {
     if (board->current_player)
     {
@@ -371,31 +371,31 @@ void execute_move(board_t *board, move_t move)
         }
     }
 
-    switch (move & MOVE_NO_PROMOTION_MASK)
+    switch (move.getType())
     {
     case NORMAL_MOVE:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        if ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN)
+        remove_piece(board, move.getSource(), move.getPiece());
+        add_piece(board, move.getDest(), move.getPiece());
+        if (move.getPieceKind() == PAWN)
             board->fifty_moves = 0;
         else
             board->fifty_moves++;
         break;
 
     case CAPTURE_MOVE:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getSource(), move.getPiece());
+        remove_piece(board, move.getDest(), move.getCapturedPiece());
+        add_piece(board, move.getDest(), move.getPiece());
         board->fifty_moves = 0;
         break;
 
     case CAPTURE_MOVE_EN_PASSANT:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getSource(), move.getPiece());
 
         /* Remove the captured pawn. */
-        remove_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1? 8 : -8),
-                     MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest() + (move.getPieceColour() == SIDE_BLACK ? 8 : -8),
+                     move.getCapturedPiece());
+        add_piece(board, move.getDest(), move.getPiece());
         board->fifty_moves = 0;
         break;
 
@@ -404,10 +404,10 @@ void execute_move(board_t *board, move_t move)
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
 
-            remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) - 1, rook);
+            remove_piece(board, move.getSource(), move.getPiece());
+            add_piece(board, move.getDest(), move.getPiece());
+            remove_piece(board, move.getDest() + 1, rook);
+            add_piece(board, move.getDest() - 1, rook);
 
             /* Add phantom kings to detect whether or not
             ** this move is legal.
@@ -436,10 +436,10 @@ void execute_move(board_t *board, move_t move)
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
 
-            remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            remove_piece(board, MOVE_GET(move, DEST) - 2, rook);
-            add_piece(board, MOVE_GET(move, DEST) + 1, rook);
+            remove_piece(board, move.getSource(), move.getPiece());
+            add_piece(board, move.getDest(), move.getPiece());
+            remove_piece(board, move.getDest() - 2, rook);
+            add_piece(board, move.getDest() + 1, rook);
 
             /* Add phantom kings to detect whether or not
             ** this move is legal.
@@ -472,23 +472,23 @@ void execute_move(board_t *board, move_t move)
     }
 
     /* Promotion moves. */
-    switch (move & MOVE_PROMOTION_MASK)
+    switch (move.getPromotionType())
     {
     case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), KNIGHT + board->current_player);
         break;
     case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), BISHOP + board->current_player);
         break;
     case PROMOTION_MOVE_ROOK:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), ROOK + board->current_player);
         break;
     case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), QUEEN + board->current_player);
     }
 
     /* Reset en passant possibility. */
@@ -507,21 +507,21 @@ void execute_move(board_t *board, move_t move)
     }
 
     /* Set en passant possibility in case of a double pawn push. */
-    if ((MOVE_GET(move, PIECE) == WHITE_PAWN) && (MOVE_GET(move, DEST) -
-        MOVE_GET(move, SOURCE) == 16))
+    if ((move.getPiece() == WHITE_PAWN) && (move.getDest() -
+        move.getSource() == 16))
     {
-        board->en_passant = square_bit[MOVE_GET(move, SOURCE) + 8];
-        board->hash_key ^= ep_hash[MOVE_GET(move, SOURCE) + 8];
+        board->en_passant = square_bit[move.getSource() + 8];
+        board->hash_key ^= ep_hash[move.getSource() + 8];
     }
-    else if ((MOVE_GET(move, PIECE) == BLACK_PAWN) && (MOVE_GET(move, SOURCE) -
-             MOVE_GET(move, DEST) == 16))
+    else if ((move.getPiece() == BLACK_PAWN) && (move.getSource() -
+             move.getDest() == 16))
     {
-        board->en_passant = square_bit[MOVE_GET(move, DEST) + 8];
-        board->hash_key ^= ep_hash[MOVE_GET(move, DEST) + 8];
+        board->en_passant = square_bit[move.getDest() + 8];
+        board->hash_key ^= ep_hash[move.getDest() + 8];
     }
 
     /* Set castling possibilities. If the king moves castling is not allowed. */
-    switch (MOVE_GET(move, PIECE))
+    switch (move.getPiece())
     {
     case WHITE_KING:
         if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
@@ -551,7 +551,7 @@ void execute_move(board_t *board, move_t move)
     /* Any activety in the corners will make castling impossible, either
     ** because the rook moves, or because it is captured.
     */
-    switch (MOVE_GET(move, SOURCE))
+    switch (move.getSource())
     {
     case SQUARE_A1:
         if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
@@ -581,7 +581,7 @@ void execute_move(board_t *board, move_t move)
             board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
         }
     }
-    switch (MOVE_GET(move, DEST))
+    switch (move.getDest())
     {
     case SQUARE_A1:
         if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
@@ -617,7 +617,7 @@ void execute_move(board_t *board, move_t move)
     board->hash_key ^= black_to_move;
 }
 
-void unmake_move(board_t *board, move_t move, bitboard_t
+void unmake_move(board_t *board, Move move, bitboard_t
                  old_en_passant,                int
                  old_castle_flags, int old_fifty_moves)
 {
@@ -628,43 +628,43 @@ void unmake_move(board_t *board, move_t move, bitboard_t
     board->hash_key ^= black_to_move;
 
     /* Promotion moves. */
-    switch (move & MOVE_PROMOTION_MASK)
+    switch (move.getPromotionType())
     {
     case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), KNIGHT + board->current_player);
+        add_piece(board, move.getDest(), move.getPiece());
         break;
     case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), BISHOP + board->current_player);
+        add_piece(board, move.getDest(), move.getPiece());
         break;
     case PROMOTION_MOVE_ROOK:
-        remove_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), ROOK + board->current_player);
+        add_piece(board, move.getDest(), move.getPiece());
         break;
     case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), QUEEN + board->current_player);
+        add_piece(board, move.getDest(), move.getPiece());
     }
 
-    switch (move & MOVE_NO_PROMOTION_MASK)
+    switch (move.getType())
     {
     case NORMAL_MOVE:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getSource(), move.getPiece());
         break;
 
     case CAPTURE_MOVE:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), move.getCapturedPiece());
+        add_piece(board, move.getSource(), move.getPiece());
         break;
 
     case CAPTURE_MOVE_EN_PASSANT:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1? 8 : -8),
-                  MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest() + (move.getPiece() & 1 ? 8 : -8),
+                  move.getCapturedPiece());
+        add_piece(board, move.getSource(), move.getPiece());
         break;
 
     case CASTLING_MOVE_KINGSIDE:
@@ -694,10 +694,10 @@ void unmake_move(board_t *board, move_t move, bitboard_t
                                        | BLACK_PHANTOM_KINGS_KINGSIDE;
             }
 
-            remove_piece(board, MOVE_GET(move, DEST) - 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+            remove_piece(board, move.getDest() - 1, rook);
+            add_piece(board, move.getDest() + 1, rook);
+            remove_piece(board, move.getDest(), move.getPiece());
+            add_piece(board, move.getSource(), move.getPiece());
 
             break;
         }
@@ -728,10 +728,10 @@ void unmake_move(board_t *board, move_t move, bitboard_t
                                        | BLACK_PHANTOM_KINGS_QUEENSIDE;
             }
 
-            remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) - 2, rook);
-            remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+            remove_piece(board, move.getDest() + 1, rook);
+            add_piece(board, move.getDest() - 2, rook);
+            remove_piece(board, move.getDest(), move.getPiece());
+            add_piece(board, move.getSource(), move.getPiece());
 
             break;
         }

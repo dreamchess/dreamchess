@@ -90,11 +90,11 @@ int is_check(board_t *board, int ply)
 
 int check_game_state(board_t *board, int ply)
 {
-    move_t move;
+    Move move;
     int mate = STATE_MATE;
     g_moveGenerator->computeLegalMoves(board, ply);
 
-    while ((move = g_moveGenerator->getNextMove(board, ply)) != NO_MOVE)
+    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
         bitboard_t en_passant = board->en_passant;
         int castle_flags = board->castle_flags;
@@ -178,7 +178,7 @@ int check_abort(int ply)
     return command_check_abort(state, ply, s);
 }
 
-void do_move(state_t *state, move_t move)
+void do_move(state_t *state, Move move)
 {
     state->moves++;
     state->undo_data = (undo_data_t *)realloc(state->undo_data,
@@ -256,7 +256,7 @@ static void update_clock(state_t *state)
     state->engineTime.set(val);
 }
 
-void send_move(state_t *state, move_t move)
+void send_move(state_t *state, Move move)
 {
     char *str = coord_move_str(move);
     do_move(state, move);
@@ -286,7 +286,7 @@ int engine(void *data)
     while (state->mode != MODE_QUIT)
     {
         char *s;
-        move_t move;
+        Move move;
 
         s = e_comm_poll();
 
@@ -310,7 +310,7 @@ int engine(void *data)
 
                 if (state->flags & FLAG_NEW_GAME)
                     command_handle(state, "new");
-                else if (MOVE_IS_REGULAR(move))
+                else if (move.isRegular())
                 {
                     send_move(state, move);
                     state->engineTime.stop();
@@ -326,7 +326,7 @@ int engine(void *data)
                     command_handle(state, "new");
                 else if (!my_turn(state))
                 {
-                    if (move != NO_MOVE) {
+                    if (!move.isNone()) {
                         /* We are done pondering, but opponent hasn't moved yet. */
                         state->ponder_my_move = move;
                         state->flags = 0;
@@ -338,7 +338,7 @@ int engine(void *data)
                             state->flags |= FLAG_PONDER;
                     }
                 }
-                else if (MOVE_IS_REGULAR(move))
+                else if (move.isRegular())
                 {
                     /* Opponent made the expected move. */
                     send_move(state, move);

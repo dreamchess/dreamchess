@@ -69,26 +69,26 @@ public:
 	MoveGenerator();
 
 	int computeLegalMoves(const board_t *board, int ply);
-	move_t getNextMove(const board_t *board, int ply);
+	Move getNextMove(const board_t *board, int ply);
 	void clearHistory();
 	void ageHistory();
-	void incHistoryCounter(move_t move, int side);
+	void incHistoryCounter(Move move, int side);
 
 private:
-	void addWhiteCastleMoves(const board_t *board, move_t *&move);
-	void addBlackCastleMoves(const board_t *board, move_t *&move);
+	void addWhiteCastleMoves(const board_t *board, Move *&move);
+	void addBlackCastleMoves(const board_t *board, Move *&move);
 
 	void freeRayMoves(int ***moves);
 	void freeSingleMoves(int **moves);
 
-	int compareMoves(move_t move1, move_t move2, int current_side);
-	void swapMoveWithFirst(int ply, move_t move);
+	int compareMoves(Move move1, Move move2, int current_side);
+	void swapMoveWithFirst(int ply, Move move);
 	void sortMove(int ply, int side);
 
-	unsigned int getHistoryCounter(move_t move, int side);
+	unsigned int getHistoryCounter(Move move, int side);
 
 	// Add 1 for in_check function
-	std::array<move_t, (MAX_DEPTH + 1) * 256> _moves;
+	std::array<Move, (MAX_DEPTH + 1) * 256> _moves;
 	std::array<unsigned int, MAX_DEPTH + 2> _movesStart;
 	std::array<unsigned int, MAX_DEPTH + 1> _movesCur;
 

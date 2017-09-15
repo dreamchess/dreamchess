@@ -30,7 +30,7 @@
 
 typedef struct
 {
-    move_t move;
+    Move move;
     int count;
 } makebook_move_data;
 
@@ -49,13 +49,13 @@ static board_t board;
 
 static int moves_done;
 
-static unsigned short move_to_short(move_t move)
+static unsigned short move_to_short(Move move)
 {
     unsigned short m;
 
-    m = MOVE_GET(move, DEST) | (MOVE_GET(move, SOURCE) << 6);
+    m = move.getDest() | (move.getSource() << 6);
 
-    switch (MOVE_GET(move, TYPE) & MOVE_PROMOTION_MASK)
+    switch (move.getPromotionType())
     {
     case PROMOTION_MOVE_KNIGHT:
         m |= MAKEBOOK_KNIGHT << 12;
@@ -89,7 +89,7 @@ static int makebook_find(long long hash)
     return low;
 }
 
-static void makebook_add_move(makebook_entry *entry, move_t move)
+static void makebook_add_move(makebook_entry *entry, Move move)
 {
     int i;
 
@@ -105,7 +105,7 @@ static void makebook_add_move(makebook_entry *entry, move_t move)
     entry->move[entry->moves++].count = 1;
 }
 
-static void makebook_add(unsigned long long hash, move_t move)
+static void makebook_add(unsigned long long hash, Move move)
 {
     int index = makebook_find(hash);
 
@@ -144,7 +144,7 @@ void makebook_reset(void)
 
 void makebook_move(char *str)
 {
-    move_t move;
+    Move move;
 
     if (!parse_move(&board, 0, str, &move))
     {

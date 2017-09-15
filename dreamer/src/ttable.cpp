@@ -48,7 +48,7 @@ TTable::~TTable() {
 }
 
 void TTable::storeBoard(const board_t &board, int eval, const EvalType evalType,
-                        const int depth, const int ply, const int time_stamp, const move_t move) {
+                        const int depth, const int ply, const int time_stamp, const Move move) {
 	const unsigned int index = board.hash_key & _indexMask;
 
 	// Do not overwrite entries for this board at greater depth.
@@ -70,7 +70,7 @@ void TTable::storeBoard(const board_t &board, int eval, const EvalType evalType,
 	_table[index].move = move;
 }
 
-void TTable::setBestMove(const board_t &board, const move_t move) {
+void TTable::setBestMove(const board_t &board, const Move move) {
 	const unsigned int index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
@@ -113,11 +113,11 @@ TTable::EvalType TTable::lookupBoard(const board_t &board, const int depth, cons
 	return _table[index].evalType;
 }
 
-move_t TTable::lookupBestMove(const board_t &board) const {
+Move TTable::lookupBestMove(const board_t &board) const {
 	const unsigned int index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
-		return NO_MOVE;
+		return Move();
 
 	return _table[index].move;
 }

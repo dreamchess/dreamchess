@@ -176,6 +176,30 @@
 /* 64-bit bitboard. Bit 0 = A1, bit 1 = A2 etc. */
 typedef unsigned long long bitboard_t;
 
+class Move {
+public:
+	Move();
+	Move(unsigned int piece, unsigned int source, unsigned int dest, unsigned int type, unsigned int captured);
+
+	bool operator==(Move &rhs) const;
+
+    unsigned int getPiece() const;
+    unsigned int getPieceKind() const;
+    unsigned int getPieceColour() const;
+	unsigned int getSource() const;
+	unsigned int getDest() const;
+	unsigned int getType() const;
+	unsigned int getCapturedPiece() const;
+	unsigned int getPromotionType() const;
+	bool doesCapture() const;
+    bool doesPromotion() const;
+    bool isRegular() const;
+	bool isNone() const;
+
+private:
+	unsigned int _data;
+};
+
 /* Struct describing the current state of the board. */
 typedef struct board
 {
@@ -207,28 +231,6 @@ typedef struct board
 }
 board_t;
 
-typedef int move_t;
-#if 0
-/* Structure describing a move on the board. */
-typedef struct move
-{
-    /* Move type. Constants are defined in chess_move.h. */
-    int type;
-
-    /* The moving piece. Constants are defined above. */
-    int piece;
-
-    /* The captured piece, if this is a capture move. */
-    int captured_piece;
-
-    /* The source square. */
-    int source;
-
-    /* The destination square. */
-    int destination;
-}
-move_t;
-#endif
 extern bitboard_t square_bit[64];
 
 extern board_t chess_board;
@@ -304,19 +306,19 @@ setup_board(board_t *board);
 */
 
 void
-execute_move(board_t *board, move_t move);
+execute_move(board_t *board, Move move);
 /* Makes a move on a board.
 ** Parameters: (board_t *) board: Board to make the move on.
-**             (move_t) move: The move to make.
+**             (Move) move: The move to make.
 ** Returns   : (void)
 */
 
 void
-unmake_move(board_t *board, move_t move, bitboard_t old_en_passant,
+unmake_move(board_t *board, Move move, bitboard_t old_en_passant,
             int old_castle_flags, int old_fifty_moves);
 /* Unmakes a move on a board.
 ** Parameters: (board_t *) board: Board to unmake the move on.
-**             (move_t) move: The move to unmake.
+**             (Move) move: The move to unmake.
 **             (bitboard_t) old_en_passant: The en-passant flags before the
 **                 last move.
 **             (int) old_castle_flags: The castling flags before the last

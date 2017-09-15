@@ -42,7 +42,7 @@ typedef struct
     bitboard_t en_passant;
     int castle_flags;
     int fifty_moves;
-    move_t move;
+    Move move;
 }
 undo_data_t;
 
@@ -68,10 +68,10 @@ typedef struct state
     Timer engineTime;
     Timer moveTime;
     Timer searchTime;
-    move_t hint;
-    move_t ponder_opp_move;
-    move_t ponder_my_move;
-    move_t ponder_actual_move;
+    Move hint;
+    Move ponder_opp_move;
+    Move ponder_my_move;
+    Move ponder_actual_move;
 }
 state_t;
 
@@ -89,14 +89,14 @@ int my_turn(state_t *state);
 int engine(void *data);
 int check_game_state(board_t *board, int ply);
 void check_game_end(state_t *state);
-void do_move(state_t *state, move_t move);
+void do_move(state_t *state, Move move);
 void undo_move(state_t *state);
 int check_abort(int ply);
 int get_option(int option);
 void set_option(int option, int value);
 int get_time(void);
 int is_check(board_t *board, int ply);
-void send_move(state_t *state, move_t move);
+void send_move(state_t *state, Move move);
 void set_move_time(void);
 
 #endif
