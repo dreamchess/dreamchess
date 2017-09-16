@@ -373,7 +373,7 @@ void execute_move(board_t *board, Move move)
 
     switch (move.getType())
     {
-    case NORMAL_MOVE:
+    case Move::Type::Normal:
         remove_piece(board, move.getSource(), move.getPiece());
         add_piece(board, move.getDest(), move.getPiece());
         if (move.getPieceKind() == PAWN)
@@ -382,14 +382,27 @@ void execute_move(board_t *board, Move move)
             board->fifty_moves++;
         break;
 
-    case CAPTURE_MOVE:
+    case Move::Type::Capture:
         remove_piece(board, move.getSource(), move.getPiece());
         remove_piece(board, move.getDest(), move.getCapturedPiece());
         add_piece(board, move.getDest(), move.getPiece());
         board->fifty_moves = 0;
         break;
 
-    case CAPTURE_MOVE_EN_PASSANT:
+    case Move::Type::Promotion:
+        remove_piece(board, move.getSource(), PAWN + board->current_player);
+        add_piece(board, move.getDest(), move.getPiece());
+        board->fifty_moves = 0;
+        break;
+
+    case Move::Type::PromotionCapture:
+        remove_piece(board, move.getSource(), PAWN + board->current_player);
+        remove_piece(board, move.getDest(), move.getCapturedPiece());
+        add_piece(board, move.getDest(), move.getPiece());
+        board->fifty_moves = 0;
+        break;
+
+    case Move::Type::EnPassant:
         remove_piece(board, move.getSource(), move.getPiece());
 
         /* Remove the captured pawn. */
@@ -399,7 +412,7 @@ void execute_move(board_t *board, Move move)
         board->fifty_moves = 0;
         break;
 
-    case CASTLING_MOVE_KINGSIDE:
+    case Move::Type::KingsideCastle:
         {
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
@@ -431,7 +444,7 @@ void execute_move(board_t *board, Move move)
             board->fifty_moves++;
             break;
         }
-    case CASTLING_MOVE_QUEENSIDE:
+    case Move::Type::QueensideCastle:
         {
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
@@ -463,32 +476,12 @@ void execute_move(board_t *board, Move move)
             board->fifty_moves++;
             break;
         }
-    case RESIGN_MOVE:
+    case Move::Type::Resign:
         /* Resign or checkmate, do nothing. */
-        return;
-    case STALEMATE_MOVE:
+    case Move::Type::Stalemate:
         /* Stalemate, do nothing. */
+    case Move::Type::None:
         return;
-    }
-
-    /* Promotion moves. */
-    switch (move.getPromotionType())
-    {
-    case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, move.getDest(), move.getPiece());
-        add_piece(board, move.getDest(), KNIGHT + board->current_player);
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, move.getDest(), move.getPiece());
-        add_piece(board, move.getDest(), BISHOP + board->current_player);
-        break;
-    case PROMOTION_MOVE_ROOK:
-        remove_piece(board, move.getDest(), move.getPiece());
-        add_piece(board, move.getDest(), ROOK + board->current_player);
-        break;
-    case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, move.getDest(), move.getPiece());
-        add_piece(board, move.getDest(), QUEEN + board->current_player);
     }
 
     /* Reset en passant possibility. */
@@ -627,47 +620,38 @@ void unmake_move(board_t *board, Move move, bitboard_t
     board->current_player = OPPONENT(board->current_player);
     board->hash_key ^= black_to_move;
 
-    /* Promotion moves. */
-    switch (move.getPromotionType())
-    {
-    case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, move.getDest(), KNIGHT + board->current_player);
-        add_piece(board, move.getDest(), move.getPiece());
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, move.getDest(), BISHOP + board->current_player);
-        add_piece(board, move.getDest(), move.getPiece());
-        break;
-    case PROMOTION_MOVE_ROOK:
-        remove_piece(board, move.getDest(), ROOK + board->current_player);
-        add_piece(board, move.getDest(), move.getPiece());
-        break;
-    case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, move.getDest(), QUEEN + board->current_player);
-        add_piece(board, move.getDest(), move.getPiece());
-    }
-
     switch (move.getType())
     {
-    case NORMAL_MOVE:
+    case Move::Type::Normal:
         remove_piece(board, move.getDest(), move.getPiece());
         add_piece(board, move.getSource(), move.getPiece());
         break;
 
-    case CAPTURE_MOVE:
+    case Move::Type::Capture:
         remove_piece(board, move.getDest(), move.getPiece());
         add_piece(board, move.getDest(), move.getCapturedPiece());
         add_piece(board, move.getSource(), move.getPiece());
         break;
 
-    case CAPTURE_MOVE_EN_PASSANT:
+    case Move::Type::Promotion:
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getSource(), PAWN + board->current_player);
+        break;
+
+    case Move::Type::PromotionCapture:
+        remove_piece(board, move.getDest(), move.getPiece());
+        add_piece(board, move.getDest(), move.getCapturedPiece());
+        add_piece(board, move.getSource(), PAWN + board->current_player);
+        break;
+
+    case Move::Type::EnPassant:
         remove_piece(board, move.getDest(), move.getPiece());
         add_piece(board, move.getDest() + (move.getPiece() & 1 ? 8 : -8),
                   move.getCapturedPiece());
         add_piece(board, move.getSource(), move.getPiece());
         break;
 
-    case CASTLING_MOVE_KINGSIDE:
+    case Move::Type::KingsideCastle:
         {
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
@@ -701,7 +685,7 @@ void unmake_move(board_t *board, Move move, bitboard_t
 
             break;
         }
-    case CASTLING_MOVE_QUEENSIDE:
+    case Move::Type::QueensideCastle:
         {
             /* We have to move the rook as well. */
             int rook = ROOK + board->current_player;
@@ -735,11 +719,11 @@ void unmake_move(board_t *board, Move move, bitboard_t
 
             break;
         }
-    case RESIGN_MOVE:
+    case Move::Type::Resign:
         /* Resign or checkmate, do nothing. */
-        return;
-    case STALEMATE_MOVE:
+    case Move::Type::Stalemate:
         /* Stalemate, do nothing. */
+    case Move::Type::None:
         return;
     }
 

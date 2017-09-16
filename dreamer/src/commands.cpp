@@ -165,16 +165,12 @@ static Move get_san_move(board_t *board, int ply, san_move_t *san)
                     continue;
         }
 
-        if ((move.getPromotionType() & PROMOTION_MOVE_QUEEN) && (san->promotion_piece != SAN_QUEEN))
+        if (move.doesPromotion()) {
+            if (san->promotion_piece != san_piece(move.getPieceKind()))
+                continue;
+        } else if (san->promotion_piece != SAN_NOT_SPECIFIED) {
             continue;
-        if ((move.getPromotionType() & PROMOTION_MOVE_ROOK) && (san->promotion_piece != SAN_ROOK))
-            continue;
-        if ((move.getPromotionType() & PROMOTION_MOVE_BISHOP) && (san->promotion_piece != SAN_BISHOP))
-            continue;
-        if ((move.getPromotionType() & PROMOTION_MOVE_KNIGHT) && (san->promotion_piece != SAN_KNIGHT))
-            continue;
-        if (!move.getPromotionType() && san->promotion_piece != SAN_NOT_SPECIFIED)
-            continue;
+        }
 
         /* TODO verify check and checkmate flags? */
 
@@ -197,14 +193,14 @@ static Move get_san_move(board_t *board, int ply, san_move_t *san)
 }
 
 static char get_promotion_char(Move move) {
-    switch (move.getPromotionType()) {
-    case PROMOTION_MOVE_QUEEN:
+    switch (move.getPieceKind()) {
+    case QUEEN:
         return 'q';
-    case PROMOTION_MOVE_ROOK:
+    case ROOK:
         return 'r';
-    case PROMOTION_MOVE_KNIGHT:
+    case KNIGHT:
         return 'n';
-    case PROMOTION_MOVE_BISHOP:
+    case BISHOP:
         return 'b';
     default:
         return 0;
@@ -259,28 +255,18 @@ static Move get_coord_move(board_t *board, int ply, const char *ms)
 char *coord_move_str(Move move)
 {
     char *ret = (char *)malloc(6);
-    ret[5] = '\0';
     ret[0] = 'a' + move.getSource() % 8;
     ret[1] = '1' + move.getSource() / 8;
     ret[2] = 'a' + move.getDest() % 8;
     ret[3] = '1' + move.getDest() / 8;
-    switch (move.getPromotionType())
-    {
-    case PROMOTION_MOVE_QUEEN:
-        ret[4] = 'q';
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        ret[4] = 'b';
-        break;
-    case PROMOTION_MOVE_KNIGHT:
-        ret[4] = 'n';
-        break;
-    case PROMOTION_MOVE_ROOK:
-        ret[4] = 'r';
-        break;
-    default:
-        ret[4] = '\0';
+
+    if (move.doesPromotion()) {
+        ret[4] = get_promotion_char(move);
+        ret[5] = 0;
+    } else {
+        ret[4] = 0;
     }
+
     return ret;
 }
 
@@ -311,14 +297,15 @@ char *san_move_str(board_t *board, int ply, Move move)
 
     switch (move.getType())
     {
-    case CASTLING_MOVE_QUEENSIDE:
+    case Move::Type::QueensideCastle:
         san_move.type = SAN_QUEENSIDE_CASTLE;
         return san_string(&san_move);
-    case CASTLING_MOVE_KINGSIDE:
+    case Move::Type::KingsideCastle:
         san_move.type = SAN_KINGSIDE_CASTLE;
         return san_string(&san_move);
-    case CAPTURE_MOVE:
-    case CAPTURE_MOVE_EN_PASSANT:
+    case Move::Type::Capture:
+    case Move::Type::EnPassant:
+    case Move::Type::PromotionCapture:
         san_move.type = SAN_CAPTURE;
         break;
     default:
@@ -333,7 +320,7 @@ char *san_move_str(board_t *board, int ply, Move move)
     san_move.piece = san_piece(move_piece);
 
     if (move.doesPromotion())
-        san_move.promotion_piece = san_piece(move.getCapturedPiece() & PIECE_MASK); // FIXME, this can't be right
+        san_move.promotion_piece = san_piece(move.getPieceKind());
     else
         san_move.promotion_piece = SAN_NOT_SPECIFIED;
 

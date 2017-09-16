@@ -55,19 +55,20 @@ static unsigned short move_to_short(Move move)
 
     m = move.getDest() | (move.getSource() << 6);
 
-    switch (move.getPromotionType())
-    {
-    case PROMOTION_MOVE_KNIGHT:
-        m |= MAKEBOOK_KNIGHT << 12;
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        m |= MAKEBOOK_BISHOP << 12;
-        break;
-    case PROMOTION_MOVE_ROOK:
-        m |= MAKEBOOK_ROOK << 12;
-        break;
-    case PROMOTION_MOVE_QUEEN:
-        m |= MAKEBOOK_QUEEN << 12;
+    if (move.doesPromotion()) {
+        switch(move.getPieceKind()) {
+        case KNIGHT:
+            m |= MAKEBOOK_KNIGHT << 12;
+            break;
+        case BISHOP:
+            m |= MAKEBOOK_BISHOP << 12;
+            break;
+        case ROOK:
+            m |= MAKEBOOK_ROOK << 12;
+            break;
+        case QUEEN:
+            m |= MAKEBOOK_QUEEN << 12;    
+        }
     }
 
     return m;

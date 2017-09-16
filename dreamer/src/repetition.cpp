@@ -52,7 +52,7 @@ void repetition_exit(void)
 
 void repetition_add(board_t *board, Move move)
 {
-    if ((move.getType() != NORMAL_MOVE) || (move.getPieceKind() == PAWN))
+    if ((move.getType() != Move::Type::Normal) || (move.getPieceKind() == PAWN))
     {
         hist_idx++;
         hist = (rep_list_t *)realloc(hist, sizeof(rep_list_t) * (hist_idx + 1));
