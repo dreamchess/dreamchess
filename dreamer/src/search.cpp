@@ -464,13 +464,13 @@ find_best_move(state_t *state)
         {
             /* We're checkmated. */
             board->current_player = OPPONENT(board->current_player);
-            return Move(0, 0, 0, RESIGN_MOVE, 0);
+            return Move(0, 0, 0, Move::Type::Resign, 0);
         }
         else
         {
             /* We're stalemated. */
             board->current_player = OPPONENT(board->current_player);
-            return Move(0, 0, 0, STALEMATE_MOVE, 0);
+            return Move(0, 0, 0, Move::Type::Stalemate, 0);
         }
     }
 

@@ -177,9 +177,29 @@
 typedef unsigned long long bitboard_t;
 
 class Move {
+private:
+    enum TypeBit {
+        RegularBit = 16,
+        CaptureBit = 8,
+        PromotionBit = 4
+    };
+
 public:
+    enum class Type : unsigned char {
+        None             = 0,
+        Resign           = 1,
+        Stalemate        = 2,
+        Normal           = RegularBit,
+        Capture          = RegularBit | CaptureBit,
+        Promotion        = RegularBit | PromotionBit,
+        PromotionCapture = RegularBit | PromotionBit | CaptureBit,
+        KingsideCastle   = RegularBit | 1,
+        QueensideCastle  = RegularBit | 2,
+        EnPassant        = RegularBit | CaptureBit | 3,
+    };
+
 	Move();
-	Move(unsigned int piece, unsigned int source, unsigned int dest, unsigned int type, unsigned int captured);
+	Move(unsigned int piece, unsigned int source, unsigned int dest, Type type, unsigned int captured);
 
 	bool operator==(Move &rhs) const;
 
@@ -188,16 +208,19 @@ public:
     unsigned int getPieceColour() const;
 	unsigned int getSource() const;
 	unsigned int getDest() const;
-	unsigned int getType() const;
+	Type getType() const;
 	unsigned int getCapturedPiece() const;
-	unsigned int getPromotionType() const;
 	bool doesCapture() const;
     bool doesPromotion() const;
     bool isRegular() const;
 	bool isNone() const;
 
 private:
-	unsigned int _data;
+    Type _type;
+    unsigned char _source;
+    unsigned char _dest;
+    unsigned char _piece:4;
+    unsigned char _captured:4;
 };
 
 /* Struct describing the current state of the board. */

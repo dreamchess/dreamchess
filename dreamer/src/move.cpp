@@ -28,62 +28,70 @@
 #include "commands.h"
 #include "e_comm.h"
 
-Move::Move() : _data(NO_MOVE) { }
+Move::Move() :
+		_piece(0),
+		_source(0),
+		_dest(0),
+		_type(Type::None),
+		_captured(0) { }
 
-Move::Move(unsigned int piece, unsigned int source, unsigned int dest, unsigned int type, unsigned int captured) {
-	_data = MOVE(piece, source, dest, type, captured);
-}
+Move::Move(unsigned int piece, unsigned int source, unsigned int dest, Type type, unsigned int captured) :
+		_piece(piece),
+		_source(source),
+		_dest(dest),
+		_type(type),
+		_captured(captured) { }
 
 bool Move::operator==(Move &rhs) const {
-	return _data == rhs._data;
+	return _type == rhs._type
+	       && _piece == rhs._piece
+	       && _source == rhs._source
+	       && _dest == rhs._dest
+	       && _captured == rhs._captured;
 }
 
 unsigned int Move::getPiece() const {
-	return MOVE_GET(_data, PIECE);
+	return _piece;
 }
 
 unsigned int Move::getPieceKind() const {
-	return getPiece() & PIECE_MASK;
+	return _piece & PIECE_MASK;
 }
 
 unsigned int Move::getPieceColour() const {
-	return getPiece() & 1;
+	return _piece & 1;
 }
 
 unsigned int Move::getSource() const {
-	return MOVE_GET(_data, SOURCE);
+	return _source;
 }
 
 unsigned int Move::getDest() const {
-	return MOVE_GET(_data, DEST);
+	return _dest;
 }
 
-unsigned int Move::getType() const {
-	return _data & MOVE_NO_PROMOTION_MASK;
-}
-
-unsigned int Move::getPromotionType() const {
-	return _data & MOVE_PROMOTION_MASK;
+Move::Type Move::getType() const {
+	return _type;
 }
 
 unsigned int Move::getCapturedPiece() const {
-	return MOVE_GET(_data, CAPTURED);
+	return _captured;
 }
 
 bool Move::doesCapture() const {
-	return _data & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT);
+	return static_cast<unsigned char>(_type) & CaptureBit;
 }
 
 bool Move::doesPromotion() const {
-	return _data & MOVE_PROMOTION_MASK;
+	return static_cast<unsigned char>(_type) & PromotionBit;
 }
 
 bool Move::isRegular() const {
-	return MOVE_IS_REGULAR(_data);
+	return static_cast<unsigned char>(_type) & RegularBit;
 }
 
 bool Move::isNone() const {
-	return _data == NO_MOVE;
+	return _type == Type::None;
 }
 
 enum class MoveResult {
@@ -106,11 +114,11 @@ MoveResult doSingleMove(const board_t *board, Move *&move, const int source, con
 		if (piece == KING + OPPONENT(PLAYER))
 			return MoveResult::Illegal;
 
-		*move++ = Move(PIECE + PLAYER, source, dest, CAPTURE_MOVE, piece);
+		*move++ = Move(PIECE + PLAYER, source, dest, Move::Type::Capture, piece);
 		return MoveResult::Obstruction;
 	} else {
 		// Normal move.
-		*move++ = Move(PIECE + PLAYER, source, dest, NORMAL_MOVE, 0);
+		*move++ = Move(PIECE + PLAYER, source, dest, Move::Type::Normal, 0);
 		return MoveResult::Clear;
 	}
 }
@@ -241,16 +249,16 @@ bool generatePawnCaptures(const board_t *board, Move *&move, const int source, c
 
 		// The move is legal.
 		if (PLAYER == SIDE_WHITE ? dest <= 55 : dest >= 8) {
-			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE, piece);
+			*move++ = Move(PAWN + PLAYER, source, dest, Move::Type::Capture, piece);
 		} else {
-			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_QUEEN, piece);
-			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_ROOK, piece);
-			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_BISHOP, piece);
-			*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE | PROMOTION_MOVE_KNIGHT, piece);
+			*move++ = Move(QUEEN + PLAYER, source, dest, Move::Type::PromotionCapture, piece);
+			*move++ = Move(ROOK + PLAYER, source, dest, Move::Type::PromotionCapture, piece);
+			*move++ = Move(BISHOP + PLAYER, source, dest, Move::Type::PromotionCapture, piece);
+			*move++ = Move(KNIGHT + PLAYER, source, dest, Move::Type::PromotionCapture, piece);
 		}
 	} else if (board->en_passant & square_bit[dest]) {
 		// En passant capture.
-		*move++ = Move(PAWN + PLAYER, source, dest, CAPTURE_MOVE_EN_PASSANT, PAWN + OPPONENT(PLAYER));
+		*move++ = Move(PAWN + PLAYER, source, dest, Move::Type::EnPassant, PAWN + OPPONENT(PLAYER));
 	}
 
 	return true;
@@ -278,21 +286,21 @@ bool generatePawnMoves(const board_t *board, Move *&move) {
 		if (!(bitboard_all & square_bit[dest])) {
 			if (PLAYER == SIDE_WHITE ? dest <= 55 : dest >= 8) {
 				// Normal move.
-				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
+				*move++ = Move(PAWN + PLAYER, source, dest, Move::Type::Normal, 0);
 
 				if (PLAYER == SIDE_WHITE ? source <= 15 : source >= 48) {
 					dest += step;
 					if (!(bitboard_all & square_bit[dest])) {
 						// Double push.
-						*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE, 0);
+						*move++ = Move(PAWN + PLAYER, source, dest, Move::Type::Normal, 0);
 					}
 				}
 			} else {
 				// Pawn promotion.
-				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_QUEEN, 0);
-				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_ROOK, 0);
-				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_BISHOP, 0);
-				*move++ = Move(PAWN + PLAYER, source, dest, NORMAL_MOVE | PROMOTION_MOVE_KNIGHT, 0);
+				*move++ = Move(QUEEN + PLAYER, source, dest, Move::Type::Promotion, 0);
+				*move++ = Move(ROOK + PLAYER, source, dest, Move::Type::Promotion, 0);
+				*move++ = Move(BISHOP + PLAYER, source, dest, Move::Type::Promotion, 0);
+				*move++ = Move(KNIGHT + PLAYER, source, dest, Move::Type::Promotion, 0);
 			}
 		}
 
@@ -327,14 +335,14 @@ void MoveGenerator::addWhiteCastleMoves(const board_t *board, Move *&move) {
 	if ((board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_KINGSIDE))) {
-		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_G1, CASTLING_MOVE_KINGSIDE, 0); \
+		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_G1, Move::Type::KingsideCastle, 0);
 	}
 
 	// Queenside castle. Check for empty squares.
 	if ((board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		WHITE_EMPTY_QUEENSIDE))) {
-		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_C1, CASTLING_MOVE_QUEENSIDE, 0); \
+		*move++ = Move(WHITE_KING, SQUARE_E1, SQUARE_C1, Move::Type::QueensideCastle, 0);
 	}
 }
 
@@ -343,14 +351,14 @@ void MoveGenerator::addBlackCastleMoves(const board_t *board, Move *&move) {
 	if ((board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_KINGSIDE))) {
-		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_G8, CASTLING_MOVE_KINGSIDE, 0);
+		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_G8, Move::Type::KingsideCastle, 0);
 	}
 
 	/* Queenside castle. Check for empty squares. */
 	if ((board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE) &&
 		(!((board->bitboard[BLACK_ALL] | board->bitboard[WHITE_ALL]) &
 		BLACK_EMPTY_QUEENSIDE))) {
-		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_C8, CASTLING_MOVE_QUEENSIDE, 0);
+		*move++ = Move(BLACK_KING, SQUARE_E8, SQUARE_C8, Move::Type::QueensideCastle, 0);
 	}
 }
 
