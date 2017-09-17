@@ -59,8 +59,8 @@ typedef struct state
     int mode;
     int flags;
     int depth;
-    board_t board;
-    board_t root_board;
+    Board board;
+    Board root_board;
     undo_data_t *undo_data;
     int moves;
     int options;
@@ -87,7 +87,7 @@ int my_turn(state_t *state);
 #define OPTION_PONDER 2
 
 int engine(void *data);
-int check_game_state(board_t *board, int ply);
+int check_game_state(Board &board, int ply);
 void check_game_end(state_t *state);
 void do_move(state_t *state, Move move);
 void undo_move(state_t *state);
@@ -95,7 +95,7 @@ int check_abort(int ply);
 int get_option(int option);
 void set_option(int option, int value);
 int get_time(void);
-int is_check(board_t *board, int ply);
+int is_check(Board &board, int ply);
 void send_move(state_t *state, Move move);
 void set_move_time(void);
 

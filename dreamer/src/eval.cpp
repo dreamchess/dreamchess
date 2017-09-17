@@ -44,7 +44,7 @@ max(int a, int b)
 }
 
 static int
-eval_king_tropism(board_t *board, int side)
+eval_king_tropism(const Board &board, int side)
 {
     int score = 0;
     int square;
@@ -56,7 +56,7 @@ eval_king_tropism(board_t *board, int side)
     if (side == SIDE_WHITE)
     {
         for (square = 0; square < 64; square++)
-            if (board->bitboard[BLACK_KING] & square_bit[square])
+            if (board.bitboard[BLACK_KING] & square_bit[square])
             {
                 king_rank = square >> 3;
                 king_file = square & 7;
@@ -68,15 +68,15 @@ eval_king_tropism(board_t *board, int side)
             piece_rank = square >> 3;
             piece_file = square & 7;
 
-            if (board->bitboard[WHITE_ROOK] & square_bit[square])
+            if (board.bitboard[WHITE_ROOK] & square_bit[square])
                 score -= min(abs(king_rank - piece_rank),
                              abs(king_file - piece_file)) << 1;
             else
-                if (board->bitboard[WHITE_KNIGHT] & square_bit[square])
+                if (board.bitboard[WHITE_KNIGHT] & square_bit[square])
                     score += 5 - abs(king_rank - piece_rank)
                              - abs(king_file - piece_file);
                 else
-                    if (board->bitboard[WHITE_QUEEN] & square_bit[square])
+                    if (board.bitboard[WHITE_QUEEN] & square_bit[square])
                         score -= min(abs(king_rank - piece_rank),
                                      abs(king_file - piece_file));
         }
@@ -84,7 +84,7 @@ eval_king_tropism(board_t *board, int side)
     else
     {
         for (square = 0; square < 64; square++)
-            if (board->bitboard[WHITE_KING] & square_bit[square])
+            if (board.bitboard[WHITE_KING] & square_bit[square])
             {
                 king_rank = square >> 3;
                 king_file = square & 7;
@@ -96,15 +96,15 @@ eval_king_tropism(board_t *board, int side)
             piece_rank = square >> 3;
             piece_file = square & 7;
 
-            if (board->bitboard[BLACK_ROOK] & square_bit[square])
+            if (board.bitboard[BLACK_ROOK] & square_bit[square])
                 score -= min(abs(king_rank - piece_rank),
                              abs(king_file - piece_file)) << 1;
             else
-                if (board->bitboard[BLACK_KNIGHT] & square_bit[square])
+                if (board.bitboard[BLACK_KNIGHT] & square_bit[square])
                     score += 5 - abs(king_rank - piece_rank)
                              - abs(king_file - piece_file);
                 else
-                    if (board->bitboard[BLACK_QUEEN] & square_bit[square])
+                    if (board.bitboard[BLACK_QUEEN] & square_bit[square])
                         score -= min(abs(king_rank - piece_rank),
                                      abs(king_file - piece_file));
         }
@@ -114,11 +114,11 @@ eval_king_tropism(board_t *board, int side)
 }
 
 static int
-eval_rook_bonus(board_t *board, eval_data_t *eval_data, int side)
+eval_rook_bonus(const Board &board, eval_data_t *eval_data, int side)
 {
     int score = 0;
     int square;
-    bitboard_t bitboard = board->bitboard[ROOK + side];
+    bitboard_t bitboard = board.bitboard[ROOK + side];
     if (side == SIDE_WHITE)
     {
         for (square = 0; square < 64; square++)
@@ -179,7 +179,7 @@ eval_rook_bonus(board_t *board, eval_data_t *eval_data, int side)
 }
 
 static int
-eval_development(board_t *board, int side)
+eval_development(const Board &board, int side)
 {
     int score = 0;
     int square;
@@ -187,13 +187,13 @@ eval_development(board_t *board, int side)
 
     if (side == SIDE_WHITE)
     {
-        if (board->bitboard[WHITE_PAWN] & square_bit[SQUARE_D2])
+        if (board.bitboard[WHITE_PAWN] & square_bit[SQUARE_D2])
             score -= 15;
-        if (board->bitboard[WHITE_PAWN] & square_bit[SQUARE_E2])
+        if (board.bitboard[WHITE_PAWN] & square_bit[SQUARE_E2])
             score -= 15;
 
-        bitboard = board->bitboard[WHITE_KNIGHT] |
-                   board->bitboard[WHITE_BISHOP];
+        bitboard = board.bitboard[WHITE_KNIGHT] |
+                   board.bitboard[WHITE_BISHOP];
 
         for (square = SQUARE_A1; square <= SQUARE_H1; square++)
         {
@@ -201,22 +201,22 @@ eval_development(board_t *board, int side)
                 score -= 10;
         }
 
-        bitboard = board->bitboard[WHITE_QUEEN];
+        bitboard = board.bitboard[WHITE_QUEEN];
 
         if (bitboard && !(bitboard & square_bit[SQUARE_D1]))
         {
             int count = 0;
-            if (board->bitboard[WHITE_ROOK] & square_bit[SQUARE_A1])
+            if (board.bitboard[WHITE_ROOK] & square_bit[SQUARE_A1])
                 count++;
-            if (board->bitboard[WHITE_ROOK] & square_bit[SQUARE_H1])
+            if (board.bitboard[WHITE_ROOK] & square_bit[SQUARE_H1])
                 count++;
-            if (board->bitboard[WHITE_KNIGHT] & square_bit[SQUARE_B1])
+            if (board.bitboard[WHITE_KNIGHT] & square_bit[SQUARE_B1])
                 count++;
-            if (board->bitboard[WHITE_KNIGHT] & square_bit[SQUARE_G1])
+            if (board.bitboard[WHITE_KNIGHT] & square_bit[SQUARE_G1])
                 count++;
-            if (board->bitboard[WHITE_BISHOP] & square_bit[SQUARE_C1])
+            if (board.bitboard[WHITE_BISHOP] & square_bit[SQUARE_C1])
                 count++;
-            if (board->bitboard[WHITE_BISHOP] & square_bit[SQUARE_F1])
+            if (board.bitboard[WHITE_BISHOP] & square_bit[SQUARE_F1])
                 count++;
             /* if (board->bitboard[WHITE_KING] & square_bit[SQUARE_E1])
                 count++; */
@@ -224,19 +224,19 @@ eval_development(board_t *board, int side)
             score -= count << 3;
         }
 
-        if (board->bitboard[BLACK_QUEEN])
+        if (board.bitboard[BLACK_QUEEN])
         {
-            if (board->castle_flags & WHITE_HAS_CASTLED)
+            if (board.castle_flags & WHITE_HAS_CASTLED)
                 score += 10;
             else
-                if ((board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
-                        (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE))
+                if ((board.castle_flags & WHITE_CAN_CASTLE_KINGSIDE) &&
+                        (board.castle_flags & WHITE_CAN_CASTLE_QUEENSIDE))
                     score -= 24;
                 else
-                    if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
+                    if (board.castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
                         score -= 40;
                     else
-                        if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
+                        if (board.castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
                             score -= 80;
                         else
                             score -= 120;
@@ -244,13 +244,13 @@ eval_development(board_t *board, int side)
     }
     else
     {
-        if (board->bitboard[BLACK_PAWN] & square_bit[SQUARE_D7])
+        if (board.bitboard[BLACK_PAWN] & square_bit[SQUARE_D7])
             score -= 15;
-        if (board->bitboard[BLACK_PAWN] & square_bit[SQUARE_E7])
+        if (board.bitboard[BLACK_PAWN] & square_bit[SQUARE_E7])
             score -= 15;
 
-        bitboard = board->bitboard[BLACK_KNIGHT] |
-                   board->bitboard[BLACK_BISHOP];
+        bitboard = board.bitboard[BLACK_KNIGHT] |
+                   board.bitboard[BLACK_BISHOP];
 
         for (square = SQUARE_A8; square <= SQUARE_H8; square++)
         {
@@ -258,22 +258,22 @@ eval_development(board_t *board, int side)
                 score -= 10;
         }
 
-        bitboard = board->bitboard[BLACK_QUEEN];
+        bitboard = board.bitboard[BLACK_QUEEN];
 
         if (bitboard && !(bitboard & square_bit[SQUARE_D8]))
         {
             int count = 0;
-            if (board->bitboard[BLACK_ROOK] & square_bit[SQUARE_A8])
+            if (board.bitboard[BLACK_ROOK] & square_bit[SQUARE_A8])
                 count++;
-            if (board->bitboard[BLACK_ROOK] & square_bit[SQUARE_H8])
+            if (board.bitboard[BLACK_ROOK] & square_bit[SQUARE_H8])
                 count++;
-            if (board->bitboard[BLACK_KNIGHT] & square_bit[SQUARE_B8])
+            if (board.bitboard[BLACK_KNIGHT] & square_bit[SQUARE_B8])
                 count++;
-            if (board->bitboard[BLACK_KNIGHT] & square_bit[SQUARE_G8])
+            if (board.bitboard[BLACK_KNIGHT] & square_bit[SQUARE_G8])
                 count++;
-            if (board->bitboard[BLACK_BISHOP] & square_bit[SQUARE_C8])
+            if (board.bitboard[BLACK_BISHOP] & square_bit[SQUARE_C8])
                 count++;
-            if (board->bitboard[BLACK_BISHOP] & square_bit[SQUARE_F8])
+            if (board.bitboard[BLACK_BISHOP] & square_bit[SQUARE_F8])
                 count++;
             /* if (board->bitboard[BLACK_KING] & square_bit[SQUARE_E8])
                 count++; */
@@ -281,19 +281,19 @@ eval_development(board_t *board, int side)
             score -= count << 3;
         }
 
-        if (board->bitboard[WHITE_QUEEN])
+        if (board.bitboard[WHITE_QUEEN])
         {
-            if (board->castle_flags & BLACK_HAS_CASTLED)
+            if (board.castle_flags & BLACK_HAS_CASTLED)
                 score += 10;
             else
-                if ((board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
-                        (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE))
+                if ((board.castle_flags & BLACK_CAN_CASTLE_KINGSIDE) &&
+                        (board.castle_flags & BLACK_CAN_CASTLE_QUEENSIDE))
                     score -= 24;
                 else
-                    if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE)
+                    if (board.castle_flags & BLACK_CAN_CASTLE_KINGSIDE)
                         score -= 40;
                     else
-                        if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE)
+                        if (board.castle_flags & BLACK_CAN_CASTLE_QUEENSIDE)
                             score -= 80;
                         else
                             score -= 120;
@@ -304,11 +304,11 @@ eval_development(board_t *board, int side)
 }
 
 static int
-eval_bad_bishops(board_t *board, eval_data_t *eval_data, int side)
+eval_bad_bishops(const Board &board, eval_data_t *eval_data, int side)
 {
     int square;
     int score = 0;
-    bitboard_t bitboard = board->bitboard[BISHOP + side];
+    bitboard_t bitboard = board.bitboard[BISHOP + side];
 
     if (!bitboard)
         return 0;
@@ -336,7 +336,7 @@ eval_bad_bishops(board_t *board, eval_data_t *eval_data, int side)
 }
 
 static int
-eval_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
+eval_pawn_structure(const Board &board, eval_data_t *eval_data, int side)
 {
     int score = 0;
     int bin;
@@ -382,7 +382,7 @@ eval_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 }
 
 static void
-analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
+analyze_pawn_structure(const Board &board, eval_data_t *eval_data, int side)
 {
     int i;
     for (i = 0; i < 8; i++)
@@ -409,7 +409,7 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 
         for (square = 8; square <= 55; square++)
         {
-            if (board->bitboard[WHITE_PAWN] & square_bit[square])
+            if (board.bitboard[WHITE_PAWN] & square_bit[square])
             {
                 int piece_rank = square >> 3;
                 int piece_file = square & 7;
@@ -423,11 +423,11 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
                 else
                     eval_data->max_pawn_color_bins[1]++;
 
-                if (board->bitboard[BLACK_PAWN] & square_bit[square + 8])
+                if (board.bitboard[BLACK_PAWN] & square_bit[square + 8])
                     eval_data->pawn_rams++;
             }
             else
-                if (board->bitboard[BLACK_PAWN] & square_bit[square])
+                if (board.bitboard[BLACK_PAWN] & square_bit[square])
                 {
                     int piece_file = square & 7;
                     eval_data->min_pawn_file_bins[piece_file]++;
@@ -468,7 +468,7 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 
         for (square = 55; square >= 8; square--)
         {
-            if (board->bitboard[BLACK_PAWN] & square_bit[square])
+            if (board.bitboard[BLACK_PAWN] & square_bit[square])
             {
                 int piece_rank = square >> 3;
                 int piece_file = square & 7;
@@ -482,11 +482,11 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
                 else
                     eval_data->max_pawn_color_bins[1]++;
 
-                if (board->bitboard[WHITE_PAWN] & square_bit[square - 8])
+                if (board.bitboard[WHITE_PAWN] & square_bit[square - 8])
                     eval_data->pawn_rams++;
             }
             else
-                if (board->bitboard[WHITE_PAWN] & square_bit[square])
+                if (board.bitboard[WHITE_PAWN] & square_bit[square])
                 {
                     int piece_file = square & 7;
                     eval_data->min_pawn_file_bins[piece_file]++;
@@ -517,26 +517,26 @@ analyze_pawn_structure(board_t *board, eval_data_t *eval_data, int side)
 }
 
 static int
-board_eval_material(board_t *board, int side)
+board_eval_material(const Board &board, int side)
 {
     int mat_total;
 
-    if (board->material_value[SIDE_BLACK] ==
-            board->material_value[SIDE_WHITE])
+    if (board.material_value[SIDE_BLACK] ==
+            board.material_value[SIDE_WHITE])
         return 0;
 
-    mat_total = board->material_value[SIDE_WHITE] +
-                board->material_value[SIDE_BLACK];
+    mat_total = board.material_value[SIDE_WHITE] +
+                board.material_value[SIDE_BLACK];
 
-    if (board->material_value[SIDE_BLACK] >
-            board->material_value[SIDE_WHITE])
+    if (board.material_value[SIDE_BLACK] >
+            board.material_value[SIDE_WHITE])
     {
-        int mat_diff = board->material_value[SIDE_BLACK] -
-                       board->material_value[SIDE_WHITE];
+        int mat_diff = board.material_value[SIDE_BLACK] -
+                       board.material_value[SIDE_WHITE];
         int val = (2400 < mat_diff? 2400 : mat_diff) +
                   (mat_diff * (12000 - mat_total) *
-                   board->num_pawns[SIDE_BLACK])
-                  / (6400 * (board->num_pawns[SIDE_BLACK ] + 1 ));
+                   board.num_pawns[SIDE_BLACK])
+                  / (6400 * (board.num_pawns[SIDE_BLACK ] + 1 ));
         if (side == SIDE_BLACK)
             return val;
         else
@@ -544,12 +544,12 @@ board_eval_material(board_t *board, int side)
     }
     else
     {
-        int mat_diff = board->material_value[SIDE_WHITE] -
-                       board->material_value[SIDE_BLACK];
+        int mat_diff = board.material_value[SIDE_WHITE] -
+                       board.material_value[SIDE_BLACK];
         int val = (2400 < mat_diff? 2400 : mat_diff) +
                   (mat_diff * (12000 - mat_total) *
-                   board->num_pawns[SIDE_WHITE])
-                  / (6400 * (board->num_pawns[SIDE_WHITE] + 1 ));
+                   board.num_pawns[SIDE_WHITE])
+                  / (6400 * (board.num_pawns[SIDE_WHITE] + 1 ));
         if (side == SIDE_WHITE)
             return val;
         else
@@ -558,23 +558,23 @@ board_eval_material(board_t *board, int side)
 }
 
 int
-board_eval_quick(board_t *board, int side)
+board_eval_quick(const Board &board, int side)
 {
     int eval = board_eval_material(board, side);
-    if (board->current_player == side)
+    if (board.current_player == side)
         return eval;
     else
         return -eval;
 }
 
 int
-board_eval_complete(board_t *board, int side, int alpha, int beta)
+board_eval_complete(const Board &board, int side, int alpha, int beta)
 {
     eval_data_t eval_data;
     int eval2;
     int eval1 = board_eval_material(board, side);
 
-    if (board->current_player != side)
+    if (board.current_player != side)
         eval1 = -eval1;
 #if 0
     if (eval1 - 200 >= beta)
@@ -590,7 +590,7 @@ board_eval_complete(board_t *board, int side, int alpha, int beta)
             eval_rook_bonus(board, &eval_data, side) +
             eval_king_tropism(board, side) + 192; /* Add 192 to have the starting position score 0 */
 
-    if (board->current_player == side)
+    if (board.current_player == side)
         return eval1 + eval2;
     else
         return eval1 - eval2;

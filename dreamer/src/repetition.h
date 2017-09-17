@@ -26,15 +26,15 @@
 extern long long repetition_list[99];
 extern int repetition_head;
 
-int is_repetition(board_t *board, int ply);
+int is_repetition(const Board &board, int ply);
 
-int is_draw(board_t *board);
+int is_draw(const Board &board);
 
-void repetition_init(board_t *board);
+void repetition_init(const Board &board);
 
 void repetition_exit(void);
 
-void repetition_add(board_t *board, Move move);
+void repetition_add(const Board &board, Move move);
 
 void repetition_remove(void);
 

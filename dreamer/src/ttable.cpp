@@ -47,7 +47,7 @@ TTable::~TTable() {
 	delete[] _table;
 }
 
-void TTable::storeBoard(const board_t &board, int eval, const EvalType evalType,
+void TTable::storeBoard(const Board &board, int eval, const EvalType evalType,
                         const int depth, const int ply, const int time_stamp, const Move move) {
 	const unsigned int index = board.hash_key & _indexMask;
 
@@ -70,7 +70,7 @@ void TTable::storeBoard(const board_t &board, int eval, const EvalType evalType,
 	_table[index].move = move;
 }
 
-void TTable::setBestMove(const board_t &board, const Move move) {
+void TTable::setBestMove(const Board &board, const Move move) {
 	const unsigned int index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
@@ -79,7 +79,7 @@ void TTable::setBestMove(const board_t &board, const Move move) {
 		_table[index].move = move;
 }
 
-TTable::EvalType TTable::lookupBoard(const board_t &board, const int depth, const int ply, int &eval) const {
+TTable::EvalType TTable::lookupBoard(const Board &board, const int depth, const int ply, int &eval) const {
 	const unsigned int index = board.hash_key & _indexMask;
 
 #ifdef DEBUG_TTABLE
@@ -113,7 +113,7 @@ TTable::EvalType TTable::lookupBoard(const board_t &board, const int depth, cons
 	return _table[index].evalType;
 }
 
-Move TTable::lookupBestMove(const board_t &board) const {
+Move TTable::lookupBestMove(const Board &board) const {
 	const unsigned int index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
