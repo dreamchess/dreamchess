@@ -30,15 +30,15 @@ class MoveGenerator {
 public:
 	MoveGenerator();
 
-	int computeLegalMoves(const board_t *board, int ply);
-	Move getNextMove(const board_t *board, int ply);
+	int computeLegalMoves(const Board &board, int ply);
+	Move getNextMove(const Board &board, int ply);
 	void clearHistory();
 	void ageHistory();
 	void incHistoryCounter(Move move, int side);
 
 private:
-	void addWhiteCastleMoves(const board_t *board, Move *&move);
-	void addBlackCastleMoves(const board_t *board, Move *&move);
+	void addWhiteCastleMoves(const Board &board, Move *&move);
+	void addBlackCastleMoves(const Board &board, Move *&move);
 
 	void freeRayMoves(int ***moves);
 	void freeSingleMoves(int **moves);

@@ -52,7 +52,7 @@ init_hash(void)
 }
 
 unsigned long long
-hash_key(board_t *board)
+hash_key(const Board &board)
 {
     int piece;
     int square;
@@ -61,17 +61,17 @@ hash_key(board_t *board)
     bitboard_t bitboard;
     for (piece = 0; piece < ALL; piece++)
     {
-        bitboard = board->bitboard[piece];
-        if ((piece == WHITE_KING) && (board->castle_flags &
+        bitboard = board.bitboard[piece];
+        if ((piece == WHITE_KING) && (board.castle_flags &
                                       WHITE_PHANTOM_KINGS_KINGSIDE))
             bitboard ^= WHITE_PHANTOM_KINGSIDE;
-        if ((piece == WHITE_KING) && (board->castle_flags &
+        if ((piece == WHITE_KING) && (board.castle_flags &
                                       WHITE_PHANTOM_KINGS_QUEENSIDE))
             bitboard ^= WHITE_PHANTOM_QUEENSIDE;
-        if ((piece == BLACK_KING) && (board->castle_flags &
+        if ((piece == BLACK_KING) && (board.castle_flags &
                                       BLACK_PHANTOM_KINGS_KINGSIDE))
             bitboard ^= BLACK_PHANTOM_KINGSIDE;
-        if ((piece == BLACK_KING) && (board->castle_flags &
+        if ((piece == BLACK_KING) && (board.castle_flags &
                                       BLACK_PHANTOM_KINGS_QUEENSIDE))
             bitboard ^= BLACK_PHANTOM_QUEENSIDE;
         if (bitboard)
@@ -80,16 +80,16 @@ hash_key(board_t *board)
                     hash ^= pieces_hash[piece][square];
     }
     for (i = 0; i < 4; i++)
-        if (board->castle_flags & (1 << i))
+        if (board.castle_flags & (1 << i))
             hash ^= castle_hash[i];
 
-    bitboard = board->en_passant;
+    bitboard = board.en_passant;
     if (bitboard)
         for (square = 0; square < 64; square++)
             if (bitboard & square_bit[square])
                 hash ^= ep_hash[square];
 
-    if (board->current_player)
+    if (board.current_player)
         hash ^= black_to_move;
 
     return hash;

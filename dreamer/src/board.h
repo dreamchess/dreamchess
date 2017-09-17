@@ -223,9 +223,53 @@ private:
     unsigned char _captured:4;
 };
 
-/* Struct describing the current state of the board. */
-typedef struct board
-{
+class Board {
+public:
+    /* Looks for a piece on the board at a specified location.
+    ** Parameters: (board_t *) board: Pointer to the board to search.
+    **             (int) square: The square to search.
+    ** Returns   : (int): The black piece located at the square on the board, or
+    **                 NONE if no black piece was found. If both a fake king
+    **                 and a rook are on the square, the king is found instead
+    **                 of the rook.
+    */
+    template<int SIDE>
+    int findPiece(int square) const;
+
+    /* Clears a board.
+    ** Parameters: (board_t *) board: Pointer to the board to clear.
+    ** Returns   : (void)
+    */
+    void clear();
+    
+    /* Sets up a board to the starting position.
+    ** Parameters: (board_t *) board: Pointer to the board to set up.
+    ** Returns   : (void)
+    */
+    void setup();
+    
+    /* Makes a move on a board.
+    ** Parameters: (board_t *) board: Board to make the move on.
+    **             (Move) move: The move to make.
+    ** Returns   : (void)
+    */
+    void makeMove(Move move);
+    
+    /* Unmakes a move on a board.
+    ** Parameters: (board_t *) board: Board to unmake the move on.
+    **             (Move) move: The move to unmake.
+    **             (bitboard_t) old_en_passant: The en-passant flags before the
+    **                 last move.
+    **             (int) old_castle_flags: The castling flags before the last
+    **                 move.
+    **             (int) old_fifty_moves: The 50 moves value before the last
+    **                 move.
+    ** Returns   : (void)
+    */
+    void unmakeMove(Move move, bitboard_t old_en_passant, int old_castle_flags, int old_fifty_moves);
+    
+    bool setupFEN(const char *fen);
+
     bitboard_t bitboard[NR_BITBOARDS];
 
     /* Hash key of the current board. */
@@ -251,37 +295,16 @@ typedef struct board
 
     /* 50-move counter. */
     int fifty_moves;
-}
-board_t;
+
+private:
+    void addPiece(int square, int piece);
+    void removePiece(int square, int piece);
+};
 
 extern bitboard_t square_bit[64];
 
-extern board_t chess_board;
-
-int
-find_black_piece(board_t *board, int square);
-/* Looks for a black piece on the board at a specified location.
-** Parameters: (board_t *) board: Pointer to the board to search.
-**             (int) square: The square to search.
-** Returns   : (int): The black piece located at the square on the board, or
-**                 NONE if no black piece was found. If both a fake king
-**                 and a rook are on the square, the king is found instead
-**                 of the rook.
-*/
-
-int
-find_white_piece(board_t *board, int square);
-/* Looks for a white piece on the board at a specified location.
-** Parameters: (board_t *) board: Pointer to the board to search.
-**             (int) square: The square to search.
-** Returns   : (int): The white piece located at the square on the board, or
-**                 NONE if no white piece was found. If both a fake king
-**                 and a rook are on the square, the king is found instead
-**                 of the rook.
-*/
-
 template<int SIDE>
-int find_piece(const board_t *board, int square)
+int Board::findPiece(int square) const
 {
     bitboard_t mask = square_bit[square];
 
@@ -289,19 +312,19 @@ int find_piece(const board_t *board, int square)
     ** same square as a rook. In that case we want to find the king so
     ** that the illegality of the previous move can be detected.
     */
-    if (board->bitboard[KING + SIDE] & square_bit[square])
+    if (bitboard[KING + SIDE] & square_bit[square])
         return KING + SIDE;
 
     /* Check for other pieces in order of frequency. */
-    if (board->bitboard[PAWN + SIDE] & mask)
+    if (bitboard[PAWN + SIDE] & mask)
         return PAWN + SIDE;
-    if (board->bitboard[KNIGHT + SIDE] & mask)
+    if (bitboard[KNIGHT + SIDE] & mask)
         return KNIGHT + SIDE;
-    if (board->bitboard[BISHOP + SIDE] & mask)
+    if (bitboard[BISHOP + SIDE] & mask)
         return BISHOP + SIDE;
-    if (board->bitboard[ROOK + SIDE] & mask)
+    if (bitboard[ROOK + SIDE] & mask)
         return ROOK + SIDE;
-    if (board->bitboard[QUEEN + SIDE] & mask)
+    if (bitboard[QUEEN + SIDE] & mask)
         return QUEEN + SIDE;
 
     return NONE;
@@ -313,44 +336,5 @@ board_init(void);
 ** Parameters: (void)
 ** Returns   : (void)
 */
-
-void
-clear_board(board_t *board);
-/* Clears a board.
-** Parameters: (board_t *) board: Pointer to the board to clear.
-** Returns   : (void)
-*/
-
-void
-setup_board(board_t *board);
-/* Sets up a board to the starting position.
-** Parameters: (board_t *) board: Pointer to the board to set up.
-** Returns   : (void)
-*/
-
-void
-execute_move(board_t *board, Move move);
-/* Makes a move on a board.
-** Parameters: (board_t *) board: Board to make the move on.
-**             (Move) move: The move to make.
-** Returns   : (void)
-*/
-
-void
-unmake_move(board_t *board, Move move, bitboard_t old_en_passant,
-            int old_castle_flags, int old_fifty_moves);
-/* Unmakes a move on a board.
-** Parameters: (board_t *) board: Board to unmake the move on.
-**             (Move) move: The move to unmake.
-**             (bitboard_t) old_en_passant: The en-passant flags before the
-**                 last move.
-**             (int) old_castle_flags: The castling flags before the last
-**                 move.
-**             (int) old_fifty_moves: The 50 moves value before the last
-**                 move.
-** Returns   : (void)
-*/
-
-int setup_board_fen(board_t *board, const char *fen);
 
 #endif

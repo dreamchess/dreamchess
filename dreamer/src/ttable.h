@@ -57,7 +57,7 @@ public:
 	 * @param ply      Number of plies between the current game position and #board
 	 * @param move     The best move for #board
 	 */
-	void storeBoard(const board_t &board, int eval, const EvalType evalType, const int depth,
+	void storeBoard(const Board &board, int eval, const EvalType evalType, const int depth,
 					const int ply, const int timestamp, const Move move);
 
 	/**
@@ -67,7 +67,7 @@ public:
 	 * @param board The evaluated board
 	 * @param move  The best move for #board
 	 */
-	void setBestMove(const board_t &board, const Move move);
+	void setBestMove(const Board &board, const Move move);
 
 	/**
 	 * Looks up a board evaluation in the transposition table.
@@ -79,7 +79,7 @@ public:
 	 *
 	 * @return          The evaluation type found, or EvalType::None
 	 */
-	EvalType lookupBoard(const board_t &board, const int depth, const int ply, int &eval) const;
+	EvalType lookupBoard(const Board &board, const int depth, const int ply, int &eval) const;
 
 	/**
 	 * Looks up the best move for a board position.
@@ -88,7 +88,7 @@ public:
 	 *
 	 * @return The best move, or NO_MOVE if no entry was found
 	 */
-	Move lookupBestMove(const board_t &board) const;
+	Move lookupBestMove(const Board &board) const;
 
 	/** Clears the transposition table. */
 	void clear();

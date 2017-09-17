@@ -45,7 +45,7 @@ static makebook_entry *table;
 static int table_entries;
 static int table_size;
 
-static board_t board;
+static Board board;
 
 static int moves_done;
 
@@ -139,7 +139,7 @@ static void makebook_add(unsigned long long hash, Move move)
 
 void makebook_reset(void)
 {
-    setup_board(&board);
+    board.setup();
     moves_done = 0;
 }
 
@@ -147,12 +147,12 @@ void makebook_move(char *str)
 {
     Move move;
 
-    if (!parse_move(&board, 0, str, &move))
+    if (!parse_move(board, 0, str, &move))
     {
         if (moves_done++ < 20)
         {
             makebook_add(board.hash_key, move);
-            execute_move(&board, move);
+            board.makeMove(move);
         }
     }
     else

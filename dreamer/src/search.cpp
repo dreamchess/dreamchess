@@ -48,7 +48,7 @@ int pv_len[MAX_DEPTH];
 
 #if 0
 void
-print_board(board_t *board)
+print_board(const Board &board)
 /* Temporary! */
 {
 	long long i,j;
@@ -61,7 +61,7 @@ print_board(board_t *board)
 			c = ' ';
 			fcol = 1;
 			for (k = 0; k < NR_BITBOARDS; k++) {
-				if (board->bitboard[k] & square_bit[i * 8 + j]) {
+				if (board.bitboard[k] & square_bit[i * 8 + j]) {
 					switch (k & PIECE_MASK) {
 						case PAWN: c = 'I'; break;
 						case ROOK: c = 'X'; break;
@@ -109,13 +109,13 @@ static void pv_print_move(state_t *state, int index)
         e_comm_send(" %2d.", (state->moves + index) / 2 + 1);
 
     /* Ply 0 is used by find_best_move(). */
-    s = san_move_str(&state->board, 1, pv[0][index]);
+    s = san_move_str(state->board, 1, pv[0][index]);
     e_comm_send(" %s", s);
     free(s);
 
-    execute_move(&state->board, pv[0][index]);
+    state->board.makeMove(pv[0][index]);
     pv_print_move(state, index + 1);
-    unmake_move(&state->board, pv[0][index], en_passant, castle_flags, fifty_moves);
+    state->board.unmakeMove(pv[0][index], en_passant, castle_flags, fifty_moves);
 }
 
 static void pv_print(state_t *state, int depth, int score)
@@ -137,26 +137,26 @@ void pv_clear(void)
     pv_term(0);
 }
 
-static void pv_store_ht(board_t *board, int index)
+static void pv_store_ht(Board &board, int index)
 {
-    long long en_passant = board->en_passant;
-    int castle_flags = board->castle_flags;
-    int fifty_moves = board->fifty_moves;
+    long long en_passant = board.en_passant;
+    int castle_flags = board.castle_flags;
+    int fifty_moves = board.fifty_moves;
 
     if (index == pv_len[0])
         return;
 
-    g_transTable->setBestMove(*board, pv[0][index]);
-    execute_move(board, pv[0][index]);
+    g_transTable->setBestMove(board, pv[0][index]);
+    board.makeMove(pv[0][index]);
     pv_store_ht(board, index + 1);
-    unmake_move(board, pv[0][index], en_passant, castle_flags, fifty_moves);
+    board.unmakeMove(pv[0][index], en_passant, castle_flags, fifty_moves);
 }
 
 int
-alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side);
+alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side);
 
 int
-is_check(board_t *board, int ply);
+is_check(Board &board, int ply);
 
 static void poll_abort(int ply)
 {
@@ -168,7 +168,7 @@ static void poll_abort(int ply)
 }
 
 static int
-quiescence(board_t *board, int ply, int alpha, int beta, int side)
+quiescence(Board &board, int ply, int alpha, int beta, int side)
 {
     int eval;
     bitboard_t en_passant;
@@ -200,22 +200,22 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
     if (eval > alpha)
         alpha = eval;
 
-    en_passant = board->en_passant;
-    castle_flags = board->castle_flags;
-    fifty_moves = board->fifty_moves;
+    en_passant = board.en_passant;
+    castle_flags = board.castle_flags;
+    fifty_moves = board.fifty_moves;
 
     while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
         if (move.doesCapture() || move.doesPromotion())
         {
-            execute_move(board, move);
+            board.makeMove(move);
             eval = -quiescence(board, ply + 1, -beta, -alpha, side);
-            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+            board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
             if (eval == -ALPHABETA_ILLEGAL)
                 continue;
             if (eval >= beta)
             {
-                g_moveGenerator->incHistoryCounter(move, board->current_player);
+                g_moveGenerator->incHistoryCounter(move, board.current_player);
                 return beta;
             }
             if (eval > alpha)
@@ -232,20 +232,20 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
         /* If the opponent can capture the king that means we're
         ** checkmated.
         */
-        board->current_player = OPPONENT(board->current_player);
+        board.current_player = OPPONENT(board.current_player);
         if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
             ** that are closer.
             */
-            board->current_player = OPPONENT(board->current_player);
+            board.current_player = OPPONENT(board.current_player);
             return alpha;
         }
         else
         {
             /* We're stalemated. */
-            board->current_player = OPPONENT(board->current_player);
+            board.current_player = OPPONENT(board.current_player);
             return 0;
         }
     }
@@ -254,7 +254,7 @@ quiescence(board_t *board, int ply, int alpha, int beta, int side)
 }
 
 int
-alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
+alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side)
 {
     int eval;
     int best_move_score;
@@ -276,7 +276,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         return 0;
     }
 
-    if (board->fifty_moves == 100)
+    if (board.fifty_moves == 100)
     {
         if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
             return ALPHABETA_ILLEGAL;
@@ -287,7 +287,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         return 0;
     }
 
-    switch (g_transTable->lookupBoard(*board, depth, ply, eval))
+    switch (g_transTable->lookupBoard(board, depth, ply, eval))
     {
     case TTable::EvalType::Accurate:
         pv_term(ply);
@@ -312,24 +312,24 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
     best_move = Move();
     best_move_score = ALPHABETA_ILLEGAL;
 
-    en_passant = board->en_passant;
-    castle_flags = board->castle_flags;
-    fifty_moves = board->fifty_moves;
+    en_passant = board.en_passant;
+    castle_flags = board.castle_flags;
+    fifty_moves = board.fifty_moves;
 
     while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
         int score;
-        execute_move(board, move);
+        board.makeMove(move);
         score = -alpha_beta(board, depth - 1, ply + 1, -beta, -alpha, side);
-        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+        board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
         if (abort_search)
             return 0;
         if (score == -ALPHABETA_ILLEGAL)
             continue;
         if (score >= beta) {
-                g_transTable->storeBoard(*board, beta, TTable::EvalType::Lowerbound, depth, ply,
+                g_transTable->storeBoard(board, beta, TTable::EvalType::Lowerbound, depth, ply,
                             0 /* FIXME moves_made */, move);
-                g_moveGenerator->incHistoryCounter(move, board->current_player);
+                g_moveGenerator->incHistoryCounter(move, board.current_player);
                 return beta;
         }
         if (score > best_move_score) {
@@ -365,7 +365,7 @@ alpha_beta(board_t *board, int depth, int ply, int alpha, int beta, int side)
         }
     }
 
-    g_transTable->storeBoard(*board, alpha, evalType, depth, ply, 0 /* FIXME moves_made */, best_move);
+    g_transTable->storeBoard(board, alpha, evalType, depth, ply, 0 /* FIXME moves_made */, best_move);
 
     return alpha;
 }
@@ -374,12 +374,12 @@ Move
 find_best_move(state_t *state)
 {
     int depth = state->depth;
-    board_t *board = &state->board;
+    Board &board = state->board;
     Move best_move;
     int cur_depth;
-    long long en_passant = board->en_passant;
-    int castle_flags = board->castle_flags;
-    int fifty_moves = board->fifty_moves;
+    long long en_passant = board.en_passant;
+    int castle_flags = board.castle_flags;
+    int fifty_moves = board.fifty_moves;
 
     total_nodes = 0;
     start_time = get_time();
@@ -403,9 +403,9 @@ find_best_move(state_t *state)
             /* char *s = coord_move_str(move);
             e_comm_send("Examining move %s..\n", s);
             free(s); */
-            execute_move(board, move);
-            score = -alpha_beta(board, cur_depth, 1, ALPHABETA_MIN, -alpha, OPPONENT(board->current_player));
-            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+            state->board.makeMove(move);
+            score = -alpha_beta(state->board, cur_depth, 1, ALPHABETA_MIN, -alpha, OPPONENT(board.current_player));
+            state->board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
             /* e_comm_send("Move scored %i\n", score); */
             if (abort_search)
             {
@@ -459,17 +459,17 @@ find_best_move(state_t *state)
         /* If the opponent can capture the king that means we're
         ** checkmated.
         */
-        board->current_player = OPPONENT(board->current_player);
+        board.current_player = OPPONENT(board.current_player);
         if (g_moveGenerator->computeLegalMoves(board, 0) < 0)
         {
             /* We're checkmated. */
-            board->current_player = OPPONENT(board->current_player);
+            board.current_player = OPPONENT(board.current_player);
             return Move(0, 0, 0, Move::Type::Resign, 0);
         }
         else
         {
             /* We're stalemated. */
-            board->current_player = OPPONENT(board->current_player);
+            board.current_player = OPPONENT(board.current_player);
             return Move(0, 0, 0, Move::Type::Stalemate, 0);
         }
     }
@@ -479,9 +479,9 @@ find_best_move(state_t *state)
     else
     {
         /* Try to get hint move from hash table. */
-        execute_move(board, best_move);
-        state->hint = g_transTable->lookupBestMove(*board);
-        unmake_move(board, best_move, en_passant, castle_flags, fifty_moves);
+        state->board.makeMove(best_move);
+        state->hint = g_transTable->lookupBestMove(board);
+        state->board.unmakeMove(best_move, en_passant, castle_flags, fifty_moves);
     }
 
     return best_move;

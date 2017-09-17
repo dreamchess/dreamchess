@@ -74,21 +74,21 @@ int my_turn(state_t *state)
                 (state->board.current_player == SIDE_BLACK)));
 }
 
-int is_check(board_t *board, int ply)
+int is_check(Board &board, int ply)
 {
     /* FIXME */
-    board->current_player = OPPONENT(board->current_player);
+    board.current_player = OPPONENT(board.current_player);
     if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
     {
         /* We're in check. */
-        board->current_player = OPPONENT(board->current_player);
+        board.current_player = OPPONENT(board.current_player);
         return 1;
     }
-    board->current_player = OPPONENT(board->current_player);
+    board.current_player = OPPONENT(board.current_player);
     return 0;
 }
 
-int check_game_state(board_t *board, int ply)
+int check_game_state(Board &board, int ply)
 {
     Move move;
     int mate = STATE_MATE;
@@ -96,21 +96,21 @@ int check_game_state(board_t *board, int ply)
 
     while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
     {
-        bitboard_t en_passant = board->en_passant;
-        int castle_flags = board->castle_flags;
-        int fifty_moves = board->fifty_moves;
+        bitboard_t en_passant = board.en_passant;
+        int castle_flags = board.castle_flags;
+        int fifty_moves = board.fifty_moves;
 
-        execute_move(board, move);
-        board->current_player = OPPONENT(board->current_player);
+        board.makeMove(move);
+        board.current_player = OPPONENT(board.current_player);
         if (!is_check(board, ply + 1))
         {
             mate = STATE_NORMAL;
-            board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+            board.current_player = OPPONENT(board.current_player);
+            board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
             break;
         }
-        board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+        board.current_player = OPPONENT(board.current_player);
+        board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
     if (!is_check(board, ply) && (mate == STATE_MATE))
@@ -133,14 +133,13 @@ void set_option(int option, int value)
 
 void check_game_end(state_t *state)
 {
-    board_t *board = &state->board;
-    int res = check_game_state(board, 0);
+    int res = check_game_state(state->board, 0);
 
     switch (res)
     {
     case STATE_MATE:
         state->done = 1;
-        if (board->current_player == SIDE_WHITE)
+        if (state->board.current_player == SIDE_WHITE)
             e_comm_send("0-1 {Black mates}\n");
         else
             e_comm_send("1-0 {White mates}\n");
@@ -150,7 +149,7 @@ void check_game_end(state_t *state)
         e_comm_send("1/2-1/2 {Stalemate}\n");
         return;
     case STATE_NORMAL:
-        switch (is_draw(board))
+        switch (is_draw(state->board))
         {
         case 1:
             state->done = 1;
@@ -191,8 +190,8 @@ void do_move(state_t *state, Move move)
         state->board.fifty_moves;
     state->undo_data[state->moves - 1].move =
         move;
-    execute_move(&state->board, move);
-    repetition_add(&state->board, move);
+    state->board.makeMove(move);
+    repetition_add(state->board, move);
 }
 
 void undo_move(state_t *state)
@@ -202,8 +201,7 @@ void undo_move(state_t *state)
 
     state->moves--;
 
-    unmake_move(&state->board,
-                state->undo_data[state->moves].move,
+    state->board.unmakeMove(state->undo_data[state->moves].move,
                 state->undo_data[state->moves].en_passant,
                 state->undo_data[state->moves].castle_flags,
                 state->undo_data[state->moves].fifty_moves);

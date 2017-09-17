@@ -39,6 +39,6 @@ void
 init_hash(void);
 
 unsigned long long
-hash_key(board_t *board);
+hash_key(const Board &board);
 
 #endif

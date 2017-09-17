@@ -36,12 +36,12 @@ static rep_list_t *hist;
 static int hist_idx;
 static rep_list_t *cur_list;
 
-void repetition_init(board_t *board)
+void repetition_init(const Board &board)
 {
     hist = (rep_list_t *)malloc(sizeof(rep_list_t));
     hist_idx = 0;
     cur_list = &hist[0];
-    cur_list->position[0] = board->hash_key;
+    cur_list->position[0] = board.hash_key;
     cur_list->head = 1;
 }
 
@@ -50,18 +50,18 @@ void repetition_exit(void)
     free(hist);
 }
 
-void repetition_add(board_t *board, Move move)
+void repetition_add(const Board &board, Move move)
 {
     if ((move.getType() != Move::Type::Normal) || (move.getPieceKind() == PAWN))
     {
         hist_idx++;
         hist = (rep_list_t *)realloc(hist, sizeof(rep_list_t) * (hist_idx + 1));
         cur_list = &hist[hist_idx];
-        cur_list->position[0] = board->hash_key;
+        cur_list->position[0] = board.hash_key;
         cur_list->head = 1;
     }
     else
-        cur_list->position[cur_list->head++] = board->hash_key;
+        cur_list->position[cur_list->head++] = board.hash_key;
 }
 
 void repetition_remove(void)
@@ -75,13 +75,13 @@ void repetition_remove(void)
     }
 }
 
-int is_repetition(board_t *board, int ply)
+int is_repetition(const Board &board, int ply)
 {
     int i;
     int cur_head = cur_list->head + ply;
 
     /* We won't go out of bounds here because of the 50-move rule. */
-    cur_list->position[cur_head] = board->hash_key;
+    cur_list->position[cur_head] = board.hash_key;
 
     if (cur_head < 4)
         return 0;
@@ -90,19 +90,19 @@ int is_repetition(board_t *board, int ply)
     ** hits that lead to a third repetition without us knowing about it.
     */
     for (i = cur_head - 2; i >= 0; i -= 2)
-        if (board->hash_key == cur_list->position[i])
+        if (board.hash_key == cur_list->position[i])
             return 1;
 
     return 0;
 }
 
-int is_draw(board_t *board)
+int is_draw(const Board &board)
 {
     int i;
     int count = 0;
 
     /* 50 move rule. */
-    if (board->fifty_moves == 100)
+    if (board.fifty_moves == 100)
         return 2;
 
     if (cur_list->head < 9)

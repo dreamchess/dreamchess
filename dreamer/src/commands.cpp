@@ -105,32 +105,32 @@ static int san_piece(int piece)
     assert(0);
 }
 
-static Move get_san_move(board_t *board, int ply, san_move_t *san)
+static Move get_san_move(Board &board, int ply, san_move_t *san)
 {
     Move move;
     int piece;
-    bitboard_t en_passant = board->en_passant;
-    int castle_flags = board->castle_flags;
-    int fifty_moves = board->fifty_moves;
+    bitboard_t en_passant = board.en_passant;
+    int castle_flags = board.castle_flags;
+    int fifty_moves = board.fifty_moves;
     int found = 0;
     Move found_move;
 
     if (san->type == SAN_QUEENSIDE_CASTLE)
     {
         san->source_file = 4;
-        san->source_rank = (board->current_player == SIDE_WHITE ? 0 : 7);
-        san->destination = (board->current_player == SIDE_WHITE ? 2 : 58);
-        piece = KING + board->current_player;
+        san->source_rank = (board.current_player == SIDE_WHITE ? 0 : 7);
+        san->destination = (board.current_player == SIDE_WHITE ? 2 : 58);
+        piece = KING + board.current_player;
     }
     else if (san->type == SAN_KINGSIDE_CASTLE)
     {
         san->source_file = 4;
-        san->source_rank = (board->current_player == SIDE_WHITE ? 0 : 7);
-        san->destination = (board->current_player == SIDE_WHITE ? 6 : 62);
-        piece = KING + board->current_player;
+        san->source_rank = (board.current_player == SIDE_WHITE ? 0 : 7);
+        san->destination = (board.current_player == SIDE_WHITE ? 6 : 62);
+        piece = KING + board.current_player;
     }
     else
-        piece = convert_piece(san->piece) + board->current_player;
+        piece = convert_piece(san->piece) + board.current_player;
 
     g_moveGenerator->computeLegalMoves(board, ply);
 
@@ -142,10 +142,10 @@ static Move get_san_move(board_t *board, int ply, san_move_t *san)
         if (move.getDest() != san->destination)
             continue;
 
-        if (board->current_player == SIDE_WHITE)
-            move_piece = find_white_piece(board, move.getSource());
+        if (board.current_player == SIDE_WHITE)
+            move_piece = board.findPiece<SIDE_WHITE>(move.getSource());
         else
-            move_piece = find_black_piece(board, move.getSource());
+            move_piece = board.findPiece<SIDE_BLACK>(move.getSource());
 
         if (move_piece != piece)
             continue;
@@ -174,16 +174,16 @@ static Move get_san_move(board_t *board, int ply, san_move_t *san)
 
         /* TODO verify check and checkmate flags? */
 
-        execute_move(board, move);
-        board->current_player = OPPONENT(board->current_player);
+        board.makeMove(move);
+        board.current_player = OPPONENT(board.current_player);
         if (!is_check(board, ply + 1))
         {
             found++;
             found_move = move;
         }
  
-        board->current_player = OPPONENT(board->current_player);
-        unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+        board.current_player = OPPONENT(board.current_player);
+        board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
     }
 
     if (found != 1)
@@ -207,7 +207,7 @@ static char get_promotion_char(Move move) {
     }
 }
 
-static Move get_coord_move(board_t *board, int ply, const char *ms)
+static Move get_coord_move(Board &board, int ply, const char *ms)
 {
     int source, dest;
     Move move;
@@ -232,21 +232,21 @@ static Move get_coord_move(board_t *board, int ply, const char *ms)
                  continue;
             }
 
-            bitboard_t en_passant = board->en_passant;
-            int castle_flags = board->castle_flags;
-            int fifty_moves = board->fifty_moves;
+            bitboard_t en_passant = board.en_passant;
+            int castle_flags = board.castle_flags;
+            int fifty_moves = board.fifty_moves;
 
             /* Move found. */
-            execute_move(board, move);
-            board->current_player = OPPONENT(board->current_player);
+            board.makeMove(move);
+            board.current_player = OPPONENT(board.current_player);
             if (!is_check(board, ply + 1))
             {
-                board->current_player = OPPONENT(board->current_player);
-                unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+                board.current_player = OPPONENT(board.current_player);
+                board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
                 break;
             }
-            board->current_player = OPPONENT(board->current_player);
-            unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+            board.current_player = OPPONENT(board.current_player);
+            board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
         }
     }
     return move;
@@ -270,18 +270,18 @@ char *coord_move_str(Move move)
     return ret;
 }
 
-char *san_move_str(board_t *board, int ply, Move move)
+char *san_move_str(Board &board, int ply, Move move)
 {
     san_move_t san_move;
     int state;
     int move_piece;
-    bitboard_t en_passant = board->en_passant;
-    int castle_flags = board->castle_flags;
-    int fifty_moves = board->fifty_moves;
+    bitboard_t en_passant = board.en_passant;
+    int castle_flags = board.castle_flags;
+    int fifty_moves = board.fifty_moves;
 
-    execute_move(board, move);
+    board.makeMove(move);
     state = check_game_state(board, ply);
-    unmake_move(board, move, en_passant, castle_flags, fifty_moves);
+    board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
 
     switch (state)
     {
@@ -312,10 +312,10 @@ char *san_move_str(board_t *board, int ply, Move move)
         san_move.type = SAN_NORMAL;
     }
 
-    if (board->current_player == SIDE_WHITE)
-        move_piece = find_white_piece(board, move.getSource()) & PIECE_MASK;
+    if (board.current_player == SIDE_WHITE)
+        move_piece = board.findPiece<SIDE_WHITE>(move.getSource()) & PIECE_MASK;
     else
-        move_piece = find_black_piece(board, move.getSource()) & PIECE_MASK;
+        move_piece = board.findPiece<SIDE_BLACK>(move.getSource()) & PIECE_MASK;
 
     san_move.piece = san_piece(move_piece);
 
@@ -457,7 +457,7 @@ static int command_always(state_t *state, const char *command)
     return 0;
 }
 
-int parse_move(board_t *board, int ply, const char *command, Move *move)
+int parse_move(Board &board, int ply, const char *command, Move *move)
 {
     san_move_t *san;
 
@@ -482,7 +482,7 @@ int command_usermove(state_t *state, const char *command)
 {
     Move move;
 
-    if (!parse_move(&state->board, 0, command, &move))
+    if (!parse_move(state->board, 0, command, &move))
     {
         if (move.isNone()) {
             e_comm_send("Illegal move: %s\n", command);
@@ -569,11 +569,11 @@ void command_handle(state_t *state, const char *command)
 
     if (!strcmp(command, "new"))
     {
-        setup_board(&state->board);
+        state->board.setup();
         g_moveGenerator->clearHistory();
         g_transTable->clear();
         pv_clear();
-        repetition_init(&state->board);
+        repetition_init(state->board);
         state->done = 0;
         state->mode = MODE_BLACK;
         state->flags = 0;
@@ -714,7 +714,7 @@ void command_handle(state_t *state, const char *command)
 
     if (!strncmp(command, "setboard ", 9))
     {
-        board_t board;
+        Board board;
 
         if (state->mode != MODE_FORCE)
         {
@@ -722,7 +722,7 @@ void command_handle(state_t *state, const char *command)
             return;
         }
 
-        if (setup_board_fen(&board, command + 9))
+        if (board.setupFEN(command + 9))
         {
             BADPARAM(command);
             return;
@@ -731,7 +731,7 @@ void command_handle(state_t *state, const char *command)
         state->board = board;
         g_moveGenerator->clearHistory();
         g_transTable->clear();
-        repetition_init(&state->board);
+        repetition_init(state->board);
         state->done = 0;
         return;
     }
@@ -824,7 +824,7 @@ int command_check_abort(state_t *state, int ply, const char *command)
     {
         Move move;
 
-        if (!parse_move(&state->root_board, ply, command, &move))
+        if (!parse_move(state->root_board, ply, command, &move))
         {
             if (move.isNone()) {
                 e_comm_send("Illegal move: %s\n", command);
