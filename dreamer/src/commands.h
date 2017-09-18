@@ -23,9 +23,9 @@
 
 #include "dreamer.h"
 
-void command_handle(state_t *state, const char *command);
-int command_check_abort(state_t *state, int ply, const char *command);
-int command_usermove(state_t *state, const char *command);
+void command_handle(Dreamer *state, const char *command);
+int command_check_abort(Dreamer *state, int ply, const char *command);
+int command_usermove(Dreamer *state, const char *command);
 
 char *san_move_str(Board &board, int ply, Move move);
 char *coord_move_str(Move move);
