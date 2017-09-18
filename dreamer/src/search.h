@@ -33,12 +33,12 @@
 #define MIN_NODE 1
 
 Move
-find_best_move(state_t *state);
+find_best_move(Dreamer *state);
 
 void
 pv_clear(void);
 
 Move
-ponder(state_t *state);
+ponder(Dreamer *state);
 
 #endif

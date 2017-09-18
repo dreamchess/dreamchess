@@ -35,46 +35,18 @@
 #include "ttable.h"
 #include "config.h"
 
-#ifdef _WIN32
-
-#include <windows.h>
-#define drm_sleep(M) Sleep(M)
-
-#elif defined HAVE_USLEEP
-
-#include <unistd.h>
-
-#define drm_sleep(M) usleep((M) * 1000)
-
-#else
-
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-static void drm_sleep(unsigned long usec)
-{
-    struct timeval tv;
-
-    tv.tv_sec = 0;
-    tv.tv_usec = usec;
-    select(0, 0, 0, 0, &tv);
-}
-
-#endif
-
 static int start_time;
-static state_t *state;
 
-int my_turn(state_t *state)
+Dreamer::Dreamer() :
+        undo_data(nullptr) { }
+
+bool Dreamer::isMyTurn()
 {
-    return (((state->mode == MODE_WHITE) &&
-             (state->board.current_player == SIDE_WHITE))
-            || ((state->mode == MODE_BLACK) &&
-                (state->board.current_player == SIDE_BLACK)));
+    return (((mode == MODE_WHITE) && (board.current_player == SIDE_WHITE))
+            || ((mode == MODE_BLACK) && (board.current_player == SIDE_BLACK)));
 }
 
-int is_check(Board &board, int ply)
+bool Dreamer::isCheck(Board &board, int ply)
 {
     /* FIXME */
     board.current_player = OPPONENT(board.current_player);
@@ -82,13 +54,13 @@ int is_check(Board &board, int ply)
     {
         /* We're in check. */
         board.current_player = OPPONENT(board.current_player);
-        return 1;
+        return true;
     }
     board.current_player = OPPONENT(board.current_player);
-    return 0;
+    return false;
 }
 
-int check_game_state(Board &board, int ply)
+int Dreamer::checkGameState(Board &board, int ply)
 {
     Move move;
     int mate = STATE_MATE;
@@ -102,7 +74,7 @@ int check_game_state(Board &board, int ply)
 
         board.makeMove(move);
         board.current_player = OPPONENT(board.current_player);
-        if (!is_check(board, ply + 1))
+        if (!isCheck(board, ply + 1))
         {
             mate = STATE_NORMAL;
             board.current_player = OPPONENT(board.current_player);
@@ -113,50 +85,50 @@ int check_game_state(Board &board, int ply)
         board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
-    if (!is_check(board, ply) && (mate == STATE_MATE))
+    if (!isCheck(board, ply) && (mate == STATE_MATE))
         mate = STATE_STALEMATE;
-    if (is_check(board, ply) && (mate == STATE_NORMAL))
+    if (isCheck(board, ply) && (mate == STATE_NORMAL))
         mate = STATE_CHECK;
     return mate;
 }
 
-int get_option(int option)
+int Dreamer::getOption(int option)
 {
-    return state->options & (1 << option);
+    return options & (1 << option);
 }
 
-void set_option(int option, int value)
+void Dreamer::setOption(int option, int value)
 {
-    state->options &= ~(1 << option);
-    state->options |= (value << option);
+    options &= ~(1 << option);
+    options |= (value << option);
 }
 
-void check_game_end(state_t *state)
+void Dreamer::checkGameEnd()
 {
-    int res = check_game_state(state->board, 0);
+    int res = checkGameState(board, 0);
 
     switch (res)
     {
     case STATE_MATE:
-        state->done = 1;
-        if (state->board.current_player == SIDE_WHITE)
+        done = 1;
+        if (board.current_player == SIDE_WHITE)
             e_comm_send("0-1 {Black mates}\n");
         else
             e_comm_send("1-0 {White mates}\n");
         return;
     case STATE_STALEMATE:
-        state->done = 1;
+        done = 1;
         e_comm_send("1/2-1/2 {Stalemate}\n");
         return;
     case STATE_NORMAL:
-        switch (is_draw(state->board))
+        switch (is_draw(board))
         {
         case 1:
-            state->done = 1;
+            done = 1;
             e_comm_send("1/2-1/2 {Drawn by 3-fold repetition}\n");
             return;
         case 2:
-            state->done = 1;
+            done = 1;
             e_comm_send("1/2-1/2 {Drawn by 50 move rule}\n");
             return;
         }
@@ -164,124 +136,121 @@ void check_game_end(state_t *state)
 
 }
 
-int check_abort(int ply)
+int Dreamer::checkAbort(int ply)
 {
     char *s;
 
-    if (!(state->flags & FLAG_PONDER) && (state->moveTime.get() <= 0))
+    if (!(flags & FLAG_PONDER) && (moveTime.get() <= 0))
         return 1;
 
     s = e_comm_poll();
     if (!s)
         return 0;
-    return command_check_abort(state, ply, s);
+    return command_check_abort(this, ply, s);
 }
 
-void do_move(state_t *state, Move move)
+void Dreamer::doMove(Move move)
 {
-    state->moves++;
-    state->undo_data = (undo_data_t *)realloc(state->undo_data,
-                                              sizeof(undo_data_t) * state->moves);
-    state->undo_data[state->moves - 1].en_passant =
-        state->board.en_passant;
-    state->undo_data[state->moves - 1].castle_flags =
-        state->board.castle_flags;
-    state->undo_data[state->moves - 1].fifty_moves =
-        state->board.fifty_moves;
-    state->undo_data[state->moves - 1].move =
+    moves++;
+    undo_data = (undo_data_t *)realloc(undo_data, sizeof(undo_data_t) * moves);
+    undo_data[moves - 1].en_passant =
+        board.en_passant;
+    undo_data[moves - 1].castle_flags =
+        board.castle_flags;
+    undo_data[moves - 1].fifty_moves =
+        board.fifty_moves;
+    undo_data[moves - 1].move =
         move;
-    state->board.makeMove(move);
-    repetition_add(state->board, move);
+    board.makeMove(move);
+    repetition_add(board, move);
 }
 
-void undo_move(state_t *state)
+void Dreamer::undoMove()
 {
-    if (state->moves == 0)
+    if (moves == 0)
         return;
 
-    state->moves--;
+    moves--;
 
-    state->board.unmakeMove(state->undo_data[state->moves].move,
-                state->undo_data[state->moves].en_passant,
-                state->undo_data[state->moves].castle_flags,
-                state->undo_data[state->moves].fifty_moves);
+    board.unmakeMove(undo_data[moves].move,
+                undo_data[moves].en_passant,
+                undo_data[moves].castle_flags,
+                undo_data[moves].fifty_moves);
 
     repetition_remove();
 }
 
-static void set_start_time(void)
+void Dreamer::setStartTime()
 {
-    state->searchTime.set(0);
-    state->searchTime.start(Timer::Direction::Up);
+    searchTime.set(0);
+    searchTime.start(Timer::Direction::Up);
 }
 
-void set_move_time(void)
+void Dreamer::setMoveTime()
 {
-    int safe_time = state->engineTime.get() - 1000;
+    int safe_time = engineTime.get() - 1000;
 
     if (safe_time > 0)
     {
-        if (state->time.mps == 0)
-            state->moveTime.set(safe_time / 30 + state->time.inc);
+        if (time.mps == 0)
+            moveTime.set(safe_time / 30 + time.inc);
         else {
-            int moves_left = state->time.mps - (state->moves / 2) % state->time.mps;
-            state->moveTime.set(safe_time / moves_left + state->time.inc);
+            int moves_left = time.mps - (moves / 2) % time.mps;
+            moveTime.set(safe_time / moves_left + time.inc);
         }
     }
     else
-        state->moveTime.set(0);
+        moveTime.set(0);
 }
 
-int get_time(void)
+int Dreamer::getTime()
 {
-    return state->searchTime.get();
+    return searchTime.get();
 }
 
-static void update_clock(state_t *state)
+void Dreamer::updateClock()
 {
     int val;
 
-    if (state->time.mps == 0)
+    if (time.mps == 0)
         return;
 
-    val = state->engineTime.get();
+    val = engineTime.get();
 
-    if ((((state->moves  + 1) / 2) % state->time.mps) == 0)
-        val += state->time.base;
+    if ((((moves  + 1) / 2) % time.mps) == 0)
+        val += time.base;
 
-    val += state->time.inc;
+    val += time.inc;
 
-    state->engineTime.set(val);
+    engineTime.set(val);
 }
 
-void send_move(state_t *state, Move move)
+void Dreamer::sendMove(Move move)
 {
     char *str = coord_move_str(move);
-    do_move(state, move);
+    doMove(move);
     e_comm_send("move %s\n", str);
-    state->moveTime.stop();
-    update_clock(state);
+    moveTime.stop();
+    updateClock();
     free(str);
-    check_game_end(state);
+    checkGameEnd();
 }
 
-int engine(void *data)
+void Dreamer::run()
 {
-    state = new state_t();
-
     e_comm_init();
-    set_start_time();
+    setStartTime();
 
-    state->time.mps = 40;
-    state->time.base = 5;
-    state->time.inc = 0;
-    set_option(OPTION_QUIESCE, 1);
-    set_option(OPTION_PONDER, 0);
-    set_option(OPTION_POST, 0);
+    time.mps = 40;
+    time.base = 5;
+    time.inc = 0;
+    setOption(OPTION_QUIESCE, 1);
+    setOption(OPTION_PONDER, 0);
+    setOption(OPTION_POST, 0);
 
-    command_handle(state, "new");
+    command_handle(this, "new");
 
-    while (state->mode != MODE_QUIT)
+    while (mode != MODE_QUIT)
     {
         char *s;
         Move move;
@@ -292,62 +261,58 @@ int engine(void *data)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         else
         {
-            command_handle(state, s);
+            command_handle(this, s);
             free(s);
         }
 
-        if (state->mode != MODE_IDLE && state->mode != MODE_FORCE && !state->done)
+        if (mode != MODE_IDLE && mode != MODE_FORCE && !done)
         {
-            if (my_turn(state))
+            if (isMyTurn())
             {
-                state->flags = 0;
-                set_move_time();
+                flags = 0;
+                setMoveTime();
 
-                state->engineTime.start(Timer::Direction::Down);
-                move = find_best_move(state);
+                engineTime.start(Timer::Direction::Down);
+                move = find_best_move(this);
 
-                if (state->flags & FLAG_NEW_GAME)
-                    command_handle(state, "new");
+                if (flags & FLAG_NEW_GAME)
+                    command_handle(this, "new");
                 else if (move.isRegular())
                 {
-                    send_move(state, move);
-                    state->engineTime.stop();
-                    if (get_option(OPTION_PONDER))
-                        state->flags |= FLAG_PONDER;
+                    sendMove(move);
+                    engineTime.stop();
+                    if (getOption(OPTION_PONDER))
+                        flags |= FLAG_PONDER;
                 }
             }
-            else if (state->flags & FLAG_PONDER)
+            else if (flags & FLAG_PONDER)
             {
-                move = ponder(state);
+                move = ponder(this);
 
-                if (state->flags & FLAG_NEW_GAME)
-                    command_handle(state, "new");
-                else if (!my_turn(state))
+                if (flags & FLAG_NEW_GAME)
+                    command_handle(this, "new");
+                else if (!isMyTurn())
                 {
                     if (!move.isNone()) {
                         /* We are done pondering, but opponent hasn't moved yet. */
-                        state->ponder_my_move = move;
-                        state->flags = 0;
+                        ponder_my_move = move;
+                        flags = 0;
                     }
                     else
                     {
                         /* Opponent made an illegal move, continue pondering. */
-                        if (get_option(OPTION_PONDER))
-                            state->flags |= FLAG_PONDER;
+                        if (getOption(OPTION_PONDER))
+                            flags |= FLAG_PONDER;
                     }
                 }
                 else if (move.isRegular())
                 {
                     /* Opponent made the expected move. */
-                    send_move(state, move);
-                    if (get_option(OPTION_PONDER))
-                        state->flags |= FLAG_PONDER;
+                    sendMove(move);
+                    if (getOption(OPTION_PONDER))
+                        flags |= FLAG_PONDER;
                 }
             }
         }
     }
-
-    delete g_transTable;
-    delete state;
-    return 0;
 }

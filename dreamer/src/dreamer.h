@@ -53,8 +53,24 @@ struct time_control
     int inc;
 };
 
-typedef struct state
-{
+class Dreamer {
+public:
+    Dreamer();
+
+    void run();
+    static int checkGameState(Board &board, int ply);
+    void checkGameEnd();
+    void doMove(Move move);
+    void undoMove();
+    int checkAbort(int ply);
+    int getOption(int option);
+    void setOption(int option, int value);
+    int getTime(void);
+    static bool isCheck(Board &board, int ply);
+    void sendMove(Move move);
+    void setMoveTime();
+    bool isMyTurn();
+        
     int done;
     int mode;
     int flags;
@@ -72,10 +88,13 @@ typedef struct state
     Move ponder_opp_move;
     Move ponder_my_move;
     Move ponder_actual_move;
-}
-state_t;
 
-int my_turn(state_t *state);
+private:
+    void setStartTime();
+    void updateClock();
+};
+
+extern Dreamer *g_dreamer;
 
 #define STATE_NORMAL 0
 #define STATE_CHECK 1
@@ -85,18 +104,5 @@ int my_turn(state_t *state);
 #define OPTION_QUIESCE 0
 #define OPTION_POST 1
 #define OPTION_PONDER 2
-
-int engine(void *data);
-int check_game_state(Board &board, int ply);
-void check_game_end(state_t *state);
-void do_move(state_t *state, Move move);
-void undo_move(state_t *state);
-int check_abort(int ply);
-int get_option(int option);
-void set_option(int option, int value);
-int get_time(void);
-int is_check(Board &board, int ply);
-void send_move(state_t *state, Move move);
-void set_move_time(void);
 
 #endif

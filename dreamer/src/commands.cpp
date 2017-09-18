@@ -176,7 +176,7 @@ static Move get_san_move(Board &board, int ply, san_move_t *san)
 
         board.makeMove(move);
         board.current_player = OPPONENT(board.current_player);
-        if (!is_check(board, ply + 1))
+        if (!Dreamer::isCheck(board, ply + 1))
         {
             found++;
             found_move = move;
@@ -239,7 +239,7 @@ static Move get_coord_move(Board &board, int ply, const char *ms)
             /* Move found. */
             board.makeMove(move);
             board.current_player = OPPONENT(board.current_player);
-            if (!is_check(board, ply + 1))
+            if (!Dreamer::isCheck(board, ply + 1))
             {
                 board.current_player = OPPONENT(board.current_player);
                 board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
@@ -280,7 +280,7 @@ char *san_move_str(Board &board, int ply, Move move)
     int fifty_moves = board.fifty_moves;
 
     board.makeMove(move);
-    state = check_game_state(board, ply);
+    state = Dreamer::checkGameState(board, ply);
     board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
 
     switch (state)
@@ -377,7 +377,7 @@ static void error(const char *type, const char *command)
 #define UNKNOWN(c) error("unknown command", c)
 #define BADPARAM(c) error("invalid or missing parameter(s)", c)
 
-static int parse_time_control(state_t *state, const char *s)
+static int parse_time_control(Dreamer *state, const char *s)
 {
     struct time_control t;
     char *end;
@@ -424,17 +424,17 @@ static int parse_time_control(state_t *state, const char *s)
     return 0;
 }
 
-static int command_always(state_t *state, const char *command)
+static int command_always(Dreamer *state, const char *command)
 {
     if (!strcmp(command, "post"))
     {
-        set_option(OPTION_POST, 1);
+        state->setOption(OPTION_POST, 1);
         return 1;
     }
 
     if (!strcmp(command, "nopost"))
     {
-        set_option(OPTION_POST, 0);
+        state->setOption(OPTION_POST, 0);
         return 1;
     }
 
@@ -478,7 +478,7 @@ int parse_move(Board &board, int ply, const char *command, Move *move)
     return 1;
 }
 
-int command_usermove(state_t *state, const char *command)
+int command_usermove(Dreamer *state, const char *command)
 {
     Move move;
 
@@ -489,7 +489,7 @@ int command_usermove(state_t *state, const char *command)
             return 0;
         }
 
-        if (my_turn(state))
+        if (state->isMyTurn())
         {
             NOT_NOW(command);
             return 0;
@@ -498,8 +498,8 @@ int command_usermove(state_t *state, const char *command)
 	if (state->mode == MODE_WHITE || state->mode == MODE_BLACK)
 		state->engineTime.start(Timer::Direction::Down);
 
-        do_move(state, move);
-        check_game_end(state);
+        state->doMove(move);
+        state->checkGameEnd();
 
         if (state->mode == MODE_IDLE)
             state->mode = (state->board.current_player == SIDE_WHITE?
@@ -510,7 +510,7 @@ int command_usermove(state_t *state, const char *command)
             if (move == state->ponder_opp_move && state->ponder_my_move.isRegular())
             {
                 /* User made the expected move. */
-                send_move(state, state->ponder_my_move);
+                state->sendMove(state->ponder_my_move);
             }
 
             state->ponder_my_move = Move();
@@ -522,7 +522,7 @@ int command_usermove(state_t *state, const char *command)
     return 1;
 }
 
-void command_handle(state_t *state, const char *command)
+void command_handle(Dreamer *state, const char *command)
 {
     if (command_always(state, command))
         return;
@@ -700,8 +700,8 @@ void command_handle(state_t *state, const char *command)
         if (state->moves < 2)
             NOT_NOW(command);
 
-        undo_move(state);
-        undo_move(state);
+        state->undoMove();
+        state->undoMove();
         state->done = 0;
         return;
     }
@@ -738,20 +738,20 @@ void command_handle(state_t *state, const char *command)
 
     if (!strcmp(command, "noquiesce"))
     {
-        set_option(OPTION_QUIESCE, 0);
+        state->setOption(OPTION_QUIESCE, 0);
         return;
     }
 
     if (!strcmp(command, "easy"))
     {
-        set_option(OPTION_PONDER, 0);
+        state->setOption(OPTION_PONDER, 0);
         state->ponder_my_move = Move();
         return;
     }
 
     if (!strcmp(command, "hard"))
     {
-        set_option(OPTION_PONDER, 1);
+        state->setOption(OPTION_PONDER, 1);
         if (state->moves != 0)
             state->flags |= FLAG_PONDER;
         return;
@@ -774,11 +774,11 @@ void command_handle(state_t *state, const char *command)
     UNKNOWN(command);
 }
 
-int command_check_abort(state_t *state, int ply, const char *command)
+int command_check_abort(Dreamer *state, int ply, const char *command)
 {
     if (!strcmp(command, "?"))
     {
-        if (my_turn(state))
+        if (state->isMyTurn())
             return 1;
     }
 

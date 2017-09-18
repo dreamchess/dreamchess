@@ -95,7 +95,7 @@ static inline void pv_copy(int ply, Move move)
     pv_len[ply] = pv_len[ply + 1] + 1;
 }
 
-static void pv_print_move(state_t *state, int index)
+static void pv_print_move(Dreamer *state, int index)
 {
     long long en_passant = state->board.en_passant;
     int castle_flags = state->board.castle_flags;
@@ -118,12 +118,12 @@ static void pv_print_move(state_t *state, int index)
     state->board.unmakeMove(pv[0][index], en_passant, castle_flags, fifty_moves);
 }
 
-static void pv_print(state_t *state, int depth, int score)
+static void pv_print(Dreamer *state, int depth, int score)
 {
     if (state->mode == MODE_BLACK)
         score = -score;
 
-    e_comm_send("%3i %7i %i %i", depth, score, total_nodes, get_time() - start_time, total_nodes);
+    e_comm_send("%3i %7i %i %i", depth, score, total_nodes, state->getTime() - start_time, total_nodes);
     if (state->board.current_player == SIDE_BLACK)
         e_comm_send(" %2d. ...", state->moves / 2 + 1);
 
@@ -155,15 +155,12 @@ static void pv_store_ht(Board &board, int index)
 int
 alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side);
 
-int
-is_check(Board &board, int ply);
-
 static void poll_abort(int ply)
 {
     if (pv_len[0] == 0)
         return;
 
-    if (check_abort(ply))
+    if (g_dreamer->checkAbort(ply))
         abort_search = 1;
 }
 
@@ -194,7 +191,7 @@ quiescence(Board &board, int ply, int alpha, int beta, int side)
     if (ply == MAX_DEPTH - 1)
         return eval;
 
-    if (!get_option(OPTION_QUIESCE) || eval >= beta)
+    if (!g_dreamer->getOption(OPTION_QUIESCE) || eval >= beta)
         return eval;
 
     if (eval > alpha)
@@ -348,7 +345,7 @@ alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side)
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
         */
-        if (is_check(board, ply))
+        if (g_dreamer->isCheck(board, ply))
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
@@ -371,7 +368,7 @@ alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side)
 }
 
 Move
-find_best_move(state_t *state)
+find_best_move(Dreamer *state)
 {
     int depth = state->depth;
     Board &board = state->board;
@@ -382,7 +379,7 @@ find_best_move(state_t *state)
     int fifty_moves = board.fifty_moves;
 
     total_nodes = 0;
-    start_time = get_time();
+    start_time = state->getTime();
     abort_search = 0;
     pv_len[0] = 0;
 
@@ -420,7 +417,7 @@ find_best_move(state_t *state)
                 alpha = score;
                 best_move = move;
                 pv_copy(0, move);
-                if (get_option(OPTION_POST))
+                if (state->getOption(OPTION_POST))
                     pv_print(state, cur_depth + 1, alpha);
             }
         }
@@ -488,7 +485,7 @@ find_best_move(state_t *state)
 }
 
 Move
-ponder(state_t *state)
+ponder(Dreamer *state)
 {
 	Move move;
 
@@ -498,10 +495,10 @@ ponder(state_t *state)
         state->root_board = state->board;
 	state->ponder_actual_move = Move();
 	state->ponder_opp_move = state->hint;
-	do_move(state, state->ponder_opp_move);
+	state->doMove(state->ponder_opp_move);
         state->flags = FLAG_DELAY_MOVE;
 
-        set_move_time();
+        state->setMoveTime();
 
         command_handle(state, "hint");
 	move = find_best_move(state);
@@ -513,11 +510,11 @@ ponder(state_t *state)
         {
 		/* Player did not play the move we expected */
 		/* or pondering was switched off. */
-		undo_move(state);
+		state->undoMove();
                 if (!state->ponder_actual_move.isNone())
                 {
-                    do_move(state, state->ponder_actual_move);
-                    check_game_end(state);
+                    state->doMove(state->ponder_actual_move);
+                    state->checkGameEnd();
                 }
 
 		return Move();
@@ -526,7 +523,7 @@ ponder(state_t *state)
         if (state->flags & FLAG_DELAY_MOVE)
         {
                 /* Opponent hasn't moved yet. */
- 		undo_move(state);
+ 		state->undoMove();
         }
 
 	return move;
