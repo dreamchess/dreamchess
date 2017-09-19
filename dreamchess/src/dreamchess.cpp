@@ -122,8 +122,7 @@ static void move_list_view_prev(move_list_t *list)
         list->view--;
 }
 
-void game_view_next(void)
-{
+void Dreamchess::gameViewNext() {
     history_view_next(history);
     move_list_view_next(&fullalg_list);
     move_list_view_next(&san_list);
@@ -131,8 +130,7 @@ void game_view_next(void)
     ui->update(history->view->board, NULL);
 }
 
-void game_view_prev(void)
-{
+void Dreamchess::gameViewPrev(void) {
     history_view_prev(history);
     move_list_view_prev(&fullalg_list);
     move_list_view_prev(&san_list);
@@ -140,8 +138,7 @@ void game_view_prev(void)
     ui->update(history->view->board, NULL);
 }
 
-void game_undo(void)
-{
+void Dreamchess::gameUndo(void) {
     history_undo(history);
     move_list_undo(&fullalg_list);
     move_list_undo(&san_list);
@@ -155,21 +152,19 @@ void game_undo(void)
     ui->update(history->view->board, NULL);
 }
 
-void game_retract_move(void)
-{
+void Dreamchess::gameRetractMove(void) {
     /* Make sure a user is on move and we can undo two moves. */
     if (config->player[history->last->board->turn] != PLAYER_UI)
         return;
     if (!history->last->prev || !history->last->prev->prev)
         return;
 
-    game_undo();
-    game_undo();
+    gameUndo();
+    gameUndo();
     comm_send("remove\n");
 }
 
-void game_move_now(void)
-{
+void Dreamchess::gameMoveNow(void) {
     /* Make sure engine is on move. */
     if (config->player[history->last->board->turn] != PLAYER_ENGINE)
         return;
@@ -177,14 +172,12 @@ void game_move_now(void)
     comm_send("?\n");
 }
 
-int game_want_move(void)
-{
+int Dreamchess::gameWantMove(void) {
     return config->player[history->last->board->turn] == PLAYER_UI
            && history->last == history->view;
 }
 
-int game_save( int slot )
-{
+int Dreamchess::gameSave( int slot ) {
     int retval;
     char temp[80];
 
@@ -202,13 +195,11 @@ int game_save( int slot )
     return retval;
 }
 
-void game_set_engine_error(int err)
-{
+void Dreamchess::gameSetEngineError(int err) {
     engine_error = err;
 }
 
-int game_get_engine_error(void)
-{
+int Dreamchess::gameGetEngineError(void) {
     return engine_error;
 }
 
@@ -286,8 +277,7 @@ static int do_move(move_t *move, int ui_update)
     return 1;
 }
 
-void game_make_move(move_t *move, int ui_update)
-{
+void Dreamchess::gameMakeMove(move_t *move, int ui_update) {
     if (do_move(move, ui_update)){
         comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);
     }
@@ -299,13 +289,11 @@ void game_make_move(move_t *move, int ui_update)
     }
 }
 
-void game_quit(void)
-{
+void Dreamchess::gameQuit(void) {
     in_game = 0;
 }
 
-int game_load( int slot )
-{
+int Dreamchess::gameLoad( int slot ) {
     int retval;
     char temp[80];
     board_t *board;
@@ -344,8 +332,11 @@ int game_load( int slot )
     return retval;
 }
 
-void game_make_move_str(char *move_str, int ui_update)
-{
+void game_make_move_str(char *move_str, int ui_update) {
+    return g_Dreamchess->gameMakeMoveStr(move_str, ui_update);
+}
+
+void Dreamchess::gameMakeMoveStr(char *move_str, int ui_update) {
     board_t new_board = *history->last->board;
     move_t *engine_move;
 
@@ -357,22 +348,20 @@ void game_make_move_str(char *move_str, int ui_update)
         engine_move = fullalg_to_move(&new_board, move_str);
     if (engine_move)
     {
-        game_make_move(engine_move, ui_update);
+        gameMakeMove(engine_move, ui_update);
         free(engine_move);
     }
     else
         DBG_ERROR("failed to parse move string '%s'", move_str);
 }
 
-void game_get_move_list(char ***list, int *total, int *view)
-{
+void Dreamchess::gameGetMoveList(char ***list, int *total, int *view) {
     *list = fan_list.move;
     *total = fan_list.entries;
     *view = fan_list.view;
 }
 
-int set_resolution(int init)
-{
+int Dreamchess::setResolution(int init) {
     int width, height, fs, ms;
     option_t *option = config_get_option("resolution");
     config_resolution_t *res = (config_resolution_t *)option->selected->data;
@@ -402,24 +391,22 @@ int set_resolution(int init)
         return ui->resize(width, height, fs, ms);
 }
 
-static void init_resolution(void)
-{
-    if (set_resolution(1)) {
+void Dreamchess::initResolution() {
+    if (setResolution(1)) {
         DBG_LOG("switching to failsafe video mode defaults");
         config_set_failsafe_video();
         config_save();
 
-        if (set_resolution(1)) {
+        if (setResolution(1)) {
             exit(1);
         }
     }
 }
 
-void toggle_fullscreen(void)
-{
+void Dreamchess::toggleFullscreen() {
     option_t *option = config_get_option("full_screen");
     option_select_value_by_index(option, 1 - option->selected->index);
-    set_resolution(0);
+    setResolution(0);
 }
 
 static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_options_t *cl_options)
@@ -537,7 +524,15 @@ static void set_cl_options(cl_options_t *cl_options)
         }
 }
 
-int dreamchess(void *data)
+Dreamchess::Dreamchess() {
+
+}
+
+Dreamchess::~Dreamchess() {
+
+}
+
+int Dreamchess::init(void *data)
 {
     cl_options_t cl_options = { 0 };
     arguments_t *arg = (arguments_t *)data;
@@ -558,7 +553,7 @@ int dreamchess(void *data)
 
     ui->init();
 
-    init_resolution();
+    initResolution();
 
     while (1)
     {
@@ -589,9 +584,9 @@ int dreamchess(void *data)
 			game_set_engine_error(comm_init(temp2));
 		}
 		else
-		game_set_engine_error(comm_init(option->string));		
+		gameSetEngineError(comm_init(option->string));		
 #else
-		game_set_engine_error(comm_init(option->string));
+		gameSetEngineError(comm_init(option->string));
 #endif
 
         comm_send("xboard\n");
@@ -620,7 +615,7 @@ int dreamchess(void *data)
         move_list_init(&fullalg_list);
 
         if (pgn_slot >= 0)
-            if (game_load(pgn_slot))
+            if (gameLoad(pgn_slot))
             {
                  DBG_ERROR("failed to load savegame in slot %i", pgn_slot);
                  exit(1);
@@ -657,7 +652,7 @@ int dreamchess(void *data)
                             DBG_ERROR("failed to parse move string '%s'", move_str);
                     }
                     else if (strstr(s, "llegal move"))
-                        game_undo();
+                        gameUndo();
                     /* Ignore result message if we've already determined a result ourselves. */
                     else
                     {

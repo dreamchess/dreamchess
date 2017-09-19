@@ -86,7 +86,7 @@ static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void 
     gg_dialog_close();
     gg_dialog_close();
 
-    if (!game_save( saveload_selected ))
+    if (!g_Dreamchess->gameSave( saveload_selected ))
     {
         write_save_xml( saveload_selected );
     }

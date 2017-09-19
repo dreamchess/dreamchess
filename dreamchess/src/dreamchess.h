@@ -23,15 +23,45 @@
 
 #include "board.h"
 
+#define PLAYER_UI 0
+#define PLAYER_ENGINE 1
+
+class Dreamchess {
+public:
+	Dreamchess();
+	~Dreamchess();
+
+	int init(void *data);
+
+	void gameViewNext(void);
+	void gameViewPrev(void);
+	void gameUndo(void);
+	int gameWantMove(void);
+	void gameMakeMove(move_t *move, int ui_update);
+	void gameRetractMove(void);
+	void gameMoveNow(void);
+	void gameQuit(void);
+	void gameGetMoveList(char ***list, int *total, int *view);
+	int gameSave( int slot );
+	int gameLoad( int slot );
+	void gameMakeMoveStr(char *move_str, int ui_update);
+	int gameGetEngineError(void);
+	void gameSetEngineError(int err);
+
+	void initResolution();
+	int setResolution(int init);
+	void toggleFullscreen();
+};
+
+extern Dreamchess *g_Dreamchess;
+void game_make_move_str(char *move_str, int ui_update);
+
 typedef struct arguments
 {
     int argc;
     char **argv;
 }
 arguments_t;
-
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
 
 typedef struct config
 {
@@ -40,25 +70,5 @@ typedef struct config
     int difficulty;
 }
 config_t;
-
-int dreamchess(void *arg);
-
-void game_view_next(void);
-void game_view_prev(void);
-void game_undo(void);
-int game_want_move(void);
-void game_make_move(move_t *move, int ui_update);
-void game_retract_move(void);
-void game_move_now(void);
-void game_quit(void);
-void game_get_move_list(char ***list, int *total, int *view);
-int game_save( int slot );
-int game_load( int slot );
-void game_make_move_str(char *move_str, int ui_update);
-int game_get_engine_error(void);
-void game_set_engine_error(int err);
-
-int set_resolution(int init);
-void toggle_fullscreen(void);
 
 #endif

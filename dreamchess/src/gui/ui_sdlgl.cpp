@@ -216,7 +216,7 @@ static int poll_event(gg_event_t *event)
             sdl_event.key.keysym.sym == SDLK_F11) )
         {
             DBG_LOG( "toggled fullscreen" );
-            toggle_fullscreen();
+            g_Dreamchess->toggleFullscreen();
             continue;
         }
 
@@ -712,7 +712,7 @@ static void poll_move(void)
         source = -1;
         dest = -1;
         unload_theme();
-        game_quit();
+        g_Dreamchess->gameQuit();
         return;
     }
     else if (quit_to_menu)
@@ -725,14 +725,14 @@ static void poll_move(void)
     }
     input = get_move();
     /* FIXME */
-    if (!engine_error_shown && game_get_engine_error())
+    if (!engine_error_shown && g_Dreamchess->gameGetEngineError())
     {
         gg_dialog_open(dialog_engine_error_create());
         engine_error_shown = 1;
         return;
     }
 
-    if (!game_want_move())
+    if (!g_Dreamchess->gameWantMove())
     {
         source = -1;
         dest = -1;
@@ -793,7 +793,7 @@ static void poll_move(void)
 
     source = -1;
     dest = -1;
-    game_make_move(&move, 1);
+    g_Dreamchess->gameMakeMove(&move, 1);
     reset_turn_counter();
 }
 

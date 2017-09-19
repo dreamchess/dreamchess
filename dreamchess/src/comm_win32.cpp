@@ -161,7 +161,7 @@ char *comm_poll(void)
 
         pipe_win32_exit();
         init_ok = 0;
-        game_set_engine_error(1);
+        g_Dreamchess->gameSetEngineError(1);
     }
 
     return NULL;

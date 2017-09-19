@@ -24,12 +24,15 @@
 
 #include "dreamchess.h"
 
+Dreamchess *g_Dreamchess;
+
 int main(int argc, char **argv)
 {
     arguments_t arg;
-
     arg.argc = argc;
     arg.argv = argv;
 
-    return dreamchess(&arg);
+    g_Dreamchess = new Dreamchess();
+
+    return g_Dreamchess->init(&arg);
 }

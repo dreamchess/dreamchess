@@ -105,7 +105,7 @@ int get_move(void)
             event.key.keysym.sym == SDLK_F11) )
         {
             DBG_LOG( "toggled fullscreen" );
-            toggle_fullscreen();
+            g_Dreamchess->toggleFullscreen();
             continue;
         }
 
@@ -145,13 +145,13 @@ int get_move(void)
                 /* gg_dialog_open(dialog_ingame_create()); */
                 break;
             case 'p':
-                game_view_prev();
+                g_Dreamchess->gameViewPrev();
                 break;
             case 'n':
-                game_view_next();
+                g_Dreamchess->gameViewNext();
                 break;
             case 'r':
-                game_retract_move();
+                g_Dreamchess->gameRetractMove();
                 break;
             default:
                 break;

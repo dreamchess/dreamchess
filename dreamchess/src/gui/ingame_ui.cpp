@@ -283,7 +283,7 @@ void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col
     gg_colour_t col_normal2=*col_normal;
     gg_colour_t col_high2=*col_normal;
 
-    game_get_move_list(&list, &entries, &view);
+    g_Dreamchess->gameGetMoveList(&list, &entries, &view);
 
     if (IS_BLACK(get_board()->turn))
     {
