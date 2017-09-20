@@ -65,12 +65,12 @@ typedef struct cl_options {
 static ui_driver_t *ui;
 static config_t *config;
 static MoveList *san_list, *fan_list, *fullalg_list;
-static history_t *history;
+static History *history;
 static int in_game;
 static int engine_error;
 
 void Dreamchess::gameViewNext() {
-    history_view_next(history);
+    history->viewNext();
     fullalg_list->viewNext();
     san_list->viewNext();
     fan_list->viewNext();
@@ -78,7 +78,7 @@ void Dreamchess::gameViewNext() {
 }
 
 void Dreamchess::gameViewPrev(void) {
-    history_view_prev(history);
+    history->viewPrev();
     fullalg_list->viewPrev();
     san_list->viewPrev();
     fan_list->viewPrev();
@@ -86,12 +86,11 @@ void Dreamchess::gameViewPrev(void) {
 }
 
 void Dreamchess::gameUndo(void) {
-    history_undo(history);
+    history->undo();
     fullalg_list->undo();
     san_list->undo();
     fan_list->undo();
-    if (history->result)
-    {
+    if (history->result) {
         free(history->result->reason);
         free(history->result);
         history->result = NULL;
@@ -131,7 +130,7 @@ int Dreamchess::gameSave( int slot ) {
     if (!ch_userdir())
     {
         sprintf( temp, "save%i.pgn", slot );
-        retval = history_save_pgn(history, temp);
+        retval = history->savePGN(temp);
     }
     else
     {
@@ -187,7 +186,7 @@ static int do_move(move_t *move, int ui_update)
     else
         new_board.state = BOARD_NORMAL;
 
-    history_play(history, move, &new_board);
+    history->play(move, &new_board);
 
     if (ui_update)
         ui->update(history->view->board, move);
@@ -556,7 +555,7 @@ int Dreamchess::init(void *data)
 
         in_game = 1;
         board_setup(&board);
-        history = history_init(&board);
+        history = new History(&board);
         san_list = new MoveList();
         fan_list = new MoveList();
         fullalg_list = new MoveList();
@@ -644,7 +643,7 @@ int Dreamchess::init(void *data)
         }
         comm_send("quit\n");
         comm_exit();
-        history_exit(history);
+        delete history;
         delete san_list;
         delete fan_list;
         delete fullalg_list;

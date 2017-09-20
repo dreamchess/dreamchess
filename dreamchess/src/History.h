@@ -42,8 +42,20 @@ typedef struct step
 step_t;
 
 /** History list. The last step never contains a move. */
-typedef struct history
-{
+class History{
+public:
+    History() { }
+    History(board_t *board) {init(board);}
+
+    ~History();
+
+    void init(board_t *board);
+    void play(move_t *move, board_t *board);
+    int savePGN(char *filename);
+    int viewNext();
+    int viewPrev();
+    int undo();
+
     /** Currently viewed history step. */
     step_t *view;
 
@@ -55,22 +67,22 @@ typedef struct history
 
     /** Game result (if any), NULL otherwise. */
     result_t *result;
-}
-history_t;
+};
+
 
 /** @brief Allocates a new history list containing one step.
  *
  *  @param board Board to use as first step.
  *  @return Pointer to dynamically allocated history list.
  */
-history_t *history_init(board_t *board);
+//history_t *history_init(board_t *board);
 
 /** @brief Deallocates a history list and all moves and boards contained
  *         therein.
  *
  *  @param hist History list to deallocate.
  */
-void history_exit(history_t *hist);
+//void history_exit(history_t *hist);
 
 /** @brief Deallocates a history list.
  *
@@ -87,7 +99,7 @@ void history_exit(history_t *hist);
  *  @param move The move to add.
  *  @param board The board to add.
  */
-void history_play(history_t *hist, move_t *move, board_t *board);
+//void history_play(history_t *hist, move_t *move, board_t *board);
 
 /** @brief Removes the last move and its resulting board position from the
  *         history list. The play and view pointers will be set to the last
@@ -96,21 +108,21 @@ void history_play(history_t *hist, move_t *move, board_t *board);
  * @param hist History list to update.
  * @return 1, if undo failed (nothing to undo), 0 otherwise.
  */
-int history_undo(history_t *hist);
+//int history_undo(history_t *hist);
 
 /** @brief Sets the view pointer to the next step.
  *
  *  @param hist History list to update.
  *  @return 1, if there's no next step, 0 otherwise.
  */
-int history_view_next(history_t *hist);
+//int history_view_next(history_t *hist);
 
 /** @brief Sets the view pointer to the previous step.
  *
  *  @param hist History list to update.
  *  @return 1, if there's no previous step, 0 otherwise.
  */
-int history_view_prev(history_t *hist);
+//int history_view_prev(history_t *hist);
 
 /** @brief Saves the history in Portable Game Notation format.
  *
@@ -118,6 +130,6 @@ int history_view_prev(history_t *hist);
  *  @param filename Filename of file to write to. File will be truncated.
  *  @return 1 on error, 0 on success
  */
-int history_save_pgn(history_t *hist, char *filename);
+//int history_save_pgn(history_t *hist, char *filename);
 
 #endif

@@ -50,9 +50,8 @@ static void write_token(FILE *f, int *width, const char *token)
     *width += strlen(token);
 }
 
-history_t *history_init(board_t *board)
-{
-    history_t *hist = (history_t *) malloc(sizeof(history_t));
+void History::init(board_t *board) {
+    //history_t *hist = (history_t *) malloc(sizeof(history_t));
     step_t *step = (step_t *) malloc(sizeof(step_t));
 
     step->board = (board_t *) malloc(sizeof(board_t));
@@ -60,20 +59,16 @@ history_t *history_init(board_t *board)
     step->next = NULL;
     *step->board = *board;
     step->move = NULL;
-    hist->last = step;
-    hist->view = step;
-    hist->first = step;
-    hist->result = NULL;
-
-    return hist;
+    last = step;
+    view = step;
+    first = step;
+    result = NULL;
 }
 
-void history_exit(history_t *hist)
-{
-    step_t *step = hist->last;
+History::~History() {
+    step_t *step = last;
 
-    while (step)
-    {
+    while (step) {
         step_t *s;
         if (step->move)
             free(step->move);
@@ -84,68 +79,60 @@ void history_exit(history_t *hist)
         free(s);
     }
 
-    if (hist->result)
-    {
-        free(hist->result->reason);
-        free(hist->result);
+    if (result) {
+        free(result->reason);
+        free(result);
     }
-
-    free(hist);
 }
 
-void history_play(history_t *hist, move_t *move, board_t *board)
-{
+void History::play(move_t *move, board_t *board) {
     step_t *step = (step_t *) malloc(sizeof(step_t));
 
     step->board = (board_t *) malloc(sizeof(board_t));
-    hist->last->move = (move_t *) malloc(sizeof(move_t));
+    last->move = (move_t *) malloc(sizeof(move_t));
     *step->board = *board;
     step->move = NULL;
-    step->prev = hist->last;
+    step->prev = last;
     step->next = NULL;
-    *hist->last->move = *move;
-    hist->last->next = step;
-    hist->last = step;
-    hist->view = step;
+    *last->move = *move;
+    last->next = step;
+    last = step;
+    view = step;
 }
 
-int history_undo(history_t *hist)
-{
-    if (!hist->last->prev)
+int History::undo() {
+    if (!last->prev)
         return 1;
 
-    free(hist->last->board);
-    hist->last = hist->last->prev;
-    free(hist->last->move);
-    hist->last->move = NULL;
-    free(hist->last->next);
-    hist->last->next = NULL;
-    hist->view = hist->last;
+    free(last->board);
+    last = last->prev;
+    free(last->move);
+    last->move = NULL;
+    free(last->next);
+    last->next = NULL;
+    view = last;
     return 0;
 }
 
-int history_view_next(history_t *hist)
-{
-    if (!hist->view->next)
+int History::viewNext() {
+    if (!view->next)
         return 1;
 
-    hist->view = hist->view->next;
-
-    return 0;
-}
-
-int history_view_prev(history_t *hist)
-{
-    if (!hist->view->prev)
-        return 1;
-
-    hist->view = hist->view->prev;
+    view = view->next;
 
     return 0;
 }
 
-int history_save_pgn(history_t *hist, char *filename)
-{
+int History::viewPrev() {
+    if (!view->prev)
+        return 1;
+
+    view = view->prev;
+
+    return 0;
+}
+
+int History::savePGN(char *filename) {
     FILE *f;
     int width;
     int side;
@@ -165,11 +152,11 @@ int history_save_pgn(history_t *hist, char *filename)
     fputs("[White \"?\"]\n", f);
     fputs("[Black \"?\"]\n", f);
 
-    if (!hist->result)
+    if (!result)
         res = "*";
-    else if (hist->result->code == RESULT_WHITE_WINS)
+    else if (result->code == RESULT_WHITE_WINS)
         res = "1-0";
-    else if (hist->result->code == RESULT_BLACK_WINS)
+    else if (result->code == RESULT_BLACK_WINS)
         res = "0-1";
     else
         res = "1/2-1/2";
@@ -179,7 +166,7 @@ int history_save_pgn(history_t *hist, char *filename)
     width = 0;
     move = 1;
     side = WHITE;
-    step = hist->first;
+    step = first;
 
     while (step->next)
     {
