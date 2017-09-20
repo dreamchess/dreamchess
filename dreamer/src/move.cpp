@@ -407,6 +407,36 @@ bool MoveGenerator::isCheck(Board &board, int ply) {
 	return isCheck;
 }
 
+int MoveGenerator::checkGameState(Board &board, int ply) {
+	Move move;
+	int mate = STATE_MATE;
+	computeLegalMoves(board, ply);
+
+	while (!(move = getNextMove(board, ply)).isNone())
+	{
+		bitboard_t en_passant = board.en_passant;
+		int castle_flags = board.castle_flags;
+		int fifty_moves = board.fifty_moves;
+
+		board.makeMove(move);
+		board.current_player = OPPONENT(board.current_player);
+		if (!isCheck(board, ply + 1)) {
+			mate = STATE_NORMAL;
+			board.current_player = OPPONENT(board.current_player);
+			board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
+			break;
+		}
+		board.current_player = OPPONENT(board.current_player);
+		board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
+	}
+	/* We're either stalemated or checkmated. */
+	if (!isCheck(board, ply) && (mate == STATE_MATE))
+		mate = STATE_STALEMATE;
+	if (isCheck(board, ply) && (mate == STATE_NORMAL))
+		mate = STATE_CHECK;
+	return mate;
+}
+
 Move MoveGenerator::getNextMove(const Board &board, int ply) {
 	if (_movesCur[ply] == _movesStart[ply + 1])
 		return Move();

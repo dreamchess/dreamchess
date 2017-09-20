@@ -280,7 +280,7 @@ char *san_move_str(Board &board, int ply, Move move)
     int fifty_moves = board.fifty_moves;
 
     board.makeMove(move);
-    state = Dreamer::checkGameState(board, ply);
+    state = g_moveGenerator->checkGameState(board, ply);
     board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
 
     switch (state)
