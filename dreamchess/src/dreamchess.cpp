@@ -53,12 +53,7 @@
 #define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
 #endif
 
-typedef struct move_list
-{
-    char **move;
-    int entries, view, max_entries;
-}
-move_list_t;
+#include "moveList.h"
 
 typedef struct cl_options {
 	int width;
@@ -69,80 +64,32 @@ typedef struct cl_options {
 
 static ui_driver_t *ui;
 static config_t *config;
-static move_list_t san_list, fan_list, fullalg_list;
+static MoveList *san_list, *fan_list, *fullalg_list;
 static history_t *history;
 static int in_game;
 static int engine_error;
 
-static void move_list_play(move_list_t *list, char *move)
-{
-    if (list->entries == list->max_entries)
-    {
-        list->max_entries *= 2;
-        list->move = (char **)realloc(list->move, list->max_entries * sizeof(char *));
-    }
-    list->move[list->entries++] = strdup(move);
-    list->view = list->entries - 1;
-}
-
-static void move_list_undo(move_list_t *list)
-{
-    if (list->entries > 0)
-    {
-        list->entries--;
-        free(list->move[list->entries]);
-        list->view = list->entries - 1;
-    }
-}
-
-static void move_list_init(move_list_t *list)
-{
-    list->max_entries = 20;
-    list->move = (char **)malloc(list->max_entries * sizeof(char *));
-    list->entries = 0;
-    list->view = -1;
-}
-
-static void move_list_exit(move_list_t *list)
-{
-    while (list->entries > 0)
-        move_list_undo(list);
-    free(list->move);
-}
-
-static void move_list_view_next(move_list_t *list)
-{
-    if (list->view < list->entries - 1)
-        list->view++;
-}
-
-static void move_list_view_prev(move_list_t *list)
-{
-    if (list->view >= 0)
-        list->view--;
-}
-
 void Dreamchess::gameViewNext() {
     history_view_next(history);
-    move_list_view_next(&fullalg_list);
-    move_list_view_next(&san_list);
-    move_list_view_next(&fan_list);
+    fullalg_list->viewNext();
+    san_list->viewNext();
+    fan_list->viewNext();
     ui->update(history->view->board, NULL);
 }
 
 void Dreamchess::gameViewPrev(void) {
     history_view_prev(history);
-    move_list_view_prev(&fullalg_list);
-    move_list_view_prev(&san_list);
-    move_list_view_prev(&fan_list);
+    fullalg_list->viewPrev();
+    san_list->viewPrev();
+    fan_list->viewPrev();
     ui->update(history->view->board, NULL);
 }
 
 void Dreamchess::gameUndo(void) {
     history_undo(history);
-    move_list_undo(&fullalg_list);
-    move_list_undo(&san_list);
-    move_list_undo(&fan_list);
+    fullalg_list->undo();
+    san_list->undo();
+    fan_list->undo();
     if (history->result)
     {
         free(history->result->reason);
@@ -217,15 +164,15 @@ static int do_move(move_t *move, int ui_update)
     move_set_attr(history->last->board, move);
     new_board = *history->last->board;
     move_s = move_to_fullalg(&new_board, move);
-    move_list_play(&fullalg_list, move_s);
+    fullalg_list->play(move_s);
 
     move_san = move_to_san(&new_board, move);
     move_f = san_to_fan(&new_board, move_san);
 
     DBG_LOG("processing move %s (%s)", move_s, move_san);
 
-    move_list_play(&san_list, move_san);
-    move_list_play(&fan_list, move_f);
+    san_list->play(move_san);
+    fan_list->play(move_f);
 
     free(move_san);
     free(move_f);
@@ -279,7 +226,7 @@ static int do_move(move_t *move, int ui_update)
 
 void Dreamchess::gameMakeMove(move_t *move, int ui_update) {
     if (do_move(move, ui_update)){
-        comm_send("%s\n", fullalg_list.move[fullalg_list.entries-1]);
+        comm_send("%s\n", fullalg_list->move[fullalg_list->entries-1]);
     }
     else
     {
@@ -356,9 +303,9 @@ void Dreamchess::gameMakeMoveStr(char *move_str, int ui_update) {
 }
 
 void Dreamchess::gameGetMoveList(char ***list, int *total, int *view) {
-    *list = fan_list.move;
-    *total = fan_list.entries;
-    *view = fan_list.view;
+    *list = fan_list->move;
+    *total = fan_list->entries;
+    *view = fan_list->view;
 }
 
 int Dreamchess::setResolution(int init) {
@@ -497,7 +444,7 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 
 static void set_cl_options(cl_options_t *cl_options)
 {
-        option_t *option;
+       option_t *option;
 
 	if (cl_options->engine) {
 	    option = config_get_option("first_engine");
@@ -610,9 +557,9 @@ int Dreamchess::init(void *data)
         in_game = 1;
         board_setup(&board);
         history = history_init(&board);
-        move_list_init(&san_list);
-        move_list_init(&fan_list);
-        move_list_init(&fullalg_list);
+        san_list = new MoveList();
+        fan_list = new MoveList();
+        fullalg_list = new MoveList();
 
         if (pgn_slot >= 0)
             if (gameLoad(pgn_slot))
@@ -698,9 +645,9 @@ int Dreamchess::init(void *data)
         comm_send("quit\n");
         comm_exit();
         history_exit(history);
-        move_list_exit(&san_list);
-        move_list_exit(&fan_list);
-        move_list_exit(&fullalg_list);
+        delete san_list;
+        delete fan_list;
+        delete fullalg_list;
     }
     ui->exit();
     return 0;

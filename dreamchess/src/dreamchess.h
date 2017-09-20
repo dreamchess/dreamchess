@@ -33,6 +33,7 @@ public:
 
 	int init(void *data);
 
+	/* Move handling */
 	void gameViewNext(void);
 	void gameViewPrev(void);
 	void gameUndo(void);
@@ -48,6 +49,7 @@ public:
 	int gameGetEngineError(void);
 	void gameSetEngineError(int err);
 
+	/* Display */
 	void initResolution();
 	int setResolution(int init);
 	void toggleFullscreen();

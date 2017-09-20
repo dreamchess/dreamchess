@@ -26,6 +26,8 @@ add_executable(dreamchess
     dir.h
     dreamchess.cpp
     dreamchess.h
+    moveList.cpp
+    moveList.h
     fen.cpp
     fen.h
     history.cpp
