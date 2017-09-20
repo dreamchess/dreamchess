@@ -46,38 +46,6 @@ bool Dreamer::isMyTurn()
             || ((mode == MODE_BLACK) && (board.current_player == SIDE_BLACK)));
 }
 
-int Dreamer::checkGameState(Board &board, int ply)
-{
-    Move move;
-    int mate = STATE_MATE;
-    g_moveGenerator->computeLegalMoves(board, ply);
-
-    while (!(move = g_moveGenerator->getNextMove(board, ply)).isNone())
-    {
-        bitboard_t en_passant = board.en_passant;
-        int castle_flags = board.castle_flags;
-        int fifty_moves = board.fifty_moves;
-
-        board.makeMove(move);
-        board.current_player = OPPONENT(board.current_player);
-        if (!g_moveGenerator->isCheck(board, ply + 1))
-        {
-            mate = STATE_NORMAL;
-            board.current_player = OPPONENT(board.current_player);
-            board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
-            break;
-        }
-        board.current_player = OPPONENT(board.current_player);
-        board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
-    }
-    /* We're either stalemated or checkmated. */
-    if (!g_moveGenerator->isCheck(board, ply) && (mate == STATE_MATE))
-        mate = STATE_STALEMATE;
-    if (g_moveGenerator->isCheck(board, ply) && (mate == STATE_NORMAL))
-        mate = STATE_CHECK;
-    return mate;
-}
-
 int Dreamer::getOption(int option)
 {
     return options & (1 << option);
@@ -91,7 +59,7 @@ void Dreamer::setOption(int option, int value)
 
 void Dreamer::checkGameEnd()
 {
-    int res = checkGameState(board, 0);
+    int res = g_moveGenerator->checkGameState(board, 0);
 
     switch (res)
     {

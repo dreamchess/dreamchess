@@ -32,6 +32,7 @@ public:
 
 	int computeLegalMoves(const Board &board, int ply);
 	bool isCheck(Board &board, int ply);
+	int checkGameState(Board &board, int ply);
 	Move getNextMove(const Board &board, int ply);
 	void clearHistory();
 	void ageHistory();

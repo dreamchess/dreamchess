@@ -58,7 +58,6 @@ public:
     Dreamer();
 
     void run();
-    static int checkGameState(Board &board, int ply);
     void checkGameEnd();
     void doMove(Move move);
     void undoMove();
