@@ -46,20 +46,6 @@ bool Dreamer::isMyTurn()
             || ((mode == MODE_BLACK) && (board.current_player == SIDE_BLACK)));
 }
 
-bool Dreamer::isCheck(Board &board, int ply)
-{
-    /* FIXME */
-    board.current_player = OPPONENT(board.current_player);
-    if (g_moveGenerator->computeLegalMoves(board, ply) < 0)
-    {
-        /* We're in check. */
-        board.current_player = OPPONENT(board.current_player);
-        return true;
-    }
-    board.current_player = OPPONENT(board.current_player);
-    return false;
-}
-
 int Dreamer::checkGameState(Board &board, int ply)
 {
     Move move;
@@ -74,7 +60,7 @@ int Dreamer::checkGameState(Board &board, int ply)
 
         board.makeMove(move);
         board.current_player = OPPONENT(board.current_player);
-        if (!isCheck(board, ply + 1))
+        if (!g_moveGenerator->isCheck(board, ply + 1))
         {
             mate = STATE_NORMAL;
             board.current_player = OPPONENT(board.current_player);
@@ -85,9 +71,9 @@ int Dreamer::checkGameState(Board &board, int ply)
         board.unmakeMove(move, en_passant, castle_flags, fifty_moves);
     }
     /* We're either stalemated or checkmated. */
-    if (!isCheck(board, ply) && (mate == STATE_MATE))
+    if (!g_moveGenerator->isCheck(board, ply) && (mate == STATE_MATE))
         mate = STATE_STALEMATE;
-    if (isCheck(board, ply) && (mate == STATE_NORMAL))
+    if (g_moveGenerator->isCheck(board, ply) && (mate == STATE_NORMAL))
         mate = STATE_CHECK;
     return mate;
 }

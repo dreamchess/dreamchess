@@ -176,7 +176,7 @@ static Move get_san_move(Board &board, int ply, san_move_t *san)
 
         board.makeMove(move);
         board.current_player = OPPONENT(board.current_player);
-        if (!Dreamer::isCheck(board, ply + 1))
+        if (!g_moveGenerator->isCheck(board, ply + 1))
         {
             found++;
             found_move = move;
@@ -239,7 +239,7 @@ static Move get_coord_move(Board &board, int ply, const char *ms)
             /* Move found. */
             board.makeMove(move);
             board.current_player = OPPONENT(board.current_player);
-            if (!Dreamer::isCheck(board, ply + 1))
+            if (!g_moveGenerator->isCheck(board, ply + 1))
             {
                 board.current_player = OPPONENT(board.current_player);
                 board.unmakeMove(move, en_passant, castle_flags, fifty_moves);

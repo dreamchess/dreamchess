@@ -66,7 +66,6 @@ public:
     int getOption(int option);
     void setOption(int option, int value);
     int getTime(void);
-    static bool isCheck(Board &board, int ply);
     void sendMove(Move move);
     void setMoveTime();
     bool isMyTurn();

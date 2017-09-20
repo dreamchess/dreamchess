@@ -345,7 +345,7 @@ alpha_beta(Board &board, int depth, int ply, int alpha, int beta, int side)
         /* There are no legal moves. We're either checkmated or
         ** stalemated.
         */
-        if (g_dreamer->isCheck(board, ply))
+        if (g_moveGenerator->isCheck(board, ply))
         {
             /* depth is added to make checkmates that are
             ** further away more preferable over the ones
