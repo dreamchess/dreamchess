@@ -44,10 +44,10 @@ Move::Move(unsigned int piece, unsigned int source, unsigned int dest, Type type
 
 bool Move::operator==(Move &rhs) const {
 	return _type == rhs._type
-	       && _piece == rhs._piece
-	       && _source == rhs._source
-	       && _dest == rhs._dest
-	       && _captured == rhs._captured;
+		   && _piece == rhs._piece
+		   && _source == rhs._source
+		   && _dest == rhs._dest
+		   && _captured == rhs._captured;
 }
 
 unsigned int Move::getPiece() const {
@@ -397,6 +397,14 @@ int MoveGenerator::computeLegalMoves(const Board &board, int ply) {
 	_movesStart[ply + 1] = _movesStart[ply] + move - &_moves[_movesStart[ply]];
 	_movesCur[ply] = _movesStart[ply];
 	return 0;
+}
+
+bool MoveGenerator::isCheck(Board &board, int ply) {
+	// FIXME
+	board.current_player = OPPONENT(board.current_player);
+	bool isCheck =  computeLegalMoves(board, ply) < 0;
+	board.current_player = OPPONENT(board.current_player);
+	return isCheck;
 }
 
 Move MoveGenerator::getNextMove(const Board &board, int ply) {
