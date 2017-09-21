@@ -32,7 +32,7 @@ typedef struct ui_driver
     int (* resize) (int height, int width, int fullscreen, int ms);
     int (* exit) (void);
     config_t *( *config) (int *pgn_slot);
-    void (* update) (board_t *board, move_t *move);
+    void (* update) (Board *board, move_t *move);
     void (* poll) (void);
     void (* show_message) (char *msg);
     void (* show_result) (result_t *result);

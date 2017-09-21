@@ -149,24 +149,22 @@ int Dreamchess::gameGetEngineError(void) {
     return engine_error;
 }
 
-static int do_move(move_t *move, int ui_update)
-{
+static int do_move(move_t *move, int ui_update) {
     char *move_s, *move_f, *move_san;
-    board_t new_board;
+    Board new_board;
 
-    if (!move_is_valid(history->last->board, move))
-    {
+    if (!history->last->board->moveIsValid(move)) {
         DBG_WARN("move is illegal");
         return 0;
     }
 
-    move_set_attr(history->last->board, move);
+    history->last->board->moveSetAttr(move);
     new_board = *history->last->board;
-    move_s = move_to_fullalg(&new_board, move);
+    move_s = new_board.moveToFullalg(move);
     fullalg_list->play(move_s);
 
-    move_san = move_to_san(&new_board, move);
-    move_f = san_to_fan(&new_board, move_san);
+    move_san = new_board.moveToSan(move);
+    move_f = new_board.sanToFan(move_san);
 
     DBG_LOG("processing move %s (%s)", move_s, move_san);
 
@@ -177,7 +175,7 @@ static int do_move(move_t *move, int ui_update)
     free(move_f);
     free(move_s);
 
-    make_move(&new_board, move);
+    new_board.makeMove(move);
 
     if (move->state == MOVE_CHECK)
         new_board.state = BOARD_CHECK;
@@ -191,17 +189,14 @@ static int do_move(move_t *move, int ui_update)
     if (ui_update)
         ui->update(history->view->board, move);
 
-    if (new_board.state == MOVE_CHECKMATE)
-    {
+    if (new_board.state == MOVE_CHECKMATE) {
         history->result = (result_t *)malloc(sizeof(result_t));
 
-        if (new_board.turn == WHITE)
-        {
+        if (new_board.turn == WHITE) {
             history->result->code = RESULT_BLACK_WINS;
             history->result->reason = strdup("Black mates");
         }
-        else
-        {
+        else {
             history->result->code = RESULT_WHITE_WINS;
             history->result->reason = strdup("White mates");
         }
@@ -209,8 +204,7 @@ static int do_move(move_t *move, int ui_update)
         if (ui_update)
             ui->show_result(history->result);
     }
-    else if (new_board.state == MOVE_STALEMATE)
-    {
+    else if (new_board.state == MOVE_STALEMATE) {
         history->result = (result_t *)malloc(sizeof(result_t));
 
         history->result->code = RESULT_DRAW;
@@ -224,12 +218,11 @@ static int do_move(move_t *move, int ui_update)
 }
 
 void Dreamchess::gameMakeMove(move_t *move, int ui_update) {
-    if (do_move(move, ui_update)){
+    if (do_move(move, ui_update)) {
         comm_send("%s\n", fullalg_list->move[fullalg_list->entries-1]);
     }
-    else
-    {
-        char *move_str = move_to_fullalg(history->last->board, move);
+    else {
+        char *move_str = history->last->board->moveToFullalg(move);
         DBG_WARN("ignoring illegal move %s", move_str);
         free(move_str);
     }
@@ -242,7 +235,7 @@ void Dreamchess::gameQuit(void) {
 int Dreamchess::gameLoad( int slot ) {
     int retval;
     char temp[80];
-    board_t *board;
+    Board *board;
 
     if (ch_userdir())
     {
@@ -283,15 +276,15 @@ void game_make_move_str(char *move_str, int ui_update) {
 }
 
 void Dreamchess::gameMakeMoveStr(char *move_str, int ui_update) {
-    board_t new_board = *history->last->board;
+    Board new_board = *history->last->board;
     move_t *engine_move;
 
     DBG_LOG("parsing move string '%s'", move_str);
 
-    engine_move = san_to_move(&new_board, move_str);
+    engine_move = new_board.sanToMove(move_str);
 
     if (!engine_move)
-        engine_move = fullalg_to_move(&new_board, move_str);
+        engine_move = new_board.fullalgToMove(move_str);
     if (engine_move)
     {
         gameMakeMove(engine_move, ui_update);
@@ -503,7 +496,7 @@ int Dreamchess::init(void *data)
 
     while (1)
     {
-        board_t board;
+        Board board;
         int pgn_slot;
         option_t *option;
 
@@ -554,7 +547,7 @@ int Dreamchess::init(void *data)
 	    comm_send("go\n");
 
         in_game = 1;
-        board_setup(&board);
+        board.boardSetup();
         history = new History(&board);
         san_list = new MoveList();
         fan_list = new MoveList();
@@ -580,14 +573,14 @@ int Dreamchess::init(void *data)
                     if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) && config->player[history->last->board->turn] == PLAYER_ENGINE)
                     {
                         char *move_str = strrchr(s, ' ') + 1;
-                        board_t new_board = *history->last->board;
+                        Board new_board = *history->last->board;
                         move_t *engine_move;
 
                         DBG_LOG("parsing move string '%s'", move_str);
 
-                        engine_move = san_to_move(&new_board, move_str);
+                        engine_move = new_board.sanToMove(move_str);
                         if (!engine_move)
-                            engine_move = fullalg_to_move(&new_board, move_str);
+                            engine_move = new_board.fullalgToMove(move_str);
                         if (engine_move)
                         {
                             audio_play_sound(AUDIO_MOVE);

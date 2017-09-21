@@ -23,8 +23,8 @@
 
 #include "board.h"
 
-char *fen_encode(board_t *board);
+char *fen_encode(Board *board);
 
-board_t *fen_decode(char *fen);
+Board *fen_decode(char *fen);
 
 #endif

@@ -34,7 +34,7 @@ typedef struct step
     struct step *prev, *next;
 
     /** Board position. */
-    board_t *board;
+    Board *board;
 
     /** Move done from this board position (if any), NULL otherwise. */
     move_t *move;
@@ -45,12 +45,12 @@ step_t;
 class History{
 public:
     History() { }
-    History(board_t *board) {init(board);}
+    History(Board *board) {init(board);}
 
     ~History();
 
-    void init(board_t *board);
-    void play(move_t *move, board_t *board);
+    void init(Board *board);
+    void play(move_t *move, Board *board);
     int savePGN(char *filename);
     int viewNext();
     int viewPrev();

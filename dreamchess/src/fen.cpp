@@ -28,7 +28,7 @@
 /* FIXME: Add support for castling rights and move counters. */
 /* FIXME: Error checking. */
 
-char *fen_encode(board_t *board)
+char *fen_encode(Board *board)
 {
 	char *fen = (char *)malloc(256);
 	int feni = 0;
@@ -93,9 +93,9 @@ char *fen_encode(board_t *board)
 	return fen;
 }
 
-board_t *fen_decode(char *fen)
+Board *fen_decode(char *fen)
 {
-	board_t *board;
+	Board *board;
 	char *space = strchr(fen, ' ');
 	int i;
 	int square = 56;
@@ -103,7 +103,7 @@ board_t *fen_decode(char *fen)
 	if (!space)
 		return NULL;
 
-	board = (board_t *)malloc(sizeof(board_t));
+	board = new Board(); 
 
 	for (i = 0; i < space - fen; i++)
 	{

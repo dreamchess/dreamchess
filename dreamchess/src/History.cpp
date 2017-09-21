@@ -50,11 +50,11 @@ static void write_token(FILE *f, int *width, const char *token)
     *width += strlen(token);
 }
 
-void History::init(board_t *board) {
+void History::init(Board *board) {
     //history_t *hist = (history_t *) malloc(sizeof(history_t));
     step_t *step = (step_t *) malloc(sizeof(step_t));
 
-    step->board = (board_t *) malloc(sizeof(board_t));
+    step->board = new Board();
     step->prev = NULL;
     step->next = NULL;
     *step->board = *board;
@@ -85,10 +85,10 @@ History::~History() {
     }
 }
 
-void History::play(move_t *move, board_t *board) {
+void History::play(move_t *move, Board *board) {
     step_t *step = (step_t *) malloc(sizeof(step_t));
 
-    step->board = (board_t *) malloc(sizeof(board_t));
+    step->board = new Board();
     last->move = (move_t *) malloc(sizeof(move_t));
     *step->board = *board;
     step->move = NULL;
@@ -179,7 +179,7 @@ int History::savePGN(char *filename) {
             write_token(f, &width, buf);
         }
 
-        san = move_to_san(step->board, step->move);
+        san = step->board->moveToSan(step->move);
         write_token(f, &width, san);
         free(san);
 

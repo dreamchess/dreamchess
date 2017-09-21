@@ -31,7 +31,7 @@ float get_mouse_square(void)
  *
  *  @param b Board configuration to render.
  */
-void draw_scene( board_t *b, GLuint fb, int reflections )
+void draw_scene( Board *b, GLuint fb, int reflections )
 {
     char temp[80];
     int clock_seconds=0;

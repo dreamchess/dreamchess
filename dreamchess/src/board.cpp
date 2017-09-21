@@ -26,52 +26,51 @@
 #include "san.h"
 #include "debug.h"
 
-static int move_is_semi_valid(board_t *board, move_t *move);
-static int in_check(board_t *board, int turn);
+//static int move_is_semi_valid(board_t *board, move_t *move);
+//static int in_check(board_t *board, int turn);
 
-void board_setup(board_t *board)
-{
+void Board::boardSetup() {
     int i;
 
     for (i = 16; i < 48; i++)
-        board->square[i] = NONE;
+        square[i] = NONE;
 
-    board->square[0] = WHITE_ROOK;
-    board->square[1] = WHITE_KNIGHT;
-    board->square[2] = WHITE_BISHOP;
-    board->square[3] = WHITE_QUEEN;
-    board->square[4] = WHITE_KING;
-    board->square[5] = WHITE_BISHOP;
-    board->square[6] = WHITE_KNIGHT;
-    board->square[7] = WHITE_ROOK;
-    board->square[56] = BLACK_ROOK;
-    board->square[57] = BLACK_KNIGHT;
-    board->square[58] = BLACK_BISHOP;
-    board->square[59] = BLACK_QUEEN;
-    board->square[60] = BLACK_KING;
-    board->square[61] = BLACK_BISHOP;
-    board->square[62] = BLACK_KNIGHT;
-    board->square[63] = BLACK_ROOK;
+    square[0] = WHITE_ROOK;
+    square[1] = WHITE_KNIGHT;
+    square[2] = WHITE_BISHOP;
+    square[3] = WHITE_QUEEN;
+    square[4] = WHITE_KING;
+    square[5] = WHITE_BISHOP;
+    square[6] = WHITE_KNIGHT;
+    square[7] = WHITE_ROOK;
+    square[56] = BLACK_ROOK;
+    square[57] = BLACK_KNIGHT;
+    square[58] = BLACK_BISHOP;
+    square[59] = BLACK_QUEEN;
+    square[60] = BLACK_KING;
+    square[61] = BLACK_BISHOP;
+    square[62] = BLACK_KNIGHT;
+    square[63] = BLACK_ROOK;
 
     for (i = 8; i < 16; i++)
-        board->square[i] = WHITE_PAWN;
+        square[i] = WHITE_PAWN;
 
     for (i = 48; i < 56; i++)
-        board->square[i] = BLACK_PAWN;
+        square[i] = BLACK_PAWN;
 
     for (i = 0; i < 10; i++)
-        board->captured[i] = 0;
+        captured[i] = 0;
 
-    board->turn = WHITE;
-    board->state = BOARD_NORMAL;
+    turn = WHITE;
+    state = BOARD_NORMAL;
 }
 
-static int move_is_capture(board_t *board, move_t *move)
+int Board::moveIsCapture(move_t *move)
 {
-    if (board->square[move->destination] != NONE)
+    if (square[move->destination] != NONE)
         return 1;
 
-    if ((PIECE(board->square[move->source]) == PAWN) &&
+    if ((PIECE(square[move->source]) == PAWN) &&
             ((move->destination - move->source) % 8 != 0))
         return 1;
 
@@ -84,8 +83,7 @@ static void square_to_str(char *buf, int square)
     buf[1] = (square / 8) + '1';
 }
 
-char *move_to_fullalg(board_t *board, move_t *move)
-{
+char *Board::moveToFullalg(move_t *move) {
     char *s = (char *) malloc(6);
     char prom[4] = { 'n', 'b', 'r', 'q' };
 
@@ -94,7 +92,7 @@ char *move_to_fullalg(board_t *board, move_t *move)
     s[4] = '\0';
     s[5] = '\0';
 
-    if ((PIECE(board->square[move->source]) == PAWN) && ((move->destination < 8) || (move->destination >= 56)))
+    if ((PIECE(square[move->source]) == PAWN) && ((move->destination < 8) || (move->destination >= 56)))
         s[4] = prom[(move->promotion_piece - 2) / 2];
     return s;
 }
@@ -121,44 +119,44 @@ static int san_piece(int piece)
     exit(1);
 }
 
-int make_move(board_t *board, move_t *move)
+int Board::makeMove(move_t *move)
 {
     /* Assume that move is valid. */
 
-    if ((PIECE(board->square[move->source]) == PAWN) && ((PIECE(board->square[move->destination]) == NONE)) && ((move->source % 8) != (move->destination % 8)))
+    if ((PIECE(square[move->source]) == PAWN) && ((PIECE(square[move->destination]) == NONE)) && ((move->source % 8) != (move->destination % 8)))
     {
         /* En-passant move. */
         int ep = move->destination - 8 * (move->destination > move->source ? 1 : -1);
-        board->captured[board->square[ep]]++;
-        board->square[ep] = NONE;
+        captured[square[ep]]++;
+        square[ep] = NONE;
     }
 
     /* Update captured pieces. */
-    if (board->square[move->destination] != NONE)
-        board->captured[board->square[move->destination]]++;
+    if (square[move->destination] != NONE)
+        captured[square[move->destination]]++;
 
-    if ((PIECE(board->square[move->source]) == KING) && (move->destination - move->source == 2))
+    if ((PIECE(square[move->source]) == KING) && (move->destination - move->source == 2))
     {
         /* Kingside castle. */
-        board->square[move->destination - 1] = board->square[move->destination + 1];
-        board->square[move->destination + 1] = NONE;
+        square[move->destination - 1] = square[move->destination + 1];
+        square[move->destination + 1] = NONE;
     }
 
-    if ((PIECE(board->square[move->source]) == KING) && (move->source - move->destination == 2))
+    if ((PIECE(square[move->source]) == KING) && (move->source - move->destination == 2))
     {
         /* Queenside castle. */
-        board->square[move->destination + 1] = board->square[move->destination - 2];
-        board->square[move->destination - 2] = NONE;
+        square[move->destination + 1] = square[move->destination - 2];
+        square[move->destination - 2] = NONE;
     }
 
-    if ((PIECE(board->square[move->source]) == PAWN) && (move->destination < 8 || move->destination >= 56))
+    if ((PIECE(square[move->source]) == PAWN) && (move->destination < 8 || move->destination >= 56))
         /* Promotion. */
-        board->square[move->destination] = move->promotion_piece;
+        square[move->destination] = move->promotion_piece;
     else
-        board->square[move->destination] = board->square[move->source];
+        square[move->destination] = square[move->source];
 
-    board->square[move->source] = NONE;
-    board->turn = OPPONENT(board->turn);
+    square[move->source] = NONE;
+    turn = OPPONENT(turn);
 
     return 0;
 }
@@ -166,7 +164,7 @@ int make_move(board_t *board, move_t *move)
 #define HOR abs(move->source % 8 - move->destination % 8)
 #define VERT abs(move->source / 8 - move->destination / 8)
 
-static int ray_ok(board_t *board, move_t *move)
+int Board::rayOk(move_t *move)
 {
     int step, i;
     if (VERT != 0)
@@ -178,43 +176,41 @@ static int ray_ok(board_t *board, move_t *move)
 
     while (i != move->destination)
     {
-        if (board->square[i] != NONE)
+        if (square[i] != NONE)
             return 0;
         i += step;
     }
 
-    if (board->square[i] == NONE)
+    if (square[i] == NONE)
         return 1;
 
-    if (COLOUR(board->square[i]) != COLOUR(board->square[move->source]))
+    if (COLOUR(square[i]) != COLOUR(square[move->source]))
         return 1;
 
     return 0;
 }
 
-static int square_attacked(board_t *b, int square, int side)
-{
-    board_t board = *b;
+int Board::squareAttacked(int squarei, int side) { /* FIXME MAYBE */
     move_t move;
     int i;
 
-    board.turn = side;
+    turn = side;
 
     /* We add a piece because we only want to take capture moves into consideration. */
-    board.square[square] = KING + OPPONENT(side);
+    square[squarei] = KING + OPPONENT(side);
 
-    move.destination = square;
+    move.destination = squarei;
 
     for (i = 0; i < 64; i++)
     {
-        if (COLOUR(board.square[i]) == side)
+        if (COLOUR(square[i]) == side)
         {
             move.source = i;
-            if ((PIECE(board.square[i]) == PAWN) && ((square < 8) || (square >= 56)))
+            if ((PIECE(square[i]) == PAWN) && ((squarei < 8) || (squarei >= 56)))
                 move.promotion_piece = QUEEN + side;
             else
                 move.promotion_piece = NONE;
-            if (move_is_semi_valid(&board, &move))
+            if (moveIsSemiValid(&move))
                 return 1;
         }
     }
@@ -222,7 +218,7 @@ static int square_attacked(board_t *b, int square, int side)
 }
 
 /* Checks whether a move is valid, except for whether this puts own king in check. */
-static int move_is_semi_valid(board_t *board, move_t *move)
+int Board::moveIsSemiValid(move_t *move)
 {
     /* Bounds check. */
     if ((move->source > 63) || (move->source < 0))
@@ -236,15 +232,15 @@ static int move_is_semi_valid(board_t *board, move_t *move)
         return 0;
 
     /* Test for empty source square. */
-    if (board->square[move->source] == NONE)
+    if (square[move->source] == NONE)
         return 0;
 
     /* Test for moving opponent's piece. */
-    if (COLOUR(board->square[move->source]) != board->turn)
+    if (COLOUR(square[move->source]) != turn)
         return 0;
 
     /* Check that a promotion piece is specified for promotion moves. */
-    if ((PIECE(board->square[move->source]) == PAWN) && ((move->destination < 8) || (move->destination >= 56)))
+    if ((PIECE(square[move->source]) == PAWN) && ((move->destination < 8) || (move->destination >= 56)))
     {
         switch (PIECE(move->promotion_piece))
         {
@@ -257,14 +253,14 @@ static int move_is_semi_valid(board_t *board, move_t *move)
             return 0;
         }
 
-        if (COLOUR(move->promotion_piece) != board->turn)
+        if (COLOUR(move->promotion_piece) != turn)
             return 0;
     }
     else if (move->promotion_piece != NONE)
         /* Promotion piece specified for non-promotion move. */
         return 0;
 
-    switch (PIECE(board->square[move->source]))
+    switch (PIECE(square[move->source]))
     {
     case KNIGHT:
         if ((HOR != 1) && (HOR != 2))
@@ -273,34 +269,34 @@ static int move_is_semi_valid(board_t *board, move_t *move)
             return 0;
         if ((HOR == 2) && (VERT != 1))
             return 0;
-        if (board->square[move->destination] == NONE)
+        if (square[move->destination] == NONE)
             break;
-        if (COLOUR(board->square[move->destination]) == COLOUR(board->square[move->source]))
+        if (COLOUR(square[move->destination]) == COLOUR(square[move->source]))
             return 0;
         break;
     case BISHOP:
         if (HOR != VERT)
             return 0;
-        if (!ray_ok(board, move))
+        if (!rayOk(move))
             return 0;
         break;
     case ROOK:
         if ((HOR != 0) && (VERT != 0))
             return 0;
-        if (!ray_ok(board, move))
+        if (!rayOk(move))
             return 0;
         break;
     case QUEEN:
         if ((HOR != 0) && (VERT != 0) && (HOR != VERT))
             return 0;
-        if (!ray_ok(board, move))
+        if (!rayOk(move))
             return 0;
         break;
     case PAWN:
         /* Catch moves in wrong direction. */
-        if ((move->destination > move->source) && (COLOUR(board->square[move->source]) == BLACK))
+        if ((move->destination > move->source) && (COLOUR(square[move->source]) == BLACK))
             return 0;
-        if ((move->destination < move->source) && (COLOUR(board->square[move->source]) == WHITE))
+        if ((move->destination < move->source) && (COLOUR(square[move->source]) == WHITE))
             return 0;
 
         if (HOR > 1)
@@ -316,25 +312,25 @@ static int move_is_semi_valid(board_t *board, move_t *move)
                 if (!(((move->source >= 8) && (move->source <= 15)) || ((move->source >= 48) && (move->source <= 55))))
                     return 0;
             /* Use ray checking code with added requirement that destination square is empty. */
-            if (!ray_ok(board, move) || (board->square[move->destination] != NONE))
+            if (!rayOk(move) || (square[move->destination] != NONE))
                 return 0;
         }
         else
         {
             if (VERT != 1)
                 return 0;
-            if (!ray_ok(board, move))
+            if (!rayOk(move))
                 return 0;
             /* En-passant move. */
-            if (board->square[move->destination] == NONE)
+            if (square[move->destination] == NONE)
             {
-                if ((COLOUR(board->square[move->source]) == WHITE) && !((move->source >= 32) && (move->source < 40)))
+                if ((COLOUR(square[move->source]) == WHITE) && !((move->source >= 32) && (move->source < 40)))
                     return 0;
-                if ((COLOUR(board->square[move->source]) == BLACK) && !((move->source >= 24) && (move->source < 32)))
+                if ((COLOUR(square[move->source]) == BLACK) && !((move->source >= 24) && (move->source < 32)))
                     return 0;
 
-                if (board->square[move->destination + (COLOUR(board->square[move->source]) == WHITE ? -8 : 8)] !=
-                        PAWN + OPPONENT(COLOUR(board->square[move->source])))
+                if (square[move->destination + (COLOUR(square[move->source]) == WHITE ? -8 : 8)] !=
+                        PAWN + OPPONENT(COLOUR(square[move->source])))
                     return 0;
             }
 
@@ -345,7 +341,7 @@ static int move_is_semi_valid(board_t *board, move_t *move)
             return 0;
         else if (HOR == 2)
         {
-            int white = COLOUR(board->square[move->source]) == WHITE;
+            int white = COLOUR(square[move->source]) == WHITE;
 
             int i, step = (move->destination > move->source ? 1 : -1);
             int rook = (step == 1 ? (white ? 7 : 63) : (white ? 0 : 56));
@@ -357,14 +353,14 @@ static int move_is_semi_valid(board_t *board, move_t *move)
             if (move->source != (white ? 4 : 60))
                 return 0;
 
-            if (board->square[rook] != ROOK + COLOUR(board->square[move->source]))
+            if (square[rook] != ROOK + COLOUR(square[move->source]))
                 return 0;
 
             i = move->source + step;
 
             while (i != rook)
             {
-                if (board->square[i] != NONE)
+                if (square[i] != NONE)
                     return 0;
                 i += step;
             }
@@ -372,82 +368,78 @@ static int move_is_semi_valid(board_t *board, move_t *move)
             /* Check whether any of the squares the king moves over is under
             ** attack. Note that destination square is checked later.
             */
-            if (square_attacked(board, move->source, (white ? BLACK : WHITE)))
+            if (squareAttacked(move->source, (white ? BLACK : WHITE)))
                 return 0;
-            if (square_attacked(board, move->source + step, (white ? BLACK : WHITE)))
+            if (squareAttacked(move->source + step, (white ? BLACK : WHITE)))
                 return 0;
         }
         else
         {
             if (VERT > 1)
                 return 0;
-            if (!ray_ok(board, move))
+            if (!rayOk(move))
                 return 0;
         }
     }
     return 1;
 }
 
-static int in_check(board_t *board, int turn)
+int Board::inCheck(int turn)
 {
     int i;
     for (i = 0; i < 64; i++)
-        if (board->square[i] ==  KING + turn)
+        if (square[i] ==  KING + turn)
             break;
 
-    if (i == 64)
-    {
+    if (i == 64) {
         DBG_ERROR("board is missing a king");
         exit(1);
     }
 
-    return square_attacked(board, i, OPPONENT(turn));
+    return squareAttacked(i, OPPONENT(turn));
 }
 
-int move_is_valid(board_t *b, move_t *move)
+int Board::moveIsValid(move_t *move)
 {
-    board_t board = *b;
-
-    if (!move_is_semi_valid(&board, move))
+    if (!moveIsSemiValid(move))
         return 0;
 
-    make_move(&board, move);
+    makeMove(move);
 
-    return !in_check(&board, b->turn);
+    return !inCheck(turn);
 }
 
-static int is_mated(board_t *board, int side)
+int Board::isMated(int side)
 {
     int src, dest;
     move_t move;
 
     for (src = 0; src < 64; src++)
-        if (COLOUR(board->square[src]) == side)
+        if (COLOUR(square[src]) == side)
             for (dest = 0; dest < 64; dest++)
             {
                 move.source = src;
                 move.destination = dest;
-                if ((PIECE(board->square[src]) == PAWN) && ((dest < 8) || (dest >= 56)))
+                if ((PIECE(square[src]) == PAWN) && ((dest < 8) || (dest >= 56)))
                     move.promotion_piece = QUEEN + side;
                 else
                     move.promotion_piece = NONE;
-                if (move_is_valid(board, &move))
+                if (moveIsValid(&move))
                     return 0;
             }
     return 1;
 }
 
-void move_set_attr(board_t *b, move_t *move)
+void Board::moveSetAttr(move_t *move)
 {
     int check, mated;
-    board_t board = *b;
 
-    if (move_is_capture(b, move))
+    if (moveIsCapture(move))
         move->type = CAPTURE;
     else
         move->type = NORMAL;
 
-    if (PIECE(b->square[move->source]) == KING)
+    if (PIECE(square[move->source]) == KING)
     {
         int hor = move->destination % 8 - move->source % 8;
 
@@ -457,10 +449,10 @@ void move_set_attr(board_t *b, move_t *move)
             move->type = QUEENSIDE_CASTLE;
     }
 
-    make_move(&board, move);
+    makeMove(move);
 
-    check = in_check(&board, board.turn);
-    mated = is_mated(&board, board.turn);
+    check = inCheck(turn);
+    mated = isMated(turn);
 
     if (check && mated)
         move->state = MOVE_CHECKMATE;
@@ -473,7 +465,7 @@ void move_set_attr(board_t *b, move_t *move)
 
 }
 
-move_t *fullalg_to_move(board_t *board, char *move_s)
+move_t *Board::fullalgToMove(char *move_s)
 {
     move_t *move;
 
@@ -512,18 +504,18 @@ move_t *fullalg_to_move(board_t *board, char *move_s)
         case 'q':
             move->promotion_piece = QUEEN;
         }
-        move->promotion_piece += board->turn;
+        move->promotion_piece += turn;
     }
     else
         move->promotion_piece = NONE;
 
-    if (!move_is_valid(board, move))
+    if (!moveIsValid(move))
     {
         free(move);
         return NULL;
     }
 
-    move_set_attr(board, move);
+    moveSetAttr(move);
 
     return move;
 }
@@ -552,9 +544,8 @@ static int ui_piece(int san_piece)
     exit(1);
 }
 
-static move_t *find_unique_move(board_t *board, san_move_t *san_move)
-{
-    int square;
+move_t *Board::findUniqueMove(san_move_t *san_move) {
+    int squarei;
     int piece;
     int found = 0;
     move_t move, *retval;
@@ -562,47 +553,47 @@ static move_t *find_unique_move(board_t *board, san_move_t *san_move)
     if (san_move->type == SAN_QUEENSIDE_CASTLE)
     {
         san_move->source_file = 4;
-        san_move->source_rank = (board->turn == WHITE ? 0 : 7);
-        san_move->destination = (board->turn == WHITE ? 2 : 58);
+        san_move->source_rank = (turn == WHITE ? 0 : 7);
+        san_move->destination = (turn == WHITE ? 2 : 58);
         piece = KING;
     }
     else if (san_move->type == SAN_KINGSIDE_CASTLE)
     {
         san_move->source_file = 4;
-        san_move->source_rank = (board->turn == WHITE ? 0 : 7);
-        san_move->destination = (board->turn == WHITE ? 6 : 62);
+        san_move->source_rank = (turn == WHITE ? 0 : 7);
+        san_move->destination = (turn == WHITE ? 6 : 62);
         piece = KING;
     }
     else
         piece = ui_piece(san_move->piece);
 
-    piece += board->turn;
+    piece += turn;
 
-    for (square = 0; square < 64; square++)
+    for (squarei = 0; squarei < 64; squarei++)
     {
         move_t m;
 
-        if (board->square[square] != piece)
+        if (square[squarei] != piece)
             continue;
 
         /* We found a piece. */
 
         if (san_move->source_file != SAN_NOT_SPECIFIED)
-            if (san_move->source_file != square % 8)
+            if (san_move->source_file != squarei % 8)
                 continue;
 
         if (san_move->source_rank != SAN_NOT_SPECIFIED)
-            if (san_move->source_rank != square / 8)
+            if (san_move->source_rank != squarei / 8)
                 continue;
 
-        m.source = square;
+        m.source = squarei;
         m.destination = san_move->destination;
         m.promotion_piece = ui_piece(san_move->promotion_piece);
 
         if (m.promotion_piece != NONE)
-            m.promotion_piece += board->turn;
+            m.promotion_piece += turn;
 
-        if (move_is_valid(board, &m))
+        if (moveIsValid(&m))
         {
             move = m;
             found++;
@@ -622,7 +613,7 @@ static move_t *find_unique_move(board_t *board, san_move_t *san_move)
     return retval;
 }
 
-char *move_to_san(board_t *board, move_t *move)
+char *Board::moveToSan(move_t *move)
 {
     san_move_t san_move;
 
@@ -653,7 +644,7 @@ char *move_to_san(board_t *board, move_t *move)
         san_move.type = SAN_NORMAL;
     }
 
-    san_move.piece = san_piece(board->square[move->source]);
+    san_move.piece = san_piece(square[move->source]);
     san_move.source_file = SAN_NOT_SPECIFIED;
     san_move.source_rank = SAN_NOT_SPECIFIED;
     san_move.destination = move->destination;
@@ -670,24 +661,24 @@ char *move_to_san(board_t *board, move_t *move)
     else
     {
         move_t *u_move;
-        u_move = find_unique_move(board, &san_move);
+        u_move = findUniqueMove(&san_move);
 
         if (!u_move)
         {
             san_move.source_file = move->source % 8;
-            u_move = find_unique_move(board, &san_move);
+            u_move = findUniqueMove(&san_move);
             if (!u_move)
             {
                 san_move.source_file = SAN_NOT_SPECIFIED;
                 san_move.source_rank = move->source / 8;
-                u_move = find_unique_move(board, &san_move);
+                u_move = findUniqueMove(&san_move);
                 if (!u_move)
                 {
                     san_move.source_file = move->source % 8;
-                    u_move = find_unique_move(board, &san_move);
+                    u_move = findUniqueMove(&san_move);
                     if (!u_move)
                     {
-                        char *move_s = move_to_fullalg(board, move);
+                        char *move_s = moveToFullalg(move);
 
                         DBG_ERROR("failed to convert move %s to SAN notation", move_s);
 
@@ -708,7 +699,7 @@ char *move_to_san(board_t *board, move_t *move)
     return san_string(&san_move);
 }
 
-move_t* san_to_move(board_t *board, char *move_s)
+move_t* Board::sanToMove(char *move_s)
 {
     san_move_t *san_move = san_parse(move_s);
 
@@ -718,10 +709,10 @@ move_t* san_to_move(board_t *board, char *move_s)
         return NULL;
     }
 
-    return find_unique_move(board, san_move);
+    return findUniqueMove(san_move);
 }
 
-char* san_to_fan(board_t *board, char *move_s)
+char* Board::sanToFan(char *move_s)
 {
     char *move = strdup(move_s);
 

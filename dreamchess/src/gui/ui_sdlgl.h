@@ -152,7 +152,7 @@ int get_slots(void);
 void set_slots( int slots );
 char *get_time_save( int index );
 config_t *get_config_save( int index );
-board_t *get_saved_board( int index );
+Board *get_saved_board( int index );
 
 /* gamegui_driver.c */
 gg_event_t convert_event(SDL_Event *event);
@@ -202,7 +202,7 @@ texture_t *get_border(void);
 void unload_theme(void);
 
 /* draw_scene.c */
-void draw_scene( board_t *b, GLuint fb, int reflections );
+void draw_scene( Board *b, GLuint fb, int reflections );
 float get_mouse_square(void);
 
 /* credits.c */
@@ -218,7 +218,7 @@ int get_black_in_checkmate(void);
 int get_white_in_checkmate(void);
 int get_game_stalemate(void);
 void set_switch_to_menu(int sw);
-board_t *get_board(void);
+Board *get_board(void);
 int get_fading_out(void);
 config_t *get_config(void);
 void set_pgn_slot( int slot );

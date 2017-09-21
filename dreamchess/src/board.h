@@ -79,14 +79,9 @@
 #define BOARD_CHECKMATE 2
 #define BOARD_STALEMATE 3
 
-typedef struct board
-{
-    int turn;
-    int square[64];
-    int captured[10];
-    int state;
-}
-board_t;
+#define RESULT_WHITE_WINS 0
+#define RESULT_BLACK_WINS 1
+#define RESULT_DRAW 2
 
 typedef struct move
 {
@@ -98,12 +93,34 @@ typedef struct move
     int type;
     /* Board state after move. */
     int state;
-}
-move_t;
+} move_t;
 
-#define RESULT_WHITE_WINS 0
-#define RESULT_BLACK_WINS 1
-#define RESULT_DRAW 2
+#include "san.h"
+
+class Board {
+public:
+    void boardSetup();
+    char *moveToFullalg(move_t *move);
+    move_t *fullalgToMove(char *move_s);
+    move_t *sanToMove(char *move_s);
+    int makeMove(move_t *move);
+    void moveSetAttr(move_t *move);
+    int moveIsValid(move_t *move);
+    int moveIsSemiValid(move_t *move);
+    int moveIsCapture(move_t *move);
+    int inCheck(int turn); 
+    int isMated(int side);
+    char *moveToSan(move_t *move);
+    char* sanToFan(char *move_s);
+    int rayOk(move_t *move);
+    int squareAttacked(int square, int side); 
+    move_t *findUniqueMove(san_move_t *san_move);
+
+    int turn;
+    int square[64];
+    int captured[10];
+    int state;
+};
 
 typedef struct result
 {
@@ -111,15 +128,5 @@ typedef struct result
     char *reason;
 }
 result_t;
-
-void board_setup(board_t *board);
-char *move_to_fullalg(board_t *board, move_t *move);
-move_t *fullalg_to_move(board_t *board, char *move_s);
-move_t *san_to_move(board_t *board, char *move_s);
-int make_move(board_t *board, move_t *move);
-void move_set_attr(board_t *b, move_t *move);
-int move_is_valid(board_t *b, move_t *move);
-char *move_to_san(board_t *board, move_t *move);
-char* san_to_fan(board_t *board, char *move_s);
 
 #endif

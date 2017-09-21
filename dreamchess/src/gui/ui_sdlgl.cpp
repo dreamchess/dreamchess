@@ -42,7 +42,7 @@ static int white_in_check;
 static int black_in_check;
 static int white_in_checkmate;
 static int black_in_checkmate;
-static board_t board;
+static Board board;
 static int pgn_slot;
 static int quit_to_menu=FALSE;
 static int title_process_retval;
@@ -134,7 +134,7 @@ void set_pgn_slot( int slot )
     pgn_slot=slot;
 }
 
-board_t *get_board(void)
+Board *get_board(void)
 {
     return &board;
 }
@@ -617,7 +617,7 @@ static int create_window( int width, int height, int fullscreen, int ms)
 }
 
 /** Implements ui_driver::update. */
-static void update(board_t *b, move_t *move)
+static void update(Board *b, move_t *move)
 {
     board = *b;
 

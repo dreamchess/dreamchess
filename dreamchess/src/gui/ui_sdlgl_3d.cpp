@@ -785,7 +785,7 @@ static inline unsigned char colour_to_square(unsigned char colour)
     return colour - 1;
 }
 
-static void draw_pieces(board_t *board, int flip)
+static void draw_pieces(Board *board, int flip)
 {
     int i,j,k;
     float moved=0;
@@ -901,7 +901,7 @@ static void draw_pieces(board_t *board, int flip)
         }
 }
 
-static void draw_pieces_cp(board_t *board)
+static void draw_pieces_cp(Board *board)
 {
     int i,j,k;
 
@@ -1090,7 +1090,7 @@ static void setup_stencil(void)
     glEnable(GL_LIGHTING);
 }
 
-void render_scene_3d(board_t *board, GLuint target_fb, int reflections)
+void render_scene_3d(Board *board, GLuint target_fb, int reflections)
 {
   int ticks = SDL_GetTicks();
 

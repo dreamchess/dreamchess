@@ -23,9 +23,9 @@
 static int slots;
 static char time_save[SAVEGAME_SLOTS][80];
 static config_t config_save[SAVEGAME_SLOTS];
-static board_t saved_board[SAVEGAME_SLOTS];
+static Board saved_board[SAVEGAME_SLOTS];
 
-board_t *get_saved_board( int index )
+Board *get_saved_board( int index )
 {
     return &saved_board[index];
 }
@@ -201,7 +201,7 @@ void load_save_xml( int slot )
     {
         time_t time;
         struct tm *tm;
-        board_t *board;
+        Board *board;
 
         load_opaque(save, "time", temp);
 
