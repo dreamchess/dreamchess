@@ -18,41 +18,45 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#include "ui_sdlgl.h"
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+static gg_colour_t col_black =
+    {
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+static gg_colour_t col_red =
+    {
+        1.0f, 0.0f, 0.0f, 1.0f
+    };
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+static gg_colour_t col_white =
+    {
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+static gg_colour_t col_yellow =
+    {
+        1.0f, 1.0f, 0.0f, 1.0f
+    };
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
-
-#endif
+/* Return the specified colour, returning white if unknown value */
+gg_colour_t *get_col( int colour )
+{
+    switch ( colour )
+    {
+        case COL_BLACK:
+            return &col_black;
+            break;
+        case COL_RED:
+            return &col_red;
+            break;
+        case COL_YELLOW:
+            return &col_yellow;
+            break;
+        case COL_WHITE:
+        default:
+            return &col_white;
+            break;
+    }
+}

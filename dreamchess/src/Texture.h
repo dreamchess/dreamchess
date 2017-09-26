@@ -18,41 +18,22 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_TEXTURE_H
+#define DREAMCHESS_TEXTURE_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
-
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
-
-class LaunchArguments {
+class Texture {
 public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
+	void load(const char *filename, int alpha, int clamp );
+	void loadFromSurface(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);
+	void render(float xpos, float ypos, float zpos, float width, float height);
 private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
+    GLuint _id;
+    float _u1;
+    float _v1;
+    float _u2;
+    float _v2;
+    int _width;
+    int _height;
 };
-
-extern DreamChess *g_DreamChess;
 
 #endif

@@ -18,41 +18,44 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_CONTAINER_H
+#define GAMEGUI_CONTAINER_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/widget.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_CONTAINER(W) GG_CHECK_CAST(W, gg_container_get_class_id(), gg_container_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_CONTAINER_DATA \
+    GG_WIDGET_DATA \
+    list_t *widget_list;
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct list
+{
+    /** Total number of items in the list. */
+    int items;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+    /** The items in the list. */
+    void **item;
+}
+list_t;
 
-extern DreamChess *g_DreamChess;
+typedef struct gg_container
+{
+    GG_CONTAINER_DATA
+}
+gg_container_t;
+
+gg_class_id gg_container_get_class_id(void);
+
+void gg_container_destroy(gg_widget_t *widget);
+
+void gg_container_init(gg_container_t *container);
+
+void gg_container_append(gg_container_t *container, gg_widget_t *widget);
+
+int gg_container_get_size(gg_container_t *container);
+
+gg_widget_t *gg_container_get_child(gg_container_t *container, int index);
 
 #endif

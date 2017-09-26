@@ -23,6 +23,7 @@
 
 #include "board.h"
 #include "dreamchess.h"
+#include "GameConfig.h"
 
 typedef struct ui_driver
 {
@@ -31,7 +32,7 @@ typedef struct ui_driver
     int (* create_window) (int height, int width, int fullscreen, int ms);
     int (* resize) (int height, int width, int fullscreen, int ms);
     int (* exit) (void);
-    config_t *( *config) (int *pgn_slot);
+    GameConfig *( *config) (int *pgn_slot);
     void (* update) (Board *board, move_t *move);
     void (* poll) (void);
     void (* show_message) (char *msg);

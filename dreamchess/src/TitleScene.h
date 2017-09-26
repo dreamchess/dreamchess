@@ -18,41 +18,19 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_TITLESCENE_H
+#define DREAMCHESS_TITLESCENE_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include "Scene.h"
+class Texture;
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
-
-class LaunchArguments {
+class TitleScene: public Scene {
 public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
+	void init();
+	void update();
+	void render();
 private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
+	Texture *_backdrop;
 };
-
-extern DreamChess *g_DreamChess;
 
 #endif

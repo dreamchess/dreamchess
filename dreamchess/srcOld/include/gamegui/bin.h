@@ -18,41 +18,33 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_BIN_H
+#define GAMEGUI_BIN_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/container.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_BIN(W) GG_CHECK_CAST(W, gg_bin_get_class_id(), gg_bin_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_BIN_DATA \
+    GG_CONTAINER_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_bin
+{
+    GG_BIN_DATA
+}
+gg_bin_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_bin_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+gg_widget_t *gg_bin_get_child(gg_bin_t *bin);
+
+void gg_bin_set_size(gg_widget_t *widget, int width, int height);
+
+int gg_bin_set_focus_pos(gg_widget_t *widget, int x, int y);
+
+int gg_bin_input(gg_widget_t *widget, gg_event_t event);
+
+void gg_bin_init(gg_bin_t *bin, gg_widget_t *child);
 
 #endif

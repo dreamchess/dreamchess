@@ -18,41 +18,39 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+/** @file
+ *  @brief Action widget.
+ */
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#ifndef GAMEGUI_ACTION_H
+#define GAMEGUI_ACTION_H
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#include <gamegui/system.h>
+#include <gamegui/bin.h>
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+/** Typecast to action widget. */
+#define GG_ACTION(W) GG_CHECK_CAST(W, gg_action_get_class_id(), gg_action_t)
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+#define GG_ACTION_DATA \
+    GG_BIN_DATA \
+    gg_signal_t pressed; 
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+typedef struct gg_action
+{
+    GG_ACTION_DATA
+}
+gg_action_t;
 
-extern DreamChess *g_DreamChess;
+gg_class_id gg_action_get_class_id(void);
+
+void gg_action_render(gg_widget_t *widget, int x, int y, int focus);
+
+int gg_action_input(gg_widget_t *widget, gg_event_t event);
+
+void gg_action_init(gg_action_t *action, gg_widget_t *widget);
+
+gg_widget_t *gg_action_create(gg_widget_t *widget);
+
+gg_widget_t *gg_action_create_with_label(const char *text, float xalign, float yalign);
 
 #endif

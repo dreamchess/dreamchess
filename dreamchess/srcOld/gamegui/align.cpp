@@ -18,41 +18,24 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#include <gamegui/align.h>
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+gg_class_id gg_align_get_class_id(void)
+{
+    GG_CHILD(gg_widget_get_class_id())
+}
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+void gg_align_init(gg_align_t *align)
+{
+    gg_widget_init((gg_widget_t *) align);
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+    align->id = gg_align_get_class_id();
+    align->xalign = 0.0f;
+    align->yalign = 0.0f;
+}
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
-
-#endif
+void gg_align_set_alignment(gg_align_t *align, float xalign, float yalign)
+{
+    align->xalign = xalign;
+    align->yalign = yalign;
+}

@@ -18,41 +18,24 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef AUDIO_PLAYLIST_H
+#define AUDIO_PLAYLIST_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include "gamegui/queue.h"
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+typedef struct playlist_entry {
+	int index;
+	char *title;
+	char *artist;
+	char *album;
+	char *filename;
+	TAILQ_ENTRY(playlist_entry) entries;
+} playlist_entry_t;
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+typedef TAILQ_HEAD(playlist, playlist_entry) playlist_t;
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
+playlist_t *playlist_create(void);
+void playlist_destroy(playlist_t *playlist);
+void playlist_add_tracks(playlist_t *playlist, char *filename);
 
 #endif

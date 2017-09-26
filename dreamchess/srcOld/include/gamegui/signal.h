@@ -18,41 +18,18 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_SIGNAL_H
+#define GAMEGUI_SIGNAL_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/widget.h>
+#include <gamegui/queue.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+typedef int gg_signal_t;
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
+gg_signal_t gg_signal_lookup(gg_class_id class_id, const char *name);
+int gg_signal_register(gg_class_id class_id, const char *name);
+void gg_signal_init(void);
+void gg_signal_exit(void);
 
 #endif

@@ -18,41 +18,37 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+/** @file
+ *  @brief Gamegui clipping.
+ */
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#ifndef GAMEGUI_CLIPPING_H
+#define GAMEGUI_CLIPPING_H
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#include <gamegui/system.h>
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+/** @brief Returns the clipping rectangle.
+ *
+ *  @return The clipping rectangle, or NULL if no clipping rectangle set.
+ */
+gg_rect_t *gg_clipping_get(void);
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+/** @brief Adjusts the clipping rectangle. The clipping rectangle will be set
+ *         to rect, clipped to the previous clipping rectangle (if any).
+ *
+ *  @param rect The clipping rectangle.
+ */
+void gg_clipping_adjust(gg_rect_t *rect);
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+/** @brief Undoes the last clipping adjustment. */
+void gg_clipping_undo(void);
 
-extern DreamChess *g_DreamChess;
+/** @brief Clips a rectangle to another rectangle.
+ *
+ *  @param rect1 The first rectangle.
+ *  @param rect2 The second rectangle.
+ *  @return The clipped rectangle.
+ */
+gg_rect_t gg_clipping_rect(gg_rect_t *rect1, gg_rect_t *rect2);
 
 #endif

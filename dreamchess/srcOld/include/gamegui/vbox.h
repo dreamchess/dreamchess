@@ -18,41 +18,41 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_VBOX_H
+#define GAMEGUI_VBOX_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/box.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_VBOX(W) GG_CHECK_CAST(W, gg_vbox_get_class_id(), gg_vbox_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_VBOX_DATA \
+    GG_BOX_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_vbox
+{
+    GG_VBOX_DATA
+}
+gg_vbox_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_vbox_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_vbox_render(gg_widget_t *widget, int x, int y, int focus);
+
+int gg_vbox_input(gg_widget_t *widget, gg_event_t event);
+
+void gg_vbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
+
+void gg_vbox_set_size(gg_widget_t *widget, int width, int height);
+
+gg_rect_t gg_vbox_get_focus_pos(gg_widget_t *widget);
+
+int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y);
+
+void gg_vbox_init(gg_vbox_t *vbox, int spacing);
+
+gg_widget_t *gg_vbox_create(int spacing);
+
+void gg_vbox_set_selected(gg_widget_t *widget, int index );
 
 #endif

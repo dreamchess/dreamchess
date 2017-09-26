@@ -18,41 +18,16 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#include "dialogs.h"
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+static gg_dialog_style_t style_ingame, style_menu;
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+gg_dialog_style_t *get_ingame_style(void)
+{
+    return &style_ingame;
+}
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
-
-#endif
+gg_dialog_style_t *get_menu_style(void)
+{
+    return &style_menu;
+}

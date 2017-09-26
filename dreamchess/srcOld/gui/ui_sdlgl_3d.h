@@ -18,41 +18,33 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GUI_UI_SDLGL_3D_H
+#define GUI_UI_SDLGL_3D_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#define SELECTOR_UP 0
+#define SELECTOR_DOWN 1
+#define SELECTOR_LEFT 2
+#define SELECTOR_RIGHT 3
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+typedef struct coord3
+{
+    float x;
+    float y;
+    float z;
+}
+coord3_t;
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
+void move_camera(float x, float z);
+void render_scene_3d(Board *board, GLuint target_fb, int reflections);
+void move_selector(int direction);
+int get_selector(void);
+void select_piece(int square);
+void reset_3d(int flip);
+void loadmodels(const char *filename);
+void load_board(const char *dcm_name, const char *texture_name);
+void init_fbo(void);
+void deinit_fbo(void);
+int find_square(int x, int y);
+void freemodels(void);
 
 #endif

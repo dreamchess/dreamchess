@@ -19,20 +19,24 @@
 */
 
 #include <stdio.h>
-
 #include "SDL.h"
 
-#include "dreamchess.h"
+#include "DreamChess.h"
+#include "System.h"
 
-Dreamchess *g_Dreamchess;
+DreamChess *g_DreamChess;
+System *g_System;
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-    arguments_t arg;
-    arg.argc = argc;
-    arg.argv = argv;
+	LaunchArguments args = LaunchArguments(argc, argv);
 
-    g_Dreamchess = new Dreamchess();
+    g_System = new System();
+    g_System->initVideo();
 
-    return g_Dreamchess->init(&arg);
+    g_DreamChess = new DreamChess();
+	g_DreamChess->init(&args);
+	g_DreamChess->go();
+
+    return true; 
 }

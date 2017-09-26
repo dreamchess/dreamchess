@@ -18,41 +18,26 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_BOX_H
+#define GAMEGUI_BOX_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/select.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_BOX(W) GG_CHECK_CAST(W, gg_box_get_class_id(), gg_box_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_BOX_DATA \
+    GG_SELECT_DATA \
+    int spacing;
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_box
+{
+    GG_BOX_DATA
+}
+gg_box_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_box_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_box_init(gg_box_t *box, int spacing);
 
 #endif

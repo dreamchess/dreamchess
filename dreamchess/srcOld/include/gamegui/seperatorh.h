@@ -18,41 +18,29 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_SEPERATORH_H
+#define GAMEGUI_SEPERATORH_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/widget.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_SEPERATORH(W) GG_CHECK_CAST(W, gg_seperatorh_get_class_id(), gg_seperatorh_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_SEPERATORH_DATA \
+    GG_WIDGET_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_seperatorh
+{
+    GG_SEPERATORH_DATA
+}
+gg_seperatorh_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_seperatorh_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_seperatorh_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_seperatorh_init(gg_seperatorh_t *sep);
+
+gg_widget_t *gg_seperatorh_create(void);
 
 #endif

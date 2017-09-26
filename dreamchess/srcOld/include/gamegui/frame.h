@@ -18,41 +18,35 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_FRAME_H
+#define GAMEGUI_FRAME_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/bin.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_FRAME(W) GG_CHECK_CAST(W, gg_frame_get_class_id(), gg_frame_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_FRAME_DATA \
+    GG_BIN_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_frame
+{
+    GG_FRAME_DATA
+}
+gg_frame_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_frame_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_frame_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_frame_init(gg_frame_t *frame, gg_widget_t *child);
+
+gg_widget_t *gg_frame_create(gg_widget_t *child);
+
+gg_rect_t gg_frame_get_focus_pos(gg_widget_t *widget);
+
+int gg_frame_set_focus_pos(gg_widget_t *widget, int x, int y);
+
+int gg_frame_input(gg_widget_t *widget, gg_event_t event);
 
 #endif

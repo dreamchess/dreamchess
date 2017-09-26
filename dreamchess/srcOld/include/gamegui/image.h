@@ -18,41 +18,30 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_IMAGE_H
+#define GAMEGUI_IMAGE_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/align.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_IMAGE(W) GG_CHECK_CAST(W, gg_image_get_class_id(), gg_image_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_IMAGE_DATA \
+    GG_ALIGN_DATA \
+    void *image;
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_image
+{
+    GG_IMAGE_DATA
+}
+gg_image_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_image_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_image_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_image_init(gg_image_t *image, void *texture);
+
+gg_widget_t *gg_image_create(void *texture);
 
 #endif

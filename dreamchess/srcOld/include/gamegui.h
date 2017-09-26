@@ -18,41 +18,30 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_GAMEGUI_H
+#define GAMEGUI_GAMEGUI_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
-
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
-
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
+#include <gamegui/system.h>
+#include <gamegui/action.h>
+#include <gamegui/box.h>
+#include <gamegui/entry.h>
+#include <gamegui/label.h>
+#include <gamegui/system.h>
+#include <gamegui/align.h>
+#include <gamegui/container.h>
+#include <gamegui/hbox.h>
+#include <gamegui/option.h>
+#include <gamegui/vbox.h>
+#include <gamegui/bin.h>
+#include <gamegui/dialog.h>
+#include <gamegui/image.h>
+#include <gamegui/select.h>
+#include <gamegui/seperatorh.h>
+#include <gamegui/seperatorv.h>
+#include <gamegui/widget.h>
+#include <gamegui/frame.h>
+#include <gamegui/viewport.h>
+#include <gamegui/edit.h>
+#include <gamegui/scrollbarv.h>
 
 #endif

@@ -18,35 +18,6 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DreamChess.h"
-#include "System.h"
-#include "TitleScene.h"
-
-void DreamChess::gameLoop() {
-    g_System->pollEvents();
-
-    _currentScene->update();
-    _currentScene->render();
-
-    g_System->finishFrame();
-}
-
-int DreamChess::init(LaunchArguments *args) {
-    _titleScene = new TitleScene();
-    _titleScene->init();
-
-    _currentScene = _titleScene;
-
-    return true;
-}
-
-void DreamChess::go() {
-    while(1) {
-        gameLoop();
-    }
-}
-
-/*
 #include "config.h"
 
 #include <stdio.h>
@@ -57,19 +28,19 @@ void DreamChess::go() {
 #include <getopt.h>
 #elif defined(_MSC_VER)
 #include "msvc/getopt.h"
-#endif // HAVE_GETOPT_H 
+#endif /* HAVE_GETOPT_H */
 #include <errno.h>
 
-#include "ChessBoard.h"
-#include "History.h"
-//#include "ui.h"
-//#include "comm.h"
-//#include "dir.h"
+#include "board.h"
+#include "history.h"
+#include "ui.h"
+#include "comm.h"
+#include "dir.h"
 #include "DreamChess.h"
-//#include "debug.h"
+#include "debug.h"
 #include "git_rev.h"
 #include "audio.h"
-//#include "system_config.h"
+#include "system_config.h"
 #include "pgn_scanner.h"
 
 #include "GameConfig.h"
@@ -86,7 +57,7 @@ void DreamChess::go() {
 
 #include "moveList.h"
 
-//static ui_driver_t *ui;
+static ui_driver_t *ui;
 static MoveList *san_list, *fan_list, *fullalg_list;
 static int in_game;
 static int engine_error;
@@ -96,7 +67,7 @@ void DreamChess::gameViewNext() {
     fullalg_list->viewNext();
     san_list->viewNext();
     fan_list->viewNext();
-    //ui->update(_history->view->board, NULL);
+    ui->update(_history->view->board, NULL);
 }
 
 void DreamChess::gameViewPrev(void) {
@@ -104,7 +75,7 @@ void DreamChess::gameViewPrev(void) {
     fullalg_list->viewPrev();
     san_list->viewPrev();
     fan_list->viewPrev();
-    //ui->update(_history->view->board, NULL);
+    ui->update(_history->view->board, NULL);
 }
 
 void DreamChess::gameUndo(void) {
@@ -117,11 +88,11 @@ void DreamChess::gameUndo(void) {
         free(_history->result);
         _history->result = NULL;
     }
-    //ui->update(_history->view->board, NULL);
+    ui->update(_history->view->board, NULL);
 }
 
 void DreamChess::gameRetractMove(void) {
-    // Make sure a user is on move and we can undo two moves. 
+    /* Make sure a user is on move and we can undo two moves. */
     if (_config->player[_history->last->board->turn] != PLAYER_UI)
         return;
     if (!_history->last->prev || !_history->last->prev->prev)
@@ -133,7 +104,7 @@ void DreamChess::gameRetractMove(void) {
 }
 
 void DreamChess::gameMoveNow(void) {
-    // Make sure engine is on move. 
+    /* Make sure engine is on move. */
     if (_config->player[_history->last->board->turn] != PLAYER_ENGINE)
         return;
 
@@ -339,7 +310,7 @@ int DreamChess::setResolution(int init) {
         height = res->h;
     }
     else {
-        // Custom 
+        /* Custom */
         option = config_get_option("custom_resolution_width");
         width = option->value;
         option = config_get_option("custom_resolution_height");
@@ -500,7 +471,7 @@ int DreamChess::init(LaunchArguments *arg)
                     }
                     else if (strstr(s, "llegal move"))
                         gameUndo();
-                    // Ignore result message if we've already determined a result ourselves. 
+                    /* Ignore result message if we've already determined a result ourselves. */
                     else
                     {
                         char *start = strchr(s, '{');
@@ -551,4 +522,3 @@ int DreamChess::init(LaunchArguments *arg)
     ui->exit();
     return 0;
 }
-*/

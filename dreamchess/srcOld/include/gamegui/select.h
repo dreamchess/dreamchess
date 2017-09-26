@@ -18,41 +18,30 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_SELECT_H
+#define GAMEGUI_SELECT_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/bin.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_SELECT(W) GG_CHECK_CAST(W, gg_select_get_class_id(), gg_select_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_SELECT_DATA \
+    GG_CONTAINER_DATA \
+    int sel;
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_select
+{
+    GG_SELECT_DATA
+}
+gg_select_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_select_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_select_init(gg_select_t *select);
+
+int gg_select_prev(gg_select_t *select, int input, int enabled);
+
+int gg_select_next(gg_select_t *select, int input, int enabled);
 
 #endif

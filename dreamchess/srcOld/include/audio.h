@@ -18,41 +18,39 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef AUDIO_AUDIO_H
+#define AUDIO_AUDIO_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include "gamegui/queue.h"
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
-
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
+enum {
+	AUDIO_MOVE,
+	AUDIO_SOUNDS /* Must be last */
 };
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+#define AUDIO_MAX_VOL 10
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+typedef struct sound {
+	int id;
+	const char *filename;
+} sound_t;
 
-extern DreamChess *g_DreamChess;
+typedef void (*audio_music_callback_t)(char *title, char *artist, char *album);
+
+void audio_init(void);
+
+void audio_exit(void);
+
+void audio_play_music(void);
+
+void audio_poll(int title);
+
+void audio_set_music_callback(audio_music_callback_t callback);
+
+void audio_play_sound(int id);
+
+void audio_set_sound_volume(int vol);
+
+void audio_set_music_volume(int vol);
 
 #endif

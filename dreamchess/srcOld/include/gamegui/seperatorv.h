@@ -18,41 +18,29 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_SEPERATORV_H
+#define GAMEGUI_SEPERATORV_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/widget.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_SEPERATORV(W) GG_CHECK_CAST(W, gg_seperatorv_get_class_id(), gg_seperatorv_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_SEPERATORV_DATA \
+    GG_WIDGET_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_seperatorv
+{
+    GG_SEPERATORV_DATA
+}
+gg_seperatorv_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_seperatorv_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_seperatorv_render(gg_widget_t *widget, int x, int y, int focus);
+
+void gg_seperatorv_init(gg_seperatorv_t *sep);
+
+gg_widget_t *gg_seperatorv_create(void);
 
 #endif

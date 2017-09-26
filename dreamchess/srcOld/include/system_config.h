@@ -18,41 +18,20 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_SYSTEM_CONFIG_H
+#define DREAMCHESS_SYSTEM_CONFIG_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include "options.h"
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+void config_init(void);
+void config_save(void);
+option_t *config_get_option(const char *name);
+char *config_backup(void);
+int config_restore(char *string);
+void config_set_failsafe_video(void);
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
+typedef struct config_resolution {
+	int w, h;
+} config_resolution_t;
 
 #endif

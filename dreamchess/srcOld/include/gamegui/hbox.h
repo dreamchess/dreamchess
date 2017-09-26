@@ -18,41 +18,39 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef GAMEGUI_HBOX_H
+#define GAMEGUI_HBOX_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include <gamegui/system.h>
+#include <gamegui/box.h>
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+#define GG_HBOX(W) GG_CHECK_CAST(W, gg_hbox_get_class_id(), gg_hbox_t)
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+#define GG_HBOX_DATA \
+    GG_BOX_DATA
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+typedef struct gg_hbox
+{
+    GG_HBOX_DATA
+}
+gg_hbox_t;
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
+gg_class_id gg_hbox_get_class_id(void);
 
-extern DreamChess *g_DreamChess;
+void gg_hbox_render(gg_widget_t *widget, int x, int y, int focus);
+
+int gg_hbox_input(gg_widget_t *widget, gg_event_t event);
+
+void gg_hbox_get_requested_size(gg_widget_t *widget, int *width, int *height);
+
+void gg_hbox_set_size(gg_widget_t *widget, int width, int height);
+
+gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget);
+
+int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y);
+
+void gg_hbox_init(gg_hbox_t *hbox, int spacing);
+
+gg_widget_t *gg_hbox_create(int spacing);
 
 #endif

@@ -21,10 +21,8 @@
 #ifndef DREAMCHESS_DREAMCHESS_H
 #define DREAMCHESS_DREAMCHESS_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+#include "board.h"
+#include "GameConfig.h"
 
 #define PLAYER_UI 0
 #define PLAYER_ENGINE 1
@@ -42,17 +40,39 @@ public:
 
 class DreamChess {
 public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
+	DreamChess();
+	~DreamChess();
 
-	void go();
-	void gameLoop();
 	int init(LaunchArguments *arg);
+	int doMove(move_t *move, int ui_update);
+
+	/* Move handling */
+	void gameViewNext(void);
+	void gameViewPrev(void);
+	void gameUndo(void);
+	int gameWantMove(void);
+	void gameMakeMove(move_t *move, int ui_update);
+	void gameRetractMove(void);
+	void gameMoveNow(void);
+	void gameQuit(void);
+	void gameGetMoveList(char ***list, int *total, int *view);
+	int gameSave( int slot );
+	int gameLoad( int slot );
+	void gameMakeMoveStr(char *move_str, int ui_update);
+	int gameGetEngineError(void);
+	void gameSetEngineError(int err);
+
+	/* Display */
+	void initResolution();
+	int setResolution(int init);
+	void toggleFullscreen();
+
 private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
+	GameConfig *_config;
+	History *_history;
 };
 
 extern DreamChess *g_DreamChess;
+void game_make_move_str(char *move_str, int ui_update);
 
 #endif

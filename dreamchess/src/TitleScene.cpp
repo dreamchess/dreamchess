@@ -18,41 +18,22 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#include <SDL.h>
+#include <GL/glew.h>
+#include "TitleScene.h"
+#include "Texture.h"
+#include "System.h"
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
+void TitleScene::init() {
+    _backdrop = new Texture();
+    _backdrop->load("menu_title.png", 0, 1);
+}
 
-#define PLAYER_UI 0
-#define PLAYER_ENGINE 1
+void TitleScene::update() {
 
-class LaunchArguments {
-public:
-	LaunchArguments(int c, char **v) {
-		argc = c;
-		argv = v;
-	}
-	
-    int argc;
-    char **argv;
-};
+}
 
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr; }
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-};
-
-extern DreamChess *g_DreamChess;
-
-#endif
+void TitleScene::render() {
+	g_System->go2D();
+    _backdrop->render(0, 0, 1, 1280, 720);
+}
