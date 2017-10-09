@@ -26,27 +26,6 @@
 
 #include <stdio.h>
 
-void Texture::render(float xpos, float ypos, float zpos, float width, float height) { //, gg_colour_t *col )
-    glEnable( GL_TEXTURE_2D );
-
-    //glColor4f( col->r, col->g, col->b, col->a );
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glBindTexture(GL_TEXTURE_2D, _id);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(_u1, _v1);
-    glVertex3f( xpos, ypos+height, zpos );
-    glTexCoord2f(_u2, _v1);
-    glVertex3f( xpos+width,  ypos+height, zpos );
-    glTexCoord2f(_u2, _v2);
-    glVertex3f( xpos+width,  ypos, zpos );
-    glTexCoord2f(_u1, _v2);
-    glVertex3f( xpos, ypos, zpos );
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-}
-
 int power_of_two(int input) {
     int value = 1;
 
@@ -59,7 +38,6 @@ int power_of_two(int input) {
 
 void Texture::load(const char *filename, int alpha, int clamp )
 {
-    g_System->chDataDir();
     /* Create storage space for the texture */
     SDL_Surface *texture_image;
 
@@ -145,10 +123,6 @@ void Texture::loadFromSurface(SDL_Surface *surface, SDL_Rect *area, int alpha, i
                  image->pixels);
     SDL_FreeSurface(image); /* No longer needed */
 
-    _u1 = 0;
-    _v1 = 0;
-    _u2 = area->w / (float) w;
-    _v2 = area->h / (float) h;
-    _width = area->w;
-    _height = area->h;
+    _uv = glm::vec2(area->w / (float) w, area->h / (float) h);
+    _size = glm::vec2(area->w, area->h);
 }

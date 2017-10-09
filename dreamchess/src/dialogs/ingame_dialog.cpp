@@ -26,29 +26,29 @@
 
 static int retract_move(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    DBG_LOG("retracting move");
-    g_Dreamchess->gameRetractMove();
+    //DBG_LOG("retracting move");
+    //g_DreamChess->gameRetractMove();
     return 1;
 }
 
 static int move_now(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    DBG_LOG("forcing dreamer to move");
-    g_Dreamchess->gameMoveNow();
+    //DBG_LOG("forcing dreamer to move");
+    //g_DreamChess->gameMoveNow();
     return 1;
 }
 
 static int view_prev(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    DBG_LOG("viewing previous move");
-    g_Dreamchess->gameViewPrev();
+    //DBG_LOG("viewing previous move");
+    //g_DreamChess->gameViewPrev();
     return 1;
 }
 
 static int view_next(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    DBG_LOG("viewing next move");
-    g_Dreamchess->gameViewNext();
+    //DBG_LOG("viewing next move");
+    //g_DreamChess->gameViewNext();
     return 1;
 }
 

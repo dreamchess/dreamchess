@@ -22,21 +22,17 @@
 #include "SDL.h"
 
 #include "DreamChess.h"
+#include "GameConfig.h"
 #include "System.h"
-
-DreamChess *g_DreamChess;
-System *g_System;
+#include "ResourcePool.h"
 
 int main(int argc, char *argv[])
 {
 	LaunchArguments args = LaunchArguments(argc, argv);
 
-    g_System = new System();
-    g_System->initVideo();
-
-    g_DreamChess = new DreamChess();
-	g_DreamChess->init(&args);
-	g_DreamChess->go();
+    DreamChess *dreamChess = new DreamChess();
+	dreamChess->init(&args);
+	dreamChess->go();
 
     return true; 
 }

@@ -29,7 +29,7 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-#include "debug.h"
+//#include "debug.h"
 #include "playlist.h"
 #include "theme.h"
 #include "system_config.h"
@@ -56,10 +56,10 @@ static void load_sounds(void)
 	int i;
 
 	for (i = 0; i < AUDIO_SOUNDS; i++) {
-		DBG_LOG("loading %s", sounds[i].filename);
+		//DBG_LOG("loading %s", sounds[i].filename);
 		wav_data[sounds[i].id] = Mix_LoadWAV(sounds[i].filename);
 		if (!wav_data[sounds[i].id]) {
-			DBG_ERROR("failed to load %s", sounds[i].filename);
+			//DBG_ERROR("failed to load %s", sounds[i].filename);
 			exit(1);
 		}
 	}
@@ -93,7 +93,7 @@ void audio_init(void)
 	SDL_Init(SDL_INIT_AUDIO);
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
-		DBG_ERROR("unable to open audio");
+		//DBG_ERROR("unable to open audio");
 		return;
 	}
 
@@ -171,7 +171,7 @@ void audio_poll(int title)
 		if (music_callback)
 			music_callback(current_song->title, current_song->artist, current_song->album);
 
-		DBG_LOG("playing %s", current_song->filename);
+		//DBG_LOG("playing %s", current_song->filename);
 		Mix_PlayMusic(music, 0);
 	}
 }
@@ -189,8 +189,8 @@ void audio_play_sound(int id)
 	if (sound_volume == 0)
 		return;
 
-	if (Mix_PlayChannel(0, wav_data[id], 0) == -1)
-		DBG_WARN("failed to play sound %i", id);
+	/*if (Mix_PlayChannel(0, wav_data[id], 0) == -1)
+		DBG_WARN("failed to play sound %i", id);*/
 }
 
 void audio_set_sound_volume(int vol)

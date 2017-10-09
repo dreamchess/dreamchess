@@ -21,7 +21,7 @@
 #ifndef DREAMCHESS_SYSTEM_H
 #define DREAMCHESS_SYSTEM_H
 
-class SDL_Window;
+struct SDL_Window;
 
 class System {
 public:
@@ -41,7 +41,5 @@ private:
 	int _width, _height, _ms;
 	bool _fullscreen;
 };
-
-extern System *g_System;
 
 #endif

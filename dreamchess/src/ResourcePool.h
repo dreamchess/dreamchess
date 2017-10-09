@@ -18,33 +18,31 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_RESOURCEPOOL_H
+#define DREAMCHESS_RESOURCEPOOL_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
-class LaunchArguments;
-class System;
-class ResourcePool;
+#include <unordered_map>
 
-class DreamChess {
+class Texture;
+class Model;
+class DreamChess;
+
+class Resource {
 public:
-	DreamChess() {_currentScene = nullptr;}
-	~DreamChess() { }
+	std::string _filename;
+};
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-	ResourcePool *getResourcePool() {return _resourcePool;}
-	System *getSystem() {return _system;}
+class ResourcePool {
+public:
+	ResourcePool(DreamChess *d);
+	~ResourcePool();
+
+	Resource *getResource(std::string name);
+	Texture *getTexture(const char *filename);
+	Model *getModel(const char *filename);
 private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-
-	ResourcePool *_resourcePool;
-	System *_system;
+    std::unordered_map<std::string, Resource *> _resources;
+    DreamChess *_game;
 };
 
 #endif

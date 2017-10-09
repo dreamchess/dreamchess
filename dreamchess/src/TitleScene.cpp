@@ -18,15 +18,28 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <SDL.h>
-#include <GL/glew.h>
+#include "ResourcePool.h"
 #include "TitleScene.h"
 #include "Texture.h"
 #include "System.h"
+#include "Model.h"
+#include "Dreamchess.h"
+#include "Image.h"
+
+TitleScene::TitleScene(DreamChess *d) : Scene(d) {
+
+}
 
 void TitleScene::init() {
-    _backdrop = new Texture();
-    _backdrop->load("menu_title.png", 0, 1);
+	_backdrop = new Image(this, "menu_title.png");
+	
+	_backdrop2 = new Image(this, "menu_title.png");
+    _backdrop2->setPosition(100, 100, 1);	
+	
+	_backdrop3D = new Image(this, "menu_title.png"); 
+	_backdrop3D->setPosition(1, 1, -600);
+
+	//_chessBoard = static_cast<Model*>(g_ResourcePool->getResource("boards/classic/board.dcm"));
 }
 
 void TitleScene::update() {
@@ -34,6 +47,11 @@ void TitleScene::update() {
 }
 
 void TitleScene::render() {
-	g_System->go2D();
-    _backdrop->render(0, 0, 1, 1280, 720);
+	_game->getSystem()->go2D();
+    
+    _backdrop->render();    
+    _backdrop2->render();    
+
+    _game->getSystem()->go3D();
+    _backdrop3D->render();
 }

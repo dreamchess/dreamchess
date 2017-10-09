@@ -18,33 +18,47 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_GAMECONFIG_H
+#define DREAMCHESS_GAMECONFIG_H
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
-class LaunchArguments;
-class System;
-class ResourcePool;
+#include <string>
 
-class DreamChess {
+class LaunchArguments {
 public:
-	DreamChess() {_currentScene = nullptr;}
-	~DreamChess() { }
+	LaunchArguments(int c, char **v) {
+		argc = c;
+		argv = v;
+	}
+	
+    int argc;
+    char **argv;
+};
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-	ResourcePool *getResourcePool() {return _resourcePool;}
-	System *getSystem() {return _system;}
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
+class ConfigOption {
+public:
+	int type;
+	std::string name;
 
-	ResourcePool *_resourcePool;
-	System *_system;
+	int value;
+
+	std::string string;
+};
+
+class GameConfig {
+public:
+	void parseLaunchOptions(LaunchArguments *arg);
+
+	int loadConfig();
+	int saveConfig();
+
+    int player[2];
+    int cpu_level;
+    int difficulty;
+
+	int width;
+	int height;
+	int fs;
+	char *engine;    
 };
 
 #endif

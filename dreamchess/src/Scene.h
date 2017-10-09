@@ -21,13 +21,18 @@
 #ifndef DREAMCHESS_SCENE_H
 #define DREAMCHESS_SCENE_H
 
+class DreamChess;
+
 class Scene {
 public:
+	Scene(DreamChess *d) {_game = d;}
+	DreamChess *getGame() {return _game;}
+
 	virtual void init() = 0;
 	virtual void update() = 0;
 	virtual void render() = 0;
-private:
-	// fbo?
+protected:
+	DreamChess *_game;
 };
 
 #endif

@@ -50,7 +50,7 @@ static int dialog_ingame_open(gg_widget_t *widget, gg_widget_t *emitter, void *d
 
 static int dialog_savegame_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), TRUE));
+    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), true));
     return 1;
 }
 

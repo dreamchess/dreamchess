@@ -22,7 +22,7 @@
 #include <errno.h>
 
 #include "dialogs.h"
-#include "system_config.h"
+#include "System.h"
 
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;
 
@@ -98,11 +98,12 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 
 	gg_dialog_close();
 
-	if (g_Dreamchess->setResolution(0)) {
+    // FIXME
+	/*if (g_DreamChess->setResolution(0)) {
 		config_restore(old_config);
 
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
-	}
+	}*/
 
 	free(old_config);
 

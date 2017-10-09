@@ -1,3 +1,0 @@
-#include "winuser.h"
-1 RT_MANIFEST dpi.manifest
-icon ICON "win32.ico"

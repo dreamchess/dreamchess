@@ -3,7 +3,7 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(TINYXML2 REQUIRED)
+find_package(PUGIXML REQUIRED)
 
 BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.cpp)
 FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.cpp)
@@ -13,23 +13,39 @@ if(MINGW)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>") 
 endif(MINGW)
 
+find_path(GLM_INCLUDE_DIR glm/glm.hpp)
+if (GLM_INCLUDE_DIR)
+    include_directories(${GLM_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "Unable to find GLM!")
+endif()
+
 add_executable(dreamchess
-    #ChessBoard.cpp
-    #ChessBoard.h
+    ChessBoard.cpp
+    ChessBoard.h
     DreamChess.cpp
     DreamChess.h
-    #MoveList.cpp
-    #MoveList.h
-    #GameConfig.h
-    #GameConfig.cpp
-    #History.cpp
-    #History.h
+    MoveList.cpp
+    MoveList.h
+    GameConfig.h
+    GameConfig.cpp
+    History.cpp
+    History.h
     System.cpp
     System.h
+    Texture.h
     Texture.cpp
+    Model.h
+    Model.cpp
     Scene.h
     TitleScene.cpp
     TitleScene.h
+    ResourcePool.h
+    ResourcePool.cpp
+    Image.h
+    Image.cpp
+    Object.h
+    Object.cpp
     Main.cpp
     #${BISON_PgnParser_OUTPUTS}
     #${FLEX_PgnScanner_OUTPUTS}
@@ -45,19 +61,19 @@ endif()
 if(MSVC)
     target_sources(dreamchess PRIVATE msvc/getopt.c msvc/getopt.h)
 endif()
-
 #[[
 target_sources(dreamchess
     PRIVATE
     audio/playlist.cpp
     audio/playlist.h
     audio/sdlmixer.cpp
-    include/audio.h
+    audio/audio.h
 )
 
 source_group("Source Files\\audio" REGULAR_EXPRESSION "/audio/.*.cpp$")
 source_group("Header Files\\audio" REGULAR_EXPRESSION /audio/.*.h$)
-
+]]
+#[[
 target_sources(dreamchess
     PRIVATE
     dialogs/configuration.cpp
@@ -68,11 +84,12 @@ target_sources(dreamchess
     dialogs/styles.cpp
     dialogs/system_dialog.cpp
     dialogs/time.cpp
-    include/dialogs.h
+    dialogs/dialogs.h
 )
 
 source_group("Source Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.cpp$)
 source_group("Header Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.h$)
+
 
 target_sources(dreamchess
     PRIVATE
@@ -99,35 +116,35 @@ target_sources(dreamchess
     gamegui/vbox.cpp
     gamegui/viewport.cpp
     gamegui/widget.cpp
-    include/gamegui.h
-    include/gamegui/action.h
-    include/gamegui/align.h
-    include/gamegui/bin.h
-    include/gamegui/box.h
-    include/gamegui/clipping.h
-    include/gamegui/container.h
-    include/gamegui/dialog.h
-    include/gamegui/edit.h
-    include/gamegui/entry.h
-    include/gamegui/frame.h
-    include/gamegui/hbox.h
-    include/gamegui/image.h
-    include/gamegui/label.h
-    include/gamegui/option.h
-    include/gamegui/queue.h
-    include/gamegui/scrollbarv.h
-    include/gamegui/select.h
-    include/gamegui/seperatorh.h
-    include/gamegui/seperatorv.h
-    include/gamegui/signal.h
-    include/gamegui/system.h
-    include/gamegui/vbox.h
-    include/gamegui/viewport.h
-    include/gamegui/widget.h
+    gamegui/gamegui.h
+    gamegui/action.h
+    gamegui/align.h
+    gamegui/bin.h
+    gamegui/box.h
+    gamegui/clipping.h
+    gamegui/container.h
+    gamegui/dialog.h
+    gamegui/edit.h
+    gamegui/entry.h
+    gamegui/frame.h
+    gamegui/hbox.h
+    gamegui/image.h
+    gamegui/label.h
+    gamegui/option.h
+    gamegui/queue.h
+    gamegui/scrollbarv.h
+    gamegui/select.h
+    gamegui/seperatorh.h
+    gamegui/seperatorv.h
+    gamegui/signal.h
+    gamegui/system.h
+    gamegui/vbox.h
+    gamegui/viewport.h
+    gamegui/widget.h
 )
 
 source_group("Source Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.cpp$)
-source_group("Header Files\\gamegui" REGULAR_EXPRESSION /include/gamegui/.*.h$)
+source_group("Header Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.h$)
 ]]
 
 #[[
@@ -157,10 +174,10 @@ target_sources(dreamchess
     gui/vkeyboard.cpp
     gui/xmlsavefile.cpp
 )
-]]
 
 source_group("Source Files\\gui" REGULAR_EXPRESSION /gui/.*.cpp$)
 source_group("Header Files\\gui" REGULAR_EXPRESSION /gui/.*.h$)
+]]
 
 if(UNIX)
     target_compile_definitions(dreamchess PRIVATE -DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/dreamchess")
@@ -173,9 +190,9 @@ target_include_directories(dreamchess
     ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
-    ${MXML_INCLUDE_DIRS}
+    ${PUGIXML_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/gamegui
     ${CMAKE_BINARY_DIR}
 )
 
@@ -186,7 +203,7 @@ target_link_libraries(dreamchess
     ${SDL2_MIXER_LIBRARY}
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${MXML_LIBRARY}
+    ${PUGIXML_LIBRARY}
 )
 
 if(WIN32)

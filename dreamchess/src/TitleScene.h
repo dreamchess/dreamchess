@@ -22,15 +22,21 @@
 #define DREAMCHESS_TITLESCENE_H
 
 #include "Scene.h"
-class Texture;
+class Image;
+class Model;
 
 class TitleScene: public Scene {
 public:
+	TitleScene(DreamChess *d);
 	void init();
 	void update();
 	void render();
 private:
-	Texture *_backdrop;
+	Image *_backdrop;
+	Image *_backdrop2;
+	Image *_backdrop3D;	
+
+	Model *_chessBoard;
 };
 
 #endif

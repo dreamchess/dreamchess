@@ -18,33 +18,24 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_OBJECT_H
+#define DREAMCHESS_OBJECT_H
 
-class GameConfig;
-class History; 
-class TitleScene;
+#include "glm/glm.hpp"
+
 class Scene;
-class LaunchArguments;
-class System;
-class ResourcePool;
 
-class DreamChess {
+class Object {
 public:
-	DreamChess() {_currentScene = nullptr;}
-	~DreamChess() { }
+    Object() { }
+	virtual void render() { }
+    glm::vec3 getPosition() {return _position;}
+    void setPosition(float x, float y, float z = 0) {_position = glm::vec3(x, y, z);}
 
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-	ResourcePool *getResourcePool() {return _resourcePool;}
-	System *getSystem() {return _system;}
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
+protected:
+    glm::vec3 _position, _rotation, _size, _scale;
 
-	ResourcePool *_resourcePool;
-	System *_system;
+    Scene *_scene;
 };
 
 #endif

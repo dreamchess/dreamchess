@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <mxml.h>
 
-#include "debug.h"
+//#include "debug.h"
 #include "playlist.h"
 
 static char *read_opaque(mxml_node_t *top, const char *name)
@@ -86,8 +86,8 @@ void playlist_add_tracks(playlist_t *playlist, char *dir)
 	f = fopen(filename, "r");
 	if (f)
 		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
-	else
-		DBG_ERROR("could not open tracks file");
+	/*else
+		DBG_ERROR("could not open tracks file");*/
 
 	track = tree;
 
@@ -110,8 +110,8 @@ void playlist_add_tracks(playlist_t *playlist, char *dir)
 
 		filename = read_opaque(track, "filename");
 
-		if (!filename)
-			DBG_ERROR("could not parse XML file");
+		/*if (!filename)
+			DBG_ERROR("could not parse XML file");*/
 
 		fullname = (char *)malloc(strlen(dir) + strlen(filename) + 2);
 		strcpy(fullname, dir);

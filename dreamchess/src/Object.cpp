@@ -18,33 +18,11 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#include <SDL.h>
+#include <SDL_Image.h>
+#include <GL/glew.h>
+#include "Object.h"
+#include "System.h"
 
-class GameConfig;
-class History; 
-class TitleScene;
-class Scene;
-class LaunchArguments;
-class System;
-class ResourcePool;
-
-class DreamChess {
-public:
-	DreamChess() {_currentScene = nullptr;}
-	~DreamChess() { }
-
-	void go();
-	void gameLoop();
-	int init(LaunchArguments *arg);
-	ResourcePool *getResourcePool() {return _resourcePool;}
-	System *getSystem() {return _system;}
-private:
-	TitleScene *_titleScene; 
-	Scene *_currentScene;
-
-	ResourcePool *_resourcePool;
-	System *_system;
-};
-
-#endif
+#include <stdio.h>
+#include <string>

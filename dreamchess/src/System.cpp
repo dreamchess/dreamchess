@@ -74,7 +74,11 @@ void System::go2D() {
 
 
 void System::go3D() {
-
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    gluPerspective(45.0f, _width/_height, 1.0f, 1000.0f);
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
 }
 
 void System::initGL() {
@@ -174,7 +178,7 @@ int System::initVideo() {
 
     initGL();
 
-    SDL_ShowCursor(SDL_DISABLE);
+    //SDL_ShowCursor(SDL_DISABLE);
 
     //SDL_WM_SetCaption( "DreamChess", NULL );
 
