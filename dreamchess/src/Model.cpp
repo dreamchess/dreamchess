@@ -23,126 +23,50 @@
 #include <GL/glew.h>
 #include "Model.h"
 #include "System.h"
+#include "Scene.h"
+#include "DreamChess.h"
+#include "ResourcePool.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 #include <stdio.h>
 #include <string>
 
-int Model::load(const char *mesh) { //, const char *texture) {
-	return true;
+Model::Model(Scene *s, std::string mesh, std::string texture) {
+    _scene = s;
+    _mesh = static_cast<Mesh*>(_scene->getGame()->getResourcePool()->getResource(mesh));
+    _texture = static_cast<Texture*>(_scene->getGame()->getResourcePool()->getResource(texture));    
+    _size = glm::vec3(1, 1, 1);
 }
 
-Mesh *Model::loadDCM(const char *filename) {
-    FILE *f;
-    Mesh *mesh;
-    int version;
-    char id[3];
-    int vertices;
-    int i;
+void Model::render() {
+    float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float mcolor[4] = { 1.0f, 1.0f, 1.0f };
+    float alpha = 1.0f;
+    int specular = 0;
 
-    f = fopen(filename, "r");
+    mcolor[3] = alpha;
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mcolor);
 
-    if (!f) {
-        //DBG_ERROR("couldn't open %s", filename);
-        return NULL;
-    }
+    if (specular)
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specReflection);
+    else
+        glMaterialfv(GL_FRONT, GL_SPECULAR, nospecReflection);
+    glMateriali(GL_FRONT, GL_SHININESS, 128);
 
-    if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4)
-            || ((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M'))) {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, _texture->getID());
 
-        //DBG_ERROR("invalid DCM file header");
-        return NULL;
-    }
+    glPushMatrix();
+    glTranslatef(_position.x, _position.y, _position.z);
+    glRotatef(_rotation.x, 1, 0, 0);
+    glRotatef(_rotation.y, 0, 1, 0);
+    glRotatef(_rotation.z, 0, 0, 1); 
 
-    if (version != 100) {
-        //DBG_ERROR( "DCM version %i not supported", version);
-        return NULL;
-    }
+    glCallList(_mesh->list);
 
-    if (fscanf(f, "%d\n", &vertices) != 1) {
-        //DBG_ERROR("error reading DCM file");
-        return NULL;
-    }
+    glDisable(GL_TEXTURE_2D);
 
-    mesh = new Mesh(); //(Mesh *)malloc(sizeof(mesh_t));
-
-    mesh->has_bones = 0;
-    mesh->vertices = vertices;
-    mesh->vertex = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 3);
-
-    for (i = 0; i < vertices * 3; i++) {
-        if (fscanf(f, "%f\n", &mesh->vertex[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-    }
-
-    mesh->normal = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 3);
-
-    for (i = 0; i < vertices * 3; i++) {
-        if (fscanf(f, "%f\n", &mesh->normal[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-    }
-
-    mesh->tex_coord = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 2);
-
-    for (i = 0; i < vertices * 2; i++) {
-        if (fscanf(f, "%f\n", &mesh->tex_coord[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-    }
-
-    /* As we don't flip our images we flip our u coordinates instead. */
-    for (i = 1; i < vertices * 2; i += 2)
-        mesh->tex_coord[i] = 1.0f - mesh->tex_coord[i];
-
-    if (fscanf(f, "%d\n", &mesh->groups) != 1) {
-        //DBG_ERROR("error reading DCM file");
-        exit(1);
-    }
-
-    mesh->group = (group_t *)malloc(sizeof(group_t) * mesh->groups);
-
-    for (i = 0; i < mesh->groups; i++) {
-        char line[11];
-        int group_len;
-        int j;
-
-        fgets(line, 11, f);
-
-        if (!strcmp(line, "STRIP\n"))
-            mesh->group[i].type = PRIM_STRIP;
-        else if (!strcmp(line, "TRIANGLES\n"))
-            mesh->group[i].type = PRIM_TRIANGLES;
-        else
-        {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-
-        if (fscanf(f, "%d\n", &group_len) != 1)
-        {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-
-        mesh->group[i].len = group_len;
-
-        mesh->group[i].data = (GLuint *)malloc(sizeof(GLuint) * group_len);
-
-        for (j = 0; j < group_len; j++)
-        {
-            if (fscanf(f, "%u\n", &mesh->group[i].data[j]) != 1)
-            {
-                //DBG_ERROR("error reading DCM file");
-                exit(1);
-            }
-        }
-    }
-
-    fclose(f);
-
-    return mesh;
+    glPopMatrix();
 }

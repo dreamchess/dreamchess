@@ -63,6 +63,10 @@ void Texture::load(const char *filename, int alpha, int clamp )
         SDL_FreeSurface( texture_image );
 }
 
+glm::vec4 Texture::getUVForRegion(int x, int y, int width, int height) {
+    return glm::vec4((float)x / (float)_nativeSize.x, (float)y / (float)_nativeSize.y, (float)(width+x) / (float)_nativeSize.x, (float)(height+y) / (float)_nativeSize.y);
+}
+
 void Texture::loadFromSurface(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp) {
     int w, h;
     SDL_Surface *image;
@@ -125,4 +129,5 @@ void Texture::loadFromSurface(SDL_Surface *surface, SDL_Rect *area, int alpha, i
 
     _uv = glm::vec2(area->w / (float) w, area->h / (float) h);
     _size = glm::vec2(area->w, area->h);
+    _nativeSize = glm::vec2(w, h);
 }

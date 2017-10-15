@@ -21,18 +21,27 @@
 #ifndef DREAMCHESS_SCENE_H
 #define DREAMCHESS_SCENE_H
 
+#include <vector>
+
 class DreamChess;
+class Object;
 
 class Scene {
 public:
-	Scene(DreamChess *d) {_game = d;}
+	Scene(DreamChess *d) {_game = d; _is3D = false;}
 	DreamChess *getGame() {return _game;}
+	void addObject(Object *o);
+	void removeObject(Object *o);
+	int getObjectCount() {return _objects.size();}
+
+	void render();
 
 	virtual void init() = 0;
 	virtual void update() = 0;
-	virtual void render() = 0;
 protected:
+	bool _is3D;
 	DreamChess *_game;
+	std::vector<Object*> _objects;
 };
 
 #endif

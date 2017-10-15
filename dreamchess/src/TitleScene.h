@@ -33,10 +33,12 @@ public:
 	void render();
 private:
 	Image *_backdrop;
-	Image *_backdrop2;
-	Image *_backdrop3D;	
 
 	Model *_chessBoard;
+	Image *_chessBoardSquares;
+
+	Model *_whiteRook;
+	Model *_blackQueen;
 };
 
 #endif

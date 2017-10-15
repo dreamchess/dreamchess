@@ -18,20 +18,26 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_IMAGE_H
-#define DREAMCHESS_IMAGE_H
-
+#include "Scene.h"
+#include "DreamChess.h"
+#include "System.h"
 #include "Object.h"
-#include <string>
 
-class Image: public Object {
-public:
-	Image(Scene *s, std::string filename);
-	void setClipRegion(int x, int y, int width, int height);
-	void render();
-private:
-    Texture *_texture;
-    glm::vec4 _clipRegion;
-};
+void Scene::addObject(Object *o) {
+    _objects.push_back(o);
+}
 
-#endif
+void Scene::removeObject(Object *o) {
+    // TODO
+}
+
+void Scene::render() {
+    if (_is3D)
+        _game->getSystem()->go3D();
+    else
+        _game->getSystem()->go2D(); 
+
+    for (int i = 0; i < _objects.size(); i++) {
+        _objects[i]->render();
+    }
+}

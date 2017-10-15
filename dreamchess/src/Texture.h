@@ -36,8 +36,10 @@ public:
     unsigned int getID() {return _id;}
     glm::vec2 getSize() {return _size;}
     glm::vec2 getUV() {return _uv;}
+    glm::vec4 getUVForRegion(int x, int y, int width, int height);
 private:
     unsigned int _id;
+    glm::vec2 _nativeSize;
     glm::vec2 _size;
     glm::vec2 _uv;
 };

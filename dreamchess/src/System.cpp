@@ -24,6 +24,63 @@
 #include <GL/glew.h>
 #include "System.h"
 
+Shader::Shader(System *s, std::string vert, std::string frag) {
+    _system = s;
+    _vertexShaderID = load(vert, SHADER_VERTEX);
+    _fragmentShaderID = load(frag, SHADER_FRAGMENT);
+   
+    _programID = glCreateProgram();
+    glAttachShader(_programID, _vertexShaderID);
+    glAttachShader(_programID, _fragmentShaderID);
+
+    // Set up the attribute locations..
+    glBindAttribLocation(_programID, VERTLOCATION, "aPosition");
+    glBindAttribLocation(_programID, NORMLOCATION, "aNormal");
+    glBindAttribLocation(_programID, TEXLOCATION, "aTexCoord");
+    glBindAttribLocation(_programID, COLLOCATION, "aColour");
+    glBindAttribLocation(_programID, COLMODLOCATION, "aColourMod");
+    
+    glLinkProgram(_programID);
+
+    //_projectionMatrixLocation = glGetUniformLocation(_program, "uProjectionMatrix");    
+}
+
+int Shader::load(std::string filename, int type) {
+    unsigned int shaderID = 0;
+
+    _system->chDataDir();
+
+    std::ifstream fileStream = std::ifstream(filename);
+    if (!fileStream.is_open()) {
+        printf("Error opening shader file. %s\n", filename.c_str());
+        exit(1);        
+    }
+
+    std::string str = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
+    const char *shaderText = str.c_str();
+
+    if (type == SHADER_VERTEX) 
+        shaderID = glCreateShader(GL_VERTEX_SHADER);
+    else 
+        shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+    glShaderSource(shaderID, 1, &shaderText, nullptr);
+    glCompileShader(shaderID);
+
+    int stat;
+    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &stat);
+    if (stat == GL_FALSE) {
+        printf("Shader %s failed to compile.\n", filename.c_str());
+
+        int length;
+        char log[255];
+        glGetShaderInfoLog(shaderID, 255, &length, (char *)log);
+        printf("LOG: %s\n", log);        
+    }
+
+    return shaderID;
+}
+
 void System::finishFrame() {
     SDL_GL_SwapWindow(_window);
 }
@@ -64,6 +121,7 @@ int System::pollEvents() {
 }
 
 void System::go2D() {
+    glDisable(GL_DEPTH_TEST);
     glViewport( 0, 0, _width, _height );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -74,9 +132,10 @@ void System::go2D() {
 
 
 void System::go3D() {
+    glEnable(GL_DEPTH_TEST); 
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    gluPerspective(45.0f, _width/_height, 1.0f, 1000.0f);
+    gluPerspective(90.0f, (float)_width/(float)_height, 1.0f, 1000.0f);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
@@ -146,24 +205,27 @@ int System::initVideo() {
         return 1;
     }
 
-   /* err = glewInit();
-    if (err != GLEW_OK)
-    {
-        DBG_ERROR("failed to initialize GLEW: %s", glewGetErrorString(err));
+    err = glewInit();
+    if (err != GLEW_OK) {
+        printf("Failed to init GLEW\n");
+        //DBG_ERROR("failed to initialize GLEW: %s", glewGetErrorString(err));
         exit(1);
     }
 
     if (!glewIsSupported("GL_ARB_framebuffer_object"))
     {
-        DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
+        //DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
         exit(1);
     }
 
     if (!glewIsSupported("GL_ARB_texture_non_power_of_two"))
     {
-        DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
+        //DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
         exit(1);
-    }*/
+    }
+
+    _currentShader = new Shader(this, "shader/vertex.glsl", "shader/fragment.glsl");
+
 
     /*glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
     //init_fbo();

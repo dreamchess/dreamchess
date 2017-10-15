@@ -38,6 +38,7 @@ add_executable(dreamchess
     Model.h
     Model.cpp
     Scene.h
+    Scene.cpp
     TitleScene.cpp
     TitleScene.h
     ResourcePool.h
@@ -46,6 +47,8 @@ add_executable(dreamchess
     Image.cpp
     Object.h
     Object.cpp
+    Mesh.h
+    Mesh.cpp
     Main.cpp
     #${BISON_PgnParser_OUTPUTS}
     #${FLEX_PgnScanner_OUTPUTS}

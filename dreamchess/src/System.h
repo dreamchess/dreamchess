@@ -21,7 +21,27 @@
 #ifndef DREAMCHESS_SYSTEM_H
 #define DREAMCHESS_SYSTEM_H
 
+#include <string>
+#include <fstream>
+
 struct SDL_Window;
+#include "glm/glm.hpp"
+
+enum {SHADER_VERTEX, SHADER_FRAGMENT};
+enum {VERTLOCATION, NORMLOCATION, TEXLOCATION, COLLOCATION, COLMODLOCATION};
+
+class System;
+
+class Shader {
+public:
+	Shader(System *s, std::string vert, std::string frag);
+	int load(std::string filename, int type);
+private:
+	System *_system;
+	unsigned int _programID;
+	unsigned int _vertexShaderID;
+	unsigned int _fragmentShaderID;
+};
 
 class System {
 public:
@@ -37,6 +57,9 @@ public:
 	int chDataDir();
 	int chUserDir();
 private:
+	glm::mat4 _currentModelMatrix;
+	Shader *_currentShader;
+
 	SDL_Window *_window;
 	int _width, _height, _ms;
 	bool _fullscreen;

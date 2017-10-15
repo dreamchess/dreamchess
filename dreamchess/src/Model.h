@@ -21,56 +21,17 @@
 #ifndef DREAMCHESS_MODEL_H
 #define DREAMCHESS_MODEL_H
 
+#include <string>
+#include "Object.h"
+
 class Texture;
 class Mesh;
 
-#include "glm/glm.hpp"
-#include "ResourcePool.h"
-
-typedef enum primitive_type
-{
-    PRIM_TRIANGLES,
-    PRIM_STRIP
-} primitive_type_t;
-
-typedef struct group
-{
-    primitive_type_t type;
-    int len;
-    unsigned int *data;
-} group_t;
-
-typedef struct bone
-{
-    char *name;
-    float offset[3];
-    int children;
-    int *child;
-} bone_t;
-
-class Mesh {
+class Model: public Object {
 public:
-    int has_bones;
-    int vertices;
-    float *vertex;
-    float *normal;
-    float *tex_coord;
-    int *bone_w;
-    int groups;
-    group_t *group;
-    bone_t *bone;
-    unsigned int list;
-};
-
-class Model: public Resource {
-public:
-    int load(const char *mesh); //, const char *texture);
-	Mesh *loadDCM(const char *filename);
+    Model(Scene *s, std::string mesh, std::string texture);
     void render();
-	//void loadFromSurface(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);
-	//void render(float xpos, float ypos, float zpos, float width, float height);
 private:
-    glm::vec3 _position, _rotation;
     Texture *_texture;
     Mesh *_mesh;
 };

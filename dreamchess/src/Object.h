@@ -31,6 +31,16 @@ public:
 	virtual void render() { }
     glm::vec3 getPosition() {return _position;}
     void setPosition(float x, float y, float z = 0) {_position = glm::vec3(x, y, z);}
+    void setPosition(glm::vec3 p) {_position = p;}
+    glm::vec3 getRotation() {return _rotation;}
+    void setRotation(float x, float y, float z = 0) {_rotation = glm::vec3(x, y, z);}
+    void setRotation(glm::vec3 r) {_rotation = r;}    
+    glm::vec3 getScale() {return _scale;}
+    void setScale(float x, float y, float z = 0) {_scale = glm::vec3(x, y, z);}
+    void setScale(glm::vec3 s) {_scale = s;}       
+    glm::vec3 getSize() {return _size;}
+    void setSize(float x, float y, float z = 0) {_size = glm::vec3(x, y, z);}
+    void setSize(glm::vec3 s) {_size = s;}       
 
 protected:
     glm::vec3 _position, _rotation, _size, _scale;

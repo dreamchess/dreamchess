@@ -24,7 +24,7 @@
 
 #include "ResourcePool.h"
 #include "Texture.h"
-#include "Model.h"
+#include "Mesh.h"
 #include "System.h"
 #include "DreamChess.h"
 
@@ -50,7 +50,7 @@ Resource *ResourcePool::getResource(std::string name) {
 			r = static_cast<Resource *>(getTexture(name.c_str()));
 		}
 		else if (extension == "dcm") {
-			r = static_cast<Resource *>(getModel(name.c_str()));
+			r = static_cast<Resource *>(getMesh(name.c_str()));
 		}
 
 		r->_filename = name;
@@ -70,9 +70,9 @@ Texture *ResourcePool::getTexture(const char *filename) {
 	return t;
 }
 
-Model *ResourcePool::getModel(const char *filename) {
-	Model *m = new Model();
-	m->load(filename);
+Mesh *ResourcePool::getMesh(const char *filename) {
+	Mesh *m = new Mesh();
+	m->loadDCM(filename);
 
 	return m;
 }

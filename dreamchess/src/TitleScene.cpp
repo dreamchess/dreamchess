@@ -32,26 +32,35 @@ TitleScene::TitleScene(DreamChess *d) : Scene(d) {
 
 void TitleScene::init() {
 	_backdrop = new Image(this, "menu_title.png");
-	
-	_backdrop2 = new Image(this, "menu_title.png");
-    _backdrop2->setPosition(100, 100, 1);	
-	
-	_backdrop3D = new Image(this, "menu_title.png"); 
-	_backdrop3D->setPosition(1, 1, -600);
+	_backdrop->setPosition(1280 / 2, 720 / 2);
+	_backdrop->setSize(1280, 720);
+	addObject(_backdrop);
 
-	//_chessBoard = static_cast<Model*>(g_ResourcePool->getResource("boards/classic/board.dcm"));
+	_chessBoard = new Model(this, "boards/classic/board.dcm", "boards/classic/board.png");
+	_chessBoard->setPosition(-1.5, -0.25, -5);
+	_chessBoard->setRotation(-80, 0, 45);
+	addObject(_chessBoard);
+
+	_chessBoardSquares = new Image(this, "boards/classic/board.png");
+	_chessBoardSquares->setClipRegion(92, 92, 840, 840);
+
+	glm::vec3 pos = _chessBoard->getPosition();
+	_chessBoardSquares->setPosition(pos.x, pos.y, pos.z);
+	_chessBoardSquares->setRotation(_chessBoard->getRotation());
+	_chessBoardSquares->setSize(8, 8, 1);
+	addObject(_chessBoardSquares);
+
+	_whiteRook = new Model(this, "pieces/classic/rook.dcm", "pieces/classic/white.png");
+	_whiteRook->setPosition(1, -0.25, -5);
+	_whiteRook->setRotation(-80, 0, 45);
+	addObject(_whiteRook);
+
+	_blackQueen = new Model(this, "pieces/classic/queen.dcm", "pieces/classic/black.png");
+	_blackQueen->setPosition(-1.5, -0.25, -5);
+	_blackQueen->setRotation(-80, 0, 45);	
+	addObject(_blackQueen);
 }
 
 void TitleScene::update() {
 
-}
-
-void TitleScene::render() {
-	_game->getSystem()->go2D();
-    
-    _backdrop->render();    
-    _backdrop2->render();    
-
-    _game->getSystem()->go3D();
-    _backdrop3D->render();
 }

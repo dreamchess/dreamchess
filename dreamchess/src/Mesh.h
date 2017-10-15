@@ -18,20 +18,51 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_IMAGE_H
-#define DREAMCHESS_IMAGE_H
+#ifndef DREAMCHESS_MESH_H
+#define DREAMCHESS_MESH_H
 
-#include "Object.h"
-#include <string>
+class Texture;
+class Mesh;
 
-class Image: public Object {
+#include "glm/glm.hpp"
+#include "ResourcePool.h"
+
+typedef enum primitive_type
+{
+    PRIM_TRIANGLES,
+    PRIM_STRIP
+} primitive_type_t;
+
+typedef struct group
+{
+    primitive_type_t type;
+    int len;
+    unsigned int *data;
+} group_t;
+
+typedef struct bone
+{
+    char *name;
+    float offset[3];
+    int children;
+    int *child;
+} bone_t;
+
+class Mesh: public Resource {
 public:
-	Image(Scene *s, std::string filename);
-	void setClipRegion(int x, int y, int width, int height);
-	void render();
-private:
-    Texture *_texture;
-    glm::vec4 _clipRegion;
+	int loadDCM(const char *filename);
+	void makeList();
+
+    int has_bones;
+    int vertices;
+    float *vertex;
+    float *normal;
+    float *tex_coord;
+    int *bone_w;
+    int groups;
+    group_t *group;
+    bone_t *bone;
+    unsigned int list;
 };
 
 #endif

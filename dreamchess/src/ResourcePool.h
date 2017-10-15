@@ -23,9 +23,9 @@
 
 #include <unordered_map>
 
-class Texture;
-class Model;
 class DreamChess;
+class Texture;
+class Mesh;
 
 class Resource {
 public:
@@ -39,7 +39,7 @@ public:
 
 	Resource *getResource(std::string name);
 	Texture *getTexture(const char *filename);
-	Model *getModel(const char *filename);
+	Mesh *getMesh(const char *filename);
 private:
     std::unordered_map<std::string, Resource *> _resources;
     DreamChess *_game;

@@ -32,29 +32,37 @@ Image::Image(Scene *s, std::string filename) {
     _scene = s;
     _texture = static_cast<Texture*>(_scene->getGame()->getResourcePool()->getResource(filename));
     _size = glm::vec3(_texture->getSize().x, _texture->getSize().y, 1);
+    setClipRegion(0, 0, _size.x, _size.y);
+}
+
+void Image::setClipRegion(int x, int y, int width, int height) {
+    _clipRegion = _texture->getUVForRegion(x, y, width, height);
 }
 
 void Image::render() { 
-    float u1 = 0.0f;
-    float v1 = 0.0f;
-    float u2 = _texture->getUV().x;
-    float v2 = _texture->getUV().y;
-
     glEnable( GL_TEXTURE_2D );
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, _texture->getID());
 
+    glPushMatrix();
+    glTranslatef(_position.x, _position.y, _position.z);
+    glRotatef(_rotation.x, 1, 0, 0);
+    glRotatef(_rotation.y, 0, 1, 0);
+    glRotatef(_rotation.z, 0, 0, 1); 
+
     glBegin(GL_QUADS);
-    glTexCoord2f(u1, v1);
-    glVertex3f( _position.x, _position.y + _size.y, _position.z );
-    glTexCoord2f(u2, v1);
-    glVertex3f( _position.x + _size.x,  _position.y + _size.y, _position.z );
-    glTexCoord2f(u2, v2);
-    glVertex3f( _position.x + _size.x,  _position.y, _position.z );
-    glTexCoord2f(u1, v2);
-    glVertex3f( _position.x, _position.y, _position.z );
+    glTexCoord2f(_clipRegion[0], _clipRegion[1]);
+    glVertex3f(-(_size.x / 2), (_size.y / 2), 0);
+    glTexCoord2f(_clipRegion[2], _clipRegion[1]);
+    glVertex3f((_size.x / 2), (_size.y / 2), 0);
+    glTexCoord2f(_clipRegion[2], _clipRegion[3]);
+    glVertex3f((_size.x / 2), -(_size.y / 2), 0);
+    glTexCoord2f(_clipRegion[0], _clipRegion[3]);
+    glVertex3f(-(_size.x / 2), -(_size.y / 2), 0);
     glEnd();
+
+    glPopMatrix();
 
     glDisable(GL_TEXTURE_2D);
 }
