@@ -17,6 +17,7 @@ addons:
     - bison
     - flex
     - libpugixml-dev
+    - libglm-dev
     - libsdl2-dev
     - libsdl2-image-dev
     - libsdl2-mixer-dev
