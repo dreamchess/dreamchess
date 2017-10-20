@@ -19,7 +19,7 @@
 */
 
 #include <SDL.h>
-#include <SDL_Image.h>
+#include <SDL_image.h>
 #include <GL/glew.h>
 #include "Texture.h"
 #include "Image.h"
