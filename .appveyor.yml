@@ -27,12 +27,24 @@ install:
     %DEP% mkdir %PREFIX%\include\SDL2
     %DEP% mkdir %PREFIX%\include\GL
     %DEP% mkdir %PREFIX%\lib
-    %MSVC% %DEP% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
     %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
   # flex / bison
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v.2.4.9/win_flex_bison-2.4.9.zip
     %MSVC% %DEP% 7z x win_flex_bison-2.4.9.zip -o%PREFIX%\win_flex_bison > nul
+  # glm
+  - |-
+    %MSVC% %DEP% appveyor DownloadFile https://github.com/g-truc/glm/releases/download/0.9.8.5/glm-0.9.8.5.zip
+    %MSVC% %DEP% 7z x glm-0.9.8.5.zip > nul
+    %MSVC% %DEP% robocopy glm-0.9.8.5\glm %PREFIX%\include\glm /S > nul
+  # pugixml
+  - |-
+    %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.zip
+    %MSVC% %DEP% 7z x pugixml-1.8.zip > nul
+    %MSVC% %DEP% cmake pugixml-1.8
+    %MSVC% %DEP% cmake --build pugixml-1.8 --config Release
+    %MSVC% %DEP% copy pugixml-1.8\Release\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy pugixml-1.8\src\*.hpp %PREFIX%\include > nul
   # SDL
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
