@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
+
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #elif defined(_MSC_VER)
