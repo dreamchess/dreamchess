@@ -39,20 +39,14 @@ void dbg_set_level(int level)
     dbg_level = level;
 }
 
-#ifdef HAVE_VARARGS_MACROS
 void dbg_error(const char *file, int line, const char *fmt, ...)
-#else
-void dbg_error(const char *fmt, ...)
-#endif
 {
     va_list ap;
 
     if (dbg_level < 1)
         return;
 
-#ifdef HAVE_VARARGS_MACROS
     fprintf(stderr, "%s:%d: ", file, line);
-#endif
     fprintf(stderr, "error: ");
 
     va_start(ap, fmt);
@@ -62,20 +56,14 @@ void dbg_error(const char *fmt, ...)
     fprintf(stderr, "\n");
 }
 
-#ifdef HAVE_VARARGS_MACROS
 void dbg_warn(const char *file, int line, const char *fmt, ...)
-#else
-void dbg_warn(const char *fmt, ...)
-#endif
 {
     va_list ap;
 
     if (dbg_level < 2)
         return;
 
-#ifdef HAVE_VARARGS_MACROS
     printf("%s:%d: ", file, line);
-#endif
     printf("warning: ");
 
     va_start(ap, fmt);
@@ -85,20 +73,14 @@ void dbg_warn(const char *fmt, ...)
     printf("\n");
 }
 
-#ifdef HAVE_VARARGS_MACROS
 void dbg_log(const char *file, int line, const char *fmt, ...)
-#else
-void dbg_log(const char *fmt, ...)
-#endif
 {
     va_list ap;
 
     if (dbg_level < 3)
         return;
 
-#ifdef HAVE_VARARGS_MACROS
     printf("%s:%d: ", file, line);
-#endif
 
     va_start(ap, fmt);
     vprintf(fmt, ap);
