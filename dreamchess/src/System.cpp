@@ -58,13 +58,13 @@ int Shader::load(std::string filename, int type) {
 
     _system->chDataDir();
 
-    std::ifstream fileStream = std::ifstream(filename);
+    std::ifstream fileStream(filename);
     if (!fileStream.is_open()) {
         printf("Error opening shader file. %s\n", filename.c_str());
         exit(1);        
     }
 
-    std::string str = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
+    std::string str{std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>()};
     const char *shaderText = str.c_str();
 
     if (type == SHADER_VERTEX) 
