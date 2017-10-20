@@ -35,6 +35,9 @@ class System;
 class Shader {
 public:
 	Shader(System *s, std::string vert, std::string frag);
+	~Shader();
+	
+	void activate();
 	int load(std::string filename, int type);
 private:
 	System *_system;

@@ -45,6 +45,14 @@ Shader::Shader(System *s, std::string vert, std::string frag) {
     //_projectionMatrixLocation = glGetUniformLocation(_program, "uProjectionMatrix");    
 }
 
+Shader::~Shader() {
+    glDeleteShader(_programID);
+}
+
+void Shader::activate() {
+    glUseProgram(_programID);
+}
+
 int Shader::load(std::string filename, int type) {
     unsigned int shaderID = 0;
 
@@ -212,20 +220,18 @@ int System::initVideo() {
         exit(1);
     }
 
-    if (!glewIsSupported("GL_ARB_framebuffer_object"))
-    {
+    if (!glewIsSupported("GL_ARB_framebuffer_object")) {
         //DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
         exit(1);
     }
 
-    if (!glewIsSupported("GL_ARB_texture_non_power_of_two"))
-    {
+    if (!glewIsSupported("GL_ARB_texture_non_power_of_two")) {
         //DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
         exit(1);
     }
 
     _currentShader = new Shader(this, "shader/vertex.glsl", "shader/fragment.glsl");
-
+    //_currentShader->activate();
 
     /*glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
     //init_fbo();

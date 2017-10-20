@@ -24,6 +24,7 @@
 class Texture;
 class Mesh;
 
+#include <vector>
 #include "glm/glm.hpp"
 #include "ResourcePool.h"
 

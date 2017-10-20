@@ -24,12 +24,16 @@
 #include "Object.h"
 #include <string>
 
+class Mesh;
+
 class Image: public Object {
 public:
 	Image(Scene *s, std::string filename);
 	void setClipRegion(int x, int y, int width, int height);
 	void render();
 private:
+	Mesh *_mesh;
+	bool _clamp, _filter;
     Texture *_texture;
     glm::vec4 _clipRegion;
 };

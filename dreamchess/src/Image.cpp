@@ -25,6 +25,7 @@
 #include "Image.h"
 #include "Scene.h"
 #include "DreamChess.h"
+#include "Mesh.h"
 
 #include <stdio.h>
 
@@ -39,7 +40,7 @@ void Image::setClipRegion(int x, int y, int width, int height) {
     _clipRegion = _texture->getUVForRegion(x, y, width, height);
 }
 
-void Image::render() { 
+void Image::render() { 	
     glEnable( GL_TEXTURE_2D );
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
