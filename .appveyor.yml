@@ -36,12 +36,12 @@ install:
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/g-truc/glm/releases/download/0.9.8.5/glm-0.9.8.5.zip
     %MSVC% %DEP% 7z x glm-0.9.8.5.zip > nul
-    %MSVC% %DEP% robocopy glm\glm %PREFIX%\include\glm /S > nul
+    %MSVC% %DEP% robocopy glm\glm %PREFIX%\include\glm /S
   # pugixml
   - |-
     %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.zip
     %MSVC% %DEP% 7z x pugixml-1.8.zip > nul
-    %MSVC% %DEP% cmake pugixml-1.8
+    %MSVC% %DEP% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" pugixml-1.8
     %MSVC% %DEP% cmake --build pugixml-1.8 --config Release
     %MSVC% %DEP% copy pugixml-1.8\Release\*.lib %PREFIX%\lib > nul
     %MSVC% %DEP% copy pugixml-1.8\src\*.hpp %PREFIX%\include > nul
