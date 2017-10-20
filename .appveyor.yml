@@ -36,7 +36,7 @@ install:
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/g-truc/glm/releases/download/0.9.8.5/glm-0.9.8.5.zip
     %MSVC% %DEP% 7z x glm-0.9.8.5.zip > nul
-    %MSVC% %DEP% xcopy glm\glm %PREFIX%\include\glm /s
+    %MSVC% %DEP% xcopy glm\glm %PREFIX%\include\glm\ /s > nul
   # pugixml
   - |-
     %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.zip
