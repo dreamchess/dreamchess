@@ -58,7 +58,7 @@ if(WIN32)
     target_sources(dreamchess PRIVATE #[[EngineCommWin.cpp]] win32.rc)
     set_source_files_properties(win32.rc PROPERTIES OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/win32.ico;${CMAKE_CURRENT_SOURCE_DIR}/dpi.manifest")
 else()
-    target_sources(dreamchess PRIVATE EngineCommUnix.cpp)
+    target_sources(dreamchess PRIVATE #[[EngineCommUnix.cpp]])
 endif()
 
 if(MSVC)
