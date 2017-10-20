@@ -41,10 +41,11 @@ install:
   - |-
     %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.zip
     %MSVC% %DEP% 7z x pugixml-1.8.zip > nul
-    %MSVC% %DEP% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" pugixml-1.8
-    %MSVC% %DEP% cmake --build pugixml-1.8 --config Release
-    %MSVC% %DEP% copy pugixml-1.8\Release\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy pugixml-1.8\src\*.hpp %PREFIX%\include > nul
+    %MSVC% %DEP% cd pugixml-1.8 > nul
+    %MSVC% %DEP% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" .
+    %MSVC% %DEP% cmake --build . --config Release
+    %MSVC% %DEP% copy Release\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy src\*.hpp %PREFIX%\include > nul
   # SDL
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
