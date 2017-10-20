@@ -30,8 +30,8 @@
 
 #include <stdio.h>
 
-ResourcePool::ResourcePool(DreamChess *d) {
-	_game = d;
+ResourcePool::ResourcePool(Game *g) {
+	_game = g;
 }
 
 Resource *ResourcePool::getResource(std::string name) {

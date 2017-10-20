@@ -43,6 +43,7 @@ public:
     void setSize(glm::vec3 s) {_size = s;}       
 
 protected:
+    glm::mat4 _matrix;
     glm::vec3 _position, _rotation, _size, _scale;
 
     Scene *_scene;

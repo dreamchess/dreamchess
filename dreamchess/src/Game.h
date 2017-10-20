@@ -18,18 +18,29 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
+#ifndef DREAMCHESS_GAME_H
+#define DREAMCHESS_GAME_H
 
-#include "Game.h"
+class Scene;
+class LaunchArguments;
+class System;
+class ResourcePool;
 
-class TitleScene;
-
-class DreamChess: public Game {
+class Game {
 public:
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
+	Game();
+	~Game() { }
+
+	virtual void go();
+	virtual void gameLoop();
+	virtual int init(LaunchArguments *arg) = 0;
+	ResourcePool *getResourcePool() {return _resourcePool;}
+	System *getSystem() {return _system;}
+protected:
+	Scene *_currentScene;
+
+	ResourcePool *_resourcePool;
+	System *_system;
 };
 
 #endif

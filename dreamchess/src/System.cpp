@@ -322,4 +322,39 @@ int System::chUserDir(void)
     return 0;
 }
 
+#else /* !_WIN32 */
+
+#define USERDIR ".dreamchess"
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+int System::chDataDir(void)
+{
+    return chdir(DATADIR);
+}
+
+int System::chUserDir(void)
+{
+    char *home = getenv("HOME");
+
+    if (!home)
+        return -1;
+
+    if (chdir(home))
+        return -1;
+
+    if (chdir(USERDIR))
+    {
+        if (mkdir(USERDIR, 0755))
+            return -1;
+
+        return chdir(USERDIR);
+    }
+
+    return 0;
+}
+
 #endif

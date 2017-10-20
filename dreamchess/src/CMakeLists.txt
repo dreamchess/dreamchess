@@ -49,6 +49,8 @@ add_executable(dreamchess
     Object.cpp
     Mesh.h
     Mesh.cpp
+    Game.h
+    Game.cpp
     Main.cpp
     #${BISON_PgnParser_OUTPUTS}
     #${FLEX_PgnScanner_OUTPUTS}

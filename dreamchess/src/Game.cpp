@@ -18,18 +18,33 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DREAMCHESS_H
-#define DREAMCHESS_DREAMCHESS_H
-
 #include "Game.h"
+#include "System.h"
+#include "ResourcePool.h"
+#include "TitleScene.h"
 
-class TitleScene;
+Game::Game() {
+	_system = new System();
+    _system->initVideo();
+    _resourcePool = new ResourcePool(this);
 
-class DreamChess: public Game {
-public:
-	int init(LaunchArguments *arg);
-private:
-	TitleScene *_titleScene; 
-};
+    _currentScene = nullptr;
+}
 
-#endif
+void Game::gameLoop() {
+	if (!_currentScene)
+		return;
+
+    _system->pollEvents();
+
+    _currentScene->update();
+    _currentScene->render();
+
+    _system->finishFrame();
+}
+
+void Game::go() {
+    while(1) {
+        gameLoop();
+    }
+}

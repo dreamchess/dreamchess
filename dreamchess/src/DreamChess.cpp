@@ -23,32 +23,13 @@
 #include "ResourcePool.h"
 #include "TitleScene.h"
 
-void DreamChess::gameLoop() {
-    _system->pollEvents();
-
-    _currentScene->update();
-    _currentScene->render();
-
-    _system->finishFrame();
-}
-
 int DreamChess::init(LaunchArguments *args) {
-    _system = new System();
-    _system->initVideo();
-    _resourcePool = new ResourcePool(this);
-
     _titleScene = new TitleScene(this);
     _titleScene->init();
 
     _currentScene = _titleScene;
 
     return true;
-}
-
-void DreamChess::go() {
-    while(1) {
-        gameLoop();
-    }
 }
 
 /*

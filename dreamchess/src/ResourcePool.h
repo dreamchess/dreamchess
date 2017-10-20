@@ -23,7 +23,7 @@
 
 #include <unordered_map>
 
-class DreamChess;
+class Game;
 class Texture;
 class Mesh;
 
@@ -34,7 +34,7 @@ public:
 
 class ResourcePool {
 public:
-	ResourcePool(DreamChess *d);
+	ResourcePool(Game *g);
 	~ResourcePool();
 
 	Resource *getResource(std::string name);
@@ -42,7 +42,7 @@ public:
 	Mesh *getMesh(const char *filename);
 private:
     std::unordered_map<std::string, Resource *> _resources;
-    DreamChess *_game;
+    Game *_game;
 };
 
 #endif
