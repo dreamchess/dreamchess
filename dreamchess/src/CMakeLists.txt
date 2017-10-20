@@ -195,7 +195,7 @@ target_include_directories(dreamchess
     ${GLEW_INCLUDE_DIR}
     ${PUGIXML_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/gamegui
+#[[    ${CMAKE_CURRENT_SOURCE_DIR}/gamegui]]
     ${CMAKE_BINARY_DIR}
 )
 
