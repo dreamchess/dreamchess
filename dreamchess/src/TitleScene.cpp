@@ -23,7 +23,7 @@
 #include "Texture.h"
 #include "System.h"
 #include "Model.h"
-#include "Dreamchess.h"
+#include "DreamChess.h"
 #include "Image.h"
 
 TitleScene::TitleScene(DreamChess *d) : Scene(d) {
