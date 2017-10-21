@@ -38,7 +38,7 @@ addons:
 before_install:
   - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2 sdl2_image sdl2_mixer pugixml glew; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2 sdl2_image sdl2_mixer pugixml glew glm; fi
 
 script:
   - test $TRAVIS_BRANCH != coverity_scan || exit 0
