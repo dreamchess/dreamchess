@@ -37,8 +37,8 @@ add_executable(dreamchess
     Texture.cpp
     Model.h
     Model.cpp
-    Scene.h
-    Scene.cpp
+    #Scene.h
+    #Scene.cpp
     TitleScene.cpp
     TitleScene.h
     ResourcePool.h
@@ -51,6 +51,8 @@ add_executable(dreamchess
     Mesh.cpp
     Game.h
     Game.cpp
+    Group.h
+    Group.cpp
     Main.cpp
     #${BISON_PgnParser_OUTPUTS}
     #${FLEX_PgnScanner_OUTPUTS}

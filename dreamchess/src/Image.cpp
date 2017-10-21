@@ -29,9 +29,8 @@
 
 #include <stdio.h>
 
-Image::Image(Scene *s, std::string filename) {
-    _scene = s;
-    _texture = static_cast<Texture*>(_scene->getGame()->getResourcePool()->getResource(filename));
+Image::Image(Game *g, Group *p, std::string filename): Object(g, p) {
+    _texture = static_cast<Texture*>(_game->getResourcePool()->getResource(filename));
     _size = glm::vec3(_texture->getSize().x, _texture->getSize().y, 1);
     setClipRegion(0, 0, _size.x, _size.y);
 }

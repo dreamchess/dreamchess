@@ -21,16 +21,15 @@
 #ifndef DREAMCHESS_TITLESCENE_H
 #define DREAMCHESS_TITLESCENE_H
 
-#include "Scene.h"
+#include "Group.h"
 class Image;
 class Model;
 
-class TitleScene: public Scene {
+class TitleScene: public Group {
 public:
-	TitleScene(DreamChess *d);
+	TitleScene(Game *g);
 	void init();
 	void update();
-	void render();
 private:
 	Image *_backdrop;
 

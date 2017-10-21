@@ -24,11 +24,18 @@
 #include "glm/glm.hpp"
 
 class Scene;
+class Game;
+class Group;
 
 class Object {
 public:
     Object() { }
+    Object(Game *g, Group *p);
+    void setParent(Group *g) {_parent = g;}
+
+    virtual void update() { }
 	virtual void render() { }
+
     glm::vec3 getPosition() {return _position;}
     void setPosition(float x, float y, float z = 0) {_position = glm::vec3(x, y, z);}
     void setPosition(glm::vec3 p) {_position = p;}
@@ -43,10 +50,11 @@ public:
     void setSize(glm::vec3 s) {_size = s;}       
 
 protected:
-    glm::mat4 _matrix;
-    glm::vec3 _position, _rotation, _size, _scale;
+    Game *_game;
+    Group *_parent;
 
-    Scene *_scene;
+    glm::mat4 _matrix;
+    glm::vec3 _position, _rotation, _size, _scale;   
 };
 
 #endif

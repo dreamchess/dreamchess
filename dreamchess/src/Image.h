@@ -28,7 +28,7 @@ class Mesh;
 
 class Image: public Object {
 public:
-	Image(Scene *s, std::string filename);
+	Image(Game *g, Group *p, std::string filename);
 	void setClipRegion(int x, int y, int width, int height);
 	void render();
 private:

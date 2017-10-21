@@ -21,7 +21,7 @@
 #ifndef DREAMCHESS_GAME_H
 #define DREAMCHESS_GAME_H
 
-class Scene;
+class Group;
 class LaunchArguments;
 class System;
 class ResourcePool;
@@ -37,7 +37,7 @@ public:
 	ResourcePool *getResourcePool() {return _resourcePool;}
 	System *getSystem() {return _system;}
 protected:
-	Scene *_currentScene;
+	Group *_currentScene;
 
 	ResourcePool *_resourcePool;
 	System *_system;

@@ -18,24 +18,25 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_MODEL_H
-#define DREAMCHESS_MODEL_H
+#ifndef DREAMCHESS_GROUP_H
+#define DREAMCHESS_GROUP_H
 
-#include <string>
+#include <vector>
 #include "Object.h"
 
-class Texture;
-class Mesh;
-class Group;
-class Game;
-
-class Model: public Object {
+class Group: public Object {
 public:
-    Model(Game *g, Group *p, std::string mesh, std::string texture);
-    void render();
-private:
-    Texture *_texture;
-    Mesh *_mesh;
+	Group(Game *g, Group *p): Object(g, p) {_is3D = false;}
+	void is3D(bool b) {_is3D = b;}
+
+	void addObject(Object *o);
+	void removeObject(Object *o);
+	int getObjectCount() {return _objects.size();}
+
+	virtual void render();
+protected:
+	bool _is3D;
+	std::vector<Object*> _objects;
 };
 
 #endif

@@ -18,24 +18,27 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_MODEL_H
-#define DREAMCHESS_MODEL_H
-
-#include <string>
+#include "Group.h"
+#include "DreamChess.h"
+#include "System.h"
 #include "Object.h"
 
-class Texture;
-class Mesh;
-class Group;
-class Game;
+void Group::addObject(Object *o) {
+	o->setParent(this);
+    _objects.push_back(o);
+}
 
-class Model: public Object {
-public:
-    Model(Game *g, Group *p, std::string mesh, std::string texture);
-    void render();
-private:
-    Texture *_texture;
-    Mesh *_mesh;
-};
+void Group::removeObject(Object *o) {
+    // TODO
+}
 
-#endif
+void Group::render() {
+    if (_is3D)
+        _game->getSystem()->go3D();
+    else
+        _game->getSystem()->go2D(); 
+
+    for (int i = 0; i < _objects.size(); i++) {
+        _objects[i]->render();
+    }
+}

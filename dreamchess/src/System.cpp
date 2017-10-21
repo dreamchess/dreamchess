@@ -322,6 +322,53 @@ int System::chUserDir(void)
     return 0;
 }
 
+#elif defined __APPLE__
+
+#include <unistd.h>
+#include <sys/stat.h>
+#include "CoreFoundation/CoreFoundation.h"
+
+#define USERDIR "Library/Application Support/DreamChess"
+
+int System::chDataDir(void) {
+    char temp1[200];
+    char temp2[200];
+    char temp3[200];
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+    CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
+    CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
+    
+    CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );   
+    CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
+    
+    stringref=CFURLCopyFileSystemPath( resdir, kCFURLPOSIXPathStyle );  
+    CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
+    
+    sprintf( temp3, "%s/%s", temp2, temp1 );
+    
+    return chdir(temp3);
+}
+
+int System::chUserDir(void) {
+    char *home = getenv("HOME");
+
+    if (!home)
+        return -1;
+
+    if (chdir(home))
+        return -1;
+
+    if (chdir(USERDIR)) {
+        if (mkdir(USERDIR, 0755))
+            return -1;
+
+        return chdir(USERDIR);
+    }
+
+    return 0;
+}
+
 #else /* !_WIN32 */
 
 #define USERDIR ".dreamchess"
@@ -331,13 +378,11 @@ int System::chUserDir(void)
 #include <sys/stat.h>
 #include <sys/types.h>
 
-int System::chDataDir(void)
-{
+int System::chDataDir(void) {
     return chdir(DATADIR);
 }
 
-int System::chUserDir(void)
-{
+int System::chUserDir(void) {
     char *home = getenv("HOME");
 
     if (!home)
@@ -346,8 +391,7 @@ int System::chUserDir(void)
     if (chdir(home))
         return -1;
 
-    if (chdir(USERDIR))
-    {
+    if (chdir(USERDIR)) {
         if (mkdir(USERDIR, 0755))
             return -1;
 

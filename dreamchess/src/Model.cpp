@@ -28,18 +28,18 @@
 #include "ResourcePool.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Group.h"
 
 #include <stdio.h>
 #include <string>
 
-Model::Model(Scene *s, std::string mesh, std::string texture) {
-    _scene = s;
-    _mesh = static_cast<Mesh*>(_scene->getGame()->getResourcePool()->getResource(mesh));
-    _texture = static_cast<Texture*>(_scene->getGame()->getResourcePool()->getResource(texture));    
+Model::Model(Game *g, Group *p, std::string mesh, std::string texture): Object(g, p) {
+    _mesh = static_cast<Mesh*>(_game->getResourcePool()->getResource(mesh));
+    _texture = static_cast<Texture*>(_game->getResourcePool()->getResource(texture));    
     _size = glm::vec3(1, 1, 1);
 }
 
-void Model::render() {
+void Model::render() {  
     float specReflection[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float nospecReflection[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float mcolor[4] = { 1.0f, 1.0f, 1.0f };

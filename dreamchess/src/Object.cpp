@@ -26,3 +26,8 @@
 
 #include <stdio.h>
 #include <string>
+
+Object::Object(Game *g, Group *p) {
+	_game = g;
+	_parent = p;
+}
