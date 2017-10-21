@@ -35,12 +35,10 @@ addons:
     build_command: "make"
     branch_pattern: coverity_scan
 
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cmake bison flex sdl2 sdl2_image sdl2_mixer pugixml glew; fi
-
 before_install:
   - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2 sdl2_image sdl2_mixer pugixml glew; fi
 
 script:
   - test $TRAVIS_BRANCH != coverity_scan || exit 0
