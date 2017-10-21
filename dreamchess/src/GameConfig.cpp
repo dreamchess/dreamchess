@@ -29,6 +29,8 @@
 #include "msvc/getopt.h"
 #endif // HAVE_GETOPT_H 
 
+#include <cerrno>
+
 #ifdef HAVE_GETOPT_LONG
 #define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
 #else
