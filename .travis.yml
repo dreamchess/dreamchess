@@ -6,6 +6,10 @@ env:
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "msu35DqC82uGxfwO3JuF+YdZsef0hcN9xpUNZ6exmfcCNE+gV0N4+wdtK5CRd9tXMBv1huKDQiPf3RrJZ8u7P/xubCFb7uAFlyK/9JVX6h1xUDLO69kcyHRvZJqoq3QtpE/IvtInjlhadur6tRqoZb5LAXBN8zdw2bqWoBrQ1b3NYJv50ud7h4/AkaHPqUDxVHpKl0BgqbK0AIwMdrjLsYyWKYYUi8s1qlUavtX6ohNsH+/LLKC0yhMY8/aqHd1qil5sSARGOeWrfCCNQxXARzY/CXByqsVJHW9UoN2Yp87HmHFCJIP6PfVahtpvHdio9uC/hRgsvafdXrpNtHjxE41PW4BxeBSL+vEn3I4oFKC2PI5M93rBD3s0jKBoTeBmKPO/yIsxcHvvoNP1laXBYfnjbxn4ldnXPkfyCBK+dj9lk1fQ1Rj353EHi25ifqhffAFzSNwbuBNzPrf0OOxUYE5NGT2S3kIYiOvO25EFVmRYy62jvrd2YxfLrUH7p7afJH22Zlsd06a1YF+e57IupYS5uodZoYX2UsGXW21kCmWC8zGO7cnZ8TBv0jcwa0Uh4uasJBbS2zaGU6odc4z+PNpMenLrpHUX6Qx5JXHoepBH8KjkhgQ2mP3MDZFX0DiOGfTcgoJSMeTY8ncPXZ25i/Kvel8blljP3sAeIi7U2ng="
 
+os:
+  - linux
+  - osx
+
 compiler:
   - gcc
   - clang
@@ -29,6 +33,9 @@ addons:
     build_command_prepend: "mkdir build && cd build && cmake .."
     build_command: "make"
     branch_pattern: coverity_scan
+
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cmake bison flex sdl2 sdl2_image sdl2_mixer libmxml glew; fi
 
 before_install:
   - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
