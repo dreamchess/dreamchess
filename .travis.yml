@@ -35,6 +35,7 @@ addons:
     branch_pattern: coverity_scan
 
 before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cmake bison flex sdl2 sdl2_image sdl2_mixer libmxml glew; fi
 
 before_install:
