@@ -22,6 +22,7 @@
 #define DREAMCHESS_RESOURCEPOOL_H
 
 #include <unordered_map>
+#include <string>
 
 class Game;
 class Texture;
