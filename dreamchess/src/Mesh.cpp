@@ -33,26 +33,24 @@ void Mesh::makeList() {
     list = glGenLists(1);
     glNewList(list, GL_COMPILE);
 
-    for (g = 0; g < groups; g++)
+    for (g = 0; g < _groups.size(); g++)
     {
         int i;
 
-        switch (group[g].type)
-        {
-        case PRIM_TRIANGLES:
-            glBegin(GL_TRIANGLES);
-            break;
-        case PRIM_STRIP:
-            glBegin(GL_TRIANGLE_STRIP);
+        switch (_groups[g].type) {
+            case PRIM_TRIANGLES:
+                glBegin(GL_TRIANGLES);
+                break;
+            case PRIM_STRIP:
+                glBegin(GL_TRIANGLE_STRIP);
         }
 
-        for (i = 0; i < group[g].len; i++)
-        {
-            unsigned int *data = group[g].data;
+        for (i = 0; i < _groups[g].len; i++) {
+            unsigned int *data = _groups[g].data;
 
-            glTexCoord2fv(tex_coord + data[i] * 2);
-            glNormal3fv(normal + data[i] * 3);
-            glVertex3fv(vertex + data[i] * 3);
+            glTexCoord2f(_uv.at(data[i]).x, _uv.at(data[i]).y);
+            glNormal3f(_normals.at(data[i]).x, _normals.at(data[i]).y, _normals.at(data[i]).z);
+            glVertex3f(_verticies.at(data[i]).x, _verticies.at(data[i]).y, _verticies.at(data[i]).z);
         }
 
         glEnd();
@@ -62,116 +60,85 @@ void Mesh::makeList() {
 }
 
 int Mesh::loadDCM(const char *filename) {
-    FILE *f;
-    int version;
-    char id[3];
-    int vertices;
-    int i;
+    std::string buf;
+    std::ifstream fstream;
 
-    f = fopen(filename, "r");
+    fstream.open(filename, std::ifstream::in);
 
-    if (!f) {
-        //DBG_ERROR("couldn't open %s", filename);
-        return NULL;
+    if (fstream.fail()) {
+        printf("Failed to open DCM file: '%s'\n", filename);
+        return false;
     }
 
-    if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4)
-            || ((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M'))) {
-
-        //DBG_ERROR("invalid DCM file header");
-        return NULL;
+    fstream >> buf;
+    if (buf != "DCM") {
+        printf("Invalid DCM file header.\n");
+        return false;
     }
 
-    if (version != 100) {
-        //DBG_ERROR( "DCM version %i not supported", version);
-        return NULL;
+    fstream >> buf;
+    if (std::stoi(buf) != 100) {
+        printf("DCM version %i is not supported.\n", std::stoi(buf));    
     }
 
-    if (fscanf(f, "%d\n", &vertices) != 1) {
-        //DBG_ERROR("error reading DCM file");
-        return NULL;
-    }
+    fstream >> buf;
+    int vertexCount = std::stoi(buf);
 
-    //mesh = new Mesh(); //(Mesh *)malloc(sizeof(mesh_t));
-
-    has_bones = 0;
-    vertices = vertices;
-    vertex = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 3);
-
-    for (i = 0; i < vertices * 3; i++) {
-        if (fscanf(f, "%f\n", &vertex[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
+    for (int i = 0; i < vertexCount; i++) {
+        glm::vec3 vert;
+        for (int j = 0; j < 3; j++) {
+            fstream >> buf;
+            vert[j] = std::stof(buf);
         }
+        _verticies.push_back(vert);
     }
 
-    normal = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 3);
-
-    for (i = 0; i < vertices * 3; i++) {
-        if (fscanf(f, "%f\n", &normal[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
+    for (int i = 0; i < vertexCount; i++) {
+        glm::vec3 normal;
+        for (int j = 0; j < 3; j++) {
+            fstream >> buf;
+            normal[j] = std::stof(buf);
         }
+        _normals.push_back(normal);
     }
 
-    tex_coord = (GLfloat *)malloc(sizeof(GLfloat) * vertices * 2);
-
-    for (i = 0; i < vertices * 2; i++) {
-        if (fscanf(f, "%f\n", &tex_coord[i]) != 1) {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
+    for (int i = 0; i < vertexCount; i++) {
+        glm::vec2 uv;
+        for (int j = 0; j < 2; j++) {
+            fstream >> buf;
+            uv[j] = std::stof(buf);
         }
+        _uv.push_back(uv);
     }
 
-    /* As we don't flip our images we flip our u coordinates instead. */
-    for (i = 1; i < vertices * 2; i += 2)
-        tex_coord[i] = 1.0f - tex_coord[i];
+    fstream >> buf;
+    int groupCount = std::stoi(buf);
 
-    if (fscanf(f, "%d\n", &groups) != 1) {
-        //DBG_ERROR("error reading DCM file");
-        exit(1);
-    }
+    for (int i = 0; i < groupCount; i++) {
+        group_t group;
 
-    group = (group_t *)malloc(sizeof(group_t) * groups);
+        fstream >> buf;
 
-    for (i = 0; i < groups; i++) {
-        char line[11];
-        int group_len;
-        int j;
+        if (buf == "STRIP") {
+            group.type = PRIM_STRIP;
+        }
+        else if (buf == "TRIANGLES") {
+            group.type = PRIM_TRIANGLES;
+        }
 
-        fgets(line, 11, f);
-
-        if (!strcmp(line, "STRIP\n"))
-            group[i].type = PRIM_STRIP;
-        else if (!strcmp(line, "TRIANGLES\n"))
-            group[i].type = PRIM_TRIANGLES;
-        else
+        fstream >> buf;
+        group.len = std::stoi(buf);
+        group.data = (GLuint *)malloc(sizeof(GLuint) * group.len);
+        for (int j = 0; j < group.len; j++)
         {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
+            fstream >> buf;
+            group.data[j] = std::stoi(buf);
         }
 
-        if (fscanf(f, "%d\n", &group_len) != 1)
-        {
-            //DBG_ERROR("error reading DCM file");
-            exit(1);
-        }
-
-        group[i].len = group_len;
-
-        group[i].data = (GLuint *)malloc(sizeof(GLuint) * group_len);
-
-        for (j = 0; j < group_len; j++)
-        {
-            if (fscanf(f, "%u\n", &group[i].data[j]) != 1)
-            {
-                //DBG_ERROR("error reading DCM file");
-                exit(1);
-            }
-        }
+        _groups.push_back(group);
     }
 
-    fclose(f);
+    fstream.close(); 
 
     makeList();
 

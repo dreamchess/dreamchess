@@ -59,10 +59,12 @@ void TitleScene::init() {
 	_whiteRook->setRotation(-80, 0, 45);
 	chessBoardGroup->addObject(_whiteRook);
 
-	_blackQueen = new Model(_game, chessBoardGroup, "pieces/classic/queen.dcm", "pieces/classic/black.png");
+	_blackQueen = new Model(_game, chessBoardGroup, "pieces/classic/king.dcm", "pieces/classic/black.png");
 	_blackQueen->setPosition(-1.5, -0.25, -5);
 	_blackQueen->setRotation(-80, 0, 45);	
 	chessBoardGroup->addObject(_blackQueen);
+
+	chessBoardGroup->setPosition(5,5,5);
 }
 
 void TitleScene::update() {

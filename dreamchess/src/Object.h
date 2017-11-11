@@ -49,6 +49,8 @@ public:
     void setSize(float x, float y, float z = 0) {_size = glm::vec3(x, y, z);}
     void setSize(glm::vec3 s) {_size = s;}       
 
+    virtual void updateMatrix();
+    glm::mat4 getMatrix() {return _matrix;}
 protected:
     Game *_game;
     Group *_parent;

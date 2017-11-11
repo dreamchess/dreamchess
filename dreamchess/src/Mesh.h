@@ -52,16 +52,21 @@ typedef struct bone
 class Mesh: public Resource {
 public:
 	int loadDCM(const char *filename);
-	void makeList();
+    std::vector<glm::vec3> _verticies;
+    std::vector<glm::vec3> _normals;
+    std::vector<glm::vec2> _uv;
+    std::vector<group_t> _groups;
 
+    // old
+    void makeList();
     int has_bones;
-    int vertices;
-    float *vertex;
-    float *normal;
-    float *tex_coord;
+    //int vertices;
+    //float *vertex;
+    //float *normal;
+    //float *tex_coord;
     int *bone_w;
-    int groups;
-    group_t *group;
+    //int groups;
+    //group_t *group;
     bone_t *bone;
     unsigned int list;
 };

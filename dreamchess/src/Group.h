@@ -26,14 +26,16 @@
 
 class Group: public Object {
 public:
-	Group(Game *g, Group *p): Object(g, p) {_is3D = false;}
+	Group(Game *g, Group *p): Object(g, p) {_is3D = false; _parent = nullptr;}
 	void is3D(bool b) {_is3D = b;}
 
+	Object *getObject(int i) {return _objects.at(i);}
 	void addObject(Object *o);
 	void removeObject(Object *o);
 	int getObjectCount() {return _objects.size();}
 
 	virtual void render();
+	void updateMatrix();
 protected:
 	bool _is3D;
 	std::vector<Object*> _objects;

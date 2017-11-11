@@ -38,6 +38,7 @@ void Game::gameLoop() {
     _system->pollEvents();
 
     _currentScene->update();
+    _currentScene->updateMatrix();
     _currentScene->render();
 
     _system->finishFrame();

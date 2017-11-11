@@ -32,6 +32,18 @@ void Group::removeObject(Object *o) {
     // TODO
 }
 
+void Group::updateMatrix() {
+    if (_parent == nullptr)
+        _matrix == glm::mat4();
+    else
+	   _matrix = _parent->getMatrix();
+    
+
+	for (int i = 0; i < _objects.size(); i++) {
+		_objects[i]->updateMatrix();
+	}
+}
+
 void Group::render() {
     if (_is3D)
         _game->getSystem()->go3D();
