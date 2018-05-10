@@ -3,6 +3,7 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(PUGIXML REQUIRED)
 find_package(MXML REQUIRED)
 
 BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.cpp)
@@ -179,6 +180,7 @@ target_include_directories(dreamchess
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
     ${MXML_INCLUDE_DIRS}
+    ${PUGIXML_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}
@@ -192,6 +194,7 @@ target_link_libraries(dreamchess
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${MXML_LIBRARY}
+    ${PUGIXML_LIBRARY}
 )
 
 if(WIN32)

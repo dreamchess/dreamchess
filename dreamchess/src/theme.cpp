@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <mxml.h>
+#include <pugixml.hpp>
 #include <limits.h>
 
 #ifdef _WIN32
@@ -37,125 +37,45 @@
 
 static music_packs_t music_packs;
 
-static int load_opaque(mxml_node_t *top, const char *name, char **dest)
+static void theme_add_theme(char *xmlfile, option_t *option)
 {
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-        {
-            free(*dest);
-            *dest = strdup(node->value.opaque);
-            return 0;
-        }
+    DBG_LOG("loading %s", xmlfile);
+
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file(xmlfile);
+
+    if (!result) {
+        DBG_ERROR("failed to load theme file '%s': %s at offset %d", xmlfile, result.description(), result.offset);
+        return;
     }
-    return 1;
-}
 
-static void theme_add_theme( char *xmlfile, option_t *option )
-{
-    FILE *fp = NULL;
-    mxml_node_t *tree=NULL, *theme=NULL;
+    for (pugi::xml_node theme = doc.child("themes").child("theme"); theme; theme = theme.next_sibling("theme")) {
+        theme_struct *cur_theme = (theme_struct *)malloc(sizeof(theme_struct));
 
-    fp = fopen(xmlfile, "r");
-    if (fp)
-        tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
-    else
-        DBG_ERROR("error opening theme file" );
+        cur_theme->name = strdup(theme.child("name").text().as_string("Untitled"));
+        cur_theme->style = strdup(theme.child("style").text().as_string("default"));
+        cur_theme->pieces = strdup(theme.child("pieces").text().as_string("classiclow"));
+        cur_theme->board = strdup(theme.child("board").text().as_string("classic"));
+        cur_theme->white_name = strdup(theme.child("white_name").text().as_string("White"));
+        cur_theme->black_name = strdup(theme.child("black_name").text().as_string("Black"));
+        cur_theme->lighting = true;
 
-    fclose(fp);
+        pugi::xml_node selector = theme.child("selector");
 
-    theme = tree;
+        cur_theme->selector.spinspeed = selector.attribute("spinspeed").as_float(0);
+        cur_theme->selector.size = selector.attribute("size").as_float(1);
+        cur_theme->selector.bouncespeed = selector.attribute("bouncespeed").as_float(0);
 
-    DBG_LOG("loading %s", xmlfile );
-    while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
-    {
-        struct theme_struct *cur_theme = (theme_struct *)malloc(sizeof(struct theme_struct));
-        mxml_node_t *node, *node2;
-        /* Set theme to defaults.. incase we have missing bits..*/
-        cur_theme->name = strdup("Untitled");
-        cur_theme->style = strdup("default");
-        cur_theme->pieces = strdup("classiclow");
-        cur_theme->board = strdup("classic");
-        cur_theme->white_name = strdup("White");
-        cur_theme->black_name = strdup("Black");
-        cur_theme->lighting=TRUE;
-        cur_theme->selector.colour[0]=1.0;
-        cur_theme->selector.colour[1]=1.0;
-        cur_theme->selector.colour[2]=1.0;
-        cur_theme->selector.colour[3]=1.0;  
-        cur_theme->selector.spinspeed=0;
-        cur_theme->selector.size=1;
-        cur_theme->selector.bouncespeed=0;
+        pugi::xml_node selectorColour = selector.child("colour");
 
-        load_opaque(theme, "name", &cur_theme->name);
-        load_opaque(theme, "style", &cur_theme->style);
-        load_opaque(theme, "pieces", &cur_theme->pieces);
-        load_opaque(theme, "board", &cur_theme->board);
-        load_opaque(theme, "white_name", &cur_theme->white_name);
-        load_opaque(theme, "black_name", &cur_theme->black_name);
+        cur_theme->selector.colour[0] = selectorColour.child("red").text().as_float(1);
+        cur_theme->selector.colour[1] = selectorColour.child("green").text().as_float(1);
+        cur_theme->selector.colour[2] = selectorColour.child("blue").text().as_float(1);
+        cur_theme->selector.colour[3] = selectorColour.child("alpha").text().as_float(1);
 
-        node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
-        if (node)
-        {
-            char *temp=(char*)mxmlElementGetAttr(node, "spinspeed");
-            if ( temp )
-                cur_theme->selector.spinspeed=atof(temp);
-
-            temp=(char*)mxmlElementGetAttr(node, "size");
-            if ( temp )
-                cur_theme->selector.size=atof(temp);
-
-            temp=(char*)mxmlElementGetAttr(node, "bouncespeed");
-            if ( temp )
-            {
-                cur_theme->selector.bouncespeed=atof(temp);
-            }
-
-            node = mxmlWalkNext(node, node, MXML_DESCEND);
-            node = mxmlFindElement(node, node, "colour", NULL, NULL, MXML_DESCEND);
-            if (node)
-            {
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "red", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[0]=atof(node2->value.opaque);
-                }       
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "green", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[1]=atof(node2->value.opaque);
-                }       
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "blue", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[2]=atof(node2->value.opaque);
-                }        
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "alpha", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[3]=atof(node2->value.opaque);
-                }               
-            }
-        }
-
-        DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style );
+        DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style);
         option_add_value(option, cur_theme->name, cur_theme);
     }
-
-    mxmlDelete(tree);
 }
 
 #ifdef _WIN32
