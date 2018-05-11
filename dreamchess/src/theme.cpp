@@ -21,6 +21,7 @@
 #include <pugixml.hpp>
 #include <limits.h>
 #include <cstring>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <windows.h>
