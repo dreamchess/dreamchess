@@ -1,6 +1,7 @@
 image: Visual Studio 2017
 environment:
   PREFIX: C:\Deps
+  PUGIXML_VERSION: 1.9
   matrix:
     - COMPILER: msvc
     - COMPILER: msys2
@@ -61,9 +62,22 @@ install:
     %MSVC% %DEP% copy glew-2.0.0\include\GL\* %PREFIX%\include\GL > nul
     %MSVC% %DEP% copy glew-2.0.0\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
     %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
+  # pugixml
+  - |-
+    %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v%PUGIXML_VERSION%/pugixml-%PUGIXML_VERSION%.zip
+    %MSVC% %DEP% 7z x pugixml-%PUGIXML_VERSION%.zip > nul
+    %MSVC% %DEP% cd pugixml-%PUGIXML_VERSION%
+    %MSVC% %DEP% mkdir build
+    %MSVC% %DEP% cd build
+    %MSVC% %DEP% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" ..
+    %MSVC% %DEP% cmake --build . --config Release
+    %MSVC% %DEP% copy Release\pugixml.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% cd ..
+    %MSVC% %DEP% copy src\*.hpp %PREFIX%\include > nul
+    %MSVC% %DEP% cd ..
   # MSYS2
   - |-
-    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
+    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml"
   # Mini-XML
   - |-
     %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
