@@ -18,28 +18,14 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <mxml.h>
+#include <pugixml.hpp>
+#include <cstring>
+#include <string>
 
 #include "debug.h"
 #include "playlist.h"
 
-static char *read_opaque(mxml_node_t *top, const char *name)
-{
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-        {
-            return node->value.opaque;
-        }
-    }
-    return NULL;
-}
-
-playlist_t *playlist_create(void)
-{
+playlist_t *playlist_create(void) {
 	playlist_t *playlist = (playlist_t *)malloc(sizeof(playlist_t));
 
 	TAILQ_INIT(playlist);
@@ -47,8 +33,7 @@ playlist_t *playlist_create(void)
 	return playlist;
 }
 
-void playlist_destroy(playlist_t *playlist)
-{
+void playlist_destroy(playlist_t *playlist) {
 	playlist_entry_t *entry;
 
 	while ((entry = TAILQ_FIRST(playlist))) {
@@ -61,9 +46,7 @@ void playlist_destroy(playlist_t *playlist)
 	}
 }
 
-static void playlist_add_track(playlist_t *playlist, const char *title, const char *album,
-		  const char *artist, const char *filename)
-{
+static void playlist_add_track(playlist_t *playlist, const char *title, const char *album, const char *artist, const char *filename) {
 	playlist_entry_t *entry = (playlist_entry_t *)malloc(sizeof(playlist_entry_t));
 
 	entry->title = strdup(title);
@@ -74,55 +57,28 @@ static void playlist_add_track(playlist_t *playlist, const char *title, const ch
 	TAILQ_INSERT_TAIL(playlist, entry, entries);
 }
 
-void playlist_add_tracks(playlist_t *playlist, char *dir)
-{
-	FILE *f;
-	mxml_node_t *tree = NULL, *track = NULL;
-	char *filename = (char *)malloc(strlen(dir) + strlen("/tracks.xml") + 1);
+void playlist_add_tracks(playlist_t *playlist, char *dir) {
+	const std::string filename = std::string(dir) + "/tracks.xml";
 
-	strcpy(filename, dir);
-	strcat(filename, "/tracks.xml");
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(filename.c_str());
 
-	f = fopen(filename, "r");
-	if (f)
-		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
-	else
-		DBG_ERROR("could not open tracks file");
-
-	track = tree;
-
-	while ((track = mxmlFindElement(track, tree, "track", NULL, NULL, MXML_DESCEND)))
-	{
-		const char *title, *album, *artist, *filename;
-		char *fullname;
-
-		title = read_opaque(track, "title");
-		if (!title)
-			title = "Unknown title";
-
-		album = read_opaque(track, "album");
-		if (!album)
-			album = "Unknown album";
-
-		artist = read_opaque(track, "artist");
-		if (!artist)
-			artist = "Unknown artist";
-
-		filename = read_opaque(track, "filename");
-
-		if (!filename)
-			DBG_ERROR("could not parse XML file");
-
-		fullname = (char *)malloc(strlen(dir) + strlen(filename) + 2);
-		strcpy(fullname, dir);
-		strcat(fullname, "/");
-		strcat(fullname, filename);
-
-		playlist_add_track(playlist, title, album, artist, fullname);
-
-		free(fullname);
+	if (!result) {
+		DBG_ERROR("failed to load theme file '%s': %s at offset %d", filename.c_str(), result.description(), result.offset);
+		return;
 	}
 
-	free(filename);
-	fclose(f);
+	for (pugi::xml_node track = doc.child("tracks").child("track"); track; track = track.next_sibling("track")) {
+		const char *title = track.child("title").text().as_string("Unknown title");
+		const char *album = track.child("album").text().as_string("Unknown album");
+		const char *artist = track.child("artist").text().as_string("Unknown artist");
+
+		if (!track.child("filename").text()) {
+			DBG_ERROR("skipping music track without filename: '%s'", title);
+			continue;
+		}
+
+		std::string trackfile = std::string(dir) + '/' + track.child("filename").text().get();
+		playlist_add_track(playlist, title, album, artist, trackfile.c_str());
+	}
 }
