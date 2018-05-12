@@ -169,7 +169,11 @@ int option_group_load_xml(option_group_t *group) {
 
 int option_group_load_string(option_group_t *group, const char *string) {
 	pugi::xml_document doc;
+#if PUGIXML_VERSION >= 150
 	pugi::xml_parse_result result = doc.load_string(string);
+#else
+	pugi::xml_parse_result result = doc.load(string);
+#endif
 
 	if (!result) {
 		DBG_ERROR("failed to load option string");
