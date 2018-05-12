@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include <mxml.h>
 
 static int slots;
 static char time_save[SAVEGAME_SLOTS][80];

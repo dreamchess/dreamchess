@@ -28,7 +28,6 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
-#include <mxml.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
