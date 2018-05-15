@@ -21,6 +21,7 @@
 #include "ui_sdlgl.h"
 #include <cstdio>
 #include <chrono>
+#include <ctime>
 #include <pugixml.hpp>
 
 static int slots;
