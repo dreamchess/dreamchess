@@ -78,18 +78,6 @@ install:
   # MSYS2
   - |-
     %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml"
-  # Mini-XML
-  - |-
-    %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
-    %DEP% 7z x mxml-2.10.tar.gz > nul
-    %DEP% 7z x mxml-2.10.tar > nul
-    %MSVC% %DEP% %DEVENV% /Upgrade mxml-2.10\vcnet\mxml.sln
-    %MSVC% %DEP% msbuild mxml-2.10\vcnet\mxml.sln /t:mxml1 /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
-    %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%'/mxml-2.10 && ./configure && make libmxml.a"
-    %DEP% copy mxml-2.10\mxml.h %PREFIX%\include > nul
-    %MSVC% %DEP% copy mxml-2.10\vcnet\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy mxml-2.10\vcnet\*.dll %PREFIX%\bin > nul
-    %MSYS2% %DEP% copy mxml-2.10\libmxml.a %PREFIX%\lib > nul
 before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
