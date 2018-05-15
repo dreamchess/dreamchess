@@ -65,7 +65,13 @@ void write_save_xml( int slot )
     pugi::xml_node save = doc.append_child("save");
 
     pugi::xml_node node = save.append_child("time");
-    node.text().set(static_cast<long long>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())));
+
+    std::time_t curTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+#ifdef PUGIXML_HAS_LONG_LONG
+    node.text().set(static_cast<long long>(curTime));
+#else
+    node.text().set(static_cast<int>(curTime));
+#endif
 
     if (ch_userdir()) {
         DBG_WARN("could not enter user directory");
