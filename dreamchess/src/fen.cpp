@@ -96,7 +96,7 @@ char *fen_encode(board_t *board)
 board_t *fen_decode(const char *fen)
 {
 	board_t *board;
-	char *space = strchr(fen, ' ');
+	const char *space = strchr(fen, ' ');
 	int i;
 	int square = 56;
 
