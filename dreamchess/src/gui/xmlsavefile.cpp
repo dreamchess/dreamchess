@@ -121,7 +121,12 @@ void load_save_xml(int slot) {
 
     pugi::xml_node save = doc.child("save");
 
+#ifdef PUGIXML_HAS_LONG_LONG
     time_t time = save.child("time").text().as_llong(0);
+#else
+    time_t time = save.child("time").text().as_int(0);
+#endif
+
     tm *tm = localtime(&time);
     std::snprintf(time_save[slot], sizeof(time_save[slot]), "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon + 1, tm->tm_hour, tm->tm_min);
 
