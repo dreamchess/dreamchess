@@ -25,6 +25,6 @@
 
 char *fen_encode(board_t *board);
 
-board_t *fen_decode(char *fen);
+board_t *fen_decode(const char *fen);
 
 #endif
