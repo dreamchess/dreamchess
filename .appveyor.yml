@@ -2,6 +2,11 @@ image: Visual Studio 2017
 environment:
   PREFIX: C:\Deps
   PUGIXML_VERSION: 1.9
+  SDL2_VERSION: 2.0.5
+  SDL2IMAGE_VERSION: 2.0.3
+  SDL2MIXER_VERSION: 2.0.2
+  FLEXBISON_VERSION: 2.4.12
+  GLEW_VERSION: 2.1.0
   matrix:
     - COMPILER: msvc
     - COMPILER: msys2
@@ -32,36 +37,36 @@ install:
     %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
   # flex / bison
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v.2.4.9/win_flex_bison-2.4.9.zip
-    %MSVC% %DEP% 7z x win_flex_bison-2.4.9.zip -o%PREFIX%\win_flex_bison > nul
-  # SDL
+    %MSVC% %DEP% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v%FLEXBISON_VERSION%/win_flex_bison-%FLEXBISON_VERSION%.zip
+    %MSVC% %DEP% 7z x win_flex_bison-%FLEXBISON_VERSION%.zip -o%PREFIX%\win_flex_bison > nul
+  # SDL2
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
-    %MSVC% %DEP% 7z x SDL2-devel-2.0.5-VC.zip > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL_image
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-%SDL2_VERSION%-VC.zip
+    %MSVC% %DEP% 7z x SDL2-devel-%SDL2_VERSION%-VC.zip > nul
+    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
+  # SDL2_image
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-VC.zip
-    %MSVC% %DEP% 7z x SDL2_image-devel-2.0.1-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL_mixer
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-%SDL2IMAGE_VERSION%-VC.zip
+    %MSVC% %DEP% 7z x SDL2_image-devel-%SDL2IMAGE_VERSION%-VC.zip > nul
+    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
+  # SDL2_mixer
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.1-VC.zip
-    %MSVC% %DEP% 7z x SDL2_mixer-devel-2.0.1-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-%SDL2MIXER_VERSION%-VC.zip
+    %MSVC% %DEP% 7z x SDL2_mixer-devel-%SDL2MIXER_VERSION%-VC.zip > nul
+    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\include\* %PREFIX%\include\SDL2 > nul
+    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
   # GLEW
   - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
-    %MSVC% %DEP% 7z x glew-2.0.0-win32.zip > nul
-    %MSVC% %DEP% copy glew-2.0.0\include\GL\* %PREFIX%\include\GL > nul
-    %MSVC% %DEP% copy glew-2.0.0\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
+    %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-%GLEW_VERSION%/glew-%GLEW_VERSION%-win32.zip
+    %MSVC% %DEP% 7z x glew-%GLEW_VERSION%-win32.zip > nul
+    %MSVC% %DEP% copy glew-%GLEW_VERSION%\include\GL\* %PREFIX%\include\GL > nul
+    %MSVC% %DEP% copy glew-%GLEW_VERSION%\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
+    %MSVC% %DEP% copy glew-%GLEW_VERSION%\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
   # pugixml
   - |-
     %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v%PUGIXML_VERSION%/pugixml-%PUGIXML_VERSION%.zip
