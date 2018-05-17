@@ -1,5 +1,3 @@
-include(GetGitRevisionDescription)
-git_describe(GIT_DESC)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/git_rev.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/git_rev.cpp" @ONLY)
 
 BISON_TARGET(SanParser san_parse.y ${CMAKE_CURRENT_BINARY_DIR}/san_parse.cpp COMPILE_FLAGS "-p san")

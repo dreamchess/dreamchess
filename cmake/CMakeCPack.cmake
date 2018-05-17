@@ -1,0 +1,4 @@
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_VERSION ${GIT_DESC})
+
+include(CPack)
