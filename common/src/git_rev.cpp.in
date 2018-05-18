@@ -18,4 +18,4 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern const char g_version[] = "v@GIT_DESC@";
+extern const char g_version[] = "v@PROJECT_VERSION@@GIT_REV@";

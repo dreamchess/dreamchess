@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
-project(DreamChess)
+project(DreamChess VERSION 0.3.0)
+
+set(DREAMCHESS_RELEASE FALSE)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,7 +19,6 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
-git_describe(GIT_DESC)
 include(CMakeCPack)
 include(CheckIncludeFiles)
 check_include_files(getopt.h HAVE_GETOPT_H)
