@@ -1,5 +1,5 @@
 DreamChess
-Copyright (C) 2003-2017 by the following:
+Copyright (C) 2003-2018 by the following:
 
 Andrew Ball
 Annie Kirkpatrick
@@ -14,5 +14,9 @@ Except:
 
 Queue macros
 Copyright (c) 1991, 1993 The Regents of the University of California
+
+We made use of the Chess Merida font by Armando Hernandez Marroquin to
+generate the figurine chess images. The latin1 characters in our bitmap font
+were generated with the Bitstream Vera font by Bitstream, Inc.
 
 The moon on the title screen is Courtesy NASA/JPL-Caltech.
