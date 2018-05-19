@@ -209,6 +209,9 @@ endif()
 
 if(WIN32)
     install(TARGETS dreamchess DESTINATION .)
+    set_property(INSTALL $<TARGET_FILE_NAME:dreamchess>
+        PROPERTY CPACK_START_MENU_SHORTCUTS "DreamChess"
+    )
     install(DIRECTORY ../data DESTINATION .)
     if(MINGW AND DEFINED ENV{MINGW_PREFIX})
         find_package(PythonInterp)
