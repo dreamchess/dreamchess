@@ -47,8 +47,8 @@ build_script:
     %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && make"
 after_build:
   - |-
-    if "%APPVEYOR_REPO_TAG%"=="true" cpack -G ZIP -C Release
-    if "%APPVEYOR_REPO_TAG%"=="true" cpack -G WIX -C Release
+    %MSVC% if "%APPVEYOR_REPO_TAG%"=="true" cpack -G ZIP -C Release
+    %MSVC% if "%APPVEYOR_REPO_TAG%"=="true" cpack -G WIX -C Release
 artifacts:
   - path: '*.zip'
   - path: '*.msi'
