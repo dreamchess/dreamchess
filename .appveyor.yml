@@ -49,5 +49,5 @@ after_build:
     %MSVC% %TAG% cpack -G ZIP -C Release
     %MSVC% %TAG% cpack -G WIX -C Release
 artifacts:
-  - path: '*.zip'
-  - path: '*.msi'
+  - path: 'build/*.zip'
+  - path: 'build/*.msi'
