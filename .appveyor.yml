@@ -14,11 +14,10 @@ install:
   - |-
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
-  - |-
     if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
-  - |-
     if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
     if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
+    if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
   - |-
     %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
   # Visual Studio
@@ -47,8 +46,8 @@ build_script:
     %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && make"
 after_build:
   - |-
-    %MSVC% if "%APPVEYOR_REPO_TAG%"=="true" cpack -G ZIP -C Release
-    %MSVC% if "%APPVEYOR_REPO_TAG%"=="true" cpack -G WIX -C Release
+    %MSVC% %TAG% cpack -G ZIP -C Release
+    %MSVC% %TAG% cpack -G WIX -C Release
 artifacts:
   - path: '*.zip'
   - path: '*.msi'
