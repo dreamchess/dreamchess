@@ -1,12 +1,7 @@
 image: Visual Studio 2017
 environment:
   PREFIX: C:\Deps
-  PUGIXML_VERSION: 1.9
-  SDL2_VERSION: 2.0.8
-  SDL2IMAGE_VERSION: 2.0.3
-  SDL2MIXER_VERSION: 2.0.2
   FLEXBISON_VERSION: 2.4.12
-  GLEW_VERSION: 2.1.0
   matrix:
     - COMPILER: msvc
     - COMPILER: msys2
@@ -15,71 +10,26 @@ platform:
   - x64
 cache:
   - '%PREFIX% -> .appveyor.yml'
+  - c:\tools\vcpkg\installed\
 install:
   - |-
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
     if exist %PREFIX% set DEP=rem
   - |-
-    if %PLATFORM%==x86 (set MSVC_PLATFORM=Win32) else set MSVC_PLATFORM=%PLATFORM%
     if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
-    if %MSVC_PLATFORM%==x64 set MSVC_SDL_PLATFORM=%MSVC_PLATFORM%
   - |-
     if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
     if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
   - |-
     %DEP% cd %TEMP%
-    %DEP% mkdir %PREFIX%\bin
-    %DEP% mkdir %PREFIX%\include\SDL2
-    %DEP% mkdir %PREFIX%\include\GL
-    %DEP% mkdir %PREFIX%\lib
-    %MSVC% %DEP% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
+    %DEP% mkdir %PREFIX%
     %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
-  # flex / bison
+  # MSVC
   - |-
     %MSVC% %DEP% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v%FLEXBISON_VERSION%/win_flex_bison-%FLEXBISON_VERSION%.zip
     %MSVC% %DEP% 7z x win_flex_bison-%FLEXBISON_VERSION%.zip -o%PREFIX%\win_flex_bison > nul
-  # SDL2
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-%SDL2_VERSION%-VC.zip
-    %MSVC% %DEP% 7z x SDL2-devel-%SDL2_VERSION%-VC.zip > nul
-    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2-%SDL2_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL2_image
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-%SDL2IMAGE_VERSION%-VC.zip
-    %MSVC% %DEP% 7z x SDL2_image-devel-%SDL2IMAGE_VERSION%-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_image-%SDL2IMAGE_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL2_mixer
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-%SDL2MIXER_VERSION%-VC.zip
-    %MSVC% %DEP% 7z x SDL2_mixer-devel-%SDL2MIXER_VERSION%-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_mixer-%SDL2MIXER_VERSION%\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # GLEW
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-%GLEW_VERSION%/glew-%GLEW_VERSION%-win32.zip
-    %MSVC% %DEP% 7z x glew-%GLEW_VERSION%-win32.zip > nul
-    %MSVC% %DEP% copy glew-%GLEW_VERSION%\include\GL\* %PREFIX%\include\GL > nul
-    %MSVC% %DEP% copy glew-%GLEW_VERSION%\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy glew-%GLEW_VERSION%\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
-  # pugixml
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile http://github.com/zeux/pugixml/releases/download/v%PUGIXML_VERSION%/pugixml-%PUGIXML_VERSION%.zip
-    %MSVC% %DEP% 7z x pugixml-%PUGIXML_VERSION%.zip > nul
-    %MSVC% %DEP% cd pugixml-%PUGIXML_VERSION%
-    %MSVC% %DEP% mkdir build
-    %MSVC% %DEP% cd build
-    %MSVC% %DEP% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" ..
-    %MSVC% %DEP% cmake --build . --config Release
-    %MSVC% %DEP% copy Release\pugixml.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% cd ..
-    %MSVC% %DEP% copy src\*.hpp %PREFIX%\include > nul
-    %MSVC% %DEP% cd ..
+    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows pugixml:%PLATFORM%-windows glew:%PLATFORM%-windows
   # MSYS2
   - |-
     %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml"
@@ -89,7 +39,7 @@ before_build:
     cd %APPVEYOR_BUILD_FOLDER%\build
   # Visual Studio
   - |-
-    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_PROGRAM_PATH=%PREFIX%\win_flex_bison ..
+    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PROGRAM_PATH=%PREFIX%\win_flex_bison ..
   # MSYS2
   - |-
     %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && cmake -DCMAKE_PREFIX_PATH='%PREFIX%' -G'MSYS Makefiles' .."
