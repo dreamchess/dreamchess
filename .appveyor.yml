@@ -25,7 +25,7 @@ install:
   - |-
     %MSVC% choco install -y winflexbison
     %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows pugixml:%PLATFORM%-windows glew:%PLATFORM%-windows
-    # MSYS2
+  # MSYS2
   - |-
     %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml"
 before_build:
