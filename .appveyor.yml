@@ -50,4 +50,16 @@ after_build:
     %MSVC% %TAG% cpack -G WIX -C Release
 artifacts:
   - path: 'build/*.zip'
+    name: portable
   - path: 'build/*.msi'
+    name: installer
+deploy:
+  description: ''
+  provider: GitHub
+  auth_token:
+    secure: 655VE6bB1PIZDNNyr0uqKhE8cvNd31/rY3gfG3jJobNOhSBTACLiMBxYYUjgcFDU
+  artifact: portable, installer
+  draft: true
+  force_update: true
+  on:
+    appveyor_repo_tag: true
