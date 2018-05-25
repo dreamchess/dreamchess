@@ -54,3 +54,5 @@ endif()
 if(BUILD_DREAMER)
     add_subdirectory(dreamer/src)
 endif()
+
+add_subdirectory(dist)
