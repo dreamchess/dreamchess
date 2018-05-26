@@ -19,14 +19,14 @@ install:
     if %PLATFORM%==x86 (set MSYS2_PREFIX=C:\msys64\mingw32) else set MSYS2_PREFIX=C:\msys64\mingw64
     if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
   - |-
-    %MSYS2% set PATH=%MSYS2_PREFIX%\bin;%PATH%
+    %MSYS2% set PATH=C:\msys64\usr\bin;%MSYS2_PREFIX%\bin;%PATH%
   # Visual Studio
   - |-
     %MSVC% choco install -y winflexbison
     %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows pugixml:%PLATFORM%-windows glew:%PLATFORM%-windows
   # MSYS2
   - |-
-    %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml
+    %MSYS2% pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml
 before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
