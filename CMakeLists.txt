@@ -55,4 +55,17 @@ if(BUILD_DREAMER)
     add_subdirectory(dreamer/src)
 endif()
 
+set(DOC_FILES
+    LICENSE.txt
+    AUTHORS.txt
+    NEWS.txt
+    README.md
+)
+
+if(UNIX)
+    install(FILES ${DOC_FILES} DESTINATION ${CMAKE_INSTALL_DOCDIR})
+else()
+    install(FILES ${DOC_FILES} DESTINATION doc)
+endif()
+
 add_subdirectory(dist)
