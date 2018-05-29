@@ -48,6 +48,12 @@ target_include_directories(dreamer
 
 if(WIN32)
     install(TARGETS dreamer DESTINATION .)
+elseif(APPLE)
+    if(BUILD_DREAMCHESS)
+        install(TARGETS dreamer DESTINATION DreamChess.app/Contents/MacOS)
+    else()
+        install(TARGETS dreamer DESTINATION .)
+    endif()
 elseif(UNIX)
     install(TARGETS dreamer DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(FILES ../man/dreamer.6 DESTINATION ${CMAKE_INSTALL_MANDIR}/man6)

@@ -23,7 +23,7 @@ if(MINGW)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>") 
 endif(MINGW)
 
-add_executable(dreamchess
+add_executable(dreamchess MACOSX_BUNDLE
     board.cpp
     board.h
     comm.cpp
@@ -53,6 +53,10 @@ add_executable(dreamchess
     include/system_config.h
     include/theme.h
 )
+
+if(APPLE OR WIN32)
+    set_target_properties(dreamchess PROPERTIES OUTPUT_NAME DreamChess)
+endif()
 
 if(WIN32)
     target_sources(dreamchess PRIVATE comm_win32.cpp win32.rc)
@@ -238,6 +242,9 @@ if(WIN32)
             file(INSTALL \${DLLS} DESTINATION \${CMAKE_INSTALL_PREFIX})
         ")
     endif()
+elseif(APPLE)
+    install(TARGETS dreamchess DESTINATION .)
+    install(DIRECTORY ../data/ DESTINATION DreamChess.app/Contents/Resources)
 elseif(UNIX)
     install(TARGETS dreamchess DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(FILES ../man/dreamchess.6 DESTINATION ${CMAKE_INSTALL_MANDIR}/man6)
