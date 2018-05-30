@@ -456,21 +456,21 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
             printf("Usage: dreamchess [options]\n\n"
                    "An xboard-compatible chess interface.\n\n"
                    "Options:\n"
-                   OPTION_TEXT("--help\t", "-h\t", "Show help.")
-                   OPTION_TEXT("--list-drivers", "-l\t", "List all available drivers.")
-                   OPTION_TEXT("--ui <drv>\t", "-u<drv>", "Use user interface driver <drv>.")
-                   OPTION_TEXT("--fullscreen\t", "-f\t", "Run fullscreen")
-                   OPTION_TEXT("--width\t", "-W<num>", "Set screen width")
-                   OPTION_TEXT("--height\t", "-H<num>", "Set screen height")
-                   OPTION_TEXT("--1st-engine <eng>", "-1<eng>", "Use <eng> as first chess engine.")
-                   OPTION_TEXT("\t\t", "\t", "  Defaults to 'dreamer'.")
-                   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.")
-                   OPTION_TEXT("\t\t", "\t", "  Verbosity levels:")
-                   OPTION_TEXT("\t\t", "\t", "  0 - Silent")
-                   OPTION_TEXT("\t\t", "\t", "  1 - Errors only")
-                   OPTION_TEXT("\t\t", "\t", "  2 - Errors and warnings only")
-                   OPTION_TEXT("\t\t", "\t", "  3 - All")
-                   OPTION_TEXT("\t\t", "\t", "  Defaults to 1")
+                   OPTION_TEXT("--help\t", "-h\t", "show help")
+                   OPTION_TEXT("--list-drivers", "-l\t", "list all available drivers")
+                   OPTION_TEXT("--ui <drv>\t", "-u<drv>", "use user interface driver <drv>")
+                   OPTION_TEXT("--fullscreen\t", "-f\t", "run fullscreen")
+                   OPTION_TEXT("--width\t", "-W<num>", "set screen width")
+                   OPTION_TEXT("--height\t", "-H<num>", "set screen height")
+                   OPTION_TEXT("--1st-engine <eng>", "-1<eng>", "use <eng> as first chess engine")
+                   OPTION_TEXT("\t\t", "\t", "  defaults to 'dreamer'")
+                   OPTION_TEXT("--verbose <level>", "-v<level>", "set verbosity to <level>")
+                   OPTION_TEXT("\t\t", "\t", "  verbosity levels:")
+                   OPTION_TEXT("\t\t", "\t", "  0 - silent")
+                   OPTION_TEXT("\t\t", "\t", "  1 - errors only")
+                   OPTION_TEXT("\t\t", "\t", "  2 - errors and warnings")
+                   OPTION_TEXT("\t\t", "\t", "  3 - all")
+                   OPTION_TEXT("\t\t", "\t", "  defaults to 1")
                   );
             exit(0);
         case 'l':
