@@ -28,6 +28,7 @@
 #include <getopt.h>
 #elif defined(_MSC_VER)
 #include "msvc/getopt.h"
+#define HAVE_GETOPT_LONG
 #endif /* HAVE_GETOPT_H */
 #include <errno.h>
 
