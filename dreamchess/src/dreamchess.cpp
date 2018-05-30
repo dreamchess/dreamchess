@@ -48,7 +48,7 @@
 #endif
 
 #ifdef HAVE_GETOPT_LONG
-#define OPTION_TEXT(L, S, T) "  " L "\t" S "\t" T "\n"
+#define OPTION_TEXT(L, S, T) "  " L "\t  " S "\t" T "\n"
 #else
 #define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
 #endif
@@ -457,12 +457,19 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
                    "Options:\n"
                    OPTION_TEXT("--help\t", "-h\t", "Show help.")
                    OPTION_TEXT("--list-drivers", "-l\t", "List all available drivers.")
-                   OPTION_TEXT("--ui <drv>\t", "-u<drv>\t", "Use user interface driver <drv>.")
+                   OPTION_TEXT("--ui <drv>\t", "-u<drv>", "Use user interface driver <drv>.")
                    OPTION_TEXT("--fullscreen\t", "-f\t", "Run fullscreen")
-                   OPTION_TEXT("--width\t", "-W<num>\t", "Set screen width")
-                   OPTION_TEXT("--height\t", "-H<num>\t", "Set screen height")
-                   OPTION_TEXT("--1st-engine <eng>", "-1<eng>\t", "Use <eng> as first chess engine.\n\t\t\t\t\t  Defaults to 'dreamer'.")
-                   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.\n\t\t\t\t\t  Verbosity levels:\n\t\t\t\t\t  0 - Silent\n\t\t\t\t\t  1 - Errors only\n\t\t\t\t\t  2 - Errors and warnings only\n\t\t\t\t\t  3 - All\n\t\t\t\t\t  Defaults to 1")
+                   OPTION_TEXT("--width\t", "-W<num>", "Set screen width")
+                   OPTION_TEXT("--height\t", "-H<num>", "Set screen height")
+                   OPTION_TEXT("--1st-engine <eng>", "-1<eng>", "Use <eng> as first chess engine.")
+                   OPTION_TEXT("\t\t", "\t", "  Defaults to 'dreamer'.")
+                   OPTION_TEXT("--verbose <level>", "-v<level>", "Set verbosity to <level>.")
+                   OPTION_TEXT("\t\t", "\t", "  Verbosity levels:")
+                   OPTION_TEXT("\t\t", "\t", "  0 - Silent")
+                   OPTION_TEXT("\t\t", "\t", "  1 - Errors only")
+                   OPTION_TEXT("\t\t", "\t", "  2 - Errors and warnings only")
+                   OPTION_TEXT("\t\t", "\t", "  3 - All")
+                   OPTION_TEXT("\t\t", "\t", "  Defaults to 1")
                   );
             exit(0);
         case 'l':
