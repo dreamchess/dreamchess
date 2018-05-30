@@ -23,11 +23,6 @@ if(MINGW)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>") 
 endif(MINGW)
 
-set(MACOSX_FRAMEWORK_IDENTIFIER org.dreamchess.DreamChess)
-set(MACOSX_FRAMEWORK_ICON_FILE DreamChess.icns)
-set(MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION})
-set(MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION})
-
 add_executable(dreamchess MACOSX_BUNDLE
     board.cpp
     board.h
@@ -57,6 +52,19 @@ add_executable(dreamchess MACOSX_BUNDLE
     include/options.h
     include/system_config.h
     include/theme.h
+)
+
+set(COPYRIGHT_STRING "Copyright © 2003-${COPYRIGHT_YEAR} DreamChess developers")
+
+set_target_properties(dreamchess PROPERTIES
+    MACOSX_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_COPYRIGHT ${COPYRIGHT_STRING}
+    MACOSX_BUNDLE_GUI_IDENTIFIER org.dreamchess.DreamChess
+    MACOSX_BUNDLE_ICON_FILE DreamChess.icns
+    MACOSX_BUNDLE_INFO_STRING ${COPYRIGHT_STRING}
+    MACOSX_BUNDLE_LONG_VERSION_STRING "Version ${PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
 )
 
 if(APPLE OR WIN32)
