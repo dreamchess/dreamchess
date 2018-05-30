@@ -1,4 +1,4 @@
-*** 2018-??-?? - DreamChess v0.3.0 ***
+### 2018-??-?? - DreamChess 0.3.0
 
 Most important changes:
 - Now uses pugixml instead of Mini-XML
@@ -12,7 +12,7 @@ Most important changes:
 - New icon
 - Music pack support on OS X
 
-*** 2007-11-17 - DreamChess v0.2.0 ***
+### 2007-11-17 - DreamChess v0.2.0
 
 Over a year has passed since the first release, and we are now happy to
 present DreamChess v0.2.0. DreamChess is a 3D chess game for Windows, Mac OS X
@@ -60,7 +60,7 @@ use help in many areas, such as programming, graphics, sound and testing. If
 you're interested in helping out, please send an email to feedback at
 dreamchess.org.
 
-*** 2006-09-24 - DreamChess v0.1.0 ***
+### 2006-09-24 - DreamChess v0.1.0
 
 DreamChess (http://www.dreamchess.org) is an open source chess game. Our
 primary target platforms are Linux, Windows, Dreamcast and BeOS. DreamChess
