@@ -433,10 +433,7 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 
     struct option options[] =
         {
-            {"help", no_argument, NULL, 'h'
-            },
-            {"list-drivers", no_argument, NULL, 'l'},
-            {"ui", required_argument, NULL, 'u'},
+            {"help", no_argument, NULL, 'h'},
             {"fullscreen", no_argument, NULL, 'f'},
             {"width", required_argument, NULL, 'W'},
             {"height", required_argument, NULL, 'H'},
@@ -445,10 +442,10 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
             {0, 0, 0, 0}
         };
 
-    while ((c = getopt_long(argc, argv, "1:fhlu:v:W:H:", options, &optindex)) > -1) {
+    while ((c = getopt_long(argc, argv, "1:fhv:W:H:", options, &optindex)) > -1) {
 #else
 
-    while ((c = getopt(argc, argv, "1:fhlu:v:W:H:")) > -1) {
+    while ((c = getopt(argc, argv, "1:fhv:W:H:")) > -1) {
 #endif /* HAVE_GETOPT_LONG */
         switch (c)
         {
@@ -457,8 +454,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
                    "An xboard-compatible chess interface.\n\n"
                    "Options:\n"
                    OPTION_TEXT("--help\t", "-h\t", "show help")
-                   OPTION_TEXT("--list-drivers", "-l\t", "list all available drivers")
-                   OPTION_TEXT("--ui <drv>\t", "-u<drv>", "use user interface driver <drv>")
                    OPTION_TEXT("--fullscreen\t", "-f\t", "run fullscreen")
                    OPTION_TEXT("--width\t", "-W<num>", "set screen width")
                    OPTION_TEXT("--height\t", "-H<num>", "set screen height")
@@ -473,17 +468,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
                    OPTION_TEXT("\t\t", "\t", "  defaults to 1")
                   );
             exit(0);
-        case 'l':
-            printf("Available drivers:\n\n");
-            ui_list_drivers();
-            exit(0);
-        case 'u':
-            if (!(*ui_driver = ui_find_driver(optarg)))
-            {
-                DBG_ERROR("could not find user interface driver '%s'", optarg);
-                exit(1);
-            }
-            break;
         case '1':
             cl_options->engine = optarg;
             break;
@@ -550,7 +534,7 @@ int dreamchess(void *data)
     cl_options_t cl_options = { 0 };
     arguments_t *arg = (arguments_t *)data;
 
-    ui = ui_driver[0];
+    ui = &ui_sdlgl;
 
     printf( "DreamChess %s\n", g_version );
 
