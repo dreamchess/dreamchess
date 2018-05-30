@@ -59,8 +59,6 @@ endif()
 set(DOC_FILES
     LICENSE.txt
     AUTHORS.txt
-    NEWS.txt
-    README.md
 )
 
 if(APPLE)
