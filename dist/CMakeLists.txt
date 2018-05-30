@@ -1,4 +1,7 @@
-install(CODE "include(BundleUtilities)")
+install(CODE "
+	set(BU_CHMOD_BUNDLE_ITEMS ON)
+	include(BundleUtilities)
+")
 
 if(MSVC)
 	set(CMAKE_INSTALL_UCRT_LIBRARIES 1)
