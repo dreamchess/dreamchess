@@ -45,6 +45,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: 655VE6bB1PIZDNNyr0uqKhE8cvNd31/rY3gfG3jJobNOhSBTACLiMBxYYUjgcFDU
+  release: DreamChess $(APPVEYOR_REPO_TAG_NAME)
   artifact: portable, installer
   draft: true
   force_update: true
