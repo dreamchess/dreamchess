@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "credits.h"
+#include "config.h"
 
 static const char* programming[] = { "Programming",
                                      "Kris McAulay",
@@ -48,8 +49,8 @@ static const char* thanks[] = { "Special Thanks To",
                                 NULL };
 
 static const char* copyright[] = { "DreamChess",
-                                   "\xa9 2003-2017",
-                                   "http://www.dreamchess.org",
+                                   "\xa9 2003-" COPYRIGHT_YEAR,
+                                   "https://www.dreamchess.org",
                                    NULL };
 
 static const char* music[] = { "Music",
