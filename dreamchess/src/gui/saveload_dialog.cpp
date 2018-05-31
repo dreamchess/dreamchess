@@ -202,8 +202,8 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
 
             for ( j=0; j<8; j++ )
             {
-                gg_colour_t col_green = {0.5, 0.6, 0.5, 1.0};
-                gg_colour_t col_yellow = {0.8, 0.7, 0.4, 1.0};
+                gg_colour_t col_green = {0.5f, 0.6f, 0.5f, 1.0f};
+                gg_colour_t col_yellow = {0.8f, 0.7f, 0.4f, 1.0f};
                 gg_colour_t front, *back;
                 int square = get_saved_board(saveload_selected)->square[i * 8 + j];
 

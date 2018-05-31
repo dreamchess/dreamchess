@@ -24,9 +24,9 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
 {
     glColor4f(col->r, col->g, col->b, col->a);
     glBegin(GL_TRIANGLES);
-    glVertex3f(x1, y1, 1.0f);
-    glVertex3f(x2, y2, 1.0f);
-    glVertex3f(x3, y3, 1.0f);
+    glVertex3f((float)x1, (float)y1, 1.0f);
+    glVertex3f((float)x2, (float)y2, 1.0f);
+    glVertex3f((float)x3, (float)y3, 1.0f);
     glEnd();
 }
 
@@ -49,13 +49,13 @@ void draw_rect_fill_gradient(int x, int y, int w, int h,
 {
     glBegin(GL_QUADS);
     glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
-    glVertex3f(x, y, 1.0f);
+    glVertex3f((float)x, (float)y, 1.0f);
     glColor4f(top_right->r, top_right->g, top_right->b, top_right->a);
-    glVertex3f(x + w, y, 1.0f);
+    glVertex3f((float)(x + w), (float)y, 1.0f);
     glColor4f(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a);
-    glVertex3f(x + w, y + h, 1.0f);
+    glVertex3f((float)(x + w), (float)(y + h), 1.0f);
     glColor4f(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a);
-    glVertex3f(x, y + h, 1.0f);
+    glVertex3f((float)x, (float)(y + h), 1.0f);
     glEnd();
 }
 

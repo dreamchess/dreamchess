@@ -202,7 +202,7 @@ void unload_theme(void);
 
 /* draw_scene.c */
 void draw_scene( board_t *b, GLuint fb, int reflections );
-float get_mouse_square(void);
+int get_mouse_square(void);
 
 /* credits.c */
 void draw_credits(int init);

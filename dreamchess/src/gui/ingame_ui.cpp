@@ -25,7 +25,7 @@ void draw_capture_list( coord3_t offset, gg_colour_t *col);
 
 coord3_t transition;
 float transition_speed=1000;
-float transition_start_pos;
+Uint32 transition_start_pos;
 float trans_amount=320;
 int trans_in;
 int trans_reset;
@@ -38,11 +38,11 @@ void reset_transition( int in )
 
 void transition_update(void)
 {
-    float ticks=SDL_GetTicks();
+    Uint32 ticks=SDL_GetTicks();
 
     if ( trans_reset )
     {
-        transition_start_pos=SDL_GetTicks();
+        transition_start_pos=ticks;
         trans_reset=FALSE;
     }
 
@@ -94,14 +94,14 @@ static void draw_health_bar( coord3_t position, coord3_t size, int white )
 
     if ( white )
     {
-        draw_rect_fill( position.x, position.y, bar_len, size.y, get_col(COL_WHITE));
-        draw_rect_fill_gradient( position.x+1, position.y+1, bar_len-2, size.y-2,
+        draw_rect_fill((int)position.x, (int)position.y, (int)bar_len, (int)size.y, get_col(COL_WHITE));
+        draw_rect_fill_gradient((int)position.x + 1, (int)position.y + 1, (int)bar_len - 2, (int)size.y - 2,
             &bottom_left_col, &bottom_right_col, &top_left_col, &top_right_col);
     }
     else
     {
-        draw_rect_fill( position.x+(size.x-bar_len), position.y, bar_len, size.y, get_col(COL_WHITE));
-        draw_rect_fill_gradient( position.x+1+(size.x-bar_len), position.y+1, bar_len-2, size.y-2,
+        draw_rect_fill((int)(position.x + (size.x - bar_len)), (int)position.y, (int)bar_len, (int)size.y, get_col(COL_WHITE));
+        draw_rect_fill_gradient((int)(position.x + 1 + (size.x - bar_len)), (int)position.y + 1, (int)bar_len - 2, (int)size.y - 2,
             &bottom_right_col, &bottom_left_col, &top_right_col, &top_left_col);
     }
 }
@@ -187,19 +187,19 @@ void draw_ui_elements(void)
     /* Get name sizes, string */
     white_name=get_white_name();
     gg_system_get_string_size(white_name, &namew, &nameh );
-    white_name_size.x=namew; white_name_size.y=nameh;
+    white_name_size.x = (float)namew; white_name_size.y = (float)nameh;
     black_name=get_black_name();
     gg_system_get_string_size(black_name, &namew, &nameh );
-    black_name_size.x=namew; black_name_size.y=nameh;
+    black_name_size.x = (float)namew; black_name_size.y = (float)nameh;
 
     /* Get clock sizes, string */
     white_clock="00:00";
     gg_system_get_string_size(white_clock, &namew, &nameh );
-    white_clock_size.x=namew; white_clock_size.y=nameh;
+    white_clock_size.x = (float)namew; white_clock_size.y = (float)nameh;
 
     black_clock="00:00";
     gg_system_get_string_size(black_clock, &namew, &nameh );
-    black_clock_size.x=namew; black_clock_size.y=nameh;
+    black_clock_size.x = (float)namew; black_clock_size.y = (float)nameh;
 
     /* Draw the avatars. */
     if ( avatars )
@@ -277,7 +277,7 @@ void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col
 {
     char **list;
     int entries, view, i;
-    int y;
+    float y;
     int last_white, last_black;
 
     gg_colour_t col_normal2=*col_normal;

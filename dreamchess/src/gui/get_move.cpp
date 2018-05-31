@@ -44,7 +44,7 @@ int get_move(void)
 
     if( mousestate & SDL_BUTTON_MIDDLE )
     {
-        move_camera( -(mousey-last_mousey)*MOUSE_CAM_SPEED, -(mousex-last_mousex)*MOUSE_CAM_SPEED);
+        move_camera((float)-(mousey-last_mousey)*MOUSE_CAM_SPEED, (float)-(mousex-last_mousex)*MOUSE_CAM_SPEED);
         last_mousex=mousex;
         last_mousey=mousey;
     }

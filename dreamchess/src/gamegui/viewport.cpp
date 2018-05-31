@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <gamegui/viewport.h>
 #include <gamegui/clipping.h>
@@ -26,9 +26,9 @@
 static void scroll_to_focus_pos(gg_viewport_t *viewport)
 {
     gg_widget_t *child = gg_bin_get_child(GG_BIN(viewport));
-    int xmin = viewport->xscroll * (child->width_a - viewport->width_a);
+    int xmin = (int)(viewport->xscroll * (child->width_a - viewport->width_a));
     int xmax = xmin + viewport->width_a;
-    int ymin = viewport->yscroll * (child->height_a - viewport->height_a);
+    int ymin = (int)(viewport->yscroll * (child->height_a - viewport->height_a));
     int ymax = ymin + viewport->height_a;
 
     gg_rect_t rect = child->get_focus_pos(child);
@@ -57,8 +57,8 @@ void gg_viewport_render(gg_widget_t *widget, int x, int y, int focus)
     gg_viewport_t *viewport = GG_VIEWPORT(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
     gg_rect_t rect;
-    int xoff = viewport->xscroll * (child->width_a - widget->width_a);
-    int yoff = viewport->yscroll * (child->height_a - widget->height_a);
+    int xoff = (int)(viewport->xscroll * (child->width_a - widget->width_a));
+    int yoff = (int)(viewport->yscroll * (child->height_a - widget->height_a));
 
     rect.x = x;
     rect.y = y;
@@ -112,8 +112,8 @@ gg_rect_t gg_viewport_get_focus_pos(gg_widget_t *widget)
 {
     gg_viewport_t *viewport = GG_VIEWPORT(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
-    int xoff = viewport->xscroll * (child->width_a - widget->width_a);
-    int yoff = viewport->yscroll * (child->height_a - widget->height_a);
+    int xoff = (int)(viewport->xscroll * (child->width_a - widget->width_a));
+    int yoff = (int)(viewport->yscroll * (child->height_a - widget->height_a));
     gg_rect_t rect = child->get_focus_pos(child);
 
     rect.x -= xoff;
@@ -126,8 +126,8 @@ int gg_viewport_set_focus_pos(gg_widget_t *widget, int x, int y)
 {
     gg_viewport_t *viewport = GG_VIEWPORT(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
-    int xoff = viewport->xscroll * (child->width_a - widget->width_a);
-    int yoff = viewport->yscroll * (child->height_a - widget->height_a);
+    int xoff = (int)(viewport->xscroll * (child->width_a - widget->width_a));
+    int yoff = (int)(viewport->yscroll * (child->height_a - widget->height_a));
 
     return child->set_focus_pos(child, x + xoff, y + yoff);
 }
@@ -137,8 +137,8 @@ int gg_viewport_input(gg_widget_t *widget, gg_event_t event)
     int retval;
     gg_viewport_t *viewport = GG_VIEWPORT(widget);
     gg_widget_t *child = gg_bin_get_child(GG_BIN(widget));
-    int xmin = viewport->xscroll * (child->width_a - widget->width_a);
-    int ymin = viewport->yscroll * (child->height_a - widget->height_a);
+    int xmin = (int)(viewport->xscroll * (child->width_a - widget->width_a));
+    int ymin = (int)(viewport->yscroll * (child->height_a - widget->height_a));
 
     if (event.type == GG_EVENT_MOUSE)
     {
@@ -172,7 +172,7 @@ void gg_viewport_init(gg_viewport_t *viewport, gg_widget_t *widget, int width, i
 
 gg_widget_t *gg_viewport_create(gg_widget_t *widget, int width, int height)
 {
-    gg_viewport_t *viewport = (gg_viewport_t *)malloc(sizeof(gg_viewport_t));
+    gg_viewport_t *viewport = (gg_viewport_t *)std::malloc(sizeof(gg_viewport_t));
 
     gg_viewport_init(viewport, widget, width, height);
 

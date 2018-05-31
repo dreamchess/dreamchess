@@ -18,9 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <gamegui/dialog.h>
 #include <gamegui/clipping.h>
@@ -132,8 +131,8 @@ void gg_dialog_set_active(gg_dialog_t *dialog)
 
 void gg_dialog_get_screen_pos(gg_dialog_t *dialog, int *x, int *y)
 {
-    *x = dialog->pos.x - dialog->width * dialog->pos.x_align;
-    *y = dialog->pos.y - dialog->height * dialog->pos.y_align;
+    *x = dialog->pos.x - (int)(dialog->width * dialog->pos.x_align);
+    *y = dialog->pos.y - (int)(dialog->height * dialog->pos.y_align);
 }
 
 void draw_border(void *image[9], char *title, int active, gg_rect_t area, int size)
@@ -142,7 +141,7 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     int image_size;
     int titlebar_height = 0;
 
-    gg_system_get_image_size(image[0], &image_size, NULL);
+    gg_system_get_image_size(image[0], &image_size, nullptr);
 
     source.x = 0;
     source.y = 0;
@@ -152,8 +151,8 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
     if (title)
     {
         int text_height;
-        gg_system_get_string_size(title, NULL, &text_height);
-        titlebar_height = text_height * GG_DIALOG_TITLE_FACT;
+        gg_system_get_string_size(title, nullptr, &text_height);
+        titlebar_height = (int)(text_height * GG_DIALOG_TITLE_FACT);
         titlebar_height += GG_DIALOG_TITLE_SEP_HEIGHT;
 
         dest.x = area.x;
@@ -175,7 +174,7 @@ void draw_border(void *image[9], char *title, int active, gg_rect_t area, int si
                 &col_grey2, &col_grey, &col_grey2, &col_grey);
 
         gg_clipping_adjust(&dest);
-        dest.y += text_height * (GG_DIALOG_TITLE_FACT - 1) / 2;
+        dest.y += (int)(text_height * (GG_DIALOG_TITLE_FACT - 1) / 2);
         gg_system_draw_string(title, dest.x + dest.width / 2, dest.y, &col_white, 0, 0.5);
         gg_clipping_undo();
     }
@@ -246,11 +245,11 @@ static void dialog_reset_transition(int in)
 
 static float dialog_get_transition(void)
 {
-    float ticks = gg_system_get_ticks();
+    unsigned int ticks = gg_system_get_ticks();
 
     if (dialog_trans_reset)
     {
-        dialog_transition_start_pos = gg_system_get_ticks();
+        dialog_transition_start_pos = (float)ticks;
         dialog_trans_reset = 0;
     }
 
@@ -298,7 +297,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
     /* Draw the 'fade' */
     gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
 
-    gg_system_get_image_size(style->border.image[0], &size, NULL);
+    gg_system_get_image_size(style->border.image[0], &size, nullptr);
 
     xmin += size;
     xmax -= size;
@@ -313,7 +312,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
     active = gg_dialog_get_active() == dialog;
 
     if (dialog_in_trans)
-        area.height *= dialog_get_transition();
+        area.height = (int)(area.height * dialog_get_transition());
 
     draw_border(style->border.image, dialog->title, active, area, size);
 
@@ -353,7 +352,7 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
         event.mouse.x -= x;
         event.mouse.y -= y;
 
-        gg_system_get_image_size(dialog->style.border.image[0], &size, NULL);
+        gg_system_get_image_size(dialog->style.border.image[0], &size, nullptr);
 
         if (event.mouse.type == GG_MOUSE_BUTTON_DOWN
             && event.mouse.button == 0)
@@ -362,8 +361,8 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
             {
                 int text_height;
                 int titlebar_height;
-                gg_system_get_string_size(dialog->title, NULL, &text_height);
-                titlebar_height = text_height * GG_DIALOG_TITLE_FACT;
+                gg_system_get_string_size(dialog->title, nullptr, &text_height);
+                titlebar_height = (int)(text_height * GG_DIALOG_TITLE_FACT);
 
                 dialog->dialog_state |= GG_DIALOG_LEFT_BUTTON;
 
@@ -404,8 +403,8 @@ int gg_dialog_input(gg_widget_t *widget, gg_event_t event)
         if ((event.mouse.type == GG_MOUSE_MOVE)
             && (dialog->dialog_state & GG_DIALOG_MOVING))
         {
-            int xoff = dialog->width * dialog->pos.x_align;
-            int yoff = dialog->height * dialog->pos.y_align;
+            int xoff = (int)(dialog->width * dialog->pos.x_align);
+            int yoff = (int)(dialog->height * dialog->pos.y_align);
 
             gg_dialog_set_position(dialog, x + event.mouse.x - dialog->movement_org_x + xoff,
                                    y + event.mouse.y - dialog->movement_org_y + yoff,
@@ -480,10 +479,10 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
 
     if (title)
     {
-        dialog->title = (char *)malloc(strlen(title) + 1);
-        strcpy(dialog->title, title);
+        dialog->title = (char *)std::malloc(std::strlen(title) + 1);
+        std::strcpy(dialog->title, title);
     } else
-        dialog->title = NULL;
+        dialog->title = nullptr;
 
     child->get_requested_size(child, &dialog->width, &dialog->height);
     child->set_size(child, dialog->width, dialog->height);
@@ -502,7 +501,7 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
 gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title,
                               gg_dialog_t *parent, int flags)
 {
-    gg_dialog_t *dialog = (gg_dialog_t *)malloc(sizeof(gg_dialog_t));
+    gg_dialog_t *dialog = (gg_dialog_t *)std::malloc(sizeof(gg_dialog_t));
 
     gg_dialog_init(dialog, child, title, parent, flags);
 
@@ -514,7 +513,7 @@ void gg_dialog_destroy(gg_widget_t *widget)
     gg_dialog_t *dialog = GG_DIALOG(widget);
 
     if (dialog->title)
-        free(dialog->title);
+        std::free(dialog->title);
 
     gg_container_destroy(widget);
 }
@@ -528,15 +527,15 @@ void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style)
     dialog->width = child->width_a + 2 * dialog->style.hor_pad;
     dialog->height = child->height_a + 2 * dialog->style.vert_pad;
 
-    gg_system_get_image_size(style->border.image[0], &size, NULL);
+    gg_system_get_image_size(style->border.image[0], &size, nullptr);
     dialog->width += 2 * size;
     dialog->height += 2 * size;
 
     if (dialog->title)
     {
         int text_height;
-        gg_system_get_string_size(dialog->title, NULL, &text_height);
-        dialog->height += text_height * GG_DIALOG_TITLE_FACT;
+        gg_system_get_string_size(dialog->title, nullptr, &text_height);
+        dialog->height += (int)(text_height * GG_DIALOG_TITLE_FACT);
         dialog->height += GG_DIALOG_TITLE_SEP_HEIGHT;
     }
 }

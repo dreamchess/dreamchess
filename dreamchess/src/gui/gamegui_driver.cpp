@@ -111,8 +111,8 @@ gg_event_t convert_event(SDL_Event *event)
             gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN
                                 ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
             gg_event.mouse.button = event->button.button - 1;
-            gg_event.mouse.x = ((float)mouse_x/(float)get_screen_width())*640;
-            gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y/(float)get_screen_height())*480;
+            gg_event.mouse.x = (int)(((float)mouse_x/(float)get_screen_width())*640);
+            gg_event.mouse.y = SCREEN_HEIGHT - 1 - (int)(((float)mouse_y/(float)get_screen_height())*480);
         }
         break;
 
@@ -126,8 +126,8 @@ gg_event_t convert_event(SDL_Event *event)
             set_mouse_pos( mouse_x, mouse_y );
             gg_event.type = GG_EVENT_MOUSE;
             gg_event.mouse.type = GG_MOUSE_MOVE;
-            gg_event.mouse.x = ((float)mouse_x/(float)get_screen_width())*640;
-            gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y/(float)get_screen_height())*480;
+            gg_event.mouse.x = (int)(((float)mouse_x/(float)get_screen_width())*640);
+            gg_event.mouse.y = SCREEN_HEIGHT - 1 - (int)(((float)mouse_y/(float)get_screen_height())*480);
         }
     }
 
@@ -169,8 +169,8 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
         height = source.height / tex_v;
     }
 
-    draw_texture_uv(texture, dest.x,
-                    dest.y, dest.width, dest.height, 1.0f,
+    draw_texture_uv(texture, (float)dest.x,
+                    (float)dest.y, (float)dest.width, (float)dest.height, 1.0f,
                     colour, xsrc,
                     ysrc,
                     xsrc + width, ysrc + height, en_h, en_v);
@@ -187,7 +187,7 @@ static void *get_char_image(int c)
 
 static void draw_char(int c, int x, int y, gg_colour_t *colour)
 {
-    text_draw_char(x, y, 1.0f, c, colour);
+    text_draw_char((float)x, (float)y, 1.0f, c, colour);
 }
 
 static void get_image_size(void *image, int *width, int *height)

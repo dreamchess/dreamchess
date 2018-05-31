@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <gamegui/label.h>
 
@@ -55,8 +55,8 @@ void gg_label_render(gg_widget_t *widget, int x, int y, int focus)
     if (label->bgcolour.a != 0.0f)
         gg_system_draw_filled_rect(x, y, label->width_a, label->height_a, &label->bgcolour);
 
-    x += label->xalign * (label->width_a - label->width);
-    y += (1.0f - label->yalign) * (label->height_a - label->height);
+    x += (int)(label->xalign * (label->width_a - label->width));
+    y += (int)((1.0f - label->yalign) * (label->height_a - label->height));
 
 	/* TODO Fix temporary hack */
 	if (!widget->enabled)
@@ -90,7 +90,7 @@ void gg_label_destroy(gg_widget_t *widget)
     gg_label_t *label = GG_LABEL(widget);
 
     if (label->label)
-        free(label->label);
+        std::free(label->label);
 
     gg_widget_destroy(widget);
 }
@@ -121,7 +121,7 @@ void gg_label_init(gg_label_t *label, const char *text)
  */
 gg_widget_t *gg_label_create(const char *string)
 {
-    gg_label_t *label = (gg_label_t *)malloc(sizeof(gg_label_t));
+    gg_label_t *label = (gg_label_t *)std::malloc(sizeof(gg_label_t));
 
     gg_label_init(label, string);
 

@@ -20,9 +20,9 @@
 
 #include "ui_sdlgl.h"
 
-static float mouse_square;
+static int mouse_square;
 
-float get_mouse_square(void)
+int get_mouse_square(void)
 {
     return mouse_square;
 }
@@ -93,5 +93,5 @@ void draw_scene( board_t *b, GLuint fb, int reflections )
     }
 
     /* Draw mouse cursor.. */
-    draw_texture( get_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
+    draw_texture( get_mouse_cursor(), (float)get_mouse_x(), (float)(479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
 }

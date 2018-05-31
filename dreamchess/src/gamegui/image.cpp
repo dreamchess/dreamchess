@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <gamegui/image.h>
 
@@ -56,12 +56,12 @@ void gg_image_render(gg_widget_t *widget, int x, int y, int focus)
 
     if (focus != GG_FOCUS_NONE)
     {
-        dest.width *= factor;
-        dest.height *= factor;
+        dest.width = (int)(dest.width * factor);
+        dest.height = (int)(dest.height * factor);
     }
 
-    dest.x = x + image->xalign * (image->width_a - image->width) - (dest.width - image->width) / 2;
-    dest.y = y + (1.0f - image->yalign) * (image->height_a - image->height) - (dest.height - image->height) / 2;
+    dest.x = (int)(x + image->xalign * (image->width_a - image->width) - (dest.width - image->width) / 2);
+    dest.y = (int)(y + (1.0f - image->yalign) * (image->height_a - image->height) - (dest.height - image->height) / 2);
 
     source.x = 0;
     source.y = 0;
@@ -85,7 +85,7 @@ void gg_image_init(gg_image_t *image, void *texture)
 /** @brief Creates an image widget. */
 gg_widget_t *gg_image_create(void *texture)
 {
-    gg_image_t *image = (gg_image_t *)malloc(sizeof(gg_image_t));
+    gg_image_t *image = (gg_image_t *)std::malloc(sizeof(gg_image_t));
 
     gg_image_init(image, texture);
 
