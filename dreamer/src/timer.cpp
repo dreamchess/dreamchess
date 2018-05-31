@@ -18,12 +18,15 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstdio>
+#include <cstdlib>
+
 #include "timer.h"
 
 int Timer::getTimePassed() const {
 	auto diff = std::chrono::steady_clock::now() - _startTime;
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff);
-	return (ms.count() + 5) / 10;
+	return (int)((ms.count() + 5) / 10);
 }
 
 int Timer::get() const {
@@ -34,6 +37,9 @@ int Timer::get() const {
 		return _value - getTimePassed();
 	case State::CountingUp:
 		return _value + getTimePassed();
+	default:
+		std::fprintf(stderr, "Invalid timer state\n");
+		std::exit(1);
 	}
 }
 

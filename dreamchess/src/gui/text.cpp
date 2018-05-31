@@ -54,7 +54,7 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
     draw_texture( &text_characters[index], xpos, ypos, text_characters[index].width*scale,
                   text_characters[index].height*scale, 1.0f, col );
 
-    return text_characters[index].width*scale;
+    return (int)(text_characters[index].width * scale);
 }
 
 /** @brief Renders a latin1 string.
@@ -68,17 +68,17 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
 void text_draw_string( float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
 {
     int i;
-    int xposition=xpos;
+    int xposition = (int)xpos;
 
     for (i = 0; i < strlen(text); i++)
-        xposition+=text_draw_char( xposition, ypos, scale, text[i], col );
+        xposition += text_draw_char((float)xposition, ypos, scale, text[i], col );
 }
 
-static int text_width_n(const char *text, int n)
+static int text_width_n(const char *text, std::size_t n)
 {
-    int retval = 0, i;
+    int retval = 0;
 
-    for (i = 0; i < n; i++)
+    for (std::size_t i = 0; i < n; i++)
     {
         int index = text[i];
 
@@ -137,8 +137,8 @@ void text_draw_string_right( float xpos, float ypos, const char *text, float sca
 void text_draw_string_bouncy( float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
 {
     int i;
-    int xposition=xpos;
-    int yposition=ypos;
+    int xposition = (int)xpos;
+    int yposition = (int)ypos;
     Uint32 ticks = SDL_GetTicks();
 
     for (i = 0; i < strlen(text); i++)
@@ -149,10 +149,10 @@ void text_draw_string_bouncy( float xpos, float ypos, const char *text, float sc
         if (phase < 0.5)
             temp_off = phase * 2 * (BOUNCE_AMP + 1);
         else
-            temp_off = ((1.0 - phase) * 2) * (BOUNCE_AMP + 1);
+            temp_off = ((1.0f - phase) * 2) * (BOUNCE_AMP + 1);
 
-        yposition=ypos+temp_off;
-        xposition+=text_draw_char( xposition, yposition, scale, text[i], col );
+        yposition = (int)(ypos + temp_off);
+        xposition += text_draw_char((float)xposition, (float)yposition, scale, text[i], col );
 
         ticks += 1000 / BOUNCE_SPEED / BOUNCE_LEN;
     }

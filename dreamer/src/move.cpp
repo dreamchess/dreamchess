@@ -394,7 +394,7 @@ int MoveGenerator::computeLegalMoves(const Board &board, int ply) {
 			return -1;
 }
 
-	_movesStart[ply + 1] = _movesStart[ply] + move - &_moves[_movesStart[ply]];
+	_movesStart[ply + 1] = _movesStart[ply] + (unsigned int)(move - &_moves[_movesStart[ply]]);
 	_movesCur[ply] = _movesStart[ply];
 	return 0;
 }

@@ -177,8 +177,8 @@ void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mod
                 /* Magnification factor. */
                 float x_mag = dest.width / (float) source.width;
 
-                source_c.x = source.x + x_offset / x_mag;
-                source_c.width = dest_c.width / x_mag;
+                source_c.x = (int)(source.x + x_offset / x_mag);
+                source_c.width = (int)(dest_c.width / x_mag);
             }
             break;
         case GG_MODE_TILE:
@@ -193,8 +193,8 @@ void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mod
                 /* Magnification factor. */
                 float y_mag = dest.height / (float) source.height;
 
-                source_c.y = source.y + y_offset / y_mag;
-                source_c.height = dest_c.height / y_mag;
+                source_c.y = (int)(source.y + y_offset / y_mag);
+                source_c.height = (int)(dest_c.height / y_mag);
             }
             break;
         case GG_MODE_TILE:
@@ -257,7 +257,7 @@ void gg_system_draw_string(const char *s, int x, int y, gg_colour_t *colour, int
 
         gg_system_get_string_size(s, &width, NULL);
 
-        rect_d.x -= width * align;
+        rect_d.x -= (int)(width * align);
     }
 
     for (i = 0; i < strlen((char *) s); i++)
@@ -272,9 +272,9 @@ void gg_system_draw_string(const char *s, int x, int y, gg_colour_t *colour, int
             float phase = ((ticks % (1000 / GG_BOUNCE_SPEED)) / (float) (1000 / GG_BOUNCE_SPEED));
 
             if (phase < 0.5)
-                y_off = phase * 2 * (GG_BOUNCE_AMP + 1);
+                y_off = (int)(phase * 2 * (GG_BOUNCE_AMP + 1));
             else
-                y_off = ((1.0 - phase) * 2) * (GG_BOUNCE_AMP + 1);
+                y_off = (int)(((1.0f - phase) * 2) * (GG_BOUNCE_AMP + 1));
         }
 
         gg_system_get_image_size(image, &rect_s.width, &rect_s.height);

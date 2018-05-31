@@ -68,13 +68,13 @@ void draw_credits(int init)
             state = 1;
         }
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+        text_draw_string_right((float)x, (float)y, credits[section][0], 1, &col_cap);
 
         break;
 
     case 1:
         col_cap.a = 1.0f;
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+        text_draw_string_right((float)x, (float)y, credits[section][0], 1, &col_cap);
 
         diff = now - start;
 
@@ -96,7 +96,7 @@ void draw_credits(int init)
             return;
         }
 
-        text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
+        text_draw_string_right((float)x, (float)(y - 40), credits[section][nr], 1, &col_item);
 
         break;
 
@@ -118,7 +118,7 @@ void draw_credits(int init)
                 return;
             }
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+        text_draw_string_right((float)x, (float)y, credits[section][0], 1, &col_cap);
 
         break;
     }

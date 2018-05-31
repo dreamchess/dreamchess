@@ -37,7 +37,7 @@ TTable::TTable(const size_t size) {
 	entries >>= 1;
 	_indexMask = entries - 1;
 
-	printf("Hash table size: %i MB\n", entries * sizeof(Entry) >> 20);
+	printf("Hash table size: %zu MB\n", entries * sizeof(Entry) >> 20);
 	
 	_table = new Entry[entries];
 	clear();
@@ -49,7 +49,7 @@ TTable::~TTable() {
 
 void TTable::storeBoard(const Board &board, int eval, const EvalType evalType,
                         const int depth, const int ply, const int time_stamp, const Move move) {
-	const unsigned int index = board.hash_key & _indexMask;
+	const size_t index = board.hash_key & _indexMask;
 
 	// Do not overwrite entries for this board at greater depth.
 	if ((_table[index].evalType != EvalType::None) && (_table[index].hashKey == board.hash_key)
@@ -71,7 +71,7 @@ void TTable::storeBoard(const Board &board, int eval, const EvalType evalType,
 }
 
 void TTable::setBestMove(const Board &board, const Move move) {
-	const unsigned int index = board.hash_key & _indexMask;
+	const size_t index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
 		storeBoard(board, 0, EvalType::PV, 0, 0, 0, move);
@@ -80,7 +80,7 @@ void TTable::setBestMove(const Board &board, const Move move) {
 }
 
 TTable::EvalType TTable::lookupBoard(const Board &board, const int depth, const int ply, int &eval) const {
-	const unsigned int index = board.hash_key & _indexMask;
+	const size_t index = board.hash_key & _indexMask;
 
 #ifdef DEBUG_TTABLE
 	_queries++;
@@ -114,7 +114,7 @@ TTable::EvalType TTable::lookupBoard(const Board &board, const int depth, const 
 }
 
 Move TTable::lookupBestMove(const Board &board) const {
-	const unsigned int index = board.hash_key & _indexMask;
+	const size_t index = board.hash_key & _indexMask;
 
 	if ((_table[index].evalType == EvalType::None) || (_table[index].hashKey != board.hash_key))
 		return Move();

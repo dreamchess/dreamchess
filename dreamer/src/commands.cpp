@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
 #include <errno.h>
 #include <assert.h>
 
@@ -36,7 +36,7 @@
 
 static int is_coord_move(const char *ms)
 {
-    int len = strlen(ms);
+    std::size_t len = std::strlen(ms);
     /* Check format. */
     if ((len < 4) || (len > 5))
         return 0;
@@ -79,8 +79,8 @@ static int convert_piece(int san_piece)
         return PAWN;
     }
 
-    /* We should never get here */
-    assert(0);
+    std::fprintf(stderr, "Invalid SAN piece %d\n", san_piece);
+    std::exit(1);
 }
 
 static int san_piece(int piece)
@@ -101,8 +101,8 @@ static int san_piece(int piece)
         return SAN_PAWN;
     }
 
-    /* We should never get here */
-    assert(0);
+    std::fprintf(stderr, "Invalid piece %d\n", piece);
+    std::exit(1);
 }
 
 static Move get_san_move(Board &board, int ply, san_move_t *san)

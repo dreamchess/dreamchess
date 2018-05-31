@@ -90,7 +90,7 @@ static inline void pv_term(int ply)
 static inline void pv_copy(int ply, Move move)
 {
     pv[ply][0] = move;
-    for (unsigned i = 0; i < pv_len[ply + 1]; ++i)
+    for (int i = 0; i < pv_len[ply + 1]; ++i)
         pv[ply][1 + i] = pv[ply + 1][0 + i];
     pv_len[ply] = pv_len[ply + 1] + 1;
 }

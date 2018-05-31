@@ -329,7 +329,7 @@ static config_t *do_menu(int *pgn)
         mode_set_failed = 0;
     }
 
-    set_fade_start(gg_system_get_ticks());
+    set_fade_start((float)gg_system_get_ticks());
     set_show_egg(FALSE);
 
     DBG_LOG("entering title menu");
@@ -411,7 +411,7 @@ static config_t *do_menu(int *pgn)
 
             reset_3d(config.player[WHITE] == PLAYER_ENGINE);
 
-            set_fade_start(gg_system_get_ticks());
+            set_fade_start((float)gg_system_get_ticks());
             gg_dialog_close();
 
             menu_state = MENU_STATE_FADE_OUT;
@@ -422,7 +422,7 @@ static config_t *do_menu(int *pgn)
             if ((get_show_egg() && !draw_sonic_fade( FADE_OUT )) ||
                     (!get_show_egg() && !draw_fade( FADE_OUT )))
             {
-                set_fade_start(gg_system_get_ticks());
+                set_fade_start((float)gg_system_get_ticks());
                 menu_state = MENU_STATE_RETURN;
                 return &config;
             }
@@ -439,7 +439,7 @@ static config_t *do_menu(int *pgn)
         }
 
         /* Draw mouse cursor.. */
-        draw_texture( get_menu_mouse_cursor(), get_mouse_x(), (479-get_mouse_y()-32), 32, 32, 1.0f,
+        draw_texture( get_menu_mouse_cursor(), (float)get_mouse_x(), (float)(479-get_mouse_y()-32), 32, 32, 1.0f,
                       get_col(COL_WHITE) );
 
         gl_swap();
@@ -720,7 +720,7 @@ static void poll_move(void)
         DBG_LOG("returning to title menu");
         set_fading_out(TRUE);
         reset_transition(FALSE);
-        set_fade_start(gg_system_get_ticks());
+        set_fade_start((float)gg_system_get_ticks());
         quit_to_menu=FALSE;
     }
     input = get_move();

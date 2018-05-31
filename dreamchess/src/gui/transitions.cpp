@@ -73,23 +73,23 @@ int draw_sonic_fade( int inout )
         else if (amount >= 0.7f )
             amount=1.0f;
 
-        gg_system_draw_filled_rect(0, 480-(480*amount), 640, 480, &col_blue );
-        gg_system_draw_filled_rect(640-(640*amount), 0, 640, (480/3), &col_yellow );
+        gg_system_draw_filled_rect(0, (int)(480-(480*amount)), 640, 480, &col_blue );
+        gg_system_draw_filled_rect((int)(640-(640*amount)), 0, 640, (480/3), &col_yellow );
 
         text_draw_string( 640-(640*amount)+280, (480/3)-30, "DreamChess the chess game", 1.2f, &col_white);
 
-        gg_system_draw_filled_rect(0, 0, (((640/3)+(480/14))*amount)-(480/14), 480, &col_red );
+        gg_system_draw_filled_rect(0, 0, (int)((((640/3)+(480/14))*amount)-(480/14)), 480, &col_red );
 
         for ( i=0; i<14; i++ )
         {
-            draw_tri((((640/3)+(480/14))*amount)-(480/14)+2, i*(480/14)-2, 
-                (((640/3)+(480/14))*amount)-(480/14)+2, i*(480/14)+(480/14)-2, 
-                (((640/3)+(480/14))*amount)-(480/14)+(480/14)+2, i*(480/14)+((480/14)/2)-2,
+            draw_tri((int)((((640/3)+(480/14))*amount)-(480/14)+2), i*(480/14)-2, 
+                (int)((((640/3)+(480/14))*amount)-(480/14)+2), i*(480/14)+(480/14)-2, 
+                (int)((((640/3)+(480/14))*amount)-(480/14)+(480/14)+2), i*(480/14)+((480/14)/2)-2,
                 &col_black);
 
-            draw_tri((((640/3)+(480/14))*amount)-(480/14), i*(480/14), 
-                (((640/3)+(480/14))*amount)-(480/14), i*(480/14)+(480/14), 
-                (((640/3)+(480/14))*amount)-(480/14)+(480/14), i*(480/14)+((480/14)/2), &col_red);
+            draw_tri((int)((((640/3)+(480/14))*amount)-(480/14)), i*(480/14), 
+                (int)((((640/3)+(480/14))*amount)-(480/14)), i*(480/14)+(480/14), 
+                (int)((((640/3)+(480/14))*amount)-(480/14)+(480/14)), i*(480/14)+((480/14)/2), &col_red);
         }
 
         text_draw_string( 640-(640*amount*2)+840, 480-(480/3), "Chess Hill", 3.0f, &col_white);

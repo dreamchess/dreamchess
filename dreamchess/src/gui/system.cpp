@@ -74,12 +74,12 @@ int get_true_mouse_y(void)
 
 int get_mouse_x(void)
 {
-    return ((float)mouse_pos.x/(float)get_screen_width())*640;
+    return (int)(((float)mouse_pos.x/(float)get_screen_width())*640);
 }
 
 int get_mouse_y(void)
 {
-    return ((float)mouse_pos.y/(float)get_screen_height())*480;
+    return (int)(((float)mouse_pos.y/(float)get_screen_height())*480);
 }
 
 /** @brief Computes smallest power of two that's larger than the input value.

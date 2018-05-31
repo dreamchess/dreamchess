@@ -18,10 +18,10 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <string.h>
 #include <ctype.h>
 
 #include "board.h"
@@ -115,9 +115,9 @@ void Board::setup()
 
 bool Board::setupFEN(const char *fen)
 {
-	int i = 0;
+	std::size_t i = 0;
 	int square = 56;
-	int len = strlen(fen);
+	std::size_t len = std::strlen(fen);
 	char *endptr;
 	int done = 0;
 

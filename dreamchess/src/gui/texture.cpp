@@ -29,8 +29,6 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
     int w, h;
     SDL_Surface *image;
     SDL_Rect dest;
-    Uint32 saved_flags;
-    Uint8  saved_alpha;
 
     /* Use the surface width and height expanded to powers of 2 */
     w = power_of_two(area->w);

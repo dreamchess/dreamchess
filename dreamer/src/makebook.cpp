@@ -74,7 +74,7 @@ static unsigned short move_to_short(Move move)
     return m;
 }
 
-static int makebook_find(long long hash)
+static int makebook_find(unsigned long long hash)
 {
     int low = 0;
     int high = table_entries;
@@ -205,7 +205,7 @@ static void makebook_cleanup_moves(void)
 }
 
 #if 0
-static void makebook_print(long long hash)
+static void makebook_print(unsigned long long hash)
 {
     int index = makebook_find(hash);
     int i;
@@ -235,7 +235,7 @@ static void write_uint8(FILE *f, unsigned char c)
 static void write_uint16(FILE *f, unsigned short i)
 {
     write_uint8(f, i >> 8);
-    write_uint8(f, i);
+    write_uint8(f, (unsigned char)i);
 }
 
 static void write_uint32(FILE *f, unsigned int i)
@@ -247,7 +247,7 @@ static void write_uint32(FILE *f, unsigned int i)
 static void write_uint64(FILE *f, unsigned long long ll)
 {
     write_uint32(f, ll >> 32);
-    write_uint32(f, ll);
+    write_uint32(f, (unsigned int)ll);
 }
 
 static void makebook_write(char *file)

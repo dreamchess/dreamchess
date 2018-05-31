@@ -630,7 +630,7 @@ static void model_render(model_t *model, int specular, float alpha)
 
 static void model_render_cp(model_t *model, GLubyte colour)
 {
-    glColor3ub(colour, 0.0f, 0.0f);
+    glColor3ub(colour, 0, 0);
     glCallList(model->mesh->list);
 }
 
@@ -842,18 +842,18 @@ static void draw_pieces(board_t *board, int flip)
                     }
                     if (is_2d)
                         glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
-                                     piece_moving_ypos, 0.002);
+                                     piece_moving_ypos, 0.002f);
                     else
                         glTranslatef(-3.5f + piece_moving_xpos, -3.5f +
-                                     piece_moving_ypos, 0.001);
+                                     piece_moving_ypos, 0.001f);
 
                 }
                 else
-                    glTranslatef(-3.5f + j, -3.5f + i, 0.001);
+                    glTranslatef(-3.5f + j, -3.5f + i, 0.001f);
 
                 if (is_2d)
                 {
-                    int steps = (z_rotation + 45.0f) / 90.0f;
+                    int steps = (int)((z_rotation + 45.0f) / 90.0f);
 
                     glRotatef(-steps * 90.0f, 0, 0, 1);
                 }
@@ -912,7 +912,7 @@ static void draw_pieces_cp(board_t *board)
             if ((k = board->square[i * 8 + j]) != NONE)
             {
                 setup_view();
-                glTranslatef(-3.5f + j, -3.5f + i, 0.001);
+                glTranslatef(-3.5f + j, -3.5f + i, 0.001f);
                 model_render_cp(&model[k], square_to_colour(i * 8 + j));
             }
         }
@@ -937,7 +937,7 @@ static void draw_selector(float alpha)
         if (phase < 0.5)
             bounce_offset = phase * 2 * SEL_BOUNCE_AMP;
         else
-            bounce_offset = (1.0 - phase) * 2 * SEL_BOUNCE_AMP;
+            bounce_offset = (1.0f - phase) * 2 * SEL_BOUNCE_AMP;
     }
 
     if (sel.spinspeed)
@@ -949,7 +949,7 @@ static void draw_selector(float alpha)
 
     setup_view();
 
-    glTranslatef(-3.5 + selector % 8, -3.5 + selector / 8, 0);
+    glTranslatef(-3.5f + selector % 8, -3.5f + selector / 8, 0);
     glRotatef(spin_offset, 0, 0, 1);
 
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f * alpha);
@@ -1161,7 +1161,7 @@ void move_camera(float x, float z)
 
 void move_selector(int direction)
 {
-    int steps = (z_rotation + 45.0f) / 90.0f;
+    int steps = (int)((z_rotation + 45.0f) / 90.0f);
 
     selector_hide_time = SDL_GetTicks() + SELECTOR_SHOW_TICKS;
 

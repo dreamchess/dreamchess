@@ -21,6 +21,7 @@
 #ifndef GUI_UI_SDLGL_H
 #define GUI_UI_SDLGL_H
 
+#include <cstring>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
