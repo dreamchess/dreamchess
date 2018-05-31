@@ -18,8 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 #include "history.h"
 #include "board.h"
@@ -30,40 +31,40 @@
  *  @param width Width of current line (will be updated by function).
  *  @param token Token to write.
  */
-static void write_token(FILE *f, int *width, const char *token)
+static void write_token(std::FILE *f, std::size_t *width, const char *token)
 {
     /* Handle line wrapping. Add 1 for leading space. */
-    if ((*width > 0) && (*width + 1 + strlen(token) >= 80))
+    if ((*width > 0) && (*width + 1 + std::strlen(token) >= 80))
     {
-        fputs("\n", f);
+        std::fputs("\n", f);
         *width = 0;
     }
 
     /* Output leading space. */
     if (*width > 0)
     {
-        fputs(" ", f);
+        std::fputs(" ", f);
         (*width)++;
     }
 
-    fputs(token, f);
-    *width += strlen(token);
+    std::fputs(token, f);
+    *width += std::strlen(token);
 }
 
 history_t *history_init(board_t *board)
 {
-    history_t *hist = (history_t *) malloc(sizeof(history_t));
-    step_t *step = (step_t *) malloc(sizeof(step_t));
+    history_t *hist = (history_t *)std::malloc(sizeof(history_t));
+    step_t *step = (step_t *)std::malloc(sizeof(step_t));
 
-    step->board = (board_t *) malloc(sizeof(board_t));
-    step->prev = NULL;
-    step->next = NULL;
+    step->board = (board_t *)std::malloc(sizeof(board_t));
+    step->prev = nullptr;
+    step->next = nullptr;
     *step->board = *board;
-    step->move = NULL;
+    step->move = nullptr;
     hist->last = step;
     hist->view = step;
     hist->first = step;
-    hist->result = NULL;
+    hist->result = nullptr;
 
     return hist;
 }
@@ -76,33 +77,33 @@ void history_exit(history_t *hist)
     {
         step_t *s;
         if (step->move)
-            free(step->move);
+            std::free(step->move);
         if (step->board)
-            free(step->board);
+            std::free(step->board);
         s = step;
         step = step->prev;
-        free(s);
+        std::free(s);
     }
 
     if (hist->result)
     {
-        free(hist->result->reason);
-        free(hist->result);
+        std::free(hist->result->reason);
+        std::free(hist->result);
     }
 
-    free(hist);
+    std::free(hist);
 }
 
 void history_play(history_t *hist, move_t *move, board_t *board)
 {
-    step_t *step = (step_t *) malloc(sizeof(step_t));
+    step_t *step = (step_t *)std::malloc(sizeof(step_t));
 
-    step->board = (board_t *) malloc(sizeof(board_t));
-    hist->last->move = (move_t *) malloc(sizeof(move_t));
+    step->board = (board_t *)std::malloc(sizeof(board_t));
+    hist->last->move = (move_t *)std::malloc(sizeof(move_t));
     *step->board = *board;
-    step->move = NULL;
+    step->move = nullptr;
     step->prev = hist->last;
-    step->next = NULL;
+    step->next = nullptr;
     *hist->last->move = *move;
     hist->last->next = step;
     hist->last = step;
@@ -114,12 +115,12 @@ int history_undo(history_t *hist)
     if (!hist->last->prev)
         return 1;
 
-    free(hist->last->board);
+    std::free(hist->last->board);
     hist->last = hist->last->prev;
-    free(hist->last->move);
-    hist->last->move = NULL;
-    free(hist->last->next);
-    hist->last->next = NULL;
+    std::free(hist->last->move);
+    hist->last->move = nullptr;
+    std::free(hist->last->next);
+    hist->last->next = nullptr;
     hist->view = hist->last;
     return 0;
 }
@@ -146,24 +147,23 @@ int history_view_prev(history_t *hist)
 
 int history_save_pgn(history_t *hist, char *filename)
 {
-    FILE *f;
-    int width;
+    std::FILE *f;
     int side;
     int move;
     step_t *step;
     const char *res;
 
-    f = fopen(filename, "w");
+    f = std::fopen(filename, "w");
 
     if (!f)
         return 1;
 
-    fputs("[Event \"DreamChess Game\"]\n", f);
-    fputs("[Site \"?\"]\n", f);
-    fputs("[Date \"????.??.??\"]\n", f);
-    fputs("[Round \"-\"]\n", f);
-    fputs("[White \"?\"]\n", f);
-    fputs("[Black \"?\"]\n", f);
+    std::fputs("[Event \"DreamChess Game\"]\n", f);
+    std::fputs("[Site \"?\"]\n", f);
+    std::fputs("[Date \"????.??.??\"]\n", f);
+    std::fputs("[Round \"-\"]\n", f);
+    std::fputs("[White \"?\"]\n", f);
+    std::fputs("[Black \"?\"]\n", f);
 
     if (!hist->result)
         res = "*";
@@ -174,9 +174,9 @@ int history_save_pgn(history_t *hist, char *filename)
     else
         res = "1/2-1/2";
 
-    fprintf(f, "[Result \"%s\"]\n\n", res);
+    std::fprintf(f, "[Result \"%s\"]\n\n", res);
 
-    width = 0;
+    std::size_t width = 0;
     move = 1;
     side = WHITE;
     step = hist->first;
@@ -188,21 +188,21 @@ int history_save_pgn(history_t *hist, char *filename)
 
         if (side == WHITE)
         {
-            snprintf(buf, 16, "%i.", move++);
+            std::snprintf(buf, 16, "%i.", move++);
             write_token(f, &width, buf);
         }
 
         san = move_to_san(step->board, step->move);
         write_token(f, &width, san);
-        free(san);
+        std::free(san);
 
         side = OPPONENT(side);
         step = step->next;
     }
 
     write_token(f, &width, res);
-    fputs("\n\n", f);
-    fclose(f);
+    std::fputs("\n\n", f);
+    std::fclose(f);
 
     return 0;
 }

@@ -22,9 +22,6 @@
 %token CRANK
 
 %{
-#include <stdlib.h>
-#include <string.h>
-
 #include "san.h"
 
 int yylex(void);
@@ -100,18 +97,18 @@ promo   : 'Q'                     { san_move.promotion_piece = SAN_QUEEN; }
 ;
 %%
 
-#include <stdio.h>
-#include <ctype.h>
+#include <cstring>
+#include <cstdlib>
 
 #include "san.h"
 
 const char* move;
-int ptr;
+std::size_t ptr;
 
 san_move_t *san_parse(const char *s)
 {
     move = s;
-    ptr = strlen(move) - 1;
+    ptr = std::strlen(move) - 1;
 
     san_move.type = SAN_NORMAL;
     san_move.state = SAN_STATE_NORMAL;
@@ -123,12 +120,12 @@ san_move_t *san_parse(const char *s)
 
     if (!yyparse())
     {
-        san_move_t *retval = (san_move_t *)malloc(sizeof(san_move_t));
+        san_move_t *retval = (san_move_t *)std::malloc(sizeof(san_move_t));
         *retval = san_move;
         return retval;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 static void add_piece(char *s, int piece)
@@ -154,7 +151,7 @@ static void add_piece(char *s, int piece)
 
 char *san_string(san_move_t *move)
 {
-    char *s = (char *)malloc(8);
+    char *s = (char *)std::malloc(8);
     int i = 0;
 
     switch (move->type)
@@ -185,11 +182,11 @@ char *san_string(san_move_t *move)
         }
         break;
     case SAN_QUEENSIDE_CASTLE:
-        strcpy(s, "O-O-O");
+        std::strcpy(s, "O-O-O");
         i = 5;
         break;
     case SAN_KINGSIDE_CASTLE:
-        strcpy(s, "O-O");
+        std::strcpy(s, "O-O");
         i = 3;
     }
 

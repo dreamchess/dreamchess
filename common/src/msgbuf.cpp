@@ -18,8 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include "msgbuf.h"
 
@@ -30,13 +30,12 @@ static char *msg;
 
 char *msgbuf_process(char *buf)
 {
-    int buf_len = strlen(buf);
+    std::size_t buf_len = std::strlen(buf);
 
     if (buf_len > 0)
     {
         /* Characters from buf to end-1 will be added to the message. */
-        char *end = strchr(buf, '\n');
-        int in_size, i;
+        char *end = std::strchr(buf, '\n');
 
         if (end)
             /* Include newline in message. */
@@ -46,33 +45,33 @@ char *msgbuf_process(char *buf)
             end = buf + buf_len;
 
         /* Size of data (in bytes) that will be added to the message. */
-        in_size = end - buf;
+        std::size_t in_size = end - buf;
 
         if (msg)
         {
             /* We already have part of a message, realloc it and append
             ** data.
             */
-            int len = strlen(msg);
-            msg = (char *) realloc(msg, len + in_size + 1);
-            strncpy(msg + len, buf, in_size);
+            std::size_t len = std::strlen(msg);
+            msg = (char *) std::realloc(msg, len + in_size + 1);
+            std::strncpy(msg + len, buf, in_size);
             msg[len + in_size] = '\0';
         }
         else
         {
             /* Allocate a new string for the message. */
-            msg = (char *) malloc(in_size + 1);
-            strncpy(msg, buf, in_size);
+            msg = (char *) std::malloc(in_size + 1);
+            std::strncpy(msg, buf, in_size);
             msg[in_size] = '\0';
         }
 
         /* Move the remaining data (if any) and a '\0' to the front of the
         ** buffer.
         */
-        for (i = 0; i < buf_len - in_size + 1; i++)
+        for (std::size_t i = 0; i < buf_len - in_size + 1; i++)
             buf[i] = end[i];
 
-        end = strchr(msg, '\n');
+        end = std::strchr(msg, '\n');
         if (end)
         {
             char *retval = msg;
@@ -81,22 +80,22 @@ char *msgbuf_process(char *buf)
             *end = '\0';
 
             /* Chop off carriage return if it is present. */
-            end = strrchr(msg, '\r');
+            end = std::strrchr(msg, '\r');
             if (end && *end == '\r')
                 *end = '\0';
 
-            msg = NULL;
+            msg = nullptr;
             return retval;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void msgbuf_exit(void)
 {
     if (msg)
-        free(msg);
+        std::free(msg);
 
-    msg = NULL;
+    msg = nullptr;
 }

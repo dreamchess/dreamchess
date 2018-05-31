@@ -18,7 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 #include <windows.h>
 
 #include "pipe_win32.h"
@@ -50,10 +51,10 @@ void pipe_win32_send(const char *m)
 {
     DWORD written;
 
-    if (!WriteFile(h_out, m, strlen(m), &written, NULL) ||
-        (written < strlen(m)))
+    if (!WriteFile(h_out, m, (DWORD)std::strlen(m), &written, nullptr) ||
+        (written < std::strlen(m)))
     {
-        fprintf(stderr, "%s, L%d: Error writing to pipe.\n", __FILE__,
+        std::fprintf(stderr, "%s, L%d: Error writing to pipe.\n", __FILE__,
             __LINE__);
         exit(1);
     }
@@ -70,12 +71,12 @@ char *pipe_win32_poll(int *error)
     {
         DWORD bytes;
         char *msg;
-        int len;
+        std::size_t len;
 
         if ((msg = msgbuf_process(buf)))
             return msg;
 
-        len = strlen(buf);
+        len = std::strlen(buf);
 
         /* Check whether data is available. */
         if (console_mode)
@@ -83,35 +84,35 @@ char *pipe_win32_poll(int *error)
             if (!GetNumberOfConsoleInputEvents(h_in, &bytes))
             {
                 /* Error reading console input. */
-                fprintf(stderr, "%s, L%d: Error reading console input.\n", __FILE__, __LINE__);
+                std::fprintf(stderr, "%s, L%d: Error reading console input.\n", __FILE__, __LINE__);
                 *error = 1;
-                return NULL;
+                return nullptr;
             }
-        } else if (!PeekNamedPipe(h_in, NULL, 0, NULL, &bytes, NULL))
+        } else if (!PeekNamedPipe(h_in, nullptr, 0, nullptr, &bytes, nullptr))
         {
             /* Error reading pipe. */
-            fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
+            std::fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
             *error = 1;
-            return NULL;
+            return nullptr;
         }
 
         if (bytes > 0)
         {
             /* Read data. */
-            if (!ReadFile(h_in, buf + len, BUF_LEN - len - 1, &bytes, NULL))
+            if (!ReadFile(h_in, buf + len, BUF_LEN - (DWORD)len - 1, &bytes, nullptr))
             {
                 /* Error reading pipe. */
-                fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
+                std::fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
                 *error = 1;
-                return NULL;
+                return nullptr;
             }
 
             if (!console_mode && bytes == 0)
             {
                 /* Received EOF. */
-                fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
+                std::fprintf(stderr, "%s, L%d: Broken pipe.\n", __FILE__, __LINE__);
                 *error = 1;
-                return NULL;
+                return nullptr;
             }
 
             buf[len + bytes] = '\0';
@@ -120,5 +121,5 @@ char *pipe_win32_poll(int *error)
             /* No data available. */
             break;
     }
-    return NULL;
+    return nullptr;
 }
