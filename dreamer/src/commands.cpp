@@ -20,6 +20,7 @@
 
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 #include <errno.h>
 #include <assert.h>
 
