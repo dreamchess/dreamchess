@@ -11,13 +11,13 @@ os:
   - osx
 
 compiler:
-  - gcc
   - clang
+  - gcc
 
 matrix:
-  exclude:
+  include:
   - os: osx
-    compiler: gcc
+    osx_image: xcode8
 
 addons:
   apt:
