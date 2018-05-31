@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
-#    add_compile_options(/wd4996)
+    add_compile_options(/wd4996)
 endif()
 
 option(BUILD_DREAMCHESS "Build DreamChess GUI" ON)
