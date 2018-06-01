@@ -24,74 +24,72 @@ static int mouse_square;
 
 int get_mouse_square(void)
 {
-    return mouse_square;
+	return mouse_square;
 }
 
 /** @brief Main in-game rendering routine.
  *
  *  @param b Board configuration to render.
  */
-void draw_scene( board_t *b, GLuint fb, int reflections )
+void draw_scene(board_t *b, GLuint fb, int reflections)
 {
-    char temp[80];
-    int clock_seconds=0;
-    int clock_minutes=0;
+	char temp[80];
+	int clock_seconds = 0;
+	int clock_minutes = 0;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+	glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-    transition_update();
+	transition_update();
 
-    gg_dialog_cleanup();
+	gg_dialog_cleanup();
 
-    glDisable(GL_BLEND);
-    glDepthFunc(GL_ALWAYS);
+	glDisable(GL_BLEND);
+	glDepthFunc(GL_ALWAYS);
 
-    draw_backdrop();
+	draw_backdrop();
 
-    glEnable(GL_BLEND);
-    glDepthFunc(GL_LEQUAL);
+	glEnable(GL_BLEND);
+	glDepthFunc(GL_LEQUAL);
 
-    go_3d(get_screen_width(), get_screen_height());
+	go_3d(get_screen_width(), get_screen_height());
 
-    render_scene_3d(b, fb, reflections);
-    mouse_square=find_square(get_true_mouse_x(), get_true_mouse_y());
+	render_scene_3d(b, fb, reflections);
+	mouse_square = find_square(get_true_mouse_x(), get_true_mouse_y());
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
-    resize_window(get_screen_width(), get_screen_height());
+	glBindFramebuffer(GL_FRAMEBUFFER, fb);
+	resize_window(get_screen_width(), get_screen_height());
 
-    glPushMatrix();
+	glPushMatrix();
 
-    draw_ui_elements();
+	draw_ui_elements();
 
-    //draw_move_list(get_col(COL_WHITE), get_col(COL_YELLOW));
-    //draw_capture_list(get_col(COL_WHITE));
+	// draw_move_list(get_col(COL_WHITE), get_col(COL_YELLOW));
+	// draw_capture_list(get_col(COL_WHITE));
 
-    clock_minutes=(((SDL_GetTicks()-get_turn_counter())/1000)/60);
-    clock_seconds=((SDL_GetTicks()-get_turn_counter())/1000)-(clock_minutes*60);
-    sprintf( temp, "%i:%02i", clock_minutes, clock_seconds );
-    /*text_draw_string( 303, 440, temp, 1, &col_black);*/
-    glPopMatrix();
+	clock_minutes = (((SDL_GetTicks() - get_turn_counter()) / 1000) / 60);
+	clock_seconds = ((SDL_GetTicks() - get_turn_counter()) / 1000) - (clock_minutes * 60);
+	sprintf(temp, "%i:%02i", clock_minutes, clock_seconds);
+	/*text_draw_string( 303, 440, temp, 1, &col_black);*/
+	glPopMatrix();
 
-    /*if ( get_white_in_check() == TRUE )
-        text_draw_string_bouncy( 180, 420, "White is in check!", 1, get_col(COL_WHITE));
-    else if ( get_black_in_check() == TRUE )
-        text_draw_string_bouncy( 180, 420, "Black is in check!", 1, get_col(COL_WHITE));*/
+	/*if ( get_white_in_check() == TRUE )
+		text_draw_string_bouncy( 180, 420, "White is in check!", 1, get_col(COL_WHITE));
+	else if ( get_black_in_check() == TRUE )
+		text_draw_string_bouncy( 180, 420, "Black is in check!", 1, get_col(COL_WHITE));*/
 
-    gg_dialog_render_all();
+	gg_dialog_render_all();
 
-    if ( get_fading_out() )
-    {
-        if ( !draw_fade( FADE_OUT ) )
-            set_switch_to_menu(TRUE);
-    }
-    else
-    {
-        if ( get_show_egg() ) 
-            draw_sonic_fade( FADE_IN );
-        else
-            draw_fade( FADE_IN );
-    }
+	if (get_fading_out()) {
+		if (!draw_fade(FADE_OUT))
+			set_switch_to_menu(TRUE);
+	} else {
+		if (get_show_egg())
+			draw_sonic_fade(FADE_IN);
+		else
+			draw_fade(FADE_IN);
+	}
 
-    /* Draw mouse cursor.. */
-    draw_texture( get_mouse_cursor(), (float)get_mouse_x(), (float)(479-get_mouse_y()-32), 32, 32, 1.0f, get_col(COL_WHITE));
+	/* Draw mouse cursor.. */
+	draw_texture(get_mouse_cursor(), (float)get_mouse_x(), (float)(479 - get_mouse_y() - 32), 32, 32, 1.0f,
+				 get_col(COL_WHITE));
 }

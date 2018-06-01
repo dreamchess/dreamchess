@@ -26,25 +26,21 @@
 
 #define GG_CONTAINER(W) GG_CHECK_CAST(W, gg_container_get_class_id(), gg_container_t)
 
-#define GG_CONTAINER_DATA \
-    GG_WIDGET_DATA \
-    list_t *widget_list;
+#define GG_CONTAINER_DATA                                                                                              \
+	GG_WIDGET_DATA                                                                                                     \
+	list_t *widget_list;
 
-typedef struct list
-{
-    /** Total number of items in the list. */
-    int items;
+typedef struct list {
+	/** Total number of items in the list. */
+	int items;
 
-    /** The items in the list. */
-    void **item;
-}
-list_t;
+	/** The items in the list. */
+	void **item;
+} list_t;
 
-typedef struct gg_container
-{
-    GG_CONTAINER_DATA
-}
-gg_container_t;
+typedef struct gg_container {
+	GG_CONTAINER_DATA
+} gg_container_t;
 
 gg_class_id gg_container_get_class_id(void);
 

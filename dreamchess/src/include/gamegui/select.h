@@ -21,20 +21,18 @@
 #ifndef GAMEGUI_SELECT_H
 #define GAMEGUI_SELECT_H
 
-#include <gamegui/system.h>
 #include <gamegui/bin.h>
+#include <gamegui/system.h>
 
 #define GG_SELECT(W) GG_CHECK_CAST(W, gg_select_get_class_id(), gg_select_t)
 
-#define GG_SELECT_DATA \
-    GG_CONTAINER_DATA \
-    int sel;
+#define GG_SELECT_DATA                                                                                                 \
+	GG_CONTAINER_DATA                                                                                                  \
+	int sel;
 
-typedef struct gg_select
-{
-    GG_SELECT_DATA
-}
-gg_select_t;
+typedef struct gg_select {
+	GG_SELECT_DATA
+} gg_select_t;
 
 gg_class_id gg_select_get_class_id(void);
 

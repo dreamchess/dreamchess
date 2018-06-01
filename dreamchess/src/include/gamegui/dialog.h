@@ -25,47 +25,47 @@
 #ifndef GAMEGUI_DIALOG_H
 #define GAMEGUI_DIALOG_H
 
-#include <gamegui/system.h>
 #include <gamegui/bin.h>
 #include <gamegui/queue.h>
+#include <gamegui/system.h>
 
 /** Typecast to dialog. */
 #define GG_DIALOG(W) GG_CHECK_CAST(W, gg_dialog_get_class_id(), gg_dialog_t)
 
 /** Dialog methods and properties. */
-#define GG_DIALOG_DATA                                                       \
-    /** Inherit from bin class. */                                           \
-    GG_BIN_DATA                                                              \
-                                                                             \
-    /** Dialog list entry */                                                 \
-    TAILQ_ENTRY(gg_dialog) entries;                                          \
-                                                                             \
-    /** Parent dialog */                                                     \
-    struct gg_dialog *parent_dialog;                                         \
-                                                                             \
-    /** Flags */                                                             \
-    int flags;                                                               \
-                                                                             \
-    /** Dialog state */                                                      \
-    int dialog_state;                                                        \
-                                                                             \
-    /** Dialog movement original x-coordinate */                             \
-    int movement_org_x;                                                      \
-                                                                             \
-    /** Dialog movement original x-coordinate */                             \
-    int movement_org_y;                                                      \
-                                                                             \
-    /** Modal flag. 1 = modal (dialog cannot be escaped), 0 = not modal. */  \
-    int modal;                                                               \
-                                                                             \
-    /** Position of dialog on the screen. */                                 \
-    gg_dialog_position_t pos;                                                \
-                                                                             \
-    /** Visual dialog style. */                                              \
-    gg_dialog_style_t style;                                                 \
-                                                                             \
-    /** Title bar text, or NULL for no title bar. */                         \
-    char *title;                                                             
+#define GG_DIALOG_DATA                                                                                                 \
+	/** Inherit from bin class. */                                                                                     \
+	GG_BIN_DATA                                                                                                        \
+                                                                                                                       \
+	/** Dialog list entry */                                                                                           \
+	TAILQ_ENTRY(gg_dialog) entries;                                                                                    \
+                                                                                                                       \
+	/** Parent dialog */                                                                                               \
+	struct gg_dialog *parent_dialog;                                                                                   \
+                                                                                                                       \
+	/** Flags */                                                                                                       \
+	int flags;                                                                                                         \
+                                                                                                                       \
+	/** Dialog state */                                                                                                \
+	int dialog_state;                                                                                                  \
+                                                                                                                       \
+	/** Dialog movement original x-coordinate */                                                                       \
+	int movement_org_x;                                                                                                \
+                                                                                                                       \
+	/** Dialog movement original x-coordinate */                                                                       \
+	int movement_org_y;                                                                                                \
+                                                                                                                       \
+	/** Modal flag. 1 = modal (dialog cannot be escaped), 0 = not modal. */                                            \
+	int modal;                                                                                                         \
+                                                                                                                       \
+	/** Position of dialog on the screen. */                                                                           \
+	gg_dialog_position_t pos;                                                                                          \
+                                                                                                                       \
+	/** Visual dialog style. */                                                                                        \
+	gg_dialog_style_t style;                                                                                           \
+                                                                                                                       \
+	/** Title bar text, or NULL for no title bar. */                                                                   \
+	char *title;
 
 /** Dialog flags */
 #define GG_DIALOG_MODAL (1 << 0)
@@ -78,80 +78,72 @@
 
 /* FIXME */
 /** Screen width in pixels. */
-#define SCREEN_WIDTH  640
+#define SCREEN_WIDTH 640
 /** Screen height in pixels. */
 #define SCREEN_HEIGHT 480
 
 /** Textured dialog border style. */
-typedef struct gg_dialog_border
-{
-    /** Border images.
-     *  0: Top-left corner.
-     *  1: Top edge (to be tiled horizontally).
-     *  2: Top-right corner.
-     *  3: Left edge (to be tiled vertically).
-     *  4: Center (to be tiled horizontally and vertically).
-     *  5: Right edge (to be tiled vertically).
-     *  6: Bottom-left corner.
-     *  7: Bottom edge (to be tiled horizontally).
-     *  8: Bottom-right corner.
-     */
-    void *image[9];
-}
-gg_dialog_border_t;
+typedef struct gg_dialog_border {
+	/** Border images.
+	 *  0: Top-left corner.
+	 *  1: Top edge (to be tiled horizontally).
+	 *  2: Top-right corner.
+	 *  3: Left edge (to be tiled vertically).
+	 *  4: Center (to be tiled horizontally and vertically).
+	 *  5: Right edge (to be tiled vertically).
+	 *  6: Bottom-left corner.
+	 *  7: Bottom edge (to be tiled horizontally).
+	 *  8: Bottom-right corner.
+	 */
+	void *image[9];
+} gg_dialog_border_t;
 
 /** Dialog style. */
-typedef struct gg_dialog_style
-{
-    /** Textured flag. 1 = textured, 0 = plain. */
-    char textured;
+typedef struct gg_dialog_style {
+	/** Textured flag. 1 = textured, 0 = plain. */
+	char textured;
 
-    /** Dialog border style. */
-    gg_dialog_border_t border;
+	/** Dialog border style. */
+	gg_dialog_border_t border;
 
-    /** Colour of the quad that will be drawn the size of the whole screen.
-     */
-    gg_colour_t fade_col;
+	/** Colour of the quad that will be drawn the size of the whole screen.
+	 */
+	gg_colour_t fade_col;
 
-    /** Horizontal padding in pixels. This is the area between the border
-     *  and the widget.
-     */
-    int hor_pad;
+	/** Horizontal padding in pixels. This is the area between the border
+	 *  and the widget.
+	 */
+	int hor_pad;
 
-    /** Vertical padding in pixels. This is the area between the border
-     *  and the widget.
-     */
-    int vert_pad;
-}
-gg_dialog_style_t;
+	/** Vertical padding in pixels. This is the area between the border
+	 *  and the widget.
+	 */
+	int vert_pad;
+} gg_dialog_style_t;
 
 /** Dialog position. */
-typedef struct gg_dialog_position
-{
-    /** x-coordinate in pixels. */
-    int x;
+typedef struct gg_dialog_position {
+	/** x-coordinate in pixels. */
+	int x;
 
-    /** y-coordinate in pixels. */
-    int y;
+	/** y-coordinate in pixels. */
+	int y;
 
-    /** Horizontal alignment relative to x. Ranges from 0 (left aligned) to 1
-     *  (right aligned).
-     */
-    float x_align;
+	/** Horizontal alignment relative to x. Ranges from 0 (left aligned) to 1
+	 *  (right aligned).
+	 */
+	float x_align;
 
-    /** Vertical alignment relative to y. Ranges from 0 (bottom aligned) to 1
-     *  (top aligned).
-     */
-    float y_align;
-}
-gg_dialog_position_t;
+	/** Vertical alignment relative to y. Ranges from 0 (bottom aligned) to 1
+	 *  (top aligned).
+	 */
+	float y_align;
+} gg_dialog_position_t;
 
 /** Dialog class. */
-typedef struct gg_dialog
-{
-    GG_DIALOG_DATA
-}
-gg_dialog_t;
+typedef struct gg_dialog {
+	GG_DIALOG_DATA
+} gg_dialog_t;
 
 /** @brief Destroys all closed dialogs on the dialog stack and removes them
  *         from the stack.
@@ -213,13 +205,11 @@ void gg_dialog_hide(gg_dialog_t *dialog);
 
 void gg_dialog_set_position(gg_dialog_t *dialog, int x, int y, float x_align, float y_align);
 
-void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
-                    gg_dialog_t *parent, int flags);
+void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title, gg_dialog_t *parent, int flags);
 
 void gg_dialog_set_style(gg_dialog_t *dialog, gg_dialog_style_t *style);
 
-gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title,
-                              gg_dialog_t *parent, int flags);
+gg_widget_t *gg_dialog_create(gg_widget_t *child, char *title, gg_dialog_t *parent, int flags);
 
 void gg_dialog_destroy(gg_widget_t *widget);
 

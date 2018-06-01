@@ -21,27 +21,26 @@
 #ifndef GAMEGUI_GAMEGUI_H
 #define GAMEGUI_GAMEGUI_H
 
-#include <gamegui/system.h>
 #include <gamegui/action.h>
-#include <gamegui/box.h>
-#include <gamegui/entry.h>
-#include <gamegui/label.h>
-#include <gamegui/system.h>
 #include <gamegui/align.h>
-#include <gamegui/container.h>
-#include <gamegui/hbox.h>
-#include <gamegui/option.h>
-#include <gamegui/vbox.h>
 #include <gamegui/bin.h>
+#include <gamegui/box.h>
+#include <gamegui/container.h>
 #include <gamegui/dialog.h>
+#include <gamegui/edit.h>
+#include <gamegui/entry.h>
+#include <gamegui/frame.h>
+#include <gamegui/hbox.h>
 #include <gamegui/image.h>
+#include <gamegui/label.h>
+#include <gamegui/option.h>
+#include <gamegui/scrollbarv.h>
 #include <gamegui/select.h>
 #include <gamegui/seperatorh.h>
 #include <gamegui/seperatorv.h>
-#include <gamegui/widget.h>
-#include <gamegui/frame.h>
+#include <gamegui/system.h>
+#include <gamegui/vbox.h>
 #include <gamegui/viewport.h>
-#include <gamegui/edit.h>
-#include <gamegui/scrollbarv.h>
+#include <gamegui/widget.h>
 
 #endif

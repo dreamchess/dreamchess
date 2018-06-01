@@ -26,14 +26,11 @@
 
 #define GG_SEPERATORV(W) GG_CHECK_CAST(W, gg_seperatorv_get_class_id(), gg_seperatorv_t)
 
-#define GG_SEPERATORV_DATA \
-    GG_WIDGET_DATA
+#define GG_SEPERATORV_DATA GG_WIDGET_DATA
 
-typedef struct gg_seperatorv
-{
-    GG_SEPERATORV_DATA
-}
-gg_seperatorv_t;
+typedef struct gg_seperatorv {
+	GG_SEPERATORV_DATA
+} gg_seperatorv_t;
 
 gg_class_id gg_seperatorv_get_class_id(void);
 

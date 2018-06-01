@@ -26,22 +26,19 @@
 
 #define GG_SCROLLBARV(W) GG_CHECK_CAST(W, gg_scrollbarv_get_class_id(), gg_scrollbarv_t)
 
-#define GG_SCROLLBARV_DATA \
-    GG_WIDGET_DATA
+#define GG_SCROLLBARV_DATA GG_WIDGET_DATA
 
-typedef struct gg_scrollbarv
-{
-    GG_SCROLLBARV_DATA
-}
-gg_scrollbarv_t;
+typedef struct gg_scrollbarv {
+	GG_SCROLLBARV_DATA
+} gg_scrollbarv_t;
 
 gg_class_id gg_scrollbarv_get_class_id(void);
 
-void gg_scrollbarv_render(gg_widget_t * widget, int x, int y, int focus);
+void gg_scrollbarv_render(gg_widget_t *widget, int x, int y, int focus);
 
-int gg_scrollbarv_input(gg_widget_t * widget, gg_event_t event);
+int gg_scrollbarv_input(gg_widget_t *widget, gg_event_t event);
 
-void gg_scrollbarv_init(gg_scrollbarv_t * scrollbarv, int height);
+void gg_scrollbarv_init(gg_scrollbarv_t *scrollbarv, int height);
 
 gg_widget_t *gg_scrollbarv_create(int height);
 

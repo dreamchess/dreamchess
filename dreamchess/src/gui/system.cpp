@@ -20,7 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-static float zerodepth=1.0f;
+static float zerodepth = 1.0f;
 
 static int fps_enabled = 0;
 static int frames = 0;
@@ -31,55 +31,53 @@ extern SDL_Window *sdl_window;
 
 float get_fps(void)
 {
-    return fps;
+	return fps;
 }
 
 void update_fps_time(void)
 {
-    fps_time=SDL_GetTicks();
+	fps_time = SDL_GetTicks();
 }
 
 void toggle_show_fps(void)
 {
-    fps_enabled = 1 - fps_enabled;
+	fps_enabled = 1 - fps_enabled;
 }
 
-static struct
-{
-    int x;
-    int y;
-}
-mouse_pos;
+static struct {
+	int x;
+	int y;
+} mouse_pos;
 
 float get_zerodepth(void)
 {
-    return zerodepth;
+	return zerodepth;
 }
 
-void set_mouse_pos( int x, int y )
+void set_mouse_pos(int x, int y)
 {
-    mouse_pos.x=x;
-    mouse_pos.y=y;
+	mouse_pos.x = x;
+	mouse_pos.y = y;
 }
 
 int get_true_mouse_x(void)
 {
-    return mouse_pos.x;
+	return mouse_pos.x;
 }
 
 int get_true_mouse_y(void)
 {
-    return mouse_pos.y;
+	return mouse_pos.y;
 }
 
 int get_mouse_x(void)
 {
-    return (int)(((float)mouse_pos.x/(float)get_screen_width())*640);
+	return (int)(((float)mouse_pos.x / (float)get_screen_width()) * 640);
 }
 
 int get_mouse_y(void)
 {
-    return (int)(((float)mouse_pos.y/(float)get_screen_height())*480);
+	return (int)(((float)mouse_pos.y / (float)get_screen_height()) * 480);
 }
 
 /** @brief Computes smallest power of two that's larger than the input value.
@@ -89,51 +87,49 @@ int get_mouse_y(void)
  */
 int power_of_two(int input)
 {
-    int value = 1;
+	int value = 1;
 
-    while ( value < input )
-    {
-        value <<= 1;
-    }
-    return value;
+	while (value < input) {
+		value <<= 1;
+	}
+	return value;
 }
 
 void go_3d(int width, int height)
 {
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    gluPerspective(45.0f, 640.0f/480.0f, 1.0f, 100.0f);
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f, 640.0f / 480.0f, 1.0f, 100.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 /** @brief Sets the OpenGL rendering options. */
 void init_gl(void)
 {
-    /* Enable smooth shading */
-    glShadeModel( GL_SMOOTH );
+	/* Enable smooth shading */
+	glShadeModel(GL_SMOOTH);
 
-    /* Set the background black */
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+	/* Set the background black */
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    /* Depth buffer setup */
-    glClearDepth( 1.0f );
+	/* Depth buffer setup */
+	glClearDepth(1.0f);
 
-    /* Enables Depth Testing */
-    glEnable( GL_DEPTH_TEST );
+	/* Enables Depth Testing */
+	glEnable(GL_DEPTH_TEST);
 
-    /* The Type Of Depth Test To Do */
-    glDepthFunc( GL_LEQUAL );
+	/* The Type Of Depth Test To Do */
+	glDepthFunc(GL_LEQUAL);
 
-    /* Really Nice Perspective Calculations */
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+	/* Really Nice Perspective Calculations */
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /** @brief Resizes the OpenGL window.
@@ -141,43 +137,41 @@ void init_gl(void)
  *  @param width Desired width in pixels.
  *  @param height Desired height in pixels.
  */
-void resize_window( int width, int height )
+void resize_window(int width, int height)
 {
-    glViewport( 0, 0, width, height );
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    glOrtho(0, 640, 0, 480, -1, 1);
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 0, 480, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 /** @brief Swaps the OpenGL buffer.
  */
 void gl_swap(void)
 {
-    static Uint32 last = 0;
-    Uint32 now;
+	static Uint32 last = 0;
+	Uint32 now;
 
-    if (fps_enabled)
-    {
-        char fps_s[16];
+	if (fps_enabled) {
+		char fps_s[16];
 
-        snprintf(fps_s, 16, "FPS: %.2f", fps);
-        text_draw_string(10, 10, fps_s, 1, get_col(COL_RED));
-    }
+		snprintf(fps_s, 16, "FPS: %.2f", fps);
+		text_draw_string(10, 10, fps_s, 1, get_col(COL_RED));
+	}
 
-    blit_fbo();
-    SDL_GL_SwapWindow(sdl_window);
-    now = SDL_GetTicks();
-//    if (now - last < 1000 / FPS)
-//        SDL_Delay(1000 / FPS - (now - last));
-    last = SDL_GetTicks();
+	blit_fbo();
+	SDL_GL_SwapWindow(sdl_window);
+	now = SDL_GetTicks();
+	//    if (now - last < 1000 / FPS)
+	//        SDL_Delay(1000 / FPS - (now - last));
+	last = SDL_GetTicks();
 
-    frames++;
-    if (frames == 10)
-    {
-        fps = 10000 / (float) (now - fps_time);
-        frames = 0;
-        fps_time = now;
-    }
+	frames++;
+	if (frames == 10) {
+		fps = 10000 / (float)(now - fps_time);
+		frames = 0;
+		fps_time = now;
+	}
 }

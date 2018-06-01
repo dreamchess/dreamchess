@@ -21,20 +21,18 @@
 #ifndef GAMEGUI_OPTION_H
 #define GAMEGUI_OPTION_H
 
-#include <gamegui/system.h>
 #include <gamegui/select.h>
+#include <gamegui/system.h>
 
 #define GG_OPTION(W) GG_CHECK_CAST(W, gg_option_get_class_id(), gg_option_t)
 
-#define GG_OPTION_DATA \
-    GG_SELECT_DATA \
-    gg_signal_t changed;
+#define GG_OPTION_DATA                                                                                                 \
+	GG_SELECT_DATA                                                                                                     \
+	gg_signal_t changed;
 
-typedef struct gg_option
-{
-    GG_OPTION_DATA
-}
-gg_option_t;
+typedef struct gg_option {
+	GG_OPTION_DATA
+} gg_option_t;
 
 void gg_option_render(gg_widget_t *widget, int x, int y, int focus);
 

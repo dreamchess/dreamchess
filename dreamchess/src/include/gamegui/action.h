@@ -25,21 +25,19 @@
 #ifndef GAMEGUI_ACTION_H
 #define GAMEGUI_ACTION_H
 
-#include <gamegui/system.h>
 #include <gamegui/bin.h>
+#include <gamegui/system.h>
 
 /** Typecast to action widget. */
 #define GG_ACTION(W) GG_CHECK_CAST(W, gg_action_get_class_id(), gg_action_t)
 
-#define GG_ACTION_DATA \
-    GG_BIN_DATA \
-    gg_signal_t pressed; 
+#define GG_ACTION_DATA                                                                                                 \
+	GG_BIN_DATA                                                                                                        \
+	gg_signal_t pressed;
 
-typedef struct gg_action
-{
-    GG_ACTION_DATA
-}
-gg_action_t;
+typedef struct gg_action {
+	GG_ACTION_DATA
+} gg_action_t;
 
 gg_class_id gg_action_get_class_id(void);
 

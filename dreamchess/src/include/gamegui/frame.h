@@ -21,19 +21,16 @@
 #ifndef GAMEGUI_FRAME_H
 #define GAMEGUI_FRAME_H
 
-#include <gamegui/system.h>
 #include <gamegui/bin.h>
+#include <gamegui/system.h>
 
 #define GG_FRAME(W) GG_CHECK_CAST(W, gg_frame_get_class_id(), gg_frame_t)
 
-#define GG_FRAME_DATA \
-    GG_BIN_DATA
+#define GG_FRAME_DATA GG_BIN_DATA
 
-typedef struct gg_frame
-{
-    GG_FRAME_DATA
-}
-gg_frame_t;
+typedef struct gg_frame {
+	GG_FRAME_DATA
+} gg_frame_t;
 
 gg_class_id gg_frame_get_class_id(void);
 

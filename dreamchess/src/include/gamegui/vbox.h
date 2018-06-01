@@ -21,19 +21,16 @@
 #ifndef GAMEGUI_VBOX_H
 #define GAMEGUI_VBOX_H
 
-#include <gamegui/system.h>
 #include <gamegui/box.h>
+#include <gamegui/system.h>
 
 #define GG_VBOX(W) GG_CHECK_CAST(W, gg_vbox_get_class_id(), gg_vbox_t)
 
-#define GG_VBOX_DATA \
-    GG_BOX_DATA
+#define GG_VBOX_DATA GG_BOX_DATA
 
-typedef struct gg_vbox
-{
-    GG_VBOX_DATA
-}
-gg_vbox_t;
+typedef struct gg_vbox {
+	GG_VBOX_DATA
+} gg_vbox_t;
 
 gg_class_id gg_vbox_get_class_id(void);
 
@@ -47,12 +44,12 @@ void gg_vbox_set_size(gg_widget_t *widget, int width, int height);
 
 gg_rect_t gg_vbox_get_focus_pos(gg_widget_t *widget);
 
-int gg_vbox_set_focus_pos(gg_widget_t *widget, int x , int y);
+int gg_vbox_set_focus_pos(gg_widget_t *widget, int x, int y);
 
 void gg_vbox_init(gg_vbox_t *vbox, int spacing);
 
 gg_widget_t *gg_vbox_create(int spacing);
 
-void gg_vbox_set_selected(gg_widget_t *widget, int index );
+void gg_vbox_set_selected(gg_widget_t *widget, int index);
 
 #endif

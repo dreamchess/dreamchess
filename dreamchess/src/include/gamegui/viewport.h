@@ -25,22 +25,20 @@
 #ifndef GAMEGUI_VIEWPORT_H
 #define GAMEGUI_VIEWPORT_H
 
-#include <gamegui/system.h>
 #include <gamegui/bin.h>
+#include <gamegui/system.h>
 
 /** Typecast to viewport widget. */
 #define GG_VIEWPORT(W) GG_CHECK_CAST(W, gg_viewport_get_class_id(), gg_viewport_t)
 
-#define GG_VIEWPORT_DATA \
-    GG_BIN_DATA \
-    float xscroll; \
-    float yscroll;
+#define GG_VIEWPORT_DATA                                                                                               \
+	GG_BIN_DATA                                                                                                        \
+	float xscroll;                                                                                                     \
+	float yscroll;
 
-typedef struct gg_viewport
-{
-    GG_VIEWPORT_DATA
-}
-gg_viewport_t;
+typedef struct gg_viewport {
+	GG_VIEWPORT_DATA
+} gg_viewport_t;
 
 gg_class_id gg_viewport_get_class_id(void);
 

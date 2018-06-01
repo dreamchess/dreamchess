@@ -21,19 +21,16 @@
 #ifndef GAMEGUI_HBOX_H
 #define GAMEGUI_HBOX_H
 
-#include <gamegui/system.h>
 #include <gamegui/box.h>
+#include <gamegui/system.h>
 
 #define GG_HBOX(W) GG_CHECK_CAST(W, gg_hbox_get_class_id(), gg_hbox_t)
 
-#define GG_HBOX_DATA \
-    GG_BOX_DATA
+#define GG_HBOX_DATA GG_BOX_DATA
 
-typedef struct gg_hbox
-{
-    GG_HBOX_DATA
-}
-gg_hbox_t;
+typedef struct gg_hbox {
+	GG_HBOX_DATA
+} gg_hbox_t;
 
 gg_class_id gg_hbox_get_class_id(void);
 
@@ -47,7 +44,7 @@ void gg_hbox_set_size(gg_widget_t *widget, int width, int height);
 
 gg_rect_t gg_hbox_get_focus_pos(gg_widget_t *widget);
 
-int gg_hbox_set_focus_pos(gg_widget_t *widget, int x , int y);
+int gg_hbox_set_focus_pos(gg_widget_t *widget, int x, int y);
 
 void gg_hbox_init(gg_hbox_t *hbox, int spacing);
 

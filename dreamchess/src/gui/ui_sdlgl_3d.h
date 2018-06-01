@@ -26,13 +26,11 @@
 #define SELECTOR_LEFT 2
 #define SELECTOR_RIGHT 3
 
-typedef struct coord3
-{
-    float x;
-    float y;
-    float z;
-}
-coord3_t;
+typedef struct coord3 {
+	float x;
+	float y;
+	float z;
+} coord3_t;
 
 void move_camera(float x, float z);
 void render_scene_3d(board_t *board, GLuint target_fb, int reflections);

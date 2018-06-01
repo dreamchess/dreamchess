@@ -21,15 +21,15 @@
 #ifndef DIALOGS_DIALOGS_H
 #define DIALOGS_DIALOGS_H
 
-#include "dreamchess.h"
-#include "gamegui.h"
 #include "debug.h"
-#include "ui.h"
+#include "dreamchess.h"
 #include "engine.h"
+#include "gamegui.h"
 #include "options.h"
+#include "ui.h"
 
 /* Define our booleans */
-#define TRUE  1
+#define TRUE 1
 #define FALSE 0
 
 gg_dialog_style_t *get_ingame_style(void);
@@ -43,7 +43,7 @@ gg_dialog_t *dialog_promote_create(int colour);
 gg_dialog_t *dialog_victory_create(result_t *result);
 gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving);
-void show_message_dialog( const char *message );
+void show_message_dialog(const char *message);
 gg_dialog_t *dialog_error_create(gg_dialog_t *parent, const char *message1, const char *message2);
 gg_dialog_t *dialog_engine_error_create(void);
 gg_dialog_t *dialog_time_create(gg_dialog_t *parent);
@@ -51,6 +51,6 @@ gg_dialog_t *dialog_chat_create(gg_dialog_t *parent);
 gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent);
 
 /* FIXME */
-void set_quit_to_menu( int menu );
+void set_quit_to_menu(int menu);
 
 #endif

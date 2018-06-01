@@ -21,20 +21,18 @@
 #ifndef GAMEGUI_IMAGE_H
 #define GAMEGUI_IMAGE_H
 
-#include <gamegui/system.h>
 #include <gamegui/align.h>
+#include <gamegui/system.h>
 
 #define GG_IMAGE(W) GG_CHECK_CAST(W, gg_image_get_class_id(), gg_image_t)
 
-#define GG_IMAGE_DATA \
-    GG_ALIGN_DATA \
-    void *image;
+#define GG_IMAGE_DATA                                                                                                  \
+	GG_ALIGN_DATA                                                                                                      \
+	void *image;
 
-typedef struct gg_image
-{
-    GG_IMAGE_DATA
-}
-gg_image_t;
+typedef struct gg_image {
+	GG_IMAGE_DATA
+} gg_image_t;
 
 gg_class_id gg_image_get_class_id(void);
 

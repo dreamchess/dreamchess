@@ -21,19 +21,16 @@
 #ifndef GAMEGUI_BIN_H
 #define GAMEGUI_BIN_H
 
-#include <gamegui/system.h>
 #include <gamegui/container.h>
+#include <gamegui/system.h>
 
 #define GG_BIN(W) GG_CHECK_CAST(W, gg_bin_get_class_id(), gg_bin_t)
 
-#define GG_BIN_DATA \
-    GG_CONTAINER_DATA
+#define GG_BIN_DATA GG_CONTAINER_DATA
 
-typedef struct gg_bin
-{
-    GG_BIN_DATA
-}
-gg_bin_t;
+typedef struct gg_bin {
+	GG_BIN_DATA
+} gg_bin_t;
 
 gg_class_id gg_bin_get_class_id(void);
 
