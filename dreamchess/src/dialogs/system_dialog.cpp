@@ -24,8 +24,8 @@
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_close();
-    return 1;
+	gg_dialog_close();
+	return 1;
 }
 
 /** The system dialog. Provides a set of system-related actions to the user.
@@ -37,21 +37,21 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
 /** @brief Opens the quit dialog. */
 static int dialog_quit_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_open(dialog_quit_create(gg_widget_find_dialog(widget)));
-    return 1;
+	gg_dialog_open(dialog_quit_create(gg_widget_find_dialog(widget)));
+	return 1;
 }
 
 /** @brief Opens the ingame dialog. */
 static int dialog_ingame_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_open(dialog_ingame_create(gg_widget_find_dialog(widget)));
-    return 1;
+	gg_dialog_open(dialog_ingame_create(gg_widget_find_dialog(widget)));
+	return 1;
 }
 
 static int dialog_savegame_open(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), TRUE));
-    return 1;
+	gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), TRUE));
+	return 1;
 }
 
 /** @brief Creates the system dialog.
@@ -60,32 +60,28 @@ static int dialog_savegame_open(gg_widget_t *widget, gg_widget_t *emitter, void 
  */
 gg_dialog_t *dialog_system_create(void)
 {
-    gg_widget_t *dialog;
-    gg_widget_t *vbox = gg_vbox_create(0);
-    gg_widget_t *widget;
+	gg_widget_t *dialog;
+	gg_widget_t *vbox = gg_vbox_create(0);
+	gg_widget_t *widget;
 
-    widget = gg_action_create_with_label("Save game..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_savegame_open, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
+	widget = gg_action_create_with_label("Save game..", 0.0f, 0.0f);
+	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_savegame_open, NULL);
+	gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Move Options..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_ingame_open, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
+	widget = gg_action_create_with_label("Move Options..", 0.0f, 0.0f);
+	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_ingame_open, NULL);
+	gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Quit Game..", 0.0f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_quit_open, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
+	widget = gg_action_create_with_label("Quit Game..", 0.0f, 0.0f);
+	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_quit_open, NULL);
+	gg_container_append(GG_CONTAINER(vbox), widget);
 
-    widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
-    gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_close_cb, NULL);
-    gg_container_append(GG_CONTAINER(vbox), widget);
-    gg_vbox_set_selected(vbox, 3);
+	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
+	gg_container_append(GG_CONTAINER(vbox), widget);
+	gg_vbox_set_selected(vbox, 3);
 
-    dialog = gg_dialog_create(vbox, NULL, NULL, 0);
-    gg_dialog_set_style(GG_DIALOG(dialog), get_ingame_style());
-    return GG_DIALOG(dialog);
+	dialog = gg_dialog_create(vbox, NULL, NULL, 0);
+	gg_dialog_set_style(GG_DIALOG(dialog), get_ingame_style());
+	return GG_DIALOG(dialog);
 }

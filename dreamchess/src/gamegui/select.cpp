@@ -22,62 +22,56 @@
 
 gg_class_id gg_select_get_class_id(void)
 {
-    GG_CHILD(gg_container_get_class_id())
+	GG_CHILD(gg_container_get_class_id())
 }
 
 void gg_select_init(gg_select_t *select)
 {
-    gg_container_init((gg_container_t *) select);
+	gg_container_init((gg_container_t *)select);
 
-    select->id = gg_select_get_class_id();
-    select->sel = -1;
+	select->id = gg_select_get_class_id();
+	select->sel = -1;
 }
 
 int gg_select_prev(gg_select_t *select, int input, int enabled)
 {
-    int sel = select->sel - 1;
+	int sel = select->sel - 1;
 
-    while (sel >= 0)
-    {
-        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
+	while (sel >= 0) {
+		gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
 
-        if ((enabled && !child->enabled)
-                || (input && !child->input))
-            sel--;
-        else
-            break;
-    }
+		if ((enabled && !child->enabled) || (input && !child->input))
+			sel--;
+		else
+			break;
+	}
 
-    if (sel >= 0)
-    {
-        select->sel = sel;
-        return 1;
-    }
+	if (sel >= 0) {
+		select->sel = sel;
+		return 1;
+	}
 
-    return 0;
+	return 0;
 }
 
 int gg_select_next(gg_select_t *select, int input, int enabled)
 {
-    int sel = select->sel + 1;
-    int size = gg_container_get_size(GG_CONTAINER(select));
+	int sel = select->sel + 1;
+	int size = gg_container_get_size(GG_CONTAINER(select));
 
-    while (sel < size)
-    {
-        gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
+	while (sel < size) {
+		gg_widget_t *child = gg_container_get_child(GG_CONTAINER(select), sel);
 
-        if ((enabled && !child->enabled)
-                || (input && !child->input))
-            sel++;
-        else
-            break;
-    }
+		if ((enabled && !child->enabled) || (input && !child->input))
+			sel++;
+		else
+			break;
+	}
 
-    if (sel < size)
-    {
-        select->sel = sel;
-        return 1;
-    }
+	if (sel < size) {
+		select->sel = sel;
+		return 1;
+	}
 
-    return 0;
+	return 0;
 }

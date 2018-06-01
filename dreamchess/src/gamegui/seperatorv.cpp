@@ -27,43 +27,40 @@
 #define GG_SEP_SPACINGH 5
 #define GG_SEP_WIDTH 1
 
-static gg_colour_t col_black =
-    {
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+static gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
 
 gg_class_id gg_seperatorv_get_class_id(void)
 {
-    GG_CHILD(gg_widget_get_class_id())
+	GG_CHILD(gg_widget_get_class_id())
 }
 
 void gg_seperatorv_render(gg_widget_t *widget, int x, int y, int focus)
 {
-    gg_seperatorv_t *sep = GG_SEPERATORV(widget);
-    int height = sep->height_a - GG_SEP_SPACINGV * 2;
+	gg_seperatorv_t *sep = GG_SEPERATORV(widget);
+	int height = sep->height_a - GG_SEP_SPACINGV * 2;
 
-    if (height <= 0)
-        return;
+	if (height <= 0)
+		return;
 
-    gg_system_draw_filled_rect(x + sep->width_a / 2 - GG_SEP_WIDTH / 2,
-                               y + GG_SEP_SPACINGV, GG_SEP_WIDTH, height, &col_black);
+	gg_system_draw_filled_rect(x + sep->width_a / 2 - GG_SEP_WIDTH / 2, y + GG_SEP_SPACINGV, GG_SEP_WIDTH, height,
+							   &col_black);
 }
 
 void gg_seperatorv_init(gg_seperatorv_t *sep)
 {
-    gg_widget_init((gg_widget_t *) sep);
+	gg_widget_init((gg_widget_t *)sep);
 
-    sep->render = gg_seperatorv_render;
-    sep->id = gg_seperatorv_get_class_id();
-    sep->height = 0;
-    sep->width = GG_SEP_WIDTH + GG_SEP_SPACINGH * 2;
+	sep->render = gg_seperatorv_render;
+	sep->id = gg_seperatorv_get_class_id();
+	sep->height = 0;
+	sep->width = GG_SEP_WIDTH + GG_SEP_SPACINGH * 2;
 }
 
 gg_widget_t *gg_seperatorv_create(void)
 {
-    gg_seperatorv_t *sep = (gg_seperatorv_t *)malloc(sizeof(gg_seperatorv_t));
+	gg_seperatorv_t *sep = (gg_seperatorv_t *)malloc(sizeof(gg_seperatorv_t));
 
-    gg_seperatorv_init(sep);
+	gg_seperatorv_init(sep);
 
-    return GG_WIDGET(sep);
+	return GG_WIDGET(sep);
 }

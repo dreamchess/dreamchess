@@ -31,13 +31,10 @@
 
 #include "debug.h"
 #include "playlist.h"
-#include "theme.h"
 #include "system_config.h"
+#include "theme.h"
 
-static sound_t sounds[AUDIO_SOUNDS] =
-{
-	{AUDIO_MOVE, "move1.wav"}
-};
+static sound_t sounds[AUDIO_SOUNDS] = {{AUDIO_MOVE, "move1.wav"}};
 
 static audio_music_callback_t music_callback = NULL;
 static Mix_Music *music = NULL;
@@ -80,7 +77,7 @@ static void music_finished(void)
 
 void audio_init(void)
 {
-        music_packs_t *music_packs;
+	music_packs_t *music_packs;
 	int audio_rate = 44100;
 	Uint16 audio_format = AUDIO_S16;
 	int audio_channels = 2;
@@ -115,13 +112,11 @@ void audio_init(void)
 		playlist_add_tracks(playlist, music_pack->dir);
 
 	/* Check for at least two songs */
-	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist)))
-	{
+	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist))) {
 		current_song = TAILQ_LAST(playlist, playlist);
 		have_songs = 1;
 		next_song = 1;
-	}
-	else
+	} else
 		have_songs = 0;
 }
 
@@ -140,16 +135,15 @@ void audio_poll(int title)
 	if (!have_audio)
 		return;
 
-        /* Less than two songs or volume off, abort. */
-        if (!have_songs || !music_volume)
-                return;
+	/* Less than two songs or volume off, abort. */
+	if (!have_songs || !music_volume)
+		return;
 
 	/* Start a new song when the previous one is finished. Is also
 	** triggered when going from the title-screen to in-game and back
 	*/
-	if ((next_song == 1) || (!title && (current_song == TAILQ_FIRST(playlist)))
-		|| (title && (current_song != TAILQ_FIRST(playlist))))
-	{
+	if ((next_song == 1) || (!title && (current_song == TAILQ_FIRST(playlist))) ||
+		(title && (current_song != TAILQ_FIRST(playlist)))) {
 		if (title)
 			current_song = TAILQ_FIRST(playlist);
 		else {
@@ -213,8 +207,7 @@ void audio_set_music_volume(int vol)
 
 	if (music_volume == 0) {
 		Mix_HaltMusic();
-	}
-	else if (restart) {
+	} else if (restart) {
 		next_song = 1;
 	}
 }

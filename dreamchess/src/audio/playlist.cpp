@@ -18,15 +18,16 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <pugixml.hpp>
 #include <cstdlib>
 #include <cstring>
+#include <pugixml.hpp>
 #include <string>
 
 #include "debug.h"
 #include "playlist.h"
 
-playlist_t *playlist_create(void) {
+playlist_t *playlist_create(void)
+{
 	playlist_t *playlist = (playlist_t *)malloc(sizeof(playlist_t));
 
 	TAILQ_INIT(playlist);
@@ -34,7 +35,8 @@ playlist_t *playlist_create(void) {
 	return playlist;
 }
 
-void playlist_destroy(playlist_t *playlist) {
+void playlist_destroy(playlist_t *playlist)
+{
 	playlist_entry_t *entry;
 
 	while ((entry = TAILQ_FIRST(playlist))) {
@@ -47,7 +49,9 @@ void playlist_destroy(playlist_t *playlist) {
 	}
 }
 
-static void playlist_add_track(playlist_t *playlist, const char *title, const char *album, const char *artist, const char *filename) {
+static void playlist_add_track(playlist_t *playlist, const char *title, const char *album, const char *artist,
+							   const char *filename)
+{
 	playlist_entry_t *entry = (playlist_entry_t *)malloc(sizeof(playlist_entry_t));
 
 	entry->title = strdup(title);
@@ -58,14 +62,16 @@ static void playlist_add_track(playlist_t *playlist, const char *title, const ch
 	TAILQ_INSERT_TAIL(playlist, entry, entries);
 }
 
-void playlist_add_tracks(playlist_t *playlist, char *dir) {
+void playlist_add_tracks(playlist_t *playlist, char *dir)
+{
 	const std::string filename = std::string(dir) + "/tracks.xml";
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filename.c_str());
 
 	if (!result) {
-		DBG_ERROR("failed to load theme file '%s': %s at offset %d", filename.c_str(), result.description(), result.offset);
+		DBG_ERROR("failed to load theme file '%s': %s at offset %d", filename.c_str(), result.description(),
+				  result.offset);
 		return;
 	}
 
