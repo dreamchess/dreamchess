@@ -29,64 +29,38 @@ static float fps;
 
 extern SDL_Window *sdl_window;
 
-float get_fps(void)
-{
-	return fps;
-}
+float get_fps(void) { return fps; }
 
-void update_fps_time(void)
-{
-	fps_time = SDL_GetTicks();
-}
+void update_fps_time(void) { fps_time = SDL_GetTicks(); }
 
-void toggle_show_fps(void)
-{
-	fps_enabled = 1 - fps_enabled;
-}
+void toggle_show_fps(void) { fps_enabled = 1 - fps_enabled; }
 
 static struct {
 	int x;
 	int y;
 } mouse_pos;
 
-float get_zerodepth(void)
-{
-	return zerodepth;
-}
+float get_zerodepth(void) { return zerodepth; }
 
-void set_mouse_pos(int x, int y)
-{
+void set_mouse_pos(int x, int y) {
 	mouse_pos.x = x;
 	mouse_pos.y = y;
 }
 
-int get_true_mouse_x(void)
-{
-	return mouse_pos.x;
-}
+int get_true_mouse_x(void) { return mouse_pos.x; }
 
-int get_true_mouse_y(void)
-{
-	return mouse_pos.y;
-}
+int get_true_mouse_y(void) { return mouse_pos.y; }
 
-int get_mouse_x(void)
-{
-	return (int)(((float)mouse_pos.x / (float)get_screen_width()) * 640);
-}
+int get_mouse_x(void) { return (int)(((float)mouse_pos.x / (float)get_screen_width()) * 640); }
 
-int get_mouse_y(void)
-{
-	return (int)(((float)mouse_pos.y / (float)get_screen_height()) * 480);
-}
+int get_mouse_y(void) { return (int)(((float)mouse_pos.y / (float)get_screen_height()) * 480); }
 
 /** @brief Computes smallest power of two that's larger than the input value.
  *
  *  @param input Input value.
  *  @return Smallest power of two that's larger than input.
  */
-int power_of_two(int input)
-{
+int power_of_two(int input) {
 	int value = 1;
 
 	while (value < input) {
@@ -95,8 +69,7 @@ int power_of_two(int input)
 	return value;
 }
 
-void go_3d(int width, int height)
-{
+void go_3d(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0f, 640.0f / 480.0f, 1.0f, 100.0f);
@@ -105,8 +78,7 @@ void go_3d(int width, int height)
 }
 
 /** @brief Sets the OpenGL rendering options. */
-void init_gl(void)
-{
+void init_gl(void) {
 	/* Enable smooth shading */
 	glShadeModel(GL_SMOOTH);
 
@@ -137,8 +109,7 @@ void init_gl(void)
  *  @param width Desired width in pixels.
  *  @param height Desired height in pixels.
  */
-void resize_window(int width, int height)
-{
+void resize_window(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -149,8 +120,7 @@ void resize_window(int width, int height)
 
 /** @brief Swaps the OpenGL buffer.
  */
-void gl_swap(void)
-{
+void gl_swap(void) {
 	static Uint32 last = 0;
 	Uint32 now;
 

@@ -20,8 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	return 1;
 }
@@ -30,8 +29,7 @@ int saveload_selected = 0;
 int changing_slot = FALSE;
 int change_saving = FALSE;
 
-static char xmlsquaretofont(int square)
-{
+static char xmlsquaretofont(int square) {
 
 	switch (PIECE(square)) {
 	case KING:
@@ -51,8 +49,7 @@ static char xmlsquaretofont(int square)
 	return ' ';
 }
 
-static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	int slot = saveload_selected;
 
 	if (get_slots() & (1 << slot)) {
@@ -64,8 +61,7 @@ static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void 
 	return 1;
 }
 
-static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_widget_t *select = GG_WIDGET(extra_data);
 	saveload_selected = GG_OPTION(select)->sel;
 
@@ -76,8 +72,7 @@ static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, voi
 	return 1;
 }
 
-static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	int save_good = TRUE;
 
 	/* Close the dialogs.. */
@@ -97,8 +92,7 @@ static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void 
 	return 1;
 }
 
-gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
-{
+gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 	gg_widget_t *dialog;
 	gg_widget_t *rootvbox = gg_vbox_create(0);
 	gg_widget_t *vbox = gg_vbox_create(0);

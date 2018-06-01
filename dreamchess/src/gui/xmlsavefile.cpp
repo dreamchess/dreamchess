@@ -30,33 +30,17 @@ static char time_save[SAVEGAME_SLOTS][80];
 static config_t config_save[SAVEGAME_SLOTS];
 static board_t saved_board[SAVEGAME_SLOTS];
 
-board_t *get_saved_board(int index)
-{
-	return &saved_board[index];
-}
+board_t *get_saved_board(int index) { return &saved_board[index]; }
 
-config_t *get_config_save(int index)
-{
-	return &config_save[index];
-}
+config_t *get_config_save(int index) { return &config_save[index]; }
 
-char *get_time_save(int index)
-{
-	return time_save[index];
-}
+char *get_time_save(int index) { return time_save[index]; }
 
-void set_slots(int slots)
-{
-	slots = slots;
-}
+void set_slots(int slots) { slots = slots; }
 
-int get_slots(void)
-{
-	return slots;
-}
+int get_slots(void) { return slots; }
 
-void write_save_xml(int slot)
-{
+void write_save_xml(int slot) {
 	pugi::xml_document doc;
 	std::string filename("save");
 	filename += std::to_string(slot);
@@ -106,8 +90,7 @@ void write_save_xml(int slot)
 		DBG_ERROR("failed to save '%s'", filename.c_str());
 }
 
-void load_save_xml(int slot)
-{
+void load_save_xml(int slot) {
 	pugi::xml_document doc;
 	std::string filename("save");
 	filename += std::to_string(slot);

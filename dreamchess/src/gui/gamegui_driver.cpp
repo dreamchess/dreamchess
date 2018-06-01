@@ -20,8 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-static unsigned int utf8_to_utf32(const char *utf8)
-{
+static unsigned int utf8_to_utf32(const char *utf8) {
 	unsigned int char_utf32 = 0;
 	char *utf32 = SDL_iconv_string("UTF-32LE", "UTF-8", utf8, strlen(utf8) + 1);
 
@@ -36,8 +35,7 @@ static unsigned int utf8_to_utf32(const char *utf8)
 
 extern SDL_Window *sdl_window;
 
-gg_event_t convert_event(SDL_Event *event)
-{
+gg_event_t convert_event(SDL_Event *event) {
 	gg_event_t gg_event;
 
 	gg_event.type = GG_EVENT_NONE;
@@ -127,8 +125,7 @@ gg_event_t convert_event(SDL_Event *event)
 	return gg_event;
 }
 
-static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour)
-{
+static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour) {
 	texture_t *texture = (texture_t *)image;
 	float hsize = texture->u2 - texture->u1;
 	float vsize = texture->v2 - texture->v1;
@@ -159,8 +156,7 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
 					ysrc, xsrc + width, ysrc + height, en_h, en_v);
 }
 
-static void *get_char_image(int c)
-{
+static void *get_char_image(int c) {
 	if (c < 0)
 		c += 256;
 
@@ -168,13 +164,9 @@ static void *get_char_image(int c)
 	/*    return &text_characters[c];*/
 }
 
-static void draw_char(int c, int x, int y, gg_colour_t *colour)
-{
-	text_draw_char((float)x, (float)y, 1.0f, c, colour);
-}
+static void draw_char(int c, int x, int y, gg_colour_t *colour) { text_draw_char((float)x, (float)y, 1.0f, c, colour); }
 
-static void get_image_size(void *image, int *width, int *height)
-{
+static void get_image_size(void *image, int *width, int *height) {
 	texture_t *texture = (texture_t *)image;
 
 	if (width)
@@ -184,8 +176,7 @@ static void get_image_size(void *image, int *width, int *height)
 		*height = texture->height;
 }
 
-static void get_char_size(int c, int *width, int *height)
-{
+static void get_char_size(int c, int *width, int *height) {
 	if (c < 0)
 		c += 256;
 
@@ -196,15 +187,9 @@ static void get_char_size(int c, int *width, int *height)
 		*height = get_text_character(c)->height;
 }
 
-static unsigned int get_ticks(void)
-{
-	return SDL_GetTicks();
-}
+static unsigned int get_ticks(void) { return SDL_GetTicks(); }
 
 gg_driver_t gg_driver_sdlgl = {draw_rect, draw_rect_fill, draw_rect_fill_gradient, draw_image, get_char_image,
 							   draw_char, get_image_size, get_char_size,		   get_ticks};
 
-gg_driver_t *get_gg_driver_sdlgl(void)
-{
-	return &gg_driver_sdlgl;
-}
+gg_driver_t *get_gg_driver_sdlgl(void) { return &gg_driver_sdlgl; }

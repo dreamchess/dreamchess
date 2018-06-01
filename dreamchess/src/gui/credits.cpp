@@ -30,8 +30,7 @@
 
 #include "ui_sdlgl.h"
 
-void draw_credits(int init)
-{
+void draw_credits(int init) {
 	static int section, nr, state;
 	int diff;
 	static Uint32 start;

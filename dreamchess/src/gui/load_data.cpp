@@ -20,8 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-void load_border(texture_t border[9], const char *filename)
-{
+void load_border(texture_t border[9], const char *filename) {
 	/* Create storage space for the texture */
 	SDL_Surface *surface;
 
@@ -49,8 +48,7 @@ void load_border(texture_t border[9], const char *filename)
 	}
 }
 
-void unload_border(texture_t border[9])
-{
+void unload_border(texture_t border[9]) {
 	int i;
 
 	for (i = 0; i < 9; i++) {
@@ -59,8 +57,7 @@ void unload_border(texture_t border[9])
 }
 
 /** @brief Loads the textures for the chess pieces. */
-void load_pieces(void)
-{
+void load_pieces(void) {
 	int i, j;
 	texture_t texture;
 	int ypos = 0;

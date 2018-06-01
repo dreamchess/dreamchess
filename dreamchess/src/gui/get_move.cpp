@@ -34,8 +34,7 @@
 int last_mousex = 0;
 int last_mousey = 0;
 
-int get_move(void)
-{
+int get_move(void) {
 	int retval = -1;
 	int mousex, mousey;
 	SDL_Event event;

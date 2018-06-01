@@ -25,13 +25,9 @@ int in_transition = FALSE;
 
 #define SONIC_FADE_SPEED 2.0f
 
-void set_fade_start(float start)
-{
-	fade_start = start;
-}
+void set_fade_start(float start) { fade_start = start; }
 
-int draw_fade(int inout)
-{
+int draw_fade(int inout) {
 	float amount = (gg_system_get_ticks() - fade_start) / (FADE_SPEED * 1000);
 
 	gg_colour_t col = {0.0f, 0.0f, 0.0f, 1.0f - amount};
@@ -51,8 +47,7 @@ int draw_fade(int inout)
 	return TRUE;
 }
 
-int draw_sonic_fade(int inout)
-{
+int draw_sonic_fade(int inout) {
 	float amount = (gg_system_get_ticks() - fade_start) / (SONIC_FADE_SPEED * 1000);
 	int i = 0;
 

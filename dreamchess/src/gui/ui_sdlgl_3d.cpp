@@ -80,14 +80,12 @@ typedef struct {
 	int size;
 } data_col_t;
 
-static void data_col_init(data_col_t *data_col)
-{
+static void data_col_init(data_col_t *data_col) {
 	data_col->item = NULL;
 	data_col->size = 0;
 }
 
-static void data_col_free(data_col_t *data_col, void (*free_data)(void *))
-{
+static void data_col_free(data_col_t *data_col, void (*free_data)(void *)) {
 	int i;
 	for (i = 0; i < data_col->size; i++) {
 		free(data_col->item[i].name);
@@ -97,8 +95,7 @@ static void data_col_free(data_col_t *data_col, void (*free_data)(void *))
 	free(data_col->item);
 }
 
-static void *data_col_find(data_col_t *data_col, const char *name)
-{
+static void *data_col_find(data_col_t *data_col, const char *name) {
 	int i = 0;
 
 	for (i = 0; i < data_col->size; i++)
@@ -108,8 +105,7 @@ static void *data_col_find(data_col_t *data_col, const char *name)
 	return NULL;
 }
 
-static void data_col_add(data_col_t *data_col, const char *name, void *data)
-{
+static void data_col_add(data_col_t *data_col, const char *name, void *data) {
 	data_col->item = (data_col_item_t *)realloc(data_col->item, (data_col->size + 1) * sizeof(data_col_item_t));
 
 	data_col->item[data_col->size].name = strdup(name);
@@ -128,13 +124,9 @@ static GLuint fb, colourpicking_tex, depth_rb;
 #define BUF_SIZE 256
 #define FN_LEN 256
 
-static inline float in_product_self(float x, float y, float z)
-{
-	return x * x + y * y + z * z;
-}
+static inline float in_product_self(float x, float y, float z) { return x * x + y * y + z * z; }
 
-static inline float in_product(float x, float y, float z, float xx, float yy, float zz)
-{
+static inline float in_product(float x, float y, float z, float xx, float yy, float zz) {
 	return x * xx + y * yy + z * zz;
 }
 
@@ -161,8 +153,7 @@ static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
 
-void init_fbo(void)
-{
+void init_fbo(void) {
 	const int width = 1920;
 	const int height = 1080;
 
@@ -189,15 +180,13 @@ void init_fbo(void)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void deinit_fbo(void)
-{
+void deinit_fbo(void) {
 	glDeleteTextures(1, &colourpicking_tex);
 	glDeleteRenderbuffers(1, &depth_rb);
 	glDeleteFramebuffers(1, &fb);
 }
 
-static void setup_view(void)
-{
+static void setup_view(void) {
 	glLoadIdentity();
 
 	/* Transition */
@@ -208,13 +197,9 @@ static void setup_view(void)
 	glRotatef(z_rotation, 0, 0, 1);
 }
 
-int get_piece_moving_done(void)
-{
-	return piece_moving_done;
-}
+int get_piece_moving_done(void) { return piece_moving_done; }
 
-void start_piece_move(int source, int dest)
-{
+void start_piece_move(int source, int dest) {
 	piece_moving_start = SDL_GetTicks();
 
 	piece_moving_done = 0;
@@ -235,8 +220,7 @@ void start_piece_move(int source, int dest)
 	piece_moving_y_done = 0;
 }
 
-static texture_t *load_piece_texture(const char *filename)
-{
+static texture_t *load_piece_texture(const char *filename) {
 	texture_t *tex = (texture_t *)data_col_find(&textures, filename);
 
 	if (tex) {
@@ -251,8 +235,7 @@ static texture_t *load_piece_texture(const char *filename)
 	return tex;
 }
 
-static mesh_t *dcm_load(const char *filename)
-{
+static mesh_t *dcm_load(const char *filename) {
 	FILE *f;
 	mesh_t *mesh;
 	int version;
@@ -511,8 +494,7 @@ mesh_t *dcm_load_new(char *filename)
 }
 #endif
 
-static mesh_t *load_mesh(const char *filename)
-{
+static mesh_t *load_mesh(const char *filename) {
 	mesh_t *mesh = (mesh_t *)data_col_find(&meshes, filename);
 
 	if (mesh) {
@@ -541,8 +523,7 @@ static mesh_t *load_mesh_new(char *filename)
 }
 #endif
 
-static void model_render(model_t *model, int specular, float alpha)
-{
+static void model_render(model_t *model, int specular, float alpha) {
 	float specReflection[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	float nospecReflection[] = {0.0f, 0.0f, 0.0f, 1.0f};
 	float mcolor[4] = {1.0f, 1.0f, 1.0f};
@@ -565,14 +546,12 @@ static void model_render(model_t *model, int specular, float alpha)
 	glDisable(GL_TEXTURE_2D);
 }
 
-static void model_render_cp(model_t *model, GLubyte colour)
-{
+static void model_render_cp(model_t *model, GLubyte colour) {
 	glColor3ub(colour, 0, 0);
 	glCallList(model->mesh->list);
 }
 
-static void model_make_list(model_t *model)
-{
+static void model_make_list(model_t *model) {
 	int g;
 	mesh_t *mesh = model->mesh;
 
@@ -604,14 +583,12 @@ static void model_make_list(model_t *model)
 	glEndList();
 }
 
-void set_theme(struct theme_struct *theme, texture_t texture)
-{
+void set_theme(struct theme_struct *theme, texture_t texture) {
 	sel = theme->selector;
 	sel_tex = texture;
 }
 
-void loadmodels(const char *filename)
-{
+void loadmodels(const char *filename) {
 	int i;
 	FILE *f;
 	char mesh[256];
@@ -654,15 +631,13 @@ void loadmodels(const char *filename)
 	fclose(f);
 }
 
-void load_board(const char *dcm_name, const char *texture_name)
-{
+void load_board(const char *dcm_name, const char *texture_name) {
 	board.mesh = load_mesh(dcm_name);
 	board.texture = load_piece_texture(texture_name);
 	model_make_list(&board);
 }
 
-static void free_mesh(void *data)
-{
+static void free_mesh(void *data) {
 	mesh_t *mesh = (mesh_t *)data;
 	int i;
 
@@ -677,16 +652,14 @@ static void free_mesh(void *data)
 	free(mesh);
 }
 
-static void free_texture(void *data)
-{
+static void free_texture(void *data) {
 	texture_t *tex = (texture_t *)data;
 
 	glDeleteTextures(1, &tex->id);
 	free(tex);
 }
 
-void freemodels(void)
-{
+void freemodels(void) {
 	data_col_free(&meshes, free_mesh);
 	data_col_free(&textures, free_texture);
 }
@@ -704,19 +677,14 @@ static int moving_piece_render;
 static int moving_piece_model;
 static int moving_piece_grab;
 
-static inline unsigned char square_to_colour(unsigned char square)
-{
+static inline unsigned char square_to_colour(unsigned char square) {
 	/* Add one to square to leave room for empty space */
 	return square + 1;
 }
 
-static inline unsigned char colour_to_square(unsigned char colour)
-{
-	return colour - 1;
-}
+static inline unsigned char colour_to_square(unsigned char colour) { return colour - 1; }
 
-static void draw_pieces(board_t *board, int flip)
-{
+static void draw_pieces(board_t *board, int flip) {
 	int i, j, k;
 	float moved = 0;
 
@@ -810,8 +778,7 @@ static void draw_pieces(board_t *board, int flip)
 	}
 }
 
-static void draw_pieces_cp(board_t *board)
-{
+static void draw_pieces_cp(board_t *board) {
 	int i, j, k;
 
 	/* Draw the pieces.. */
@@ -825,14 +792,12 @@ static void draw_pieces_cp(board_t *board)
 		}
 }
 
-static void draw_board(int blend)
-{
+static void draw_board(int blend) {
 	setup_view();
 	model_render(&board, 0, 1.0f);
 }
 
-static void draw_selector(float alpha)
-{
+static void draw_selector(float alpha) {
 	float bounce_offset = 0.0;
 	float spin_offset = 0.0;
 	Uint32 ticks = SDL_GetTicks();
@@ -890,8 +855,7 @@ static void draw_selector(float alpha)
 	glDisable(GL_TEXTURE_2D);
 }
 
-int find_square(int x, int y)
-{
+int find_square(int x, int y) {
 	GLubyte col;
 	GLint viewport[4];
 
@@ -905,8 +869,7 @@ int find_square(int x, int y)
 	return col - 1;
 }
 
-static void draw_board_center(float r, float g, float b, float a)
-{
+static void draw_board_center(float r, float g, float b, float a) {
 	float tc = 46 / 512.0f;
 	float mcolor[4] = {1.0f, 1.0f, 1.0f};
 
@@ -937,8 +900,7 @@ static void draw_board_center(float r, float g, float b, float a)
 	glDisable(GL_TEXTURE_2D);
 }
 
-static void draw_board_center_cp()
-{
+static void draw_board_center_cp() {
 	setup_view();
 	int row, col;
 
@@ -955,8 +917,7 @@ static void draw_board_center_cp()
 	}
 }
 
-static void setup_stencil(void)
-{
+static void setup_stencil(void) {
 	float tc = 46 / 512.0f;
 
 	glDisable(GL_LIGHTING);
@@ -993,8 +954,7 @@ static void setup_stencil(void)
 	glEnable(GL_LIGHTING);
 }
 
-void render_scene_3d(board_t *board, GLuint target_fb, int reflections)
-{
+void render_scene_3d(board_t *board, GLuint target_fb, int reflections) {
 	int ticks = SDL_GetTicks();
 
 	//
@@ -1045,8 +1005,7 @@ void render_scene_3d(board_t *board, GLuint target_fb, int reflections)
 	glEnable(GL_BLEND);
 }
 
-void move_camera(float x, float z)
-{
+void move_camera(float x, float z) {
 	x_rotation -= x;
 	if (x_rotation > 0.0f)
 		x_rotation = 0.0f;
@@ -1062,8 +1021,7 @@ void move_camera(float x, float z)
 		z_rotation = 360.0f;
 }
 
-void move_selector(int direction)
-{
+void move_selector(int direction) {
 	int steps = (int)((z_rotation + 45.0f) / 90.0f);
 
 	selector_hide_time = SDL_GetTicks() + SELECTOR_SHOW_TICKS;
@@ -1103,18 +1061,11 @@ void move_selector(int direction)
 	}
 }
 
-int get_selector(void)
-{
-	return selector;
-}
+int get_selector(void) { return selector; }
 
-void select_piece(int square)
-{
-	selected = square;
-}
+void select_piece(int square) { selected = square; }
 
-void reset_3d(int flip)
-{
+void reset_3d(int flip) {
 	float mcolor[] = {1.0f, 1.0f, 1.0f};
 	float position[] = {50.0f, 10.0f, 50.0f, 1.0f};
 

@@ -30,14 +30,12 @@ float trans_amount = 320;
 int trans_in;
 int trans_reset;
 
-void reset_transition(int in)
-{
+void reset_transition(int in) {
 	trans_in = in;
 	trans_reset = TRUE;
 }
 
-void transition_update(void)
-{
+void transition_update(void) {
 	Uint32 ticks = SDL_GetTicks();
 
 	if (trans_reset) {
@@ -53,16 +51,14 @@ void transition_update(void)
 	transition.x = trans_amount - transition.y;
 }
 
-float get_ui_trans_pos(void)
-{
+float get_ui_trans_pos(void) {
 	if (trans_in)
 		return -transition.x;
 	else
 		return -transition.y;
 }
 
-static void draw_health_bar(coord3_t position, coord3_t size, int white)
-{
+static void draw_health_bar(coord3_t position, coord3_t size, int white) {
 	int health;
 	float bar_len;
 
@@ -100,8 +96,7 @@ static void draw_health_bar(coord3_t position, coord3_t size, int white)
 	}
 }
 
-static void draw_player_status(coord3_t offset, int white)
-{
+static void draw_player_status(coord3_t offset, int white) {
 	if (white) /* UGLY */
 	{
 		if (get_game_stalemate() == TRUE)
@@ -133,8 +128,7 @@ static void draw_player_status(coord3_t offset, int white)
 	}
 }
 
-void draw_ui_elements(void)
-{
+void draw_ui_elements(void) {
 	int namew, nameh;
 
 	/* Enable/disable elements, set positions/sizes. */
@@ -241,10 +235,7 @@ void draw_ui_elements(void)
 }
 
 /** @brief Renders the in-game backdrop. */
-void draw_backdrop(void)
-{
-	draw_texture(get_backdrop(), 0, 0, 640, 480, -1.0f, get_col(COL_WHITE));
-}
+void draw_backdrop(void) { draw_texture(get_backdrop(), 0, 0, 640, 480, -1.0f, get_col(COL_WHITE)); }
 
 /** @brief Renders the move list.
  *
@@ -255,8 +246,7 @@ void draw_backdrop(void)
  *  @param col_normal Text colour for move list.
  *  @param col_high Text colour for highlighting the last move.
  */
-void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high)
-{
+void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high) {
 	char **list;
 	int entries, view, i;
 	float y;
@@ -311,8 +301,7 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
  *
  *  @param col The text colour to use.
  */
-void draw_capture_list(coord3_t offset, gg_colour_t *col)
-{
+void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 	/*float x_white = 60;
 	float y_white = 180;
 	float x_black = 580;

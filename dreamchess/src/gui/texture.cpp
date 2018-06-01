@@ -23,8 +23,7 @@
 /*  This function loads the image upside-down. Meaning that texture
  *  coordinate (0,0) corresponds to the top-left corner of the image.
  */
-texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp)
-{
+texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp) {
 	texture_t texture;
 	int w, h;
 	SDL_Surface *image;
@@ -87,8 +86,7 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
  *  @param zpos The z-coordinate.
  *  @param col The colour to render with.
  */
-void draw_texture(texture_t *texture, float xpos, float ypos, float width, float height, float zpos, gg_colour_t *col)
-{
+void draw_texture(texture_t *texture, float xpos, float ypos, float width, float height, float zpos, gg_colour_t *col) {
 	glEnable(GL_TEXTURE_2D);
 
 	glColor4f(col->r, col->g, col->b, col->a);
@@ -109,8 +107,7 @@ void draw_texture(texture_t *texture, float xpos, float ypos, float width, float
 }
 
 void draw_texture_uv(texture_t *texture, float xpos, float ypos, float width, float height, float zpos,
-					 gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v)
-{
+					 gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v) {
 	glEnable(GL_TEXTURE_2D);
 
 	glColor4f(col->r, col->g, col->b, col->a);
@@ -140,8 +137,7 @@ void draw_texture_uv(texture_t *texture, float xpos, float ypos, float width, fl
  *  @param alpha 1 = Create texture with alpha channel (taken from image),
  *               0 = Create texture without alpha channel.
  */
-void load_texture_png(texture_t *texture, const char *filename, int alpha, int clamp)
-{
+void load_texture_png(texture_t *texture, const char *filename, int alpha, int clamp) {
 	/* Create storage space for the texture */
 	SDL_Surface *texture_image;
 

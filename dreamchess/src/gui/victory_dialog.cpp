@@ -20,14 +20,12 @@
 
 #include "ui_sdlgl.h"
 
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	return 1;
 }
 
-gg_dialog_t *dialog_victory_create(result_t *result)
-{
+gg_dialog_t *dialog_victory_create(result_t *result) {
 	gg_widget_t *dialog;
 	gg_widget_t *hbox = gg_hbox_create(20);
 	gg_widget_t *vbox = gg_vbox_create(0);

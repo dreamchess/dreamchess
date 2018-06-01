@@ -23,8 +23,7 @@
 #include "system_config.h"
 #include "ui_sdlgl.h"
 
-static void create_option_values(gg_option_t *widget, option_t *option)
-{
+static void create_option_values(gg_option_t *widget, option_t *option) {
 	option_value_t *value;
 
 	OPTION_VALUE_FOREACH(value, option) { gg_option_append_label(widget, value->name, 0.5f, 0.0f); }
@@ -32,15 +31,13 @@ static void create_option_values(gg_option_t *widget, option_t *option)
 	gg_option_set_selected(widget, option->selected->index);
 }
 
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	return 1;
 }
 
 /** @brief Triggers gameplay start based on currently selected options. */
-static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	int selected_difficulty, selected_level, selected_player_layout;
 	option_t *option;
 
@@ -87,46 +84,39 @@ static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *dat
 }
 
 /** @brief Triggers DreamChess exit. */
-static int menu_title_quit(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int menu_title_quit(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	set_title_process_retval(1);
 	gg_dialog_close();
 	return 1;
 }
 
-static int dialog_title_root_new(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_title_root_new(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_open(dialog_title_newgame_create(gg_widget_find_dialog(widget)));
 	return 1;
 }
 
-static int dialog_title_root_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_title_root_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_open(dialog_saveload_create(gg_widget_find_dialog(widget), FALSE));
 	return 1;
 }
 
-static int dialog_title_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_title_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	option_t *option = config_get_option((char *)extra_data);
 	option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
 	return 1;
 }
 
-static int dialog_title_open_systemopts(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_title_open_systemopts(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_open(dialog_systemopts_create(gg_widget_find_dialog(widget)));
 	return 1;
 }
 
-static int dialog_title_time_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_title_time_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_open(dialog_time_create(gg_widget_find_dialog(widget)));
 	return 1;
 }
 
-gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
-{
+gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent) {
 	gg_widget_t *dialog;
 	gg_widget_t *vbox;
 	gg_widget_t *widget;
@@ -196,8 +186,7 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent)
 	return GG_DIALOG(dialog);
 }
 
-gg_dialog_t *dialog_title_root_create(void)
-{
+gg_dialog_t *dialog_title_root_create(void) {
 	gg_widget_t *dialog;
 	gg_widget_t *vbox;
 	gg_widget_t *widget;
@@ -227,8 +216,7 @@ gg_dialog_t *dialog_title_root_create(void)
 	return GG_DIALOG(dialog);
 }
 
-void open_title_root_dialog(void)
-{
+void open_title_root_dialog(void) {
 	gg_dialog_t *title = dialog_title_root_create();
 
 	gg_dialog_open(title);

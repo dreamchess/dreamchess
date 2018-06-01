@@ -20,15 +20,13 @@
 
 #include "ui_sdlgl.h"
 
-static int dialog_promote_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_promote_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	set_dialog_promote_piece(*(int *)extra_data);
 	gg_dialog_close();
 	return 1;
 }
 
-gg_dialog_t *dialog_promote_create(int colour)
-{
+gg_dialog_t *dialog_promote_create(int colour) {
 	static int cb_pieces[4];
 
 	texture_t *pieces;

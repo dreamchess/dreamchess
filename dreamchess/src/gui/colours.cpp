@@ -21,16 +21,12 @@
 #include "ui_sdlgl.h"
 
 static gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
-
 static gg_colour_t col_red = {1.0f, 0.0f, 0.0f, 1.0f};
-
 static gg_colour_t col_white = {1.0f, 1.0f, 1.0f, 1.0f};
-
 static gg_colour_t col_yellow = {1.0f, 1.0f, 0.0f, 1.0f};
 
 /* Return the specified colour, returning white if unknown value */
-gg_colour_t *get_col(int colour)
-{
+gg_colour_t *get_col(int colour) {
 	switch (colour) {
 	case COL_BLACK:
 		return &col_black;

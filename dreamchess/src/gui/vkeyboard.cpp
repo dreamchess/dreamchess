@@ -23,8 +23,7 @@
 static ui_event_t keys[94];
 static int vkeyboard_enabled = 0;
 
-void populate_key_table(void)
-{
+void populate_key_table(void) {
 	int i;
 
 	for (i = 0; i < 94; i++) {
@@ -32,18 +31,11 @@ void populate_key_table(void)
 	}
 }
 
-void toggle_vkeyboard_enabled(void)
-{
-	vkeyboard_enabled = 1 - vkeyboard_enabled;
-}
+void toggle_vkeyboard_enabled(void) { vkeyboard_enabled = 1 - vkeyboard_enabled; }
 
-int get_vkeyboard_enabled(void)
-{
-	return vkeyboard_enabled;
-}
+int get_vkeyboard_enabled(void) { return vkeyboard_enabled; }
 
-static int dialog_vkeyboard_key(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_vkeyboard_key(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	if (gg_dialog_get_active()) {
 		gg_event_t event;
 		event.type = GG_EVENT_KEY;
@@ -56,8 +48,7 @@ static int dialog_vkeyboard_key(gg_widget_t *widget, gg_widget_t *emitter, void 
 	return 1;
 }
 
-gg_dialog_t *dialog_vkeyboard_create(void)
-{
+gg_dialog_t *dialog_vkeyboard_create(void) {
 	gg_widget_t *dialog;
 	gg_widget_t *label;
 	gg_widget_t *action;

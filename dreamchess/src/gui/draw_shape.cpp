@@ -20,8 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
-{
+void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col) {
 	glColor4f(col->r, col->g, col->b, col->a);
 	glBegin(GL_TRIANGLES);
 	glVertex3f((float)x1, (float)y1, 1.0f);
@@ -30,8 +29,7 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col)
 	glEnd();
 }
 
-void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
-{
+void draw_rect(int x, int y, int w, int h, gg_colour_t *col) {
 	glColor4f(col->r, col->g, col->b, col->a);
 	glBegin(GL_LINE_LOOP);
 	glVertex3f(x + 0.5f, y + 0.5f, 1.0f);
@@ -42,8 +40,7 @@ void draw_rect(int x, int y, int w, int h, gg_colour_t *col)
 }
 
 void draw_rect_fill_gradient(int x, int y, int w, int h, gg_colour_t *top_left, gg_colour_t *top_right,
-							 gg_colour_t *bottom_left, gg_colour_t *bottom_right)
-{
+							 gg_colour_t *bottom_left, gg_colour_t *bottom_right) {
 	glBegin(GL_QUADS);
 	glColor4f(top_left->r, top_left->g, top_left->b, top_left->a);
 	glVertex3f((float)x, (float)y, 1.0f);
@@ -56,7 +53,6 @@ void draw_rect_fill_gradient(int x, int y, int w, int h, gg_colour_t *top_left, 
 	glEnd();
 }
 
-void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col)
-{
+void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col) {
 	draw_rect_fill_gradient(x, y, w, h, col, col, col, col);
 }

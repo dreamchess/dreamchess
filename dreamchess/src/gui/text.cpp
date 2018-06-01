@@ -22,10 +22,7 @@
 
 static texture_t text_characters[256];
 
-texture_t *get_text_character(int index)
-{
-	return &text_characters[index];
-}
+texture_t *get_text_character(int index) { return &text_characters[index]; }
 
 /** @brief Renders a latin1 character.
  *
@@ -36,8 +33,7 @@ texture_t *get_text_character(int index)
  *  @param col The colour to render with.
  *  @return The width of the textured quad in pixels.
  */
-int text_draw_char(float xpos, float ypos, float scale, int character, gg_colour_t *col)
-{
+int text_draw_char(float xpos, float ypos, float scale, int character, gg_colour_t *col) {
 	int index, offset;
 	gg_colour_t black = *get_col(COL_BLACK);
 
@@ -65,8 +61,7 @@ int text_draw_char(float xpos, float ypos, float scale, int character, gg_colour
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string(float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
-{
+void text_draw_string(float xpos, float ypos, const char *text, float scale, gg_colour_t *col) {
 	int i;
 	int xposition = (int)xpos;
 
@@ -74,8 +69,7 @@ void text_draw_string(float xpos, float ypos, const char *text, float scale, gg_
 		xposition += text_draw_char((float)xposition, ypos, scale, text[i], col);
 }
 
-static int text_width_n(const char *text, std::size_t n)
-{
+static int text_width_n(const char *text, std::size_t n) {
 	int retval = 0;
 
 	for (std::size_t i = 0; i < n; i++) {
@@ -95,19 +89,13 @@ static int text_width_n(const char *text, std::size_t n)
  *  @param text String to compute width of.
  *  @return Width of string in pixels.
  */
-int text_width(const char *text)
-{
-	return text_width_n(text, strlen(text));
-}
+int text_width(const char *text) { return text_width_n(text, strlen(text)); }
 
 /** @brief Returns the font height.
  *
  *  @return Font height in pixels.
  */
-int text_height(void)
-{
-	return text_characters['a'].height;
-}
+int text_height(void) { return text_characters['a'].height; }
 
 /** @brief Renders a latin1 string with right-alignment.
  *
@@ -117,8 +105,7 @@ int text_height(void)
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_right(float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
-{
+void text_draw_string_right(float xpos, float ypos, const char *text, float scale, gg_colour_t *col) {
 	text_draw_string(xpos - text_width(text) * scale, ypos, text, scale, col);
 }
 
@@ -133,8 +120,7 @@ void text_draw_string_right(float xpos, float ypos, const char *text, float scal
  *  @param scale Size scale factor.
  *  @param col The colour to render with.
  */
-void text_draw_string_bouncy(float xpos, float ypos, const char *text, float scale, gg_colour_t *col)
-{
+void text_draw_string_bouncy(float xpos, float ypos, const char *text, float scale, gg_colour_t *col) {
 	int i;
 	int xposition = (int)xpos;
 	int yposition = (int)ypos;
@@ -157,8 +143,7 @@ void text_draw_string_bouncy(float xpos, float ypos, const char *text, float sca
 }
 
 /** @brief Generates textures for the latin1 character set. */
-void generate_text_chars(void)
-{
+void generate_text_chars(void) {
 	int i, j;
 	texture_t texture;
 	char width[256];

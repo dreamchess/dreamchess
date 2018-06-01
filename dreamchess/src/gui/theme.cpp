@@ -37,63 +37,29 @@ static texture_t selector_tex;
 static char white_name[80];
 static char black_name[80];
 
-texture_t *get_menu_border(void)
-{
-	return menu_border;
-}
+texture_t *get_menu_border(void) { return menu_border; }
 
-texture_t *get_border(void)
-{
-	return border;
-}
+texture_t *get_border(void) { return border; }
 
-texture_t *get_mouse_cursor(void)
-{
-	return &mouse_cursor;
-}
+texture_t *get_mouse_cursor(void) { return &mouse_cursor; }
 
-texture_t *get_menu_mouse_cursor(void)
-{
-	return &menu_mouse_cursor;
-}
+texture_t *get_menu_mouse_cursor(void) { return &menu_mouse_cursor; }
 
-char *get_white_name(void)
-{
-	return white_name;
-}
+char *get_white_name(void) { return white_name; }
 
-char *get_black_name(void)
-{
-	return black_name;
-}
+char *get_black_name(void) { return black_name; }
 
-texture_t *get_backdrop(void)
-{
-	return &backdrop;
-}
+texture_t *get_backdrop(void) { return &backdrop; }
 
-texture_t *get_white_pieces(void)
-{
-	return white_pieces;
-}
+texture_t *get_white_pieces(void) { return white_pieces; }
 
-texture_t *get_black_pieces(void)
-{
-	return black_pieces;
-}
+texture_t *get_black_pieces(void) { return black_pieces; }
 
-texture_t *get_white_piece(int index)
-{
-	return &white_pieces[index];
-}
+texture_t *get_white_piece(int index) { return &white_pieces[index]; }
 
-texture_t *get_black_piece(int index)
-{
-	return &black_pieces[index];
-}
+texture_t *get_black_piece(int index) { return &black_pieces[index]; }
 
-static int ld_style(char *name)
-{
+static int ld_style(char *name) {
 	if (chdir("styles"))
 		return 1;
 
@@ -110,8 +76,7 @@ static int ld_style(char *name)
 	return 0;
 }
 
-static int ld_pieces(char *name)
-{
+static int ld_pieces(char *name) {
 	if (chdir("pieces"))
 		return 1;
 
@@ -124,8 +89,7 @@ static int ld_pieces(char *name)
 	return 0;
 }
 
-static int ld_board(char *name)
-{
+static int ld_board(char *name) {
 	if (chdir("boards"))
 		return 1;
 
@@ -141,8 +105,7 @@ static int ld_board(char *name)
  *
  *  @param name The name of the subdirectory of the theme to load.
  */
-void load_theme(struct theme_struct *theme)
-{
+void load_theme(struct theme_struct *theme) {
 	ch_userdir();
 	if (ld_style(theme->style)) {
 		ch_datadir();
@@ -176,8 +139,7 @@ void load_theme(struct theme_struct *theme)
 }
 
 /** @brief Frees all textures of the currently loaded theme. */
-void unload_theme(void)
-{
+void unload_theme(void) {
 	glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
 	glDeleteTextures(1, &backdrop.id);
 	glDeleteTextures(1, &selector_tex.id);
