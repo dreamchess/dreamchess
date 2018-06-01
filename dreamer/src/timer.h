@@ -33,7 +33,7 @@ public:
 		Down ///< Decrease timer value
 	};
 
-	Timer() : _value(0), _state(State::Stopped) { }
+	Timer() : _value(0), _state(State::Stopped) {}
 
 	/**
 	 * Starts the timer.
@@ -62,11 +62,7 @@ public:
 	void set(const int value);
 
 private:
-	enum class State {
-		Stopped,
-		CountingDown,
-		CountingUp
-	};
+	enum class State { Stopped, CountingDown, CountingUp };
 
 	int getTimePassed() const;
 

@@ -30,66 +30,63 @@
 #define MODE_FORCE 3
 #define MODE_QUIT 4
 
-#define FLAG_IGNORE_MOVE (1<<0)
-#define FLAG_NEW_GAME (1<<1)
-#define FLAG_PONDER (1<<2)
-#define FLAG_DELAY_MOVE (1<<2)
+#define FLAG_IGNORE_MOVE (1 << 0)
+#define FLAG_NEW_GAME (1 << 1)
+#define FLAG_PONDER (1 << 2)
+#define FLAG_DELAY_MOVE (1 << 2)
 
 #define MAX_DEPTH 30
 
-typedef struct
-{
-    bitboard_t en_passant;
-    int castle_flags;
-    int fifty_moves;
-    Move move;
-}
-undo_data_t;
+typedef struct {
+	bitboard_t en_passant;
+	int castle_flags;
+	int fifty_moves;
+	Move move;
+} undo_data_t;
 
-struct time_control
-{
-    int mps;
-    int base;
-    int inc;
+struct time_control {
+	int mps;
+	int base;
+	int inc;
 };
 
 class Dreamer {
 public:
-    Dreamer();
+	Dreamer();
 
-    void run();
-    void checkGameEnd();
-    void doMove(Move move);
-    void undoMove();
-    int checkAbort(int ply);
-    int getOption(int option);
-    void setOption(int option, int value);
-    int getTime(void);
-    void sendMove(Move move);
-    void setMoveTime();
-    bool isMyTurn();
-        
-    int done;
-    int mode;
-    int flags;
-    int depth;
-    Board board;
-    Board root_board;
-    undo_data_t *undo_data;
-    int moves;
-    int options;
-    struct time_control time;
-    Timer engineTime;
-    Timer moveTime;
-    Timer searchTime;
-    Move hint;
-    Move ponder_opp_move;
-    Move ponder_my_move;
-    Move ponder_actual_move;
+	void run();
+	void checkGameEnd();
+	void doMove(Move move);
+	void undoMove();
+	int checkAbort(int ply);
+	int getOption(int option);
+	void setOption(int option, int value);
+	int getTime(void);
+	void sendMove(Move move);
+	void setMoveTime();
+	bool isMyTurn();
+
+	int done;
+	int mode;
+	int flags;
+	int depth;
+	Board board;
+	Board root_board;
+	undo_data_t *undo_data;
+	int moves;
+	int options;
+	struct time_control time;
+	Timer engineTime;
+	Timer moveTime;
+	Timer searchTime;
+	Move hint;
+	Move ponder_opp_move;
+	Move ponder_my_move;
+	Move ponder_actual_move;
 
 private:
-    void setStartTime();
-    void updateClock();
+	void setStartTime();
+	void updateClock();
 };
 
 extern Dreamer *g_dreamer;

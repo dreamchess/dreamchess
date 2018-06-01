@@ -21,11 +21,11 @@
 #include <cstdio>
 
 #include "board.h"
-#include "hashing.h"
-#include "ttable.h"
-#include "search.h"
-#include "move.h"
 #include "e_comm.h"
+#include "hashing.h"
+#include "move.h"
+#include "search.h"
+#include "ttable.h"
 
 TTable::TTable(const size_t size) {
 	const size_t maxEntries = (size << 20) / sizeof(Entry);
@@ -38,7 +38,7 @@ TTable::TTable(const size_t size) {
 	_indexMask = entries - 1;
 
 	printf("Hash table size: %zu MB\n", entries * sizeof(Entry) >> 20);
-	
+
 	_table = new Entry[entries];
 	clear();
 }
@@ -47,14 +47,14 @@ TTable::~TTable() {
 	delete[] _table;
 }
 
-void TTable::storeBoard(const Board &board, int eval, const EvalType evalType,
-                        const int depth, const int ply, const int time_stamp, const Move move) {
+void TTable::storeBoard(const Board &board, int eval, const EvalType evalType, const int depth, const int ply,
+						const int time_stamp, const Move move) {
 	const size_t index = board.hash_key & _indexMask;
 
 	// Do not overwrite entries for this board at greater depth.
-	if ((_table[index].evalType != EvalType::None) && (_table[index].hashKey == board.hash_key)
-	    && (_table[index].depth > depth))
-	return;
+	if ((_table[index].evalType != EvalType::None) && (_table[index].hashKey == board.hash_key) &&
+		(_table[index].depth > depth))
+		return;
 
 	/* Make mate-in-n values relative to board that's to be stored */
 	if (eval < ALPHABETA_MIN + 1000)
@@ -86,7 +86,7 @@ TTable::EvalType TTable::lookupBoard(const Board &board, const int depth, const 
 	_queries++;
 
 	if (_queries % 100000 == 0)
-		e_comm_send("#[TTable] Queries: %d; Hits: %d; Rate:: %.2f%%\n", _queries, _hits, _hits / (float) _queries * 100);
+		e_comm_send("#[TTable] Queries: %d; Hits: %d; Rate:: %.2f%%\n", _queries, _hits, _hits / (float)_queries * 100);
 #endif
 
 	if (_table[index].evalType == EvalType::None)

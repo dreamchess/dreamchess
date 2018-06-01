@@ -21,30 +21,29 @@
 #include <stdio.h>
 
 #include "board.h"
+#include "git_rev.h"
 #include "hashing.h"
 #include "move.h"
 #include "ttable.h"
-#include "git_rev.h"
 
 int engine(void *data);
 
 Dreamer *g_dreamer;
 
-int main(int argc, char **argv)
-{
-    fprintf(stderr, "Dreamer %s\n", g_version);
+int main(int argc, char **argv) {
+	fprintf(stderr, "Dreamer %s\n", g_version);
 
-    board_init();
-    init_hash();
-    g_moveGenerator = new MoveGenerator();
-    g_transTable = new TTable(64);
+	board_init();
+	init_hash();
+	g_moveGenerator = new MoveGenerator();
+	g_transTable = new TTable(64);
 
-    /* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
+	/* return makebook("/home/walter/tmp/GM2001.pgn", "/home/walter/tmp/opening.dcb"); */
 
-    g_dreamer = new Dreamer;
-    g_dreamer->run();
+	g_dreamer = new Dreamer;
+	g_dreamer->run();
 
-    delete g_dreamer;
-    delete g_transTable;
-    delete g_moveGenerator;
+	delete g_dreamer;
+	delete g_transTable;
+	delete g_moveGenerator;
 }

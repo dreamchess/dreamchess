@@ -29,16 +29,12 @@ extern unsigned long long castle_hash[4];
 extern unsigned long long ep_hash[64];
 extern unsigned long long black_to_move;
 
-void
-random_init_64(unsigned long long seed);
+void random_init_64(unsigned long long seed);
 
-unsigned long long
-random_rand_64(void);
+unsigned long long random_rand_64(void);
 
-void
-init_hash(void);
+void init_hash(void);
 
-unsigned long long
-hash_key(const Board &board);
+unsigned long long hash_key(const Board &board);
 
 #endif

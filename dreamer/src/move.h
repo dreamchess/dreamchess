@@ -57,7 +57,7 @@ private:
 	std::array<unsigned int, MAX_DEPTH + 1> _movesCur;
 
 	// History heurstic
-	std::array<unsigned int, 2 * 64 * 64> _history;    
+	std::array<unsigned int, 2 * 64 * 64> _history;
 };
 
 // FIXME: temporary global pointer

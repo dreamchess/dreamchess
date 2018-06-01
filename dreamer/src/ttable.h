@@ -31,11 +31,11 @@ class TTable {
 public:
 	/** Evaluation type. */
 	enum class EvalType {
-		None,       ///< Empty table slot
+		None,		///< Empty table slot
 		Lowerbound, ///< Lowerbound score
 		Accurate,   ///< Accurate score
 		Upperbound, ///< Upperbound score
-		PV          ///< PV move only, no score
+		PV			///< PV move only, no score
 	};
 
 	/**
@@ -57,8 +57,8 @@ public:
 	 * @param ply      Number of plies between the current game position and #board
 	 * @param move     The best move for #board
 	 */
-	void storeBoard(const Board &board, int eval, const EvalType evalType, const int depth,
-					const int ply, const int timestamp, const Move move);
+	void storeBoard(const Board &board, int eval, const EvalType evalType, const int depth, const int ply,
+					const int timestamp, const Move move);
 
 	/**
 	 * Updates the best move for a board position. If the board is not

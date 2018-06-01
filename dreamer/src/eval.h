@@ -23,8 +23,7 @@
 
 #include "board.h"
 
-typedef struct eval_data
-{
+typedef struct eval_data {
 	int max_pawn_file_bins[8];
 	int max_pawn_color_bins[8];
 	int max_total_pawns;
@@ -35,10 +34,8 @@ typedef struct eval_data
 	int min_most_backward[8];
 } eval_data_t;
 
-int
-board_eval_quick(const Board &board, int side);
+int board_eval_quick(const Board &board, int side);
 
-int
-board_eval_complete(const Board &board, int side, int alpha, int beta);
+int board_eval_complete(const Board &board, int side, int alpha, int beta);
 
 #endif

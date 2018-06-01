@@ -32,13 +32,10 @@
 #define MAX_NODE 0
 #define MIN_NODE 1
 
-Move
-find_best_move(Dreamer *state);
+Move find_best_move(Dreamer *state);
 
-void
-pv_clear(void);
+void pv_clear(void);
 
-Move
-ponder(Dreamer *state);
+Move ponder(Dreamer *state);
 
 #endif

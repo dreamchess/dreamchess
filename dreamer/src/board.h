@@ -47,16 +47,12 @@
 #define SQUARE_BIT(A) (1LL << (A))
 
 /* Empty squares required for kingside castle. */
-#define WHITE_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F1) \
-| SQUARE_BIT(SQUARE_G1))
-#define BLACK_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F8) \
-| SQUARE_BIT(SQUARE_G8))
+#define WHITE_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F1) | SQUARE_BIT(SQUARE_G1))
+#define BLACK_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F8) | SQUARE_BIT(SQUARE_G8))
 
 /* Empty squares required for queenside castle. */
-#define WHITE_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B1) | SQUARE_BIT(SQUARE_C1) \
-| SQUARE_BIT(SQUARE_D1))
-#define BLACK_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B8) | SQUARE_BIT(SQUARE_C8) \
-| SQUARE_BIT(SQUARE_D8))
+#define WHITE_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B1) | SQUARE_BIT(SQUARE_C1) | SQUARE_BIT(SQUARE_D1))
+#define BLACK_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B8) | SQUARE_BIT(SQUARE_C8) | SQUARE_BIT(SQUARE_D8))
 
 /* Squares where phantom kings are placed during a kingside castle to detect an
 ** illegal move.
@@ -77,8 +73,8 @@
 
 /* Chess piece mask. */
 #define PIECE_MASK 14
-#define PIECE_IS_WHITE(A) (!((A) & 1)) /* A % 1 */
-#define PIECE_IS_BLACK(A) ((A) & 1)
+#define PIECE_IS_WHITE(A) (!((A)&1)) /* A % 1 */
+#define PIECE_IS_BLACK(A) ((A)&1)
 
 /* Castling. */
 
@@ -178,160 +174,152 @@ typedef unsigned long long bitboard_t;
 
 class Move {
 private:
-    enum TypeBit {
-        RegularBit = 16,
-        CaptureBit = 8,
-        PromotionBit = 4
-    };
+	enum TypeBit { RegularBit = 16, CaptureBit = 8, PromotionBit = 4 };
 
 public:
-    enum class Type : unsigned char {
-        None             = 0,
-        Resign           = 1,
-        Stalemate        = 2,
-        Normal           = RegularBit,
-        Capture          = RegularBit | CaptureBit,
-        Promotion        = RegularBit | PromotionBit,
-        PromotionCapture = RegularBit | PromotionBit | CaptureBit,
-        KingsideCastle   = RegularBit | 1,
-        QueensideCastle  = RegularBit | 2,
-        EnPassant        = RegularBit | CaptureBit | 3,
-    };
+	enum class Type : unsigned char {
+		None = 0,
+		Resign = 1,
+		Stalemate = 2,
+		Normal = RegularBit,
+		Capture = RegularBit | CaptureBit,
+		Promotion = RegularBit | PromotionBit,
+		PromotionCapture = RegularBit | PromotionBit | CaptureBit,
+		KingsideCastle = RegularBit | 1,
+		QueensideCastle = RegularBit | 2,
+		EnPassant = RegularBit | CaptureBit | 3,
+	};
 
 	Move();
 	Move(unsigned int piece, unsigned int source, unsigned int dest, Type type, unsigned int captured);
 
 	bool operator==(Move &rhs) const;
 
-    unsigned int getPiece() const;
-    unsigned int getPieceKind() const;
-    unsigned int getPieceColour() const;
+	unsigned int getPiece() const;
+	unsigned int getPieceKind() const;
+	unsigned int getPieceColour() const;
 	unsigned int getSource() const;
 	unsigned int getDest() const;
 	Type getType() const;
 	unsigned int getCapturedPiece() const;
 	bool doesCapture() const;
-    bool doesPromotion() const;
-    bool isRegular() const;
+	bool doesPromotion() const;
+	bool isRegular() const;
 	bool isNone() const;
 
 private:
-    Type _type;
-    unsigned char _source;
-    unsigned char _dest;
-    unsigned char _piece:4;
-    unsigned char _captured:4;
+	Type _type;
+	unsigned char _source;
+	unsigned char _dest;
+	unsigned char _piece : 4;
+	unsigned char _captured : 4;
 };
 
 class Board {
 public:
-    /* Looks for a piece on the board at a specified location.
-    ** Parameters: (board_t *) board: Pointer to the board to search.
-    **             (int) square: The square to search.
-    ** Returns   : (int): The black piece located at the square on the board, or
-    **                 NONE if no black piece was found. If both a fake king
-    **                 and a rook are on the square, the king is found instead
-    **                 of the rook.
-    */
-    template<int SIDE>
-    int findPiece(int square) const;
+	/* Looks for a piece on the board at a specified location.
+	** Parameters: (board_t *) board: Pointer to the board to search.
+	**             (int) square: The square to search.
+	** Returns   : (int): The black piece located at the square on the board, or
+	**                 NONE if no black piece was found. If both a fake king
+	**                 and a rook are on the square, the king is found instead
+	**                 of the rook.
+	*/
+	template <int SIDE> int findPiece(int square) const;
 
-    /* Clears a board.
-    ** Parameters: (board_t *) board: Pointer to the board to clear.
-    ** Returns   : (void)
-    */
-    void clear();
-    
-    /* Sets up a board to the starting position.
-    ** Parameters: (board_t *) board: Pointer to the board to set up.
-    ** Returns   : (void)
-    */
-    void setup();
-    
-    /* Makes a move on a board.
-    ** Parameters: (board_t *) board: Board to make the move on.
-    **             (Move) move: The move to make.
-    ** Returns   : (void)
-    */
-    void makeMove(Move move);
-    
-    /* Unmakes a move on a board.
-    ** Parameters: (board_t *) board: Board to unmake the move on.
-    **             (Move) move: The move to unmake.
-    **             (bitboard_t) old_en_passant: The en-passant flags before the
-    **                 last move.
-    **             (int) old_castle_flags: The castling flags before the last
-    **                 move.
-    **             (int) old_fifty_moves: The 50 moves value before the last
-    **                 move.
-    ** Returns   : (void)
-    */
-    void unmakeMove(Move move, bitboard_t old_en_passant, int old_castle_flags, int old_fifty_moves);
-    
-    bool setupFEN(const char *fen);
+	/* Clears a board.
+	** Parameters: (board_t *) board: Pointer to the board to clear.
+	** Returns   : (void)
+	*/
+	void clear();
 
-    bitboard_t bitboard[NR_BITBOARDS];
+	/* Sets up a board to the starting position.
+	** Parameters: (board_t *) board: Pointer to the board to set up.
+	** Returns   : (void)
+	*/
+	void setup();
 
-    /* Hash key of the current board. */
-    long long hash_key;
+	/* Makes a move on a board.
+	** Parameters: (board_t *) board: Board to make the move on.
+	**             (Move) move: The move to make.
+	** Returns   : (void)
+	*/
+	void makeMove(Move move);
 
-    /* 0-3 can_castle flags
-    ** 4-5 has_castled flags
-    ** 6-9 phantom kings flags
-    */
-    int castle_flags;
+	/* Unmakes a move on a board.
+	** Parameters: (board_t *) board: Board to unmake the move on.
+	**             (Move) move: The move to unmake.
+	**             (bitboard_t) old_en_passant: The en-passant flags before the
+	**                 last move.
+	**             (int) old_castle_flags: The castling flags before the last
+	**                 move.
+	**             (int) old_fifty_moves: The 50 moves value before the last
+	**                 move.
+	** Returns   : (void)
+	*/
+	void unmakeMove(Move move, bitboard_t old_en_passant, int old_castle_flags, int old_fifty_moves);
 
-    /* bitboard containing the current en_passant flags, if any. */
-    bitboard_t en_passant;
+	bool setupFEN(const char *fen);
 
-    /* Current player. 0 = white, 1 = black. */
-    int current_player;
+	bitboard_t bitboard[NR_BITBOARDS];
 
-    /* Current total material value for both black and white. */
-    int material_value[2];
+	/* Hash key of the current board. */
+	long long hash_key;
 
-    /* Number of pawns on the board for both black and white. */
-    int num_pawns[2];
+	/* 0-3 can_castle flags
+	** 4-5 has_castled flags
+	** 6-9 phantom kings flags
+	*/
+	int castle_flags;
 
-    /* 50-move counter. */
-    int fifty_moves;
+	/* bitboard containing the current en_passant flags, if any. */
+	bitboard_t en_passant;
+
+	/* Current player. 0 = white, 1 = black. */
+	int current_player;
+
+	/* Current total material value for both black and white. */
+	int material_value[2];
+
+	/* Number of pawns on the board for both black and white. */
+	int num_pawns[2];
+
+	/* 50-move counter. */
+	int fifty_moves;
 
 private:
-    void addPiece(int square, int piece);
-    void removePiece(int square, int piece);
+	void addPiece(int square, int piece);
+	void removePiece(int square, int piece);
 };
 
 extern bitboard_t square_bit[64];
 
-template<int SIDE>
-int Board::findPiece(int square) const
-{
-    bitboard_t mask = square_bit[square];
+template <int SIDE> int Board::findPiece(int square) const {
+	bitboard_t mask = square_bit[square];
 
-    /* We need to check kings first because a fake king might be on the
-    ** same square as a rook. In that case we want to find the king so
-    ** that the illegality of the previous move can be detected.
-    */
-    if (bitboard[KING + SIDE] & square_bit[square])
-        return KING + SIDE;
+	/* We need to check kings first because a fake king might be on the
+	** same square as a rook. In that case we want to find the king so
+	** that the illegality of the previous move can be detected.
+	*/
+	if (bitboard[KING + SIDE] & square_bit[square])
+		return KING + SIDE;
 
-    /* Check for other pieces in order of frequency. */
-    if (bitboard[PAWN + SIDE] & mask)
-        return PAWN + SIDE;
-    if (bitboard[KNIGHT + SIDE] & mask)
-        return KNIGHT + SIDE;
-    if (bitboard[BISHOP + SIDE] & mask)
-        return BISHOP + SIDE;
-    if (bitboard[ROOK + SIDE] & mask)
-        return ROOK + SIDE;
-    if (bitboard[QUEEN + SIDE] & mask)
-        return QUEEN + SIDE;
+	/* Check for other pieces in order of frequency. */
+	if (bitboard[PAWN + SIDE] & mask)
+		return PAWN + SIDE;
+	if (bitboard[KNIGHT + SIDE] & mask)
+		return KNIGHT + SIDE;
+	if (bitboard[BISHOP + SIDE] & mask)
+		return BISHOP + SIDE;
+	if (bitboard[ROOK + SIDE] & mask)
+		return ROOK + SIDE;
+	if (bitboard[QUEEN + SIDE] & mask)
+		return QUEEN + SIDE;
 
-    return NONE;
+	return NONE;
 }
 
-void
-board_init(void);
+void board_init(void);
 /* Initialises the global array square_bit.
 ** Parameters: (void)
 ** Returns   : (void)
