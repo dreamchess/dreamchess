@@ -24,41 +24,37 @@
 #include "board.h"
 #include "dreamchess.h"
 
-typedef struct ui_driver
-{
-    const char *name;
-    void (* init) (void);
-    int (* create_window) (int height, int width, int fullscreen, int ms);
-    int (* resize) (int height, int width, int fullscreen, int ms);
-    int (* exit) (void);
-    config_t *( *config) (int *pgn_slot);
-    void (* update) (board_t *board, move_t *move);
-    void (* poll) (void);
-    void (* show_message) (char *msg);
-    void (* show_result) (result_t *result);
-}
-ui_driver_t;
+typedef struct ui_driver {
+	const char *name;
+	void (*init)(void);
+	int (*create_window)(int height, int width, int fullscreen, int ms);
+	int (*resize)(int height, int width, int fullscreen, int ms);
+	int (*exit)(void);
+	config_t *(*config)(int *pgn_slot);
+	void (*update)(board_t *board, move_t *move);
+	void (*poll)(void);
+	void (*show_message)(char *msg);
+	void (*show_result)(result_t *result);
+} ui_driver_t;
 
 extern ui_driver_t ui_sdlgl;
 
-typedef enum ui_event
-{
-    UI_EVENT_NONE = 0x00,
-    UI_EVENT_BACKSPACE = 0x08,
-    UI_EVENT_ESCAPE = 0x1B,
-    UI_EVENT_SPACE = 0x20,
-    UI_EVENT_DELETE = 0x7F,
-    UI_EVENT_ACTION = 0x100,
-    UI_EVENT_EXTRA1,
-    UI_EVENT_EXTRA2,
-    UI_EVENT_EXTRA3,
-    UI_EVENT_UP,
-    UI_EVENT_RIGHT,
-    UI_EVENT_DOWN,
-    UI_EVENT_LEFT,
-    UI_EVENT_HOME,
-    UI_EVENT_END
-}
-ui_event_t;
+typedef enum ui_event {
+	UI_EVENT_NONE = 0x00,
+	UI_EVENT_BACKSPACE = 0x08,
+	UI_EVENT_ESCAPE = 0x1B,
+	UI_EVENT_SPACE = 0x20,
+	UI_EVENT_DELETE = 0x7F,
+	UI_EVENT_ACTION = 0x100,
+	UI_EVENT_EXTRA1,
+	UI_EVENT_EXTRA2,
+	UI_EVENT_EXTRA3,
+	UI_EVENT_UP,
+	UI_EVENT_RIGHT,
+	UI_EVENT_DOWN,
+	UI_EVENT_LEFT,
+	UI_EVENT_HOME,
+	UI_EVENT_END
+} ui_event_t;
 
 #endif

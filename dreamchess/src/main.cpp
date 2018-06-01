@@ -26,10 +26,10 @@
 
 int main(int argc, char **argv)
 {
-    arguments_t arg;
+	arguments_t arg;
 
-    arg.argc = argc;
-    arg.argv = argv;
+	arg.argc = argc;
+	arg.argv = argv;
 
-    return dreamchess(&arg);
+	return dreamchess(&arg);
 }

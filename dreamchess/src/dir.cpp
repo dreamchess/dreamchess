@@ -24,49 +24,48 @@
 
 #define USERDIR "DreamChess"
 
-#include <windows.h>
-#include <io.h>
-#include <direct.h>
-#include "shlwapi.h"
 #include "shlobj.h"
+#include "shlwapi.h"
+#include <direct.h>
+#include <io.h>
+#include <windows.h>
 
 int ch_datadir(void)
 {
-    char filename[MAX_PATH + 6];
+	char filename[MAX_PATH + 6];
 
-    GetModuleFileName(NULL, filename, MAX_PATH);
-    filename[MAX_PATH] = '\0';
-    PathRemoveFileSpec(filename);
-    strcat(filename, "/data");
-    return chdir(filename);
+	GetModuleFileName(NULL, filename, MAX_PATH);
+	filename[MAX_PATH] = '\0';
+	PathRemoveFileSpec(filename);
+	strcat(filename, "/data");
+	return chdir(filename);
 }
 
 int ch_userdir(void)
 {
-    char appdir[MAX_PATH];
+	char appdir[MAX_PATH];
 
-    if (SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdir))
-        return -1;
+	if (SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdir))
+		return -1;
 
-    if (chdir(appdir))
-        return -1;
+	if (chdir(appdir))
+		return -1;
 
-    if (chdir(USERDIR))
-    {
-        if (mkdir(USERDIR))
-            return -1;
+	if (chdir(USERDIR)) {
+		if (mkdir(USERDIR))
+			return -1;
 
-        return chdir(USERDIR);
-    }
+		return chdir(USERDIR);
+	}
 
-    return 0;
+	return 0;
 }
 
 #elif defined __APPLE__
 
-#include <unistd.h>
-#include <sys/stat.h>
 #include "CoreFoundation/CoreFoundation.h"
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define USERDIR "Library/Application Support/DreamChess"
 
@@ -77,74 +76,72 @@ int ch_datadir(void)
 	char temp3[200];
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 
-	CFURLRef bundledir=CFBundleCopyResourcesDirectoryURL(mainBundle);
-	CFURLRef resdir=CFBundleCopyBundleURL(mainBundle);
-	
-	CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );	
-	CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
-	
-	stringref=CFURLCopyFileSystemPath( resdir, kCFURLPOSIXPathStyle );	
-	CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
-	
-	sprintf( temp3, "%s/%s", temp2, temp1 );
-	
+	CFURLRef bundledir = CFBundleCopyResourcesDirectoryURL(mainBundle);
+	CFURLRef resdir = CFBundleCopyBundleURL(mainBundle);
+
+	CFStringRef stringref = CFURLCopyFileSystemPath(bundledir, kCFURLPOSIXPathStyle);
+	CFStringGetCString(stringref, temp1, 200, kCFStringEncodingMacRoman);
+
+	stringref = CFURLCopyFileSystemPath(resdir, kCFURLPOSIXPathStyle);
+	CFStringGetCString(stringref, temp2, 200, kCFStringEncodingMacRoman);
+
+	sprintf(temp3, "%s/%s", temp2, temp1);
+
 	return chdir(temp3);
 }
 
 int ch_userdir(void)
 {
-    char *home = getenv("HOME");
+	char *home = getenv("HOME");
 
-    if (!home)
-        return -1;
+	if (!home)
+		return -1;
 
-    if (chdir(home))
-        return -1;
+	if (chdir(home))
+		return -1;
 
-    if (chdir(USERDIR))
-    {
-        if (mkdir(USERDIR, 0755))
-            return -1;
+	if (chdir(USERDIR)) {
+		if (mkdir(USERDIR, 0755))
+			return -1;
 
-        return chdir(USERDIR);
-    }
+		return chdir(USERDIR);
+	}
 
-    return 0;
+	return 0;
 }
 
 #else /* !_WIN32 */
 
 #define USERDIR ".dreamchess"
 
-#include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 int ch_datadir(void)
 {
-    return chdir(DATADIR);
+	return chdir(DATADIR);
 }
 
 int ch_userdir(void)
 {
-    char *home = getenv("HOME");
+	char *home = getenv("HOME");
 
-    if (!home)
-        return -1;
+	if (!home)
+		return -1;
 
-    if (chdir(home))
-        return -1;
+	if (chdir(home))
+		return -1;
 
-    if (chdir(USERDIR))
-    {
-        if (mkdir(USERDIR, 0755))
-            return -1;
+	if (chdir(USERDIR)) {
+		if (mkdir(USERDIR, 0755))
+			return -1;
 
-        return chdir(USERDIR);
-    }
+		return chdir(USERDIR);
+	}
 
-    return 0;
+	return 0;
 }
 
 #endif

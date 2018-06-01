@@ -39,14 +39,13 @@
 
 #define SAN_NOT_SPECIFIED -1
 
-typedef struct san_move
-{
-    int type;
-    int state;
-    int piece;
-    int source_file, source_rank;
-    int destination;
-    int promotion_piece;
+typedef struct san_move {
+	int type;
+	int state;
+	int piece;
+	int source_file, source_rank;
+	int destination;
+	int promotion_piece;
 } san_move_t;
 
 san_move_t *san_parse(const char *s);

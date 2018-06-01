@@ -18,15 +18,15 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <memory>
-#include <sstream>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <pugixml.hpp>
+#include <sstream>
 
-#include "options.h"
 #include "debug.h"
 #include "dir.h"
+#include "options.h"
 
 static char *remove_spaces(const char *str)
 {
@@ -85,12 +85,14 @@ option_t *option_group_add_string(option_group_t *group, const char *name)
 	return option;
 }
 
-static std::unique_ptr<pugi::xml_document> option_group_save(option_group_t *group) {
+static std::unique_ptr<pugi::xml_document> option_group_save(option_group_t *group)
+{
 	std::unique_ptr<pugi::xml_document> doc(new pugi::xml_document);
 	pugi::xml_node options = doc->append_child("options");
 
 	option_t *option;
-	TAILQ_FOREACH(option, &group->options, entries) {
+	TAILQ_FOREACH(option, &group->options, entries)
+	{
 		pugi::xml_node data = options.append_child(option->name);
 
 		if (option->type == OPTION_TYPE_OPTION)
@@ -104,7 +106,8 @@ static std::unique_ptr<pugi::xml_document> option_group_save(option_group_t *gro
 	return doc;
 }
 
-int option_group_save_xml(option_group_t *group) {
+int option_group_save_xml(option_group_t *group)
+{
 	std::unique_ptr<pugi::xml_document> doc(option_group_save(group));
 	std::string filename(group->name);
 	filename += ".xml";
@@ -128,7 +131,8 @@ char *option_group_save_string(option_group_t *group)
 	return strdup(stream.str().c_str());
 }
 
-static void option_group_load(option_group_t *group, const pugi::xml_document &doc) {
+static void option_group_load(option_group_t *group, const pugi::xml_document &doc)
+{
 	pugi::xml_node options = doc.child("options");
 	for (pugi::xml_node_iterator it = options.begin(); it != options.end(); ++it) {
 		option_t *option = option_group_find_option(group, it->name());
@@ -152,14 +156,16 @@ static void option_group_load(option_group_t *group, const pugi::xml_document &d
 	}
 }
 
-int option_group_load_xml(option_group_t *group) {
+int option_group_load_xml(option_group_t *group)
+{
 	pugi::xml_document doc;
 	std::string filename(group->name);
 	filename += ".xml";
 	pugi::xml_parse_result result = doc.load_file(filename.c_str());
 
 	if (!result) {
-		DBG_ERROR("failed to load option file '%s': %s at offset %d", filename.c_str(), result.description(), result.offset);
+		DBG_ERROR("failed to load option file '%s': %s at offset %d", filename.c_str(), result.description(),
+				  result.offset);
 		return -1;
 	}
 
@@ -167,7 +173,8 @@ int option_group_load_xml(option_group_t *group) {
 	return 0;
 }
 
-int option_group_load_string(option_group_t *group, const char *string) {
+int option_group_load_string(option_group_t *group, const char *string)
+{
 	pugi::xml_document doc;
 #if PUGIXML_VERSION >= 150
 	pugi::xml_parse_result result = doc.load_string(string);
@@ -200,7 +207,8 @@ int option_select_value_by_name(option_t *option, const char *name)
 {
 	option_value_t *value;
 
-	TAILQ_FOREACH(value, &option->values, entries) {
+	TAILQ_FOREACH(value, &option->values, entries)
+	{
 		if (!strcmp(value->name, name))
 			break;
 	}
@@ -213,10 +221,12 @@ int option_select_value_by_name(option_t *option, const char *name)
 	return -1;
 }
 
-int option_select_value_by_index(option_t *option, int index) {
+int option_select_value_by_index(option_t *option, int index)
+{
 	option_value_t *value;
 
-	TAILQ_FOREACH(value, &option->values, entries) {
+	TAILQ_FOREACH(value, &option->values, entries)
+	{
 		if (index-- == 0)
 			break;
 	}
@@ -238,7 +248,7 @@ int option_select_next_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_NEXT(option->selected, entries);
-        return 0;
+	return 0;
 }
 
 int option_select_prev_value(option_t *option)
@@ -250,7 +260,7 @@ int option_select_prev_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_PREV(option->selected, option_data::values_head, entries);
-        return 0;
+	return 0;
 }
 
 option_t *option_group_find_option(option_group_t *group, const char *name)
@@ -258,7 +268,8 @@ option_t *option_group_find_option(option_group_t *group, const char *name)
 	char *namews = remove_spaces(name);
 	option_t *option;
 
-	TAILQ_FOREACH(option, &group->options, entries) {
+	TAILQ_FOREACH(option, &group->options, entries)
+	{
 		if (!strcmp(option->name, namews))
 			break;
 	}

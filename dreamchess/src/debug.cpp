@@ -18,9 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "config.h"
 #include "debug.h"
@@ -36,55 +36,55 @@ static int dbg_level = 1;
 
 void dbg_set_level(int level)
 {
-    dbg_level = level;
+	dbg_level = level;
 }
 
 void dbg_error(const char *file, int line, const char *fmt, ...)
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 1)
-        return;
+	if (dbg_level < 1)
+		return;
 
-    fprintf(stderr, "%s:%d: ", file, line);
-    fprintf(stderr, "error: ");
+	fprintf(stderr, "%s:%d: ", file, line);
+	fprintf(stderr, "error: ");
 
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
 
-    fprintf(stderr, "\n");
+	fprintf(stderr, "\n");
 }
 
 void dbg_warn(const char *file, int line, const char *fmt, ...)
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 2)
-        return;
+	if (dbg_level < 2)
+		return;
 
-    printf("%s:%d: ", file, line);
-    printf("warning: ");
+	printf("%s:%d: ", file, line);
+	printf("warning: ");
 
-    va_start(ap, fmt);
-    vprintf(fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 
-    printf("\n");
+	printf("\n");
 }
 
 void dbg_log(const char *file, int line, const char *fmt, ...)
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 3)
-        return;
+	if (dbg_level < 3)
+		return;
 
-    printf("%s:%d: ", file, line);
+	printf("%s:%d: ", file, line);
 
-    va_start(ap, fmt);
-    vprintf(fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 
-    printf("\n");
+	printf("\n");
 }

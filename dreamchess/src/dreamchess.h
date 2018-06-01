@@ -23,23 +23,19 @@
 
 #include "board.h"
 
-typedef struct arguments
-{
-    int argc;
-    char **argv;
-}
-arguments_t;
+typedef struct arguments {
+	int argc;
+	char **argv;
+} arguments_t;
 
 #define PLAYER_UI 0
 #define PLAYER_ENGINE 1
 
-typedef struct config
-{
-    int player[2];
-    int cpu_level;
-    int difficulty;
-}
-config_t;
+typedef struct config {
+	int player[2];
+	int cpu_level;
+	int difficulty;
+} config_t;
 
 int dreamchess(void *arg);
 
@@ -52,8 +48,8 @@ void game_retract_move(void);
 void game_move_now(void);
 void game_quit(void);
 void game_get_move_list(char ***list, int *total, int *view);
-int game_save( int slot );
-int game_load( int slot );
+int game_save(int slot);
+int game_load(int slot);
 void game_make_move_str(char *move_str, int ui_update);
 int game_get_engine_error(void);
 void game_set_engine_error(int err);

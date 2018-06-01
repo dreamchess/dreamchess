@@ -21,9 +21,18 @@
 #ifndef DREAMCHESS_DEBUG_H
 #define DREAMCHESS_DEBUG_H
 
-#define DBG_ERROR(...) do {dbg_error(__FILE__, __LINE__, __VA_ARGS__);} while (0)
-#define DBG_WARN(...) do {dbg_warn(__FILE__, __LINE__, __VA_ARGS__);} while (0)
-#define DBG_LOG(...) do {dbg_log(__FILE__, __LINE__, __VA_ARGS__);} while (0)
+#define DBG_ERROR(...)                                                                                                 \
+	do {                                                                                                               \
+		dbg_error(__FILE__, __LINE__, __VA_ARGS__);                                                                    \
+	} while (0)
+#define DBG_WARN(...)                                                                                                  \
+	do {                                                                                                               \
+		dbg_warn(__FILE__, __LINE__, __VA_ARGS__);                                                                     \
+	} while (0)
+#define DBG_LOG(...)                                                                                                   \
+	do {                                                                                                               \
+		dbg_log(__FILE__, __LINE__, __VA_ARGS__);                                                                      \
+	} while (0)
 
 void dbg_set_level(int level);
 void dbg_error(const char *file, int line, const char *fmt, ...);
