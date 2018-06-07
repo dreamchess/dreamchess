@@ -43,13 +43,13 @@
 #include "credits.h"
 #include "debug.h"
 #include "dialogs.h"
-#include "dir.h"
+#include "backend/backend.h"
 #include "dreamchess.h"
 #include "fen.h"
 #include "history.h"
 #include "options.h"
 #include "theme.h"
-#include "ui.h"
+#include "gui.h"
 #include "ui_sdlgl_3d.h"
 #include <gamegui.h>
 
@@ -172,7 +172,6 @@ int get_move(void);
 /* ui_sdlgl.c */
 int get_fading_out(void);
 void set_fading_out(int fade);
-void blit_fbo(void);
 
 /* ingame_ui.c */
 void draw_name_dialog(float xpos, float ypos, char *name, int left, int white);
@@ -200,7 +199,6 @@ texture_t *get_border(void);
 void unload_theme(void);
 
 /* draw_scene.c */
-void draw_scene(board_t *b, GLuint fb, int reflections);
 int get_mouse_square(void);
 
 /* credits.c */

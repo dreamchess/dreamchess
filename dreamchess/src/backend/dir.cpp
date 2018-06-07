@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dir.h"
+#include "backend.h"
 
 #ifdef _WIN32
 
@@ -30,7 +30,7 @@
 #include <io.h>
 #include <windows.h>
 
-int ch_datadir(void)
+int Backend::ch_datadir(void)
 {
 	char filename[MAX_PATH + 6];
 
@@ -41,7 +41,7 @@ int ch_datadir(void)
 	return chdir(filename);
 }
 
-int ch_userdir(void)
+int Backend::ch_userdir(void)
 {
 	char appdir[MAX_PATH];
 
@@ -69,7 +69,7 @@ int ch_userdir(void)
 
 #define USERDIR "Library/Application Support/DreamChess"
 
-int ch_datadir(void)
+int Backend::ch_datadir(void)
 {
 	char temp1[200];
 	char temp2[200];
@@ -90,7 +90,7 @@ int ch_datadir(void)
 	return chdir(temp3);
 }
 
-int ch_userdir(void)
+int Backend::ch_userdir(void)
 {
 	char *home = getenv("HOME");
 
@@ -119,12 +119,12 @@ int ch_userdir(void)
 #include <sys/types.h>
 #include <unistd.h>
 
-int ch_datadir(void)
+int Backend::ch_datadir(void)
 {
 	return chdir(DATADIR);
 }
 
-int ch_userdir(void)
+int Backend::ch_userdir(void)
 {
 	char *home = getenv("HOME");
 

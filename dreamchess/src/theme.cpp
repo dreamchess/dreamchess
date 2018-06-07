@@ -32,7 +32,7 @@
 #endif
 
 #include "debug.h"
-#include "dir.h"
+#include "backend/backend.h"
 #include "dreamchess.h"
 #include "options.h"
 #include "theme.h"
@@ -126,10 +126,10 @@ static void find_themes(option_t *option)
 
 void theme_find_themes(option_t *option)
 {
-	ch_datadir();
+	g_Backend->ch_datadir();
 	find_themes(option);
 
-	ch_userdir();
+	g_Backend->ch_userdir();
 	find_themes(option);
 
 	option_select_value_by_name(option, "Classic Wooden");
@@ -225,10 +225,10 @@ void theme_find_music_packs(void)
 {
 	TAILQ_INIT(&music_packs);
 
-	ch_datadir();
+	g_Backend->ch_datadir();
 	find_music_packs();
 
-	ch_userdir();
+	g_Backend->ch_userdir();
 	find_music_packs();
 
 #ifdef _WIN32
@@ -252,7 +252,7 @@ void theme_find_music_packs(void)
 		data[size] = 0;
 		DBG_LOG("music pack location: %s", data);
 
-		chdir((char *)data);
+		g_Backend->ch_dir((char *)data);
 		find_music_packs();
 	}
 #elif defined(__APPLE__)

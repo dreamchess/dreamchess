@@ -106,27 +106,27 @@ static int ld_board(char *name) {
  *  @param name The name of the subdirectory of the theme to load.
  */
 void load_theme(struct theme_struct *theme) {
-	ch_userdir();
+	g_Backend->ch_userdir();
 	if (ld_style(theme->style)) {
-		ch_datadir();
+		g_Backend->ch_datadir();
 		if (ld_style(theme->style)) {
 			DBG_ERROR("failed to find style '%s'", theme->style);
 			exit(1);
 		}
 	}
 
-	ch_userdir();
+	g_Backend->ch_userdir();
 	if (ld_pieces(theme->pieces)) {
-		ch_datadir();
+		g_Backend->ch_datadir();
 		if (ld_pieces(theme->pieces)) {
 			DBG_ERROR("failed to find pieces '%s'", theme->pieces);
 			exit(1);
 		}
 	}
 
-	ch_userdir();
+	g_Backend->ch_userdir();
 	if (ld_board(theme->board)) {
-		ch_datadir();
+		g_Backend->ch_datadir();
 		if (ld_board(theme->board)) {
 			DBG_ERROR("failed to find board '%s'", theme->board);
 			exit(1);
@@ -135,7 +135,7 @@ void load_theme(struct theme_struct *theme) {
 
 	set_theme(theme, selector_tex);
 
-	ch_datadir();
+	g_Backend->ch_datadir();
 }
 
 /** @brief Frees all textures of the currently loaded theme. */

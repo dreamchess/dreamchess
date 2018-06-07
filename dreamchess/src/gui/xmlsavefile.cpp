@@ -59,7 +59,7 @@ void write_save_xml(int slot) {
 	node.text().set(static_cast<int>(curTime));
 #endif
 
-	if (ch_userdir()) {
+	if (g_Backend->ch_userdir()) {
 		DBG_WARN("could not enter user directory");
 		return;
 	}
@@ -96,7 +96,7 @@ void load_save_xml(int slot) {
 	filename += std::to_string(slot);
 	filename += ".xml";
 
-	if (ch_userdir()) {
+	if (g_Backend->ch_userdir()) {
 		DBG_WARN("could not enter user directory");
 		return;
 	}

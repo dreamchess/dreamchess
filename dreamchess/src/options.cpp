@@ -25,7 +25,8 @@
 #include <sstream>
 
 #include "debug.h"
-#include "dir.h"
+#include "dreamchess.h"
+#include "backend/backend.h"
 #include "options.h"
 
 static char *remove_spaces(const char *str)
@@ -112,7 +113,7 @@ int option_group_save_xml(option_group_t *group)
 	std::string filename(group->name);
 	filename += ".xml";
 
-	ch_userdir();
+	g_Backend->ch_userdir();
 
 	if (!doc->save_file(filename.c_str())) {
 		DBG_ERROR("failed to save '%s'", filename.c_str());

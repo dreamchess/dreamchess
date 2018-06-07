@@ -18,43 +18,31 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_UI_H
-#define DREAMCHESS_UI_H
+#ifndef GUI_UI_SDLGL_3D_H
+#define GUI_UI_SDLGL_3D_H
 
-#include "board.h"
-#include "dreamchess.h"
+#define SELECTOR_UP 0
+#define SELECTOR_DOWN 1
+#define SELECTOR_LEFT 2
+#define SELECTOR_RIGHT 3
 
-typedef struct ui_driver {
-	const char *name;
-	void (*init)(void);
-	int (*create_window)(int height, int width, int fullscreen, int ms);
-	int (*resize)(int height, int width, int fullscreen, int ms);
-	int (*exit)(void);
-	config_t *(*config)(int *pgn_slot);
-	void (*update)(board_t *board, move_t *move);
-	void (*poll)(void);
-	void (*show_message)(char *msg);
-	void (*show_result)(result_t *result);
-} ui_driver_t;
+typedef struct coord3 {
+	float x;
+	float y;
+	float z;
+} coord3_t;
 
-extern ui_driver_t ui_sdlgl;
-
-typedef enum ui_event {
-	UI_EVENT_NONE = 0x00,
-	UI_EVENT_BACKSPACE = 0x08,
-	UI_EVENT_ESCAPE = 0x1B,
-	UI_EVENT_SPACE = 0x20,
-	UI_EVENT_DELETE = 0x7F,
-	UI_EVENT_ACTION = 0x100,
-	UI_EVENT_EXTRA1,
-	UI_EVENT_EXTRA2,
-	UI_EVENT_EXTRA3,
-	UI_EVENT_UP,
-	UI_EVENT_RIGHT,
-	UI_EVENT_DOWN,
-	UI_EVENT_LEFT,
-	UI_EVENT_HOME,
-	UI_EVENT_END
-} ui_event_t;
+void move_camera(float x, float z);
+void render_scene_3d(board_t *board, GLuint target_fb, int reflections);
+void move_selector(int direction);
+int get_selector(void);
+void select_piece(int square);
+void reset_3d(int flip);
+void loadmodels(const char *filename);
+void load_board(const char *dcm_name, const char *texture_name);
+void init_fbo(void);
+void deinit_fbo(void);
+int find_square(int x, int y);
+void freemodels(void);
 
 #endif

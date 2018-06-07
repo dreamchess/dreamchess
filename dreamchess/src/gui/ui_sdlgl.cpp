@@ -21,19 +21,11 @@
 #include "ui_sdlgl.h"
 #include "git_rev.h"
 
-#ifdef _WIN32
-#include <direct.h>
-#else
-#include <unistd.h>
-#endif
-
 #include "audio.h"
 #include "dialogs.h"
 #include "options.h"
 #include "system_config.h"
 #include "theme.h"
-#include <GL/glew.h>
-#include <SDL2/SDL_syswm.h>
 
 static int turn_counter_start = 0;
 static texture_t menu_title_tex;
@@ -50,10 +42,7 @@ static int set_loading = FALSE;
 static int dialog_promote_piece;
 static int show_egg;
 static int egg_req1 = FALSE;
-static int screen_width = 640;
-static int screen_height = 480;
-static int screen_fs = 0;
-static int screen_ms = 0;
+
 static int reflections = 1;
 static int mode_set_failed = 0;
 static int engine_error_shown;
@@ -63,16 +52,17 @@ static const int max_width = 1920;
 static const int max_height = 1080;
 static int max_samples;
 
+DreamChess_GUI::DreamChess_GUI() {
+	screen_width = 640;
+	screen_height = 480;
+	screen_fs = 0;
+	screen_ms = 0;	
+}
+
 static void music_callback(char *title, char *artist, char *album) { DBG_LOG("now playing: %s - %s", artist, title); }
-
-int get_screen_width(void) { return screen_width; }
-
-int get_screen_height(void) { return screen_height; }
 
 static int menu_state;
 enum { MENU_STATE_FADE_IN, MENU_STATE_IN_MENU, MENU_STATE_LOAD, MENU_STATE_FADE_OUT, MENU_STATE_RETURN };
-
-static void poll_move(void);
 
 int get_egg_req(void) { return egg_req1; }
 
@@ -195,7 +185,7 @@ static void init_screen_fbo(int ms) {
 	glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
 }
 
-void blit_fbo() {
+void DreamChess_GUI::blit_fbo() {
 	int width, height;
 	SDL_GetWindowSize(sdl_window, &width, &height);
 
@@ -230,7 +220,7 @@ void blit_fbo() {
 }
 
 /** Implements ui_driver::menu */
-static config_t *do_menu(int *pgn) {
+config_t *DreamChess_GUI::do_menu(int *pgn) {
 	title_process_retval = 2;
 
 	resize_window(screen_width, screen_height);
@@ -366,14 +356,14 @@ static void free_menu_tex(void) {
 }
 
 static void load_menu_tex(void) {
-	ch_datadir();
+	g_Backend->ch_datadir();
 	/* For the menu.. */
 	load_texture_png(&menu_title_tex, "menu_title.png", 0, 1);
 	/* New text stuff. */
 	generate_text_chars();
 
-	chdir("styles");
-	chdir("default");
+	g_Backend->ch_dir("styles");
+	g_Backend->ch_dir("default");
 	load_border(get_menu_border(), "border.png");
 	load_texture_png(get_menu_mouse_cursor(), "mouse_cursor.png", 1, 1);
 }
@@ -387,7 +377,7 @@ static int set_fullscreen(int fullscreen) {
 	return 0;
 }
 
-static int resize(int width, int height, int fullscreen, int ms) {
+int DreamChess_GUI::resize(int width, int height, int fullscreen, int ms) {
 	DBG_LOG("resizing video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
 			ms);
 
@@ -421,9 +411,9 @@ static int resize(int width, int height, int fullscreen, int ms) {
 }
 
 /** Implements ui_driver::create_window. */
-static int create_window(int width, int height, int fullscreen, int ms) {
+int DreamChess_GUI::create_window(int width, int height, int fullscreen, int ms) {
 	int i, err;
-
+	
 	screen_width = width;
 	screen_height = height;
 	screen_fs = fullscreen;
@@ -507,7 +497,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	for (i = 0; i < 9; i++)
 		get_menu_style()->border.image[i] = &get_menu_border()[i];
 
-	ch_datadir();
+	g_Backend->ch_datadir();
 	audio_init();
 
 	/* Make virtual keyboard table? */
@@ -522,7 +512,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 }
 
 /** Implements ui_driver::update. */
-static void update(board_t *b, move_t *move) {
+void DreamChess_GUI::update(board_t *b, move_t *move) {
 	board = *b;
 
 	if (move != NULL)
@@ -551,24 +541,19 @@ static void update(board_t *b, move_t *move) {
 
 	/* FIXME */
 	while (get_piece_moving_done() == 0)
-		poll_move();
+		poll();
 }
 
 /** Implements ui_driver::show_result. */
-static void show_result(result_t *res) { gg_dialog_open(dialog_victory_create(res)); }
+void DreamChess_GUI::show_result(result_t *res) { gg_dialog_open(dialog_victory_create(res)); }
 
 /** Implements ui_driver::init. */
-static void sdlgl_init(void) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE) < 0) {
-		DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
-		exit(1);
-	}
-
-	ch_datadir();
+void DreamChess_GUI::init() {
+	g_Backend->init();
 }
 
 /** Implements ui_driver::exit. */
-static int sdlgl_exit(void) {
+int DreamChess_GUI::deinit(void) {
 	audio_set_music_callback(NULL);
 
 	gg_system_exit();
@@ -580,10 +565,10 @@ static int sdlgl_exit(void) {
 }
 
 /** Implements ui_driver::show_message. */
-static void show_message(char *msg) { gg_dialog_open(dialog_message_create(msg)); }
+void DreamChess_GUI::show_message(char *msg) { gg_dialog_open(dialog_message_create(msg)); }
 
 /** Implements ui_driver::poll. */
-static void poll_move(void) {
+void DreamChess_GUI::poll() {
 	static int source = -1, dest = -1, needprom = 0;
 	/* board_t *board = history->play->board; */
 	move_t move;
@@ -674,7 +659,3 @@ static void poll_move(void) {
 	game_make_move(&move, 1);
 	reset_turn_counter();
 }
-
-/** SDL + OpenGL driver. */
-ui_driver_t ui_sdlgl = {"sdlgl", sdlgl_init, create_window, resize,		  sdlgl_exit,
-						do_menu, update,	 poll_move,		show_message, show_result};

@@ -32,8 +32,6 @@ add_executable(dreamchess MACOSX_BUNDLE
     credits.h
     debug.cpp
     debug.h
-    dir.cpp
-    dir.h
     dreamchess.cpp
     dreamchess.h
     fen.cpp
@@ -44,7 +42,7 @@ add_executable(dreamchess MACOSX_BUNDLE
     options.cpp
     system_config.cpp
     theme.cpp
-    ui.h
+    gui.h
     ${BISON_PgnParser_OUTPUTS}
     ${FLEX_PgnScanner_OUTPUTS}
     include/engine.h
@@ -162,6 +160,16 @@ target_sources(dreamchess
 
 source_group("Source Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.cpp$)
 source_group("Header Files\\gamegui" REGULAR_EXPRESSION /include/gamegui/.*.h$)
+
+target_sources(dreamchess
+    PRIVATE
+    backend/backend.h
+    backend/backend.cpp
+    backend/dir.cpp
+)
+
+source_group("Source Files\\backend" REGULAR_EXPRESSION /backend/.*.cpp$)
+source_group("Header Files\\backend" REGULAR_EXPRESSION /backend/.*.h$)
 
 target_sources(dreamchess
     PRIVATE

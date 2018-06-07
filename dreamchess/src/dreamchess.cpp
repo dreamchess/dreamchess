@@ -36,13 +36,13 @@
 #include "board.h"
 #include "comm.h"
 #include "debug.h"
-#include "dir.h"
 #include "dreamchess.h"
 #include "git_rev.h"
 #include "history.h"
 #include "pgn_scanner.h"
 #include "system_config.h"
-#include "ui.h"
+#include "gui.h"
+#include "backend/backend.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
@@ -66,7 +66,9 @@ typedef struct cl_options {
 	char *engine;
 } cl_options_t;
 
-static ui_driver_t *ui;
+DreamChess_GUI *g_DreamChess_GUI;
+Backend *g_Backend;
+
 static config_t *config;
 static move_list_t san_list, fan_list, fullalg_list;
 static history_t *history;
@@ -125,7 +127,7 @@ void game_view_next(void)
 	move_list_view_next(&fullalg_list);
 	move_list_view_next(&san_list);
 	move_list_view_next(&fan_list);
-	ui->update(history->view->board, NULL);
+	g_DreamChess_GUI->update(history->view->board, NULL);
 }
 
 void game_view_prev(void)
@@ -134,7 +136,7 @@ void game_view_prev(void)
 	move_list_view_prev(&fullalg_list);
 	move_list_view_prev(&san_list);
 	move_list_view_prev(&fan_list);
-	ui->update(history->view->board, NULL);
+	g_DreamChess_GUI->update(history->view->board, NULL);
 }
 
 void game_undo(void)
@@ -148,7 +150,7 @@ void game_undo(void)
 		free(history->result);
 		history->result = NULL;
 	}
-	ui->update(history->view->board, NULL);
+	g_DreamChess_GUI->update(history->view->board, NULL);
 }
 
 void game_retract_move(void)
@@ -183,7 +185,7 @@ int game_save(int slot)
 	int retval;
 	char temp[80];
 
-	if (!ch_userdir()) {
+	if (!g_Backend->ch_userdir()) {
 		sprintf(temp, "save%i.pgn", slot);
 		retval = history_save_pgn(history, temp);
 	} else {
@@ -243,7 +245,7 @@ static int do_move(move_t *move, int ui_update)
 	history_play(history, move, &new_board);
 
 	if (ui_update)
-		ui->update(history->view->board, move);
+		g_DreamChess_GUI->update(history->view->board, move);
 
 	if (new_board.state == MOVE_CHECKMATE) {
 		history->result = (result_t *)malloc(sizeof(result_t));
@@ -257,7 +259,7 @@ static int do_move(move_t *move, int ui_update)
 		}
 
 		if (ui_update)
-			ui->show_result(history->result);
+			g_DreamChess_GUI->show_result(history->result);
 	} else if (new_board.state == MOVE_STALEMATE) {
 		history->result = (result_t *)malloc(sizeof(result_t));
 
@@ -265,7 +267,7 @@ static int do_move(move_t *move, int ui_update)
 		history->result->reason = strdup("Stalemate");
 
 		if (ui_update)
-			ui->show_result(history->result);
+			g_DreamChess_GUI->show_result(history->result);
 	}
 
 	return 1;
@@ -293,7 +295,7 @@ int game_load(int slot)
 	char temp[80];
 	board_t *board;
 
-	if (ch_userdir()) {
+	if (g_Backend->ch_userdir()) {
 		DBG_ERROR("failed to enter user directory");
 		return 1;
 	}
@@ -310,7 +312,7 @@ int game_load(int slot)
 
 	board = history->last->board;
 
-	ui->update(board, NULL);
+	g_DreamChess_GUI->update(board, NULL);
 
 	if (config->player[board->turn] == PLAYER_ENGINE)
 		comm_send("go\n");
@@ -374,9 +376,9 @@ int set_resolution(int init)
 	}
 
 	if (init)
-		return ui->create_window(width, height, fs, ms);
+		return g_DreamChess_GUI->create_window(width, height, fs, ms);
 	else
-		return ui->resize(width, height, fs, ms);
+		return g_DreamChess_GUI->resize(width, height, fs, ms);
 }
 
 static void init_resolution(void)
@@ -399,7 +401,7 @@ void toggle_fullscreen(void)
 	set_resolution(0);
 }
 
-static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_options_t *cl_options)
+static void parse_options(int argc, char **argv, DreamChess_GUI **ui_driver, cl_options_t *cl_options)
 {
 	int c;
 
@@ -503,20 +505,21 @@ int dreamchess(void *data)
 	cl_options_t cl_options = {0};
 	arguments_t *arg = (arguments_t *)data;
 
-	ui = &ui_sdlgl;
+	g_Backend = new Backend();
+	g_DreamChess_GUI = new DreamChess_GUI();
 
 	printf("DreamChess %s\n", g_version);
 
-	parse_options(arg->argc, arg->argv, &ui, &cl_options);
+	parse_options(arg->argc, arg->argv, &g_DreamChess_GUI, &cl_options);
 	config_init();
 	set_cl_options(&cl_options);
 
-	if (!ui) {
+	if (!g_DreamChess_GUI) {
 		DBG_ERROR("failed to find a user interface driver");
 		exit(1);
 	}
 
-	ui->init();
+	g_DreamChess_GUI->init();
 
 	init_resolution();
 
@@ -525,10 +528,10 @@ int dreamchess(void *data)
 		int pgn_slot;
 		option_t *option;
 
-		if (!(config = ui->config(&pgn_slot)))
+		if (!(config = g_DreamChess_GUI->do_menu(&pgn_slot)))
 			break;
 
-		ch_userdir();
+		g_Backend->ch_userdir();
 		option = config_get_option("first_engine");
 
 #ifdef __APPLE__
@@ -581,7 +584,7 @@ int dreamchess(void *data)
 				exit(1);
 			}
 
-		ui->update(history->view->board, NULL);
+		g_DreamChess_GUI->update(history->view->board, NULL);
 		while (in_game) {
 			char *s;
 
@@ -620,13 +623,13 @@ int dreamchess(void *data)
 							history->result->reason = comment;
 							if (strstr(s, "1-0")) {
 								history->result->code = RESULT_WHITE_WINS;
-								ui->show_result(history->result);
+								g_DreamChess_GUI->show_result(history->result);
 							} else if (strstr(s, "1/2-1/2")) {
 								history->result->code = RESULT_DRAW;
-								ui->show_result(history->result);
+								g_DreamChess_GUI->show_result(history->result);
 							} else if (strstr(s, "0-1")) {
 								history->result->code = RESULT_BLACK_WINS;
-								ui->show_result(history->result);
+								g_DreamChess_GUI->show_result(history->result);
 							} else {
 								free(history->result->reason);
 								free(history->result);
@@ -638,7 +641,7 @@ int dreamchess(void *data)
 
 				free(s);
 			}
-			ui->poll();
+			g_DreamChess_GUI->poll();
 		}
 		comm_send("quit\n");
 		comm_exit();
@@ -647,6 +650,6 @@ int dreamchess(void *data)
 		move_list_exit(&fan_list);
 		move_list_exit(&fullalg_list);
 	}
-	ui->exit();
+	delete g_DreamChess_GUI;
 	return 0;
 }

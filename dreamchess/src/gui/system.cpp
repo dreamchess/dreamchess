@@ -51,9 +51,9 @@ int get_true_mouse_x(void) { return mouse_pos.x; }
 
 int get_true_mouse_y(void) { return mouse_pos.y; }
 
-int get_mouse_x(void) { return (int)(((float)mouse_pos.x / (float)get_screen_width()) * 640); }
+int get_mouse_x(void) { return (int)(((float)mouse_pos.x / (float)g_DreamChess_GUI->get_screen_width()) * 640); }
 
-int get_mouse_y(void) { return (int)(((float)mouse_pos.y / (float)get_screen_height()) * 480); }
+int get_mouse_y(void) { return (int)(((float)mouse_pos.y / (float)g_DreamChess_GUI->get_screen_height()) * 480); }
 
 /** @brief Computes smallest power of two that's larger than the input value.
  *
@@ -120,7 +120,7 @@ void resize_window(int width, int height) {
 
 /** @brief Swaps the OpenGL buffer.
  */
-void gl_swap(void) {
+void DreamChess_GUI::gl_swap(void) {
 	static Uint32 last = 0;
 	Uint32 now;
 

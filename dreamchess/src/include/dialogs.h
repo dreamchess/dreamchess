@@ -26,7 +26,7 @@
 #include "engine.h"
 #include "gamegui.h"
 #include "options.h"
-#include "ui.h"
+#include "gui.h"
 
 /* Define our booleans */
 #define TRUE 1
