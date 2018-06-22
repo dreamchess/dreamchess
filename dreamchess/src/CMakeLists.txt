@@ -110,6 +110,7 @@ source_group("Header Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.h$)
 
 target_sources(dreamchess
     PRIVATE
+    gamegui++/gamegui++.cpp
     gamegui/action.cpp
     gamegui/align.cpp
     gamegui/bin.cpp

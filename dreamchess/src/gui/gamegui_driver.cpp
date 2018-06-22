@@ -20,14 +20,13 @@
 
 #include "ui_sdlgl.h"
 
-static unsigned int utf8_to_utf32(const char *utf8)
-{
+static unsigned int utf8_to_utf32(const char *utf8) {
 	unsigned int char_utf32 = 0;
 	char *utf32 = SDL_iconv_string("UTF-32LE", "UTF-8", utf8, strlen(utf8) + 1);
 
 	if (utf32) {
 		char_utf32 = ((unsigned char)utf32[3] << 24) | ((unsigned char)utf32[2] << 16) |
-					 ((unsigned char)utf32[1] << 8) | ((unsigned char)utf32[0]);
+		             ((unsigned char)utf32[1] << 8) | ((unsigned char)utf32[0]);
 		SDL_free(utf32);
 	}
 
@@ -36,8 +35,7 @@ static unsigned int utf8_to_utf32(const char *utf8)
 
 extern SDL_Window *sdl_window;
 
-gg_event_t convert_event(SDL_Event *event)
-{
+gg_event_t convert_event(SDL_Event *event) {
 	gg_event_t gg_event;
 
 	gg_event.type = GG_EVENT_NONE;
@@ -127,8 +125,7 @@ gg_event_t convert_event(SDL_Event *event)
 	return gg_event;
 }
 
-static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour)
-{
+static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour) {
 	texture_t *texture = (texture_t *)image;
 	float hsize = texture->u2 - texture->u1;
 	float vsize = texture->v2 - texture->v1;
@@ -156,11 +153,10 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
 	}
 
 	draw_texture_uv(texture, (float)dest.x, (float)dest.y, (float)dest.width, (float)dest.height, 1.0f, colour, xsrc,
-					ysrc, xsrc + width, ysrc + height, en_h, en_v);
+	                ysrc, xsrc + width, ysrc + height, en_h, en_v);
 }
 
-static void *get_char_image(int c)
-{
+static void *get_char_image(int c) {
 	if (c < 0)
 		c += 256;
 
@@ -168,13 +164,9 @@ static void *get_char_image(int c)
 	/*    return &text_characters[c];*/
 }
 
-static void draw_char(int c, int x, int y, gg_colour_t *colour)
-{
-	text_draw_char((float)x, (float)y, 1.0f, c, colour);
-}
+static void draw_char(int c, int x, int y, gg_colour_t *colour) { text_draw_char((float)x, (float)y, 1.0f, c, colour); }
 
-static void get_image_size(void *image, int *width, int *height)
-{
+static void get_image_size(void *image, int *width, int *height) {
 	texture_t *texture = (texture_t *)image;
 
 	if (width)
@@ -184,8 +176,7 @@ static void get_image_size(void *image, int *width, int *height)
 		*height = texture->height;
 }
 
-static void get_char_size(int c, int *width, int *height)
-{
+static void get_char_size(int c, int *width, int *height) {
 	if (c < 0)
 		c += 256;
 
@@ -196,15 +187,107 @@ static void get_char_size(int c, int *width, int *height)
 		*height = get_text_character(c)->height;
 }
 
-static unsigned int get_ticks(void)
-{
-	return SDL_GetTicks();
-}
+static unsigned int get_ticks(void) { return SDL_GetTicks(); }
 
 gg_driver_t gg_driver_sdlgl = {draw_rect, draw_rect_fill, draw_rect_fill_gradient, draw_image, get_char_image,
-							   draw_char, get_image_size, get_char_size,		   get_ticks};
+                               draw_char, get_image_size, get_char_size,           get_ticks};
 
-gg_driver_t *get_gg_driver_sdlgl(void)
-{
-	return &gg_driver_sdlgl;
+gg_driver_t *get_gg_driver_sdlgl(void) { return &gg_driver_sdlgl; }
+
+#include <array>
+#include <memory>
+
+#include "gamegui++/gamegui++.h"
+
+static gg_colour_t make_colour(const GameGUI::Colour &col) { return {col.r, col.g, col.b, col.a}; }
+
+class MyImage : public GameGUI::Image {
+public:
+	MyImage(const texture &texture) : _texture(texture) {}
+	GameGUI::Size getSize() const { return {_texture.width, _texture.height}; }
+
+	const texture &getTexture() const { return _texture; }
+
+private:
+	const texture &_texture;
+};
+
+class MyDriver : public GameGUI::Driver {
+public:
+	MyDriver() {
+		for (unsigned int i = 0; i < 256; ++i)
+			_charImages.push_back(MyImage(*get_text_character(i)));
+	}
+
+	void drawFilledRect(const GameGUI::Rect &rect, const GameGUI::Colour &colour) const {
+		gg_colour_t c(make_colour(colour));
+		draw_rect(rect.x, rect.y, rect.width, rect.height, &c);
+	}
+
+	void drawGradientRect(const GameGUI::Rect &rect, const GameGUI::Colour &colTopLeft,
+	                          const GameGUI::Colour &colTopRight, const GameGUI::Colour &colBottomLeft,
+	                          const GameGUI::Colour &colBottomRight) const {
+		gg_colour_t cTopLeft(make_colour(colTopLeft));
+		gg_colour_t cTopRight(make_colour(colTopRight));
+		gg_colour_t cBottomRight(make_colour(colBottomRight));
+		gg_colour_t cBottomLeft(make_colour(colBottomLeft));
+		draw_rect_fill_gradient(rect.x, rect.y, rect.width, rect.height, &cTopLeft, &cTopRight, &cBottomLeft,
+		                        &cBottomRight);
+	}
+
+	void drawImage(const GameGUI::Image &image, const GameGUI::Rect &rectSource, const GameGUI::Rect &rectDest,
+	                   GameGUI::FillMode fillH, GameGUI::FillMode fillV, const GameGUI::Colour &colour) const {
+		const texture &tex = static_cast<const MyImage &>(image).getTexture();
+		float hsize = tex.u2 - tex.u1;
+		float vsize = tex.v2 - tex.v1;
+		float tex_h = tex.width / hsize;
+		float tex_v = tex.height / vsize;
+		float xsrc = tex.u1 + rectSource.x / tex_h;
+		float ysrc = tex.v1 + rectSource.y / tex_v;
+		float width, height;
+		GLenum en_h, en_v;
+
+		if (fillH == GameGUI::FillMode::Tile) {
+			en_h = GL_REPEAT;
+			width = rectDest.width / tex_h;
+		} else {
+			en_h = GL_CLAMP;
+			width = rectSource.width / tex_h;
+		}
+
+		if (fillV == GameGUI::FillMode::Tile) {
+			en_v = GL_REPEAT;
+			height = rectDest.height / tex_v;
+		} else {
+			en_v = GL_CLAMP;
+			height = rectSource.height / tex_v;
+		}
+
+		gg_colour_t col(make_colour(colour));
+
+		draw_texture_uv(&tex, (float)rectDest.x, (float)rectDest.y, (float)rectDest.width, (float)rectDest.height, 1.0f,
+		                &col, xsrc, ysrc, xsrc + width, ysrc + height, en_h, en_v);
+	}
+
+	const MyImage &getCharImage(char c) const { return _charImages[(unsigned char)c]; }
+
+	GameGUI::Size getCharSize(char c) const {
+		const texture *tex = get_text_character((unsigned char)c);
+		return {tex->width, tex->height};
+	}
+
+	void drawChar(char c, const GameGUI::Point &p, const GameGUI::Colour &colour) const {
+		gg_colour_t col = make_colour(colour);
+		text_draw_char((float)p.x, (float)p.y, 1.0f, c, &col);
+	}
+
+private:
+	std::vector<MyImage> _charImages;
+};
+
+extern void foo() {
+	GameGUI::WindowManager *gameGUI = new GameGUI::WindowManager(std::unique_ptr<MyDriver>(new MyDriver()));
+	gameGUI->drawFilledRect({}, {});
+	gameGUI->drawGradientRect({}, {}, {}, {}, {});
+	gameGUI->drawString("Hello world", {}, {}, true, 0.0f);
 }

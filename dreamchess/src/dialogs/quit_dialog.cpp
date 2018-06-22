@@ -24,8 +24,7 @@
  *
  *  Closes the dialog and causes the game to go back to the title menu.
  */
-static int dialog_quit_ok(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_quit_ok(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	gg_dialog_close();
 	DBG_LOG("entering title menu");
@@ -33,8 +32,7 @@ static int dialog_quit_ok(gg_widget_t *widget, gg_widget_t *emitter, void *data,
 	return 1;
 }
 
-static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
-{
+static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	return 1;
 }
@@ -46,8 +44,7 @@ static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data
  *
  *  @return The created dialog.
  */
-gg_dialog_t *dialog_quit_create(gg_dialog_t *parent)
-{
+gg_dialog_t *dialog_quit_create(gg_dialog_t *parent) {
 	gg_widget_t *dialog;
 	gg_widget_t *vbox = gg_vbox_create(0);
 
