@@ -305,6 +305,9 @@ void blit_fbo()
 	glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
 }
 
+void fooCreate();
+void fooRender();
+
 /** Implements ui_driver::menu */
 static config_t *do_menu(int *pgn)
 {
@@ -383,6 +386,7 @@ static config_t *do_menu(int *pgn)
 				draw_credits(0);
 
 			gg_dialog_render_all();
+			fooRender();
 			break;
 
 		case MENU_STATE_LOAD: {
@@ -652,6 +656,8 @@ static void sdlgl_init(void)
 	}
 
 	ch_datadir();
+
+	fooCreate();
 }
 
 /** Implements ui_driver::exit. */

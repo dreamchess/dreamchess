@@ -26,9 +26,9 @@
 #include <algorithm>
 #include <chrono>
 #include <memory>
+#include <string>
 #include <tuple>
 #include <vector>
-#include <string>
 
 namespace GameGUI {
 
@@ -147,8 +147,9 @@ class WindowManager;
 
 class Widget {
 public:
-	virtual void init(WindowManager *windowMan);
-	void render(const Point &p, FocusMode focus);
+	virtual ~Widget() {}
+	virtual void attach(WindowManager *windowMan);
+	virtual void render(const Point &p, FocusMode focus) = 0;
 	bool input(const Event &event);
 	void setSize(Size size);
 	Size getRequestedSize();
@@ -162,13 +163,11 @@ public:
 
 protected:
 	Widget *_parent = nullptr;
+	WindowManager *_windowMan = nullptr;
 	bool _enabled = false;
 	Size _minSize{};
 	Size _forcedSize{-1, -1};
 	Size _allocSize{};
-
-private:
-	WindowManager *_windowMan = nullptr;
 };
 
 class Container : public Widget {
@@ -187,20 +186,30 @@ public:
 };
 
 struct DialogStyle {
-	bool applyTexture;        //!< Set to true to apply a texture to the dialog
-	Image *border[9];         //!< Images to use for texturing the dialog
-	Colour fadeColour;        //!< Colour of the quad that will be drawn the size of the whole screen.
-	unsigned int horPadding;  //!< Horizontal padding (between the border and the widget) in pixels
-	unsigned int vertPadding; //!< Horizontal padding (between the border and the widget) in pixels
+	bool applyTexture; //!< Set to true to apply a texture to the dialog
+	Image *border[9];  //!< Images to use for texturing the dialog
+	Colour fadeColour; //!< Colour of the quad that will be drawn the size of the whole screen.
+	int horPadding;    //!< Horizontal padding (between the border and the widget) in pixels
+	int vertPadding;   //!< Horizontal padding (between the border and the widget) in pixels
+	struct {
+		float factor;                    //!< Titlebar size factor relative to text height
+		unsigned int sepHeight;          //!< Titlebar seperator height in pixels
+		Colour textColour;               //!< Title text colour
+		Colour bgHiColour1, bgHiColour2; //!< Titlebar gradient colours when dialog has focus
+		Colour bgLoColour1, bgLoColour2; //!< Titlebar gradient colours when dialog does not have focus
+	} title;
 };
 
 class Dialog : public Bin {
 public:
 	Dialog(const DialogStyle *style) : _style(style) {}
+	void render(const Point &p, FocusMode focus) override;
 
 protected:
+	Point getScreenPos();
+	void drawBorder();
+
 	Dialog *_parentDialog = nullptr;
-	Driver *_driver = nullptr;
 	bool _hidden = false;
 	bool _modal = false;
 	bool _autoHideParent = false;
@@ -208,6 +217,7 @@ protected:
 	bool _leftButton = false;
 	Point _pos{};
 	Point _orgPos{};
+	float _xAlign = 0.0f, _yAlign = 0.0f;
 	const DialogStyle *_style = nullptr;
 	std::string _title;
 };
@@ -228,6 +238,18 @@ public:
 class WindowManager {
 public:
 	WindowManager(std::unique_ptr<Driver> driver) : _driver(std::move(driver)) {}
+
+	template <class T>
+	void open(const DialogStyle *style) {
+		_dialogs.push_back(std::unique_ptr<Dialog>(new T(style)));
+		_dialogs.back()->attach(this);
+	}
+
+	void render() {
+		for (auto &it: _dialogs) {
+			it->render({}, FocusMode::One);
+		}
+	}
 
 	//! Gets the text bounce parameters.
 	TextBounce getTextBounce() const { return _textBounce; }
@@ -405,6 +427,8 @@ public:
 
 private:
 	std::unique_ptr<Driver> _driver;
+
+	std::vector<std::unique_ptr<Dialog>> _dialogs;
 
 	TextBounce _textBounce{2.0f, 10, 3.0f};
 	std::vector<Rect> _clipRects;

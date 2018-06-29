@@ -221,12 +221,12 @@ public:
 
 	void drawFilledRect(const GameGUI::Rect &rect, const GameGUI::Colour &colour) const {
 		gg_colour_t c(make_colour(colour));
-		draw_rect(rect.x, rect.y, rect.width, rect.height, &c);
+		draw_rect_fill(rect.x, rect.y, rect.width, rect.height, &c);
 	}
 
 	void drawGradientRect(const GameGUI::Rect &rect, const GameGUI::Colour &colTopLeft,
-	                          const GameGUI::Colour &colTopRight, const GameGUI::Colour &colBottomLeft,
-	                          const GameGUI::Colour &colBottomRight) const {
+	                      const GameGUI::Colour &colTopRight, const GameGUI::Colour &colBottomLeft,
+	                      const GameGUI::Colour &colBottomRight) const {
 		gg_colour_t cTopLeft(make_colour(colTopLeft));
 		gg_colour_t cTopRight(make_colour(colTopRight));
 		gg_colour_t cBottomRight(make_colour(colBottomRight));
@@ -236,7 +236,7 @@ public:
 	}
 
 	void drawImage(const GameGUI::Image &image, const GameGUI::Rect &rectSource, const GameGUI::Rect &rectDest,
-	                   GameGUI::FillMode fillH, GameGUI::FillMode fillV, const GameGUI::Colour &colour) const {
+	               GameGUI::FillMode fillH, GameGUI::FillMode fillV, const GameGUI::Colour &colour) const {
 		const texture &tex = static_cast<const MyImage &>(image).getTexture();
 		float hsize = tex.u2 - tex.u1;
 		float vsize = tex.v2 - tex.v1;
@@ -285,9 +285,28 @@ private:
 	std::vector<MyImage> _charImages;
 };
 
-extern void foo() {
-	GameGUI::WindowManager *gameGUI = new GameGUI::WindowManager(std::unique_ptr<MyDriver>(new MyDriver()));
-	gameGUI->drawFilledRect({}, {});
-	gameGUI->drawGradientRect({}, {}, {}, {}, {});
-	gameGUI->drawString("Hello world", {}, {}, true, 0.0f);
+class MyDialog : public GameGUI::Dialog {
+public:
+	MyDialog(const GameGUI::DialogStyle *style) : GameGUI::Dialog(style) { _minSize = {100, 100}; }
+};
+
+static GameGUI::WindowManager *gameGUI;
+
+extern void fooCreate() {
+	gameGUI = new GameGUI::WindowManager(std::unique_ptr<MyDriver>(new MyDriver()));
+
+	GameGUI::DialogStyle *style = new GameGUI::DialogStyle;
+	style->applyTexture = true;
+	style->fadeColour = {0.0f, 0.0f, 0.0f, 0.0f};
+	style->horPadding = 20;
+	style->vertPadding = 10;
+
+	for (int i = 0; i < 9; i++)
+		style->border[i] = new MyImage(get_menu_border()[i]);
+
+	gameGUI->open<MyDialog>(style);
+}
+
+extern void fooRender() {
+	gameGUI->render();
 }
