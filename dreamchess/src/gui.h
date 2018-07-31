@@ -44,19 +44,8 @@ class DreamChess_GUI {
 		// Render stuff...
 		void draw_scene(board_t *b, GLuint fb, int reflections);
 
-		// System stuff...
-		void blit_fbo();
-		void gl_swap(void);
-
-		// Getter setters!
-		int get_screen_width(void) { return screen_width; }
-		int get_screen_height(void)	{ return screen_height; }
 	private:
 		const char *name;
-		int screen_width;
-		int screen_height;
-		int screen_fs;
-		int screen_ms;	
 };
 
 extern DreamChess_GUI *g_DreamChess_GUI;

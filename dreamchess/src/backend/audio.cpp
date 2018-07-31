@@ -19,6 +19,7 @@
 */
 
 #include "audio.h"
+#include "backend.h"
 
 #ifdef _WIN32
 #include <direct.h>
@@ -75,7 +76,7 @@ static void music_finished(void)
 	next_song = 1;
 }
 
-void audio_init(void)
+void Backend::init_audio(void)
 {
 	music_packs_t *music_packs;
 	int audio_rate = 44100;
@@ -120,7 +121,7 @@ void audio_init(void)
 		have_songs = 0;
 }
 
-void audio_exit(void)
+void Backend::audio_exit(void)
 {
 	if (!have_audio)
 		return;
@@ -130,7 +131,7 @@ void audio_exit(void)
 	playlist_destroy(playlist);
 }
 
-void audio_poll(int title)
+void Backend::audio_poll(int title)
 {
 	if (!have_audio)
 		return;
@@ -170,13 +171,11 @@ void audio_poll(int title)
 	}
 }
 
-void audio_set_music_callback(audio_music_callback_t callback)
-{
+void Backend::audio_set_music_callback(audio_music_callback_t callback) {
 	music_callback = callback;
 }
 
-void audio_play_sound(int id)
-{
+void Backend::audio_play_sound(int id) {
 	if (!have_audio)
 		return;
 
@@ -187,7 +186,7 @@ void audio_play_sound(int id)
 		DBG_WARN("failed to play sound %i", id);
 }
 
-void audio_set_sound_volume(int vol)
+void Backend::audio_set_sound_volume(int vol)
 {
 	if (!have_audio)
 		return;
@@ -196,7 +195,7 @@ void audio_set_sound_volume(int vol)
 	Mix_Volume(0, sound_volume);
 }
 
-void audio_set_music_volume(int vol)
+void Backend::audio_set_music_volume(int vol)
 {
 	if (!have_audio)
 		return;

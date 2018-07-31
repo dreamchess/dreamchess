@@ -81,17 +81,6 @@ endif()
 
 target_sources(dreamchess
     PRIVATE
-    audio/playlist.cpp
-    audio/playlist.h
-    audio/sdlmixer.cpp
-    include/audio.h
-)
-
-source_group("Source Files\\audio" REGULAR_EXPRESSION "/audio/.*.cpp$")
-source_group("Header Files\\audio" REGULAR_EXPRESSION /audio/.*.h$)
-
-target_sources(dreamchess
-    PRIVATE
     dialogs/configuration.cpp
     dialogs/ingame_dialog.cpp
     dialogs/message_dialog.cpp
@@ -166,6 +155,10 @@ target_sources(dreamchess
     backend/backend.h
     backend/backend.cpp
     backend/dir.cpp
+    backend/playlist.cpp
+    backend/playlist.h
+    backend/audio.cpp
+    include/audio.h    
 )
 
 source_group("Source Files\\backend" REGULAR_EXPRESSION /backend/.*.cpp$)

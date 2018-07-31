@@ -20,12 +20,7 @@
 
 #include "ui_sdlgl.h"
 
-static float zerodepth = 1.0f;
 
-static int fps_enabled = 0;
-static int frames = 0;
-static Uint32 fps_time = 0;
-static float fps;
 
 extern SDL_Window *sdl_window;
 
@@ -69,40 +64,7 @@ int power_of_two(int input) {
 	return value;
 }
 
-void go_3d(int width, int height) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0f, 640.0f / 480.0f, 1.0f, 100.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
 
-/** @brief Sets the OpenGL rendering options. */
-void init_gl(void) {
-	/* Enable smooth shading */
-	glShadeModel(GL_SMOOTH);
-
-	/* Set the background black */
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	/* Depth buffer setup */
-	glClearDepth(1.0f);
-
-	/* Enables Depth Testing */
-	glEnable(GL_DEPTH_TEST);
-
-	/* The Type Of Depth Test To Do */
-	glDepthFunc(GL_LEQUAL);
-
-	/* Really Nice Perspective Calculations */
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	glEnable(GL_BLEND);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
 
 /** @brief Resizes the OpenGL window.
  *

@@ -119,7 +119,6 @@ static data_col_t meshes;
 #define SEL_HEIGHT 0.003f
 static theme_selector_t sel;
 static texture_t sel_tex;
-static GLuint fb, colourpicking_tex, depth_rb;
 
 #define BUF_SIZE 256
 #define FN_LEN 256
@@ -153,38 +152,7 @@ static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
 
-void init_fbo(void) {
-	const int width = 1920;
-	const int height = 1080;
 
-	glGenTextures(1, &colourpicking_tex);
-	glBindTexture(GL_TEXTURE_2D, colourpicking_tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-
-	glGenFramebuffers(1, &fb);
-	glBindFramebuffer(GL_FRAMEBUFFER, fb);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourpicking_tex, 0);
-
-	glGenRenderbuffers(1, &depth_rb);
-	glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		DBG_ERROR("failed to set up FBO");
-		exit(1);
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void deinit_fbo(void) {
-	glDeleteTextures(1, &colourpicking_tex);
-	glDeleteRenderbuffers(1, &depth_rb);
-	glDeleteFramebuffers(1, &fb);
-}
 
 static void setup_view(void) {
 	glLoadIdentity();
