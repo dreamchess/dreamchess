@@ -24,7 +24,6 @@ install:
     %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew mingw-w64-%MSYS2_PLATFORM%-pugixml
 before_build:
   - |-
-    mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
     %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
     %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH=%MSYS2_PREFIX% -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
