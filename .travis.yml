@@ -34,8 +34,7 @@ addons:
       name: "dreamchess/dreamchess"
       description: "Build submitted via Travis CI"
     notification_email: feedback@dreamchess.org
-    build_command_prepend: "mkdir build && cd build && cmake .."
-    build_command: "make"
+    build_command: "./INSTALL"
     branch_pattern: coverity_scan
 
 before_install:
@@ -45,10 +44,7 @@ before_install:
 
 script:
   - test $TRAVIS_BRANCH != coverity_scan || exit 0
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
+  - ./INSTALL
 
 before_deploy:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cpack -G DragNDrop; fi
