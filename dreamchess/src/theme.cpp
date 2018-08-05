@@ -80,6 +80,8 @@ static void theme_add_theme(char *xmlfile, option_t *option)
 	}
 }
 
+#define THEMEDIR "themes"
+
 #ifdef _WIN32
 
 static void find_themes(option_t *option)
@@ -87,14 +89,14 @@ static void find_themes(option_t *option)
 	HANDLE hFind;
 	WIN32_FIND_DATA ffd;
 
-	hFind = FindFirstFile("themes\\*.xml", &ffd);
+	hFind = FindFirstFile(THEMEDIR "\\*.xml", &ffd);
 
 	if (hFind == INVALID_HANDLE_VALUE)
 		return;
 
 	do {
 		char *filename = (char *)malloc(strlen(ffd.cFileName) + 7 + 1);
-		strcpy(filename, "themes\\");
+		strcpy(filename, THEMEDIR "\\");
 		strcat(filename, ffd.cFileName);
 		theme_add_theme(filename, option);
 		free(filename);
@@ -109,13 +111,14 @@ static void find_themes(option_t *option)
 {
 	DIR *themedir;
 	struct dirent *themedir_entry;
+	char *temp;
 
-	if ((themedir = opendir("themes")) != NULL) {
+	if ((themedir = opendir(THEMEDIR)) != NULL) {
 		while ((themedir_entry = readdir(themedir)) != NULL) {
-			char temp[80];
 			if (themedir_entry->d_name[0] != '.') {
-				sprintf(temp, "themes/%s", themedir_entry->d_name);
+				asprintf(&temp, THEMEDIR "/%s", themedir_entry->d_name);
 				theme_add_theme(temp, option);
+				free(temp);
 			}
 		}
 		closedir(themedir);
