@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#You can build dreamchess as mentioned below.
+#This documentation also acts as install script, run it with "./INSTALL" if you want to do it the lazy way
+
+
+#1) Go to the build directory:
+cd build
+
+#2) Create a Makefile:
+cmake ..
+
+#3) But now the hard part: Most likely CMake failed...
+#   Install everything missing according to CMake and run it again. Do this until it actually ends with returncode 0
+if [ $? -eq 0 ] ; then
+	echo "CMake ran fine ! I'll now continue running make..."
+	echo
+	echo
+else
+	echo Sorry, according to 'cmake' you are still missing dependencies. Install them \(in most cases you will need to install 'libSOMETHING-dev' \) and run this script again.
+	exit 1
+fi
+
+#4) CMake will have created a Makefile, run 'make' to start the build
+make
+if [ $? -eq 0 ] ; then
+	echo
+	echo
+	echo "Building is done !"
+else
+	echo
+	echo
+	echo "Sorry, make failed. Try to find out why based on the errors..."
+	exit 1
+fi
