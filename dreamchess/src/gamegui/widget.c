@@ -1,7 +1,7 @@
 /*  DreamChess
 **
 **  DreamChess is the legal property of its developers, whose names are too
-**  numerous to list here. Please refer to the COPYRIGHT file distributed
+**  numerous to list here. Please refer to the AUTHORS.txt file distributed
 **  with this source distribution.
 **
 **  This program is free software: you can redistribute it and/or modify
