@@ -3,3 +3,4 @@
 #cmakedefine HAVE_USLEEP 1
 #cmakedefine HAVE_C99_VARARGS_MACROS 1
 #cmakedefine HAVE_GNUC_VARARGS_MACROS 1
+#cmakedefine COPYRIGHT_YEAR "@COPYRIGHT_YEAR@"
