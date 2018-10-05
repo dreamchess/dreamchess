@@ -44,7 +44,6 @@ add_executable(dreamchess MACOSX_BUNDLE
     options.c
     system_config.c
     theme.c
-    ui.c
     ui.h
     ${BISON_PgnParser_OUTPUTS}
     ${FLEX_PgnScanner_OUTPUTS}

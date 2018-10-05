@@ -40,10 +40,6 @@ typedef struct ui_driver
 ui_driver_t;
 
 extern ui_driver_t ui_sdlgl;
-extern ui_driver_t *ui_driver[];
-
-ui_driver_t *ui_find_driver(char *name);
-void ui_list_drivers(void);
 
 typedef enum ui_event
 {
