@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
-project(DreamChess)
+project(DreamChess VERSION 0.3.0)
+
+set(DREAMCHESS_RELEASE FALSE)
 
 option(BUILD_DREAMCHESS "Build DreamChess GUI" ON)
 option(BUILD_DREAMER "Build Dreamer chess engine" ON)
@@ -12,6 +14,18 @@ if(UNIX)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(GetGitRevisionDescription)
+if(NOT DREAMCHESS_RELEASE)
+    get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+    if(GIT_SHA1)
+        string(SUBSTRING "${GIT_SHA1}" 0 7 GIT_SHA1_SHORT)
+        set(GIT_REV "-GIT-${GIT_SHA1_SHORT}")
+    else()
+        set(GIT_REV "-GIT")
+    endif()
+endif()
+
 include(CheckIncludeFiles)
 check_include_files(getopt.h HAVE_GETOPT_H)
 include(CheckFunctionExists)
