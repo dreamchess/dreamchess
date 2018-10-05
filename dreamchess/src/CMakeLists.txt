@@ -13,7 +13,7 @@ if(MINGW)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>") 
 endif(MINGW)
 
-add_executable(dreamchess
+add_executable(dreamchess MACOSX_BUNDLE
     board.c
     board.h
     comm.c
@@ -43,6 +43,23 @@ add_executable(dreamchess
     include/system_config.h
     include/theme.h
 )
+
+set(COPYRIGHT_STRING "Copyright © 2003-${COPYRIGHT_YEAR} DreamChess developers")
+
+set_target_properties(dreamchess PROPERTIES
+    MACOSX_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_COPYRIGHT ${COPYRIGHT_STRING}
+    MACOSX_BUNDLE_GUI_IDENTIFIER org.dreamchess.DreamChess
+    MACOSX_BUNDLE_ICON_FILE DreamChess.icns
+    MACOSX_BUNDLE_INFO_STRING ${COPYRIGHT_STRING}
+    MACOSX_BUNDLE_LONG_VERSION_STRING "Version ${PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
+)
+
+if(APPLE OR WIN32)
+    set_target_properties(dreamchess PROPERTIES OUTPUT_NAME DreamChess)
+endif()
 
 if(WIN32)
     target_sources(dreamchess PRIVATE comm_win32.c win32.rc)
@@ -210,6 +227,9 @@ endif()
 if(WIN32)
     install(TARGETS dreamchess DESTINATION .)
     install(DIRECTORY ../data DESTINATION .)
+elseif(APPLE)
+    install(TARGETS dreamchess DESTINATION .)
+    install(DIRECTORY ../data/ DESTINATION DreamChess.app/Contents/Resources)
 elseif(UNIX)
     install(TARGETS dreamchess DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(FILES ../man/dreamchess.6 DESTINATION ${CMAKE_INSTALL_MANDIR}/man6)
