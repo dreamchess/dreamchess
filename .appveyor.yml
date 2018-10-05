@@ -53,4 +53,25 @@ before_build:
     %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH="%PREFIX%;%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
   - |-
-    %MSVC% cmake --build . --config Release
+    cmake --build . --config Release
+after_build:
+  - |-
+    %MSVC% %TAG% cpack -G ZIP -C Release
+    %MSVC% %TAG% cpack -G WIX -C Release
+artifacts:
+  - path: 'build/*.zip'
+    name: portable
+  - path: 'build/*.msi'
+    name: installer
+deploy:
+  description: ''
+  provider: GitHub
+  auth_token:
+    secure: 655VE6bB1PIZDNNyr0uqKhE8cvNd31/rY3gfG3jJobNOhSBTACLiMBxYYUjgcFDU
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: DreamChess $(APPVEYOR_REPO_TAG_NAME)
+  artifact: portable, installer
+  draft: true
+  force_update: true
+  on:
+    appveyor_repo_tag: true
