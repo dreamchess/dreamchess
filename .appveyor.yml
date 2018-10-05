@@ -8,62 +8,30 @@ platform:
   - x86
   - x64
 cache:
+  - C:\ProgramData\chocolatey\bin -> .appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> .appveyor.yml
+  - c:\tools\vcpkg\installed\ -> .appveyor.yml
   - '%PREFIX% -> .appveyor.yml'
 install:
   - |-
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
     if exist %PREFIX% set DEP=rem
-  - |-
-    if %PLATFORM%==x86 (set MSVC_PLATFORM=Win32) else set MSVC_PLATFORM=%PLATFORM%
     if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
-    if %MSVC_PLATFORM%==x64 set MSVC_SDL_PLATFORM=%MSVC_PLATFORM%
-  - |-
     if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
     if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
-  - |-
+    if %PLATFORM%==x86 (set MSYS2_PREFIX=C:\msys64\mingw32) else set MSYS2_PREFIX=C:\msys64\mingw64
+    if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
+    %MSYS2% set PATH=%MSYS2_PREFIX%\bin;%PATH%
+    choco install -y winflexbison
+    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows pugixml:%PLATFORM%-windows glew:%PLATFORM%-windows
+    %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew
     %DEP% cd %TEMP%
     %DEP% mkdir %PREFIX%\bin
-    %DEP% mkdir %PREFIX%\include\SDL2
-    %DEP% mkdir %PREFIX%\include\GL
+    %DEP% mkdir %PREFIX%\include
     %DEP% mkdir %PREFIX%\lib
     %MSVC% %DEP% set DEVENV="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe"
     %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
-  # flex / bison
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/lexxmark/winflexbison/releases/download/v.2.4.9/win_flex_bison-2.4.9.zip
-    %MSVC% %DEP% 7z x win_flex_bison-2.4.9.zip -o%PREFIX%\win_flex_bison > nul
-  # SDL
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.5-VC.zip
-    %MSVC% %DEP% 7z x SDL2-devel-2.0.5-VC.zip > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2-2.0.5\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL_image
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-VC.zip
-    %MSVC% %DEP% 7z x SDL2_image-devel-2.0.1-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_image-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # SDL_mixer
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-2.0.1-VC.zip
-    %MSVC% %DEP% 7z x SDL2_mixer-devel-2.0.1-VC.zip > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\include\* %PREFIX%\include\SDL2 > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy SDL2_mixer-2.0.1\lib\%PLATFORM%\*.dll %PREFIX%\bin > nul
-  # GLEW
-  - |-
-    %MSVC% %DEP% appveyor DownloadFile https://github.com/nigels-com/glew/releases/download/glew-2.0.0/glew-2.0.0-win32.zip
-    %MSVC% %DEP% 7z x glew-2.0.0-win32.zip > nul
-    %MSVC% %DEP% copy glew-2.0.0\include\GL\* %PREFIX%\include\GL > nul
-    %MSVC% %DEP% copy glew-2.0.0\lib\Release\%MSVC_PLATFORM%\*.lib %PREFIX%\lib > nul
-    %MSVC% %DEP% copy glew-2.0.0\bin\Release\%MSVC_PLATFORM%\*.dll %PREFIX%\bin > nul
-  # MSYS2
-  - |-
-    %MSYS2% %MSYS2_BASH% "pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew"
   # Mini-XML
   - |-
     %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/release-2.10/mxml-2.10.tar.gz
@@ -80,16 +48,8 @@ before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
-  # Visual Studio
-  - |-
-    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_PROGRAM_PATH=%PREFIX%\win_flex_bison ..
-  # MSYS2
-  - |-
-    %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && cmake -DCMAKE_PREFIX_PATH='%PREFIX%' -G'MSYS Makefiles' .."
+    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH=%MSYS2_PREFIX% -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
-  # Visual Studio
   - |-
     %MSVC% cmake --build . --config Release
-  # MSYS2
-  - |-
-    %MSYS2% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%' && make"
