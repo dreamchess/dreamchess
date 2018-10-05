@@ -17,6 +17,7 @@ install:
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
     if exist %PREFIX% set DEP=rem
+    if %PLATFORM%==x86 (set MSVC_PLATFORM=Win32) else set MSVC_PLATFORM=%PLATFORM%
     if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
     if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
     if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
@@ -24,7 +25,7 @@ install:
     if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
     %MSYS2% set PATH=%MSYS2_PREFIX%\bin;%PATH%
     choco install -y winflexbison
-    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows pugixml:%PLATFORM%-windows glew:%PLATFORM%-windows
+    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows glew:%PLATFORM%-windows
     %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew
     %DEP% cd %TEMP%
     %DEP% mkdir %PREFIX%\bin
@@ -49,7 +50,7 @@ before_build:
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
     %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
-    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH=%MSYS2_PREFIX% -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
+    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH="%PREFIX%;%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
   - |-
     %MSVC% cmake --build . --config Release
