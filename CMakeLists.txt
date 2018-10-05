@@ -26,6 +26,7 @@ if(NOT DREAMCHESS_RELEASE)
     endif()
 endif()
 
+include(CMakeCPack)
 include(CheckIncludeFiles)
 check_include_files(getopt.h HAVE_GETOPT_H)
 include(CheckFunctionExists)
@@ -45,3 +46,18 @@ endif()
 if(BUILD_DREAMER)
     add_subdirectory(dreamer/src)
 endif()
+
+set(DOC_FILES
+    LICENSE.txt
+    AUTHORS.txt
+)
+
+if(APPLE)
+    install(FILES ${DOC_FILES} DESTINATION .)
+elseif(UNIX)
+    install(FILES ${DOC_FILES} DESTINATION ${CMAKE_INSTALL_DOCDIR})
+else()
+    install(FILES ${DOC_FILES} DESTINATION doc)
+endif()
+
+add_subdirectory(dist)
