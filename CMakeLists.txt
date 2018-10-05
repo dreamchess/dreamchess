@@ -10,7 +10,7 @@ option(BUILD_DREAMER "Build Dreamer chess engine" ON)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
 endif()
 

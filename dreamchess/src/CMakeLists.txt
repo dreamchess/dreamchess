@@ -1,4 +1,14 @@
+# Disable our own FindSDL2.cmake for vcpkg
+if(VCPKG_TOOLCHAIN)
+    list(REMOVE_ITEM CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+endif()
+
 find_package(SDL2 REQUIRED)
+
+if(VCPKG_TOOLCHAIN)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+endif()
+
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -203,13 +213,20 @@ target_include_directories(dreamchess
 
 target_link_libraries(dreamchess
     common
-    ${GLEW_LIBRARY}
+    GLEW::GLEW
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_MIXER_LIBRARY}
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${MXML_LIBRARY}
 )
+
+if(VCPKG_TOOLCHAIN)
+    target_link_libraries(dreamchess
+        SDL2::SDL2
+        SDL2::SDL2main
+    )
+endif()
 
 if(WIN32)
     target_link_libraries(dreamchess shlwapi)
@@ -226,7 +243,18 @@ endif()
 
 if(WIN32)
     install(TARGETS dreamchess DESTINATION .)
+    set_property(INSTALL $<TARGET_FILE_NAME:dreamchess>
+        PROPERTY CPACK_START_MENU_SHORTCUTS "DreamChess"
+    )
+
     install(DIRECTORY ../data DESTINATION .)
+
+    if(MSVC)
+        install(CODE "
+            file(GLOB DLLS \"${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/*.dll\")
+            file(INSTALL \${DLLS} DESTINATION \${CMAKE_INSTALL_PREFIX})
+        ")
+    endif()
 elseif(APPLE)
     install(TARGETS dreamchess DESTINATION .)
     install(DIRECTORY ../data/ DESTINATION DreamChess.app/Contents/Resources)
