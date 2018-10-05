@@ -49,3 +49,20 @@ script:
   - cd build
   - cmake ..
   - make
+
+before_deploy:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cpack -G DragNDrop; fi
+
+deploy:
+  provider: releases
+  api_key:
+    secure: mmfiOyTwEkQUTsaYkJbr/2yLJZxbU/VfEafhFlr/yhP9BNnZ8sUR5YelgzsiC+GnIJQDsQLKBz+4sh+I5Jg8nemIP2nVb+2NE1OryggIjVjUNlK5/SKMtoGNruRlJ1c3tCfCHEbxoCCtYvwvQipeb6uHX8GQ1J3kpvD8Ii1hjUBTHgGDy3RkdG2PoFbLc4fzlvS/0AbqRWe6m/g8fxrmuZ0hssyvzRA++GA/yv2A2ZS7kDruvfRRYz0tziEVArQuSHpLqRc6JXB/bywhLMOQIPuyQdISGng8hTG+DkUeEUuL4w2mn/DV4XkFQF9KnUWb+Lmbbkh6Wv/FoW2Kp0WJaMVuLi8xM06/BLGoItm/dk6x2uZs6QiVtPSefudlU9SJ0JjzQ5zOEv/OJcDR0Gv4AJzCJ76ZzDrq+/cXqlFj9D7Tblcj2Fbo0E33bEn9/gL6RiUb+z+I50QE/9ELfH72He3bovKOtI6ZyaqiEhv7ti79uZZZikpvkibRc/oMZDJIgwTRB/NxWQUz64SDc9UYREws2DXyROcmvaavx7RvKxuFVXjQNr2jYnZaAXnWiLAhm7bYYtRrM0tWnfVDuFdLbX3N640z+v4D9U/XyN5Zi6wtaItM2BCOh6v1tmfIQfv2LTpNJTNlQCDhjrK2+/T4iQJ3kisV0jSzgJrilJKIsfM=
+  draft: true
+  tag_name: $TRAVIS_TAG
+  name: DreamChess $TRAVIS_TAG
+  file_glob: true
+  file: "*.dmg"
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: $TRAVIS_OS_NAME = osx
