@@ -37,7 +37,7 @@ void draw_credits(int init)
     static Uint32 start;
     char ***credits;
     Uint32 now;
-    int x = 620;
+    int x = get_gl_width() - 20;
     int y = 270;
     gg_colour_t col_cap = {0.55f, 0.65f, 0.95f, 0.0f};
     gg_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};

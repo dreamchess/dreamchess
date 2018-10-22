@@ -26,6 +26,7 @@ static int fps_enabled = 0;
 static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
+static float gl_width, gl_height;
 
 extern SDL_Window *sdl_window;
 
@@ -74,7 +75,7 @@ int get_true_mouse_y(void)
 
 int get_mouse_x(void)
 {
-    return ((float)mouse_pos.x/(float)get_screen_width())*640;
+    return ((float)mouse_pos.x/(float)get_screen_width())*get_gl_width();
 }
 
 int get_mouse_y(void)
@@ -102,7 +103,7 @@ void go_3d(int width, int height)
 {
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    gluPerspective(45.0f, 640.0f/480.0f, 1.0f, 100.0f);
+    gluPerspective(45.0f, get_gl_width()/480.0f, 1.0f, 100.0f);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
@@ -146,9 +147,21 @@ void resize_window( int width, int height )
     glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    glOrtho(0, 640, 0, 480, -1, 1);
+    gl_width = 480 * width / (float)height;
+    gl_height = 480;
+    glOrtho(0, gl_width, 0, gl_height, -1, 1);
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
+}
+
+float get_gl_width()
+{
+    return gl_width;
+}
+
+float get_gl_height()
+{
+    return gl_height;
 }
 
 /** @brief Swaps the OpenGL buffer.

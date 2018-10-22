@@ -48,7 +48,7 @@ gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *mess
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 60, 0.5f, 0.0f);
+    gg_dialog_set_position(GG_DIALOG(dialog), gg_system_get_screen_width() / 2, 60, 0.5f, 0.0f);
 
     return GG_DIALOG(dialog);
 }
@@ -102,7 +102,13 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 		config_restore(old_config);
 
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
-	}
+	} else {
+        // Recenter dialogs after switching to/from widescreen
+        gg_dialog_set_position(gg_dialog_get_active(), gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
+
+        if (gg_dialog_get_active()->parent_dialog)
+            gg_dialog_set_position(gg_dialog_get_active()->parent_dialog, gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
+    }
 
 	free(old_config);
 
@@ -237,7 +243,7 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 23, 0.5f, 0.0f);
+    gg_dialog_set_position(GG_DIALOG(dialog), gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
     resolution_changed(resolution, NULL, NULL, NULL);

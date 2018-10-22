@@ -248,7 +248,7 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent)
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
     gg_dialog_set_modal(GG_DIALOG(dialog), 1);
-    gg_dialog_set_position(GG_DIALOG(dialog), 320, 23, 0.5f, 0.0f);
+    gg_dialog_set_position(GG_DIALOG(dialog), gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
     gg_dialog_set_style(GG_DIALOG(dialog), get_menu_style());
 
     time_moves_changed(time_moves, NULL, NULL, NULL);

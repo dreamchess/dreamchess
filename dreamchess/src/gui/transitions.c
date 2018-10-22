@@ -43,7 +43,7 @@ int draw_fade( int inout )
         col.a = 1.0f;
 
     if (col.a >= 0.0f)
-        gg_system_draw_filled_rect(0, 0, 640, 480, &col );
+        gg_system_draw_filled_rect(0, 0, get_gl_width(), 480, &col );
 
     if ( amount >= 1.0f )
         return FALSE;

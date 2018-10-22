@@ -128,22 +128,22 @@ static void draw_player_status( coord3_t offset, int white )
         if ( get_game_stalemate() == TRUE )
         {
             gg_system_get_string_size("Tied!", &namew, &nameh );
-            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Tied!", 1, get_col(COL_WHITE));
+            text_draw_string_bouncy( get_gl_width()-offset.x-namew, offset.y, "Tied!", 1, get_col(COL_WHITE));
         }
         else if ( get_black_in_checkmate() == TRUE )
         {
             gg_system_get_string_size("Checkmate!", &namew, &nameh );
-            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Checkmate!", 1, get_col(COL_RED));
+            text_draw_string_bouncy( get_gl_width()-offset.x-namew, offset.y, "Checkmate!", 1, get_col(COL_RED));
         }
         else if ( get_black_in_check() == TRUE )
         {
             gg_system_get_string_size("Check!", &namew, &nameh );
-            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Check!", 1, get_col(COL_RED));
+            text_draw_string_bouncy( get_gl_width()-offset.x-namew, offset.y, "Check!", 1, get_col(COL_RED));
         }
         if ( get_white_in_checkmate() == TRUE )
         {
             gg_system_get_string_size("Victory!", &namew, &nameh );
-            text_draw_string_bouncy( 640-offset.x-namew, offset.y, "Victory!", 1, get_col(COL_WHITE));
+            text_draw_string_bouncy( get_gl_width()-offset.x-namew, offset.y, "Victory!", 1, get_col(COL_WHITE));
         }
     }
 }
@@ -209,13 +209,13 @@ void draw_ui_elements(void)
             draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x+shadow_offset.x, 
                 avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
 
-            draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x-avatar_offset.x+shadow_offset.x, 
+            draw_texture( get_black_piece(GUI_PIECE_AVATAR), get_gl_width()-avatar_size.x-avatar_offset.x+shadow_offset.x, 
                 avatar_offset.y-shadow_offset.y, avatar_size.x, avatar_size.y, 1.0f, get_col(COL_BLACK));
         }
         draw_texture( get_white_piece(GUI_PIECE_AVATAR), avatar_offset.x, avatar_offset.y, avatar_size.x, avatar_size.y,
             1.0f, get_col(COL_WHITE));
 
-        draw_texture( get_black_piece(GUI_PIECE_AVATAR), 640-avatar_size.x-avatar_offset.x, avatar_offset.y, 
+        draw_texture( get_black_piece(GUI_PIECE_AVATAR), get_gl_width()-avatar_size.x-avatar_offset.x, avatar_offset.y, 
             avatar_size.x, avatar_size.y, 1.0f, get_col(COL_WHITE));
     }
 
@@ -223,14 +223,14 @@ void draw_ui_elements(void)
     if ( names )
     {
         text_draw_string( name_offset.x, name_offset.y, white_name, 1, get_col(COL_WHITE));
-        text_draw_string( 640-black_name_size.x-name_offset.x, name_offset.y, black_name, 1, get_col(COL_WHITE));
+        text_draw_string( get_gl_width()-black_name_size.x-name_offset.x, name_offset.y, black_name, 1, get_col(COL_WHITE));
     }
 
     /* Draw the clocks */
     if ( clocks )
     {
         text_draw_string( clock_offset.x-white_clock_size.x, clock_offset.y, white_clock, 1, get_col(COL_WHITE));
-        text_draw_string( 640-clock_offset.x, clock_offset.y, black_clock, 1, get_col(COL_WHITE));
+        text_draw_string( get_gl_width()-clock_offset.x, clock_offset.y, black_clock, 1, get_col(COL_WHITE));
     }
 
     /* Draw the health bars. */
@@ -240,7 +240,7 @@ void draw_ui_elements(void)
         draw_health_bar( health_bar_offset, health_bar_size, TRUE );
 
         black=health_bar_offset;
-        black.x=640-black.x-health_bar_size.x;
+        black.x=get_gl_width()-black.x-health_bar_size.x;
         draw_health_bar( black, health_bar_size, FALSE );
     }   
 
@@ -261,7 +261,7 @@ void draw_ui_elements(void)
 /** @brief Renders the in-game backdrop. */
 void draw_backdrop(void)
 {
-    draw_texture( get_backdrop(), 0, 0, 640, 480, -1.0f, get_col(COL_WHITE) );
+    draw_texture_fullscreen(get_backdrop(), -1.0f);
 }
 
 /** @brief Renders the move list.
@@ -322,9 +322,9 @@ void draw_move_lists( coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col
     for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(get_board()->turn) ? 6 : 8); i -= 2)
     {
         if (i != view)
-            text_draw_string_right( 640-offset.x-5, y-5, list[i], 1, &col_normal2);
+            text_draw_string_right( get_gl_width()-offset.x-5, y-5, list[i], 1, &col_normal2);
         else
-            text_draw_string_right( 640-offset.x-5, y-5, list[i], 1, &col_high2);
+            text_draw_string_right( get_gl_width()-offset.x-5, y-5, list[i], 1, &col_high2);
         y -= text_height();
         col_normal2.a-=0.15f;
         col_high2.a-=0.15f;
@@ -359,8 +359,8 @@ void draw_capture_list( coord3_t offset, gg_colour_t *col)
         {*/
             if (snprintf(s, 4, "%i", get_board()->captured[i - 1]) >= 4)
                 exit(1);
-            text_draw_string_right( 640-offset.x, offset.y, s, 1, col);
-            draw_texture( get_white_piece((i-1)/2), 640-offset.x, offset.y, 24,
+            text_draw_string_right( get_gl_width()-offset.x, offset.y, s, 1, col);
+            draw_texture( get_white_piece((i-1)/2), get_gl_width()-offset.x, offset.y, 24,
                           24, 1.0f, get_col(COL_WHITE) );
        /* }*/
         offset.y -= 28; /*get_text_character('a')->height;*/

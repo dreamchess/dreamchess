@@ -77,8 +77,6 @@
 #define GG_DIALOG_LEFT_BUTTON (1 << 1)
 
 /* FIXME */
-/** Screen width in pixels. */
-#define SCREEN_WIDTH  640
 /** Screen height in pixels. */
 #define SCREEN_HEIGHT 480
 

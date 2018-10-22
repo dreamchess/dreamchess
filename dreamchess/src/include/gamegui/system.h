@@ -98,6 +98,7 @@ typedef struct gg_driver
   void (*get_image_size) (void *image, int *width, int *height);
   void (*get_char_size) (int c, int *width, int *height);
   unsigned int (*get_ticks) (void);
+  float (*get_screen_width) (void);
 }
 gg_driver_t;
 
@@ -155,6 +156,8 @@ void gg_system_draw_string (char *s, int x, int y, gg_colour_t * colour,
 			    int bounce, float align);
 
 unsigned int gg_system_get_ticks (void);
+
+float gg_system_get_screen_width(void);
 
 gg_colour_t gg_colour (float r, float g, float b, float a);
 

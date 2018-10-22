@@ -348,10 +348,10 @@ static config_t *do_menu(int *pgn)
         /* Draw the menu.. */
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
-        draw_texture(&menu_title_tex, 0, 0, 640, 480, 1.0f, get_col(COL_WHITE));
+        draw_texture_fullscreen(&menu_title_tex, 1.0f);
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        text_draw_string_right(620, 20, g_version, 0.75f, get_col(COL_WHITE));
+        text_draw_string_right(get_gl_width() - 20, 20, g_version, 0.75f, get_col(COL_WHITE));
 
         /*if (get_show_egg())
             text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/

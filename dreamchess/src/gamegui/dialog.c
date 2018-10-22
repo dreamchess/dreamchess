@@ -296,7 +296,7 @@ void gg_dialog_render(gg_dialog_t *dialog)
     ymax = (ymin + dialog->height);
 
     /* Draw the 'fade' */
-    gg_system_draw_filled_rect(0, 0, 640, 480, &style->fade_col);
+    gg_system_draw_filled_rect(0, 0, gg_system_get_screen_width(), SCREEN_HEIGHT, &style->fade_col);
 
     gg_system_get_image_size(style->border.image[0], &size, NULL);
 
@@ -488,7 +488,7 @@ void gg_dialog_init(gg_dialog_t *dialog, gg_widget_t *child, char *title,
     child->get_requested_size(child, &dialog->width, &dialog->height);
     child->set_size(child, dialog->width, dialog->height);
 
-    gg_dialog_set_position(dialog, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
+    gg_dialog_set_position(dialog, gg_system_get_screen_width() / 2, SCREEN_HEIGHT / 2, 0.5f, 0.5f);
 
 //  dialog_reset_transition(1);
 }

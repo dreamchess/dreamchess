@@ -96,6 +96,11 @@ unsigned int gg_system_get_ticks(void)
     return driver->get_ticks();
 }
 
+float gg_system_get_screen_width(void)
+{
+    return driver->get_screen_width();
+}
+
 void gg_system_draw_rect(int x, int y, int width, int height, gg_colour_t *colour)
 {
     gg_rect_t dest;

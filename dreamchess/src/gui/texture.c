@@ -116,6 +116,9 @@ void draw_texture( texture_t *texture, float xpos,
     glColor4f( col->r, col->g, col->b, col->a );
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
     glBegin(GL_QUADS);
     glTexCoord2f(texture->u1, texture->v1);
     glVertex3f( xpos, ypos+height, zpos );
@@ -156,6 +159,37 @@ void draw_texture_uv( texture_t *texture, float xpos,
     glDisable(GL_TEXTURE_2D);
 }
 
+void draw_texture_fullscreen(texture_t *texture, float zpos)
+{
+    glEnable( GL_TEXTURE_2D );
+
+    glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+    glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    float hor_visible = texture->height * get_screen_width() / (float)get_screen_height() / texture->width;
+
+    // If the image isn't wide enough, we stretch it
+    if (hor_visible >= 1.0f)
+        hor_visible = 1.0f;
+
+    float u_skip = (1.0f - hor_visible) / 2 * (texture->u2 - texture->u1);
+ 
+    glBegin(GL_QUADS);
+    glTexCoord2f(texture->u1 + u_skip, texture->v1);
+    glVertex3f(0, get_gl_height(), zpos);
+    glTexCoord2f(texture->u2 - u_skip, texture->v1);
+    glVertex3f(get_gl_width(), get_gl_height(), zpos);
+    glTexCoord2f(texture->u2 - u_skip, texture->v2);
+    glVertex3f(get_gl_width(), 0, zpos);
+    glTexCoord2f(texture->u1 + u_skip, texture->v2);
+    glVertex3f(0, 0, zpos);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
 
 /** @brief Loads a PNG file and turns it into a texture.
  *
