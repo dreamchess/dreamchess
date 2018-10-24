@@ -180,6 +180,7 @@ void gl_swap(void)
     }
 
     blit_fbo();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     SDL_GL_SwapWindow(sdl_window);
     now = SDL_GetTicks();
 //    if (now - last < 1000 / FPS)
