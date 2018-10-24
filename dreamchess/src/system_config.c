@@ -112,6 +112,7 @@ void config_init(void)
 	add_resolution(option, 1280, 1024);
 	add_resolution(option, 1280, 720);
 	add_resolution(option, 1920, 1080);
+	add_resolution(option, 3840, 2160);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_option(config, "full_screen");

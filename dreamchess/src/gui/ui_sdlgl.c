@@ -59,8 +59,6 @@ static int mode_set_failed=0;
 static int engine_error_shown;
 SDL_Window *sdl_window;
 static GLuint screen_fb, screen_temp_fb, screen_tex, screen_color_rb, screen_temp_color_rb, screen_depth_stencil_rb;
-static const int max_width = 1920;
-static const int max_height = 1080;
 static int max_samples;
 
 static void music_callback(char *title, char *artist, char *album)
@@ -237,13 +235,13 @@ static int poll_event(gg_event_t *event)
     return 0;
 }
 
-static void init_screen_fbo_ms(int ms) {
+static void init_screen_fbo_ms(int width, int height, int ms) {
     glBindRenderbuffer(GL_RENDERBUFFER, screen_color_rb);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, max_width, max_height);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_color_rb);
 
     glBindRenderbuffer(GL_RENDERBUFFER, screen_depth_stencil_rb);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_DEPTH24_STENCIL8, max_width, max_height);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_DEPTH24_STENCIL8, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screen_depth_stencil_rb);
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -252,7 +250,18 @@ static void init_screen_fbo_ms(int ms) {
     }
 }
 
-static void init_screen_fbo(int ms)
+static void init_screen_temp_fbo(int width, int height) {
+    glBindRenderbuffer(GL_RENDERBUFFER, screen_temp_color_rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_temp_color_rb);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        DBG_ERROR("failed to set up temp FBO");
+        exit(1);
+    }
+}
+
+static void init_screen_fbo(int width, int height, int ms)
 {
     glGenFramebuffers(1, &screen_fb); // Our default-bound framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
@@ -260,15 +269,14 @@ static void init_screen_fbo(int ms)
     glGenRenderbuffers(1, &screen_color_rb);
     glGenRenderbuffers(1, &screen_depth_stencil_rb);
 
-    init_screen_fbo_ms(ms);
+    init_screen_fbo_ms(width, height, ms);
 
     glGenFramebuffers(1, &screen_temp_fb);
     glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
 
     glGenRenderbuffers(1, &screen_temp_color_rb);
-    glBindRenderbuffer(GL_RENDERBUFFER, screen_temp_color_rb);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, max_width, max_height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_temp_color_rb);
+
+    init_screen_temp_fbo(width, height);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         DBG_ERROR("failed to set up temp FBO");
@@ -492,11 +500,13 @@ static int resize(int width, int height, int fullscreen, int ms)
     if (fullscreen != screen_fs && set_fullscreen(fullscreen))
         return 1;
 
-    if (screen_width != width || screen_height != height)
+    if (screen_width != width || screen_height != height) {
         SDL_SetWindowSize(sdl_window, width, height);
+        init_screen_temp_fbo(width, height);
+    }
 
-    if (ms != screen_ms)
-        init_screen_fbo_ms(ms);
+    if (screen_ms != ms || screen_width != width || screen_height != height)
+        init_screen_fbo_ms(width, height, ms);
 
     screen_width = width;
     screen_height = height;
@@ -581,7 +591,7 @@ static int create_window( int width, int height, int fullscreen, int ms)
         return 1;
     }
 
-    init_screen_fbo(ms);
+    init_screen_fbo(width, height, ms);
 
     init_gl();
     load_menu_tex();
