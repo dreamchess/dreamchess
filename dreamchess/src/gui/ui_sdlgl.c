@@ -309,10 +309,10 @@ void blit_fbo()
     }
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    //glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     glBlitFramebuffer(0, 0, fbo_width, fbo_height, start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);    
 }
 
 /** Implements ui_driver::menu */
