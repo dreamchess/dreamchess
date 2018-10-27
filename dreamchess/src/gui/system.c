@@ -180,7 +180,7 @@ void gl_swap(void)
     }
 
     blit_fbo();
-    SDL_GL_SwapWindow(sdl_window);
+    
     now = SDL_GetTicks();
 //    if (now - last < 1000 / FPS)
 //        SDL_Delay(1000 / FPS - (now - last));
