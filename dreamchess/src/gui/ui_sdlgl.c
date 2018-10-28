@@ -313,6 +313,8 @@ void blit_fbo()
     glClear(GL_COLOR_BUFFER_BIT);
     glBlitFramebuffer(0, 0, fbo_width, fbo_height, start_x, start_y, new_width + start_x, new_height + start_y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
+    SDL_GL_SwapWindow(sdl_window);
+    
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);    
 }
 
