@@ -236,6 +236,8 @@ static int poll_event(gg_event_t *event)
 }
 
 static void init_screen_fbo_ms(int width, int height, int ms) {
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
+
     glBindRenderbuffer(GL_RENDERBUFFER, screen_color_rb);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, ms, GL_RGBA8, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_color_rb);
@@ -251,6 +253,8 @@ static void init_screen_fbo_ms(int width, int height, int ms) {
 }
 
 static void init_screen_temp_fbo(int width, int height) {
+    glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
+
     glBindRenderbuffer(GL_RENDERBUFFER, screen_temp_color_rb);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_temp_color_rb);
@@ -264,24 +268,13 @@ static void init_screen_temp_fbo(int width, int height) {
 static void init_screen_fbo(int width, int height, int ms)
 {
     glGenFramebuffers(1, &screen_fb); // Our default-bound framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
-    
     glGenRenderbuffers(1, &screen_color_rb);
     glGenRenderbuffers(1, &screen_depth_stencil_rb);
-
     init_screen_fbo_ms(width, height, ms);
 
     glGenFramebuffers(1, &screen_temp_fb);
-    glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
-
     glGenRenderbuffers(1, &screen_temp_color_rb);
-
     init_screen_temp_fbo(width, height);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        DBG_ERROR("failed to set up temp FBO");
-        exit(1);
-    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
 }
@@ -508,19 +501,18 @@ static int resize(int width, int height, int fullscreen, int ms)
     if (screen_ms != ms || screen_width != width || screen_height != height)
         init_screen_fbo_ms(width, height, ms);
 
-    screen_width = width;
-    screen_height = height;
-    screen_fs = fullscreen;
-    screen_ms = ms;
-
-    resize_window(screen_width, screen_height);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, screen_temp_fb);
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, screen_fb);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    screen_width = width;
+    screen_height = height;
+    screen_fs = fullscreen;
+    screen_ms = ms;
+    resize_window(screen_width, screen_height);
 
     return 0;
 }
