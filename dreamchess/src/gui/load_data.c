@@ -38,6 +38,10 @@ void load_border(texture_t border[9], char *filename)
             rect.h = surface->h / 3;
             border[i] = SDL_GL_LoadTexture(surface, &rect, 1,1);
 
+            // Render size
+            border[i].width = 16;
+            border[i].height = 16;
+
             /* Nearest? */
             glBindTexture(GL_TEXTURE_2D, border[i].id);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
