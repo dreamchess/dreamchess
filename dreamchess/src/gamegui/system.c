@@ -288,14 +288,14 @@ void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounc
         rect_d.y = y + y_off;
 
         /* FIXME */
-        rect_d.x += 2;
-        rect_d.y -= 2;
+        rect_d.x += 1;
+        rect_d.y -= 1;
 
         /* FIXME  Magic alpha value to turn off shadow */
         if ( colour->a != 2.0f)
             gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-        rect_d.x -= 2;
-        rect_d.y += 2;
+        rect_d.x -= 1;
+        rect_d.y += 1;
 
         gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, colour);
 

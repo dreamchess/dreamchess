@@ -48,7 +48,7 @@ int text_draw_char( float xpos, float ypos, float scale, int character, gg_colou
     if (index < 0)
         index += 256;
 
-    draw_texture( &text_characters[index], xpos+2, ypos-2, text_characters[index].width*scale,
+    draw_texture( &text_characters[index], xpos+1, ypos-1, text_characters[index].width*scale,
                   text_characters[index].height*scale, 1.0f, &black );
 
     draw_texture( &text_characters[index], xpos, ypos, text_characters[index].width*scale,
@@ -205,6 +205,10 @@ void generate_text_chars(void)
             c.id = texture.id;
 
             xpos++;
+
+            // Scale it back to 480 vertical resolution
+            c.width /= 3;
+            c.height /= 3;
 
             text_characters[i*16+j] = c;
         }

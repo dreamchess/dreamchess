@@ -116,9 +116,6 @@ void draw_texture( texture_t *texture, float xpos,
     glColor4f( col->r, col->g, col->b, col->a );
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
     glBegin(GL_QUADS);
     glTexCoord2f(texture->u1, texture->v1);
     glVertex3f( xpos, ypos+height, zpos );
