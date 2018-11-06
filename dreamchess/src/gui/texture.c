@@ -69,7 +69,7 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
     glGenTextures(1, &texture.id);
     glBindTexture(GL_TEXTURE_2D, texture.id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     if (clamp)
     {
@@ -86,6 +86,9 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
                  GL_UNSIGNED_BYTE,
                  image->pixels);
     SDL_FreeSurface(image); /* No longer needed */
+
+    glEnable(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     texture.u1 = 0;
     texture.v1 = 0;

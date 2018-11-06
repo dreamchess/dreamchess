@@ -128,6 +128,7 @@ void init_gl(void)
 
     /* Really Nice Perspective Calculations */
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+    glHint( GL_GENERATE_MIPMAP_HINT, GL_NICEST);
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
