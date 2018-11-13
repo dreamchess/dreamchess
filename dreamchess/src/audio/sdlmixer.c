@@ -90,7 +90,10 @@ void audio_init(void)
 
 	music_packs = theme_get_music_packs();
 
-	SDL_Init(SDL_INIT_AUDIO);
+	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+		DBG_ERROR("SDL audio initialization failed: %s", SDL_GetError());
+		return;
+	}
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
 		DBG_ERROR("unable to open audio");
