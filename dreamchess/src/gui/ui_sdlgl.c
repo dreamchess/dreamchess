@@ -495,7 +495,7 @@ static int resize(int width, int height, int fullscreen, int ms)
     if (fullscreen != screen_fs && set_fullscreen(fullscreen))
         return 1;
 
-    if (screen_width != width || screen_height != height) {
+    if (screen_width != width || screen_height != height || screen_fs != fullscreen) {
         SDL_SetWindowSize(sdl_window, width, height);
         init_screen_temp_fbo(width, height);
     }
