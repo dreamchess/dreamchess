@@ -1,0 +1,15 @@
+{
+    "name": "pugixml",
+    "cmake": true,
+    "build-options": {
+        "cflags": "-fPIC",
+        "cxxflags": "-fPIC"
+    },
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://github.com/zeux/pugixml/releases/download/v1.8/pugixml-1.8.tar.gz",
+            "sha256": "8ef26a51c670fbe79a71e9af94df4884d5a4b00a2db38a0608a87c14113b2904"
+        }
+    ]
+}

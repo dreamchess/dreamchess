@@ -1,0 +1,41 @@
+{
+  "app-id": "org.dreamchess.dreamchess",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "1.6",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "dreamchess",
+  "rename-desktop-file": "dreamchess.desktop",
+  "rename-appdata-file": "dreamchess.appdata.xml",
+  "rename-icon": "dreamchess",
+  "finish-args": [
+    "--socket=wayland",
+	"--socket=fallback-x11",
+    "--filesystem=home",
+	"--filesystem=xdg-config/kdeglobals:ro",
+	"--socket=pulseaudio",
+	"--device=dri"
+	],	
+    "modules": [
+		"modules/glew-2.0.0.json",
+		"modules/pugixml.json",
+		"modules/glu-9.0.0.json",
+		{
+		"name": "dreamchess",
+		"buildsystem": "cmake",
+		"config-opts": ["-DCMAKE_PREFIX_PATH=/app",
+						"-DCMAKE_BUILD_TYPE=Release"],
+		"build-commands": [
+			"desktop-file-install --dir=/app/share/applications dreamchess/desktop/dreamchess.desktop",
+			"install -Dm755 dreamchess/appdata/dreamchess.appdata.xml /app/share/metainfo/dreamchess.appdata.xml",
+			"install -Dm755 dreamchess/desktop/48/dreamchess.png /app/share/icons/hicolor/48x48/apps/dreamchess.png",
+			"install -Dm755 dreamchess/desktop/256/dreamchess.png /app/share/icons/hicolor/256x256/apps/dreamchess.png"		
+		],
+		"sources": [
+		  {
+			"type": "git",
+			"url": "https://github.com/dreamchess/dreamchess.git"
+		  }
+		]
+		}
+    ]
+}
