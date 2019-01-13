@@ -1,4 +1,4 @@
-### 2018-??-?? - DreamChess 0.3.0
+### 2019-??-?? - DreamChess 0.3.0
 
 Most important changes:
 - Now uses SDL2 instead of SDL1

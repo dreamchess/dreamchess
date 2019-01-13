@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(DreamChess VERSION 0.3.0)
 
 set(DREAMCHESS_RELEASE FALSE)
-set(COPYRIGHT_YEAR 2018)
+set(COPYRIGHT_YEAR 2019)
 
 option(BUILD_DREAMCHESS "Build DreamChess GUI" ON)
 option(BUILD_DREAMER "Build Dreamer chess engine" ON)

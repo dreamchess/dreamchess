@@ -1,5 +1,5 @@
 DreamChess
-Copyright (C) 2003-2018 by the following:
+Copyright (C) 2003-2019 by the following:
 
 Andrew Ball
 Annie Kirkpatrick
