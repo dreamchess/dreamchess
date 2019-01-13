@@ -42,10 +42,9 @@ void load_border(texture_t border[9], char *filename)
             border[i].width = 16;
             border[i].height = 16;
 
-            /* Nearest? */
             glBindTexture(GL_TEXTURE_2D, border[i].id);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         }
         /* Free up any memory we may have used */
         SDL_FreeSurface(surface);

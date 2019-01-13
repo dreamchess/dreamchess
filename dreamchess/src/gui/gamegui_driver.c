@@ -154,7 +154,7 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
     }
     else
     {
-        en_h = GL_CLAMP;
+        en_h = GL_CLAMP_TO_EDGE;
         width = source.width / tex_h;
     }
 
@@ -165,7 +165,7 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
     }
     else
     {
-        en_v = GL_CLAMP;
+        en_v = GL_CLAMP_TO_EDGE;
         height = source.height / tex_v;
     }
 
