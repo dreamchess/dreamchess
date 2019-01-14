@@ -34,8 +34,8 @@ static texture_t white_pieces[7];
 static texture_t black_pieces[7];
 static texture_t selector_tex;
 
-static char white_name[80];
-static char black_name[80];
+static char *white_name;
+static char *black_name;
 
 texture_t *get_menu_border(void)
 {
@@ -170,6 +170,9 @@ void load_theme(struct theme_struct *theme)
         }
     }
 
+    white_name = strdup(theme->white_name);
+    black_name = strdup(theme->black_name);
+
     set_theme(theme, selector_tex);
 
     ch_datadir();
@@ -178,6 +181,10 @@ void load_theme(struct theme_struct *theme)
 /** @brief Frees all textures of the currently loaded theme. */
 void unload_theme(void)
 {
+    free(white_name);
+    white_name = NULL;
+    free(black_name);
+    black_name = NULL;
     glDeleteTextures(1, &white_pieces[GUI_PIECE_KING].id);
     glDeleteTextures(1, &backdrop.id);
     glDeleteTextures(1, &selector_tex.id);

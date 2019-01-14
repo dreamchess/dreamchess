@@ -35,6 +35,8 @@
 #include "options.h"
 #include "dir.h"
 
+#define THEME_DIR "themes"
+
 static music_packs_t music_packs;
 
 static int load_opaque(mxml_node_t *top, char *name, char **dest)
@@ -165,14 +167,14 @@ static void find_themes(option_t *option)
     HANDLE hFind;
     WIN32_FIND_DATA ffd;
 
-    hFind = FindFirstFile("themes\\*.xml", &ffd);
+    hFind = FindFirstFile(THEME_DIR "\\*.xml", &ffd);
 
     if (hFind == INVALID_HANDLE_VALUE)
         return;
 
     do {
-        char *filename = malloc(strlen(ffd.cFileName) + 7 + 1);
-        strcpy(filename, "themes\\");
+        char *filename = malloc(strlen(ffd.cFileName) + strlen(THEME_DIR) + 1 + 1);
+        strcpy(filename, THEME_DIR "\\");
         strcat(filename, ffd.cFileName);
         theme_add_theme(filename, option);
         free(filename);
@@ -188,15 +190,17 @@ static void find_themes(option_t *option)
     DIR* themedir;
     struct dirent* themedir_entry;
 
-    if ( (themedir=opendir("themes")) != NULL )
+    if ( (themedir=opendir(THEME_DIR)) != NULL )
     {
         while ((themedir_entry = readdir(themedir)) != NULL)
         {
-            char temp[80];
             if ( themedir_entry->d_name[0] != '.' )
             {
-                sprintf( temp, "themes/%s", themedir_entry->d_name );
-                theme_add_theme(temp, option);
+                char *filename = malloc(strlen(THEME_DIR) + 1 + strlen(themedir_entry->d_name) + 1);
+                strcpy(filename, THEME_DIR "/");
+                strcat(filename, themedir_entry->d_name);
+                theme_add_theme(filename, option);
+                free(filename);
             }
         }
         closedir(themedir);
