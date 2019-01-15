@@ -30,7 +30,8 @@
 
 char *fen_encode(board_t *board)
 {
-	char *fen = malloc(256);
+	const size_t fen_max_size = 255;
+	char *fen = malloc(fen_max_size + 1);
 	int feni = 0;
 	int file, rank;
 
@@ -50,7 +51,8 @@ char *fen_encode(board_t *board)
 
 			if (empty)
 			{
-				feni += sprintf(fen + feni, "%i", empty);
+				if (feni < fen_max_size)
+					fen[feni++] = '0' + empty;
 				empty = 0;
 			}
 
@@ -78,17 +80,19 @@ char *fen_encode(board_t *board)
 			if (IS_WHITE(piece))
 				c = toupper(c);
 
-			feni += sprintf(fen + feni, "%c", c);
+			if (feni < fen_max_size)
+				fen[feni++] = c;
 		}
 		if (empty)
 		{
-			feni += sprintf(fen + feni, "%i", empty);
+			if (feni < fen_max_size)
+				fen[feni++] = '0' + empty;
 			empty = 0;
 		}
-		if (rank > 0)
+		if (rank > 0 && feni < fen_max_size)
 			fen[feni++] = '/';
 	}
-	sprintf(fen + feni, " %c KQkq - 0 1", board->turn == WHITE ? 'w' : 'b');
+	snprintf(fen + feni, fen_max_size + 1 - feni, " %c KQkq - 0 1", board->turn == WHITE ? 'w' : 'b');
 
 	return fen;
 }

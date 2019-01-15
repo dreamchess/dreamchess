@@ -112,7 +112,7 @@ void write_save_xml( int slot )
     mxml_node_t *tree;
     char *fen;
 
-    sprintf( temp, "save%i.xml", slot );
+    snprintf( temp, sizeof(temp), "save%i.xml", slot );
 
     if (ch_userdir())
     {
@@ -130,7 +130,7 @@ void write_save_xml( int slot )
     fprintf( fp, "<?xml version=\"1.0\"?>\n" );
     tree = mxmlNewElement( MXML_NO_PARENT, "save" );
 
-    sprintf(temp, "%i", (int) time(NULL));
+    snprintf(temp, sizeof(temp), "%i", (int) time(NULL));
     save_opaque(tree, "time", temp);
 
     if (get_config()->player[WHITE] == PLAYER_UI)
@@ -143,10 +143,10 @@ void write_save_xml( int slot )
     else
         save_opaque(tree, "black", "engine");
 
-    sprintf(temp, "%i", get_config()->cpu_level);
+    snprintf(temp, sizeof(temp), "%i", get_config()->cpu_level);
     save_opaque(tree, "level", temp);
 
-    sprintf(temp, "%i", get_config()->difficulty);
+    snprintf(temp, sizeof(temp), "%i", get_config()->difficulty);
     save_opaque(tree, "difficulty", temp);
 
     fen = fen_encode(get_board());
@@ -171,7 +171,7 @@ void load_save_xml( int slot )
     char temp[256];
     mxml_node_t *tree, *save;
 
-    sprintf( temp, "save%i.xml", slot );
+    snprintf( temp, sizeof(temp), "save%i.xml", slot );
 
     if (ch_userdir())
     {
@@ -207,7 +207,7 @@ void load_save_xml( int slot )
 
         time = atoi(temp);
         tm = localtime(&time);
-        sprintf(time_save[slot], "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon+1,
+        snprintf(time_save[slot], sizeof(time_save[slot]), "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon+1,
                 tm->tm_hour, tm->tm_min);
 
         load_opaque(save, "white", temp);

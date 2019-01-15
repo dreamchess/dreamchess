@@ -85,7 +85,7 @@ int ch_datadir(void)
 	stringref=CFURLCopyFileSystemPath( resdir, kCFURLPOSIXPathStyle );	
 	CFStringGetCString ( stringref, temp2, 200, kCFStringEncodingMacRoman);
 	
-	sprintf( temp3, "%s/%s", temp2, temp1 );
+	snprintf( temp3, sizeof(temp3), "%s/%s", temp2, temp1 );
 	
 	return chdir(temp3);
 }

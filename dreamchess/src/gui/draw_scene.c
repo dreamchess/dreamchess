@@ -68,7 +68,7 @@ void draw_scene( board_t *b, GLuint fb, int reflections )
 
     clock_minutes=(((SDL_GetTicks()-get_turn_counter())/1000)/60);
     clock_seconds=((SDL_GetTicks()-get_turn_counter())/1000)-(clock_minutes*60);
-    sprintf( temp, "%i:%02i", clock_minutes, clock_seconds );
+    snprintf( temp, sizeof(temp), "%i:%02i", clock_minutes, clock_seconds );
     /*text_draw_string( 303, 440, temp, 1, &col_black);*/
     glPopMatrix();
 

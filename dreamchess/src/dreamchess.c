@@ -191,7 +191,7 @@ int game_save( int slot )
 
     if (!ch_userdir())
     {
-        sprintf( temp, "save%i.pgn", slot );
+        snprintf( temp, sizeof(temp), "save%i.pgn", slot );
         retval = history_save_pgn(history, temp);
     }
     else
@@ -319,7 +319,7 @@ int game_load( int slot )
 
     comm_send("force\n");
 
-    sprintf( temp, "save%i.pgn", slot );
+    snprintf( temp, sizeof(temp), "save%i.pgn", slot );
     retval = pgn_parse_file(temp);
 
     if (retval)
@@ -576,7 +576,7 @@ int dreamchess(void *data)
 			CFStringRef stringref=CFURLCopyFileSystemPath( bundledir, kCFURLPOSIXPathStyle );	
 			CFStringGetCString ( stringref, temp1, 200, kCFStringEncodingMacRoman);
 	
-			sprintf( temp2, "%s/contents/MacOS/dreamer", temp1 );
+			snprintf( temp2, sizeof(temp2), "%s/contents/MacOS/dreamer", temp1 );
 		
 			game_set_engine_error(comm_init(temp2));
 		}

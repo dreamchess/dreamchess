@@ -110,7 +110,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     gg_widget_t *hboxtemp;
     gg_widget_t *widget;
     char temp[80];
-    char whiteis[80], blackis[80];
+    char *whiteis, *blackis;
     int i=0,j=0;
     int padding=0;
 
@@ -132,48 +132,48 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     {
         gg_widget_t *board_box = gg_vbox_create(0);
 
-        sprintf( temp, "Saved: %s", get_time_save(saveload_selected) );
+        snprintf( temp, sizeof(temp), "Saved: %s", get_time_save(saveload_selected) );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
         switch ( get_config_save(saveload_selected)->player[WHITE] )
         {
         case PLAYER_ENGINE:
-            sprintf( whiteis, "CPU" );
+            whiteis = "CPU";
             break;
         case PLAYER_UI:
-            sprintf( whiteis, "Human" );
+            whiteis = "Human";
             break;
         default:
             /* Whoops */
-            sprintf( whiteis, "Oh no.." );
+            whiteis = "Oh no..";
             break;
         }
 
         switch ( get_config_save(saveload_selected)->player[BLACK] )
         {
         case PLAYER_ENGINE:
-            sprintf( blackis, "CPU" );
+            blackis = "CPU";
             break;
         case PLAYER_UI:
-            sprintf( blackis, "Human" );
+            blackis = "Human";
             break;
         default:
             /* Whoops */
-            sprintf( blackis, "Oh no.." );
+            blackis = "Oh no..";
             break;
         }
 
-        sprintf( temp, "%s vs %s", whiteis, blackis );
+        snprintf( temp, sizeof(temp), "%s vs %s", whiteis, blackis );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        sprintf( temp, "Difficulty: %s",
+        snprintf( temp, sizeof(temp), "Difficulty: %s",
             get_config_save(saveload_selected)->difficulty ? "Normal" : "Easy" );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
-        sprintf( temp, "Level: %i",
+        snprintf( temp, sizeof(temp), "Level: %i",
             get_config_save(saveload_selected)->cpu_level );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
@@ -206,7 +206,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
                 gg_colour_t front, *back;
                 int square = get_saved_board(saveload_selected)->square[i * 8 + j];
 
-                sprintf(temp, "%c", xmlsquaretofont(square));
+                snprintf(temp, sizeof(temp), "%c", xmlsquaretofont(square));
                 widget = gg_label_create( temp );
                 gg_set_requested_size(widget, 20, 20);
                 gg_align_set_alignment(GG_ALIGN(widget), 0.5, 0.5);
@@ -233,7 +233,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     }
     else
     {
-        sprintf( temp, "Empty slot" );
+        snprintf( temp, sizeof(temp), "Empty slot" );
         widget = gg_label_create(temp);
         gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -258,7 +258,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
     widget = gg_option_create();
     for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
-        sprintf( temp, "Save slot: %i", i+1 );
+        snprintf( temp, sizeof(temp), "Save slot: %i", i+1 );
         gg_option_append_label(GG_OPTION(widget), temp, 0.5f, 0.0f);
     }
     gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", 
@@ -289,7 +289,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving)
 
     /*for ( i=0; i<SAVEGAME_SLOTS; i++ )
     {
-        sprintf( temp, "%i:  ", i );
+        snprintf( temp, sizeof(temp), "%i:  ", i );
         widget = gg_action_create_with_label(temp, 0.0f, 0.0f);
 
         gg_action_set_callback(GG_ACTION(widget), dialog_saveload_change, vbox);
