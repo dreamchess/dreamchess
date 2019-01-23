@@ -30,6 +30,7 @@
 #include "ui_sdlgl.h"
 #include "ui_sdlgl_3d.h"
 #include "theme.h"
+#include "audio.h"
 
 typedef struct coord3d
 {
@@ -239,6 +240,7 @@ int get_piece_moving_done(void)
 
 void start_piece_move( int source, int dest )
 {
+    audio_play_sound(AUDIO_MOVE);
     piece_moving_start=SDL_GetTicks();
 
     piece_moving_done=0;

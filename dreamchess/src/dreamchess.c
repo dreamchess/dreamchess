@@ -641,7 +641,8 @@ int dreamchess(void *data)
                             engine_move = fullalg_to_move(&new_board, move_str);
                         if (engine_move)
                         {
-                            audio_play_sound(AUDIO_MOVE);
+                            // We've moved this to the start of the animation..
+                            //audio_play_sound(AUDIO_MOVE);
                             do_move(engine_move, 1);
                             free(engine_move);
                         }
