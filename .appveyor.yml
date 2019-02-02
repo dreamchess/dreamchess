@@ -36,7 +36,7 @@ install:
   - |-
     %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/v2.12/mxml-2.12.tar.gz
     %DEP% 7z x mxml-2.12.tar.gz > nul
-    %DEP% 7z x mxml-2.12.tar -omxml-2.12 > nul
+    %DEP% 7z x mxml-2.12.tar > nul
     %MSVC% %DEP% msbuild mxml-2.12\vcnet\mxmlstat.vcxproj /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
     %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%'/mxml-2.12 && ./configure && make libmxml.a"
     %DEP% copy mxml-2.12\mxml.h %PREFIX%\include > nul
