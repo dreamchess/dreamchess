@@ -24,10 +24,9 @@
 #include "options.h"
 
 void config_init(void);
-void config_save(void);
+int config_save(void);
+int config_load(void);
 option_t *config_get_option(char *name);
-char *config_backup(void);
-int config_restore(char *string);
 void config_set_failsafe_video(void);
 
 typedef struct config_resolution {

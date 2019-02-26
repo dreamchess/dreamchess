@@ -64,23 +64,18 @@ static void create_option_values(gg_option_t *widget, option_t *option)
     gg_option_set_selected(widget, option->selected->index);
 }
 
-static int dialog_cancel_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data )
+static int dialog_cancel_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-	char *old_config = extra_data;
-
-	config_restore(old_config);
-	free(old_config);
-
+	config_load();
 	gg_dialog_close();
 	return 1;
 }
 
-static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data )
+static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
 	int width;
 	int height;
 	option_t *option;
-	char *old_config = extra_data;
 
 	errno = 0;
 	width = strtol(gg_entry_get_text(GG_ENTRY(entry1)), NULL, 10);
@@ -98,8 +93,8 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 
 	gg_dialog_close();
 
-	if (set_resolution(0)) {
-		config_restore(old_config);
+	if (!set_resolution(0)) {
+		config_load();
 
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
 	} else {
@@ -109,8 +104,6 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
         if (gg_dialog_get_active()->parent_dialog)
             gg_dialog_set_position(gg_dialog_get_active()->parent_dialog, gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
     }
-
-	free(old_config);
 
 	return 1;
 }
@@ -166,9 +159,8 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
     gg_widget_t *resolution;
     option_t *option;
     char val[5];
-    char *old_config;
 
-    old_config = config_backup();
+    config_save();
 
     vbox = gg_vbox_create(0);
     vbox2 = gg_vbox_create(0);
@@ -234,11 +226,11 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent)
 
 	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_ok_cb, old_config);
+        dialog_ok_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
     gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed",
-        dialog_cancel_cb, old_config);
+        dialog_cancel_cb, NULL);
     gg_container_append(GG_CONTAINER(vbox), widget);
 
     dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);

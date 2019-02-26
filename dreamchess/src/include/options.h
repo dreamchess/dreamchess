@@ -65,9 +65,7 @@ typedef struct option_group
 option_group_t *option_group_create(char *name);
 option_t *option_group_add_option(option_group_t *group, char *name);
 int option_group_save_xml(option_group_t *group);
-char *option_group_save_string(option_group_t *group);
 int option_group_load_xml(option_group_t *group);
-int option_group_load_string(option_group_t *group, char *string);
 void option_add_value(option_t *option, char *name, void *data);
 int option_select_value_by_name(option_t *option, char *name);
 int option_select_value_by_index(option_t *option, int index);

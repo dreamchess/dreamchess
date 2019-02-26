@@ -152,7 +152,7 @@ void config_init(void)
 		option_add_value(option, buf, NULL);
 	}
 
-	option_group_load_xml(config);
+	config_load();
 }
 
 void config_set_failsafe_video(void)
@@ -172,19 +172,14 @@ void config_set_failsafe_video(void)
 	option_select_value_by_name(option, "Off");
 }
 
-void config_save(void)
+int config_save(void)
 {
-	option_group_save_xml(config);
+	return option_group_save_xml(config);
 }
 
-char *config_backup(void)
+int config_load(void)
 {
-	return option_group_save_string(config);
-}
-
-int config_restore(char *string)
-{
-	return option_group_load_string(config, string);
+	return option_group_load_xml(config);
 }
 
 option_t *config_get_option(char *name)

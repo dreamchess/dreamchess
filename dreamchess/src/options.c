@@ -150,14 +150,6 @@ int option_group_save_xml(option_group_t *group)
 	return error;
 }
 
-char *option_group_save_string(option_group_t *group)
-{
-	mxml_node_t *xml;
-
-	xml = option_group_save(group);
-	return mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
-}
-
 static void option_group_load(option_group_t *group, mxml_node_t *tree)
 {
 	mxml_node_t *node;
@@ -228,20 +220,6 @@ int option_group_load_xml(option_group_t *group)
 		node = tree;
 
 	free(filename);
-	option_group_load(group, tree);
-
-	return 0;
-}
-
-int option_group_load_string(option_group_t *group, char *string)
-{
-	mxml_node_t *tree =mxmlLoadString(NULL, string, MXML_OPAQUE_CALLBACK);
-
-	if (!tree) {
-		DBG_ERROR("failed to parse XML string");
-		return -1;
-	}
-
 	option_group_load(group, tree);
 
 	return 0;
