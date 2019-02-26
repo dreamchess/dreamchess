@@ -157,7 +157,7 @@ float get_ui_trans_pos(void);
 
 /* xmlsavefile.c */
 void load_save_xml( int slot );
-void write_save_xml( int slot );
+int write_save_xml( int slot );
 int get_slots(void);
 void set_slots( int slots );
 char *get_time_save( int index );

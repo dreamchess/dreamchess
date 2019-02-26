@@ -95,37 +95,33 @@ option_t *option_group_add_string(option_group_t *group, char *name)
 	return option;
 }
 
-static mxml_node_t *option_group_save(option_group_t *group)
+static void option_group_save(option_group_t *group, FILE *f)
 {
-	mxml_node_t *xml, *root;
 	option_t *option;
 
-	root = mxmlNewElement(MXML_NO_PARENT, "?xml version=\"1.0\"?");
-	xml = mxmlNewElement(root, "options");
+	fputs("<?xml version=\"1.0\"?>\n<options>\n", f);
 
 	TAILQ_FOREACH(option, &group->options, entries) {
-		mxml_node_t *data;
-		data = mxmlNewElement(xml, option->name);
+		fprintf(f, "<%s>", option->name);
 
 		if (option->type == OPTION_TYPE_OPTION)
-			mxmlNewText(data, 0, option->selected->name);
+			fputs(option->selected->name, f);
 		else if (option->type == OPTION_TYPE_INT)
-			mxmlNewInteger(data, option->value);
-                else
-                        mxmlNewText(data, 0, option->string);
+			fprintf(f, "%d", option->value);
+		else
+			fputs(option->string, f);
+
+		fprintf(f, "</%s>\n", option->name);
 	}
 
-	return root;
+	fputs("</options>\n", f);
 }
 
 int option_group_save_xml(option_group_t *group)
 {
-	mxml_node_t *xml;
 	FILE *f;
 	char *filename;
-	int error;
-
-	xml = option_group_save(group);
+	int error = 0;
 
 	filename = malloc(strlen(group->name) + 4 + 1);
 	strcpy(filename, group->name);
@@ -135,16 +131,19 @@ int option_group_save_xml(option_group_t *group)
 	f = fopen(filename, "w");
 
 	if (!f) {
-		mxmlDelete(xml);
 		DBG_ERROR("failed to open '%s'", filename);
 		free(filename);
 		return -1;
 	}
 
-	error = mxmlSaveFile(xml, f, whitespace_cb);
-	free(filename);
-	mxmlDelete(xml);
+	option_group_save(group, f);
 
+	if (ferror(f)) {
+		DBG_ERROR("failed to write '%s'", filename);
+		error = -1;
+	}
+
+	free(filename);
 	fclose(f);
 
 	return error;

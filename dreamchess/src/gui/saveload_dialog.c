@@ -80,20 +80,11 @@ static int dialog_saveload_change(gg_widget_t *widget, gg_widget_t *emitter, voi
 
 static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data)
 {
-    int save_good=TRUE;
-
     /* Close the dialogs.. */
     gg_dialog_close();
     gg_dialog_close();
 
-    if (!game_save( saveload_selected ))
-    {
-        write_save_xml( saveload_selected );
-    }
-    else
-        save_good=FALSE;
-
-    if ( save_good )
+    if (!game_save(saveload_selected) && !write_save_xml(saveload_selected))
         show_message_dialog( "Save successful" );
     else
         show_message_dialog( "Save failed" );

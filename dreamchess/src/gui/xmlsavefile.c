@@ -50,27 +50,6 @@ int get_slots(void)
     return slots;
 }
 
-static const char *whitespace_cb(mxml_node_t *node, int where)
-{
-    const char *name;
-    name = node->value.element.name;
-
-    if (!strcmp(name, "save"))
-    {
-        if (where == MXML_WS_AFTER_OPEN)
-            return "\n";
-    }
-    else
-    {
-        if (where == MXML_WS_BEFORE_OPEN)
-            return "\t";
-        else if (where == MXML_WS_AFTER_CLOSE)
-            return "\n";
-    }
-
-    return (NULL);
-}
-
 static int load_opaque(mxml_node_t *top, char *name, char *dest)
 
 {
@@ -99,69 +78,70 @@ static int load_opaque(mxml_node_t *top, char *name, char *dest)
 
 }
 
-static void save_opaque(mxml_node_t *parent, char *name, char *value)
-{
-    mxml_node_t *node = mxmlNewElement(parent, name);
-    mxmlNewOpaque(node, value);
-}
-
-void write_save_xml( int slot )
+int write_save_xml(int slot)
 {
     FILE *fp;
     char temp[80];
-    mxml_node_t *tree;
     char *fen;
+    int retval = 0;
 
     snprintf( temp, sizeof(temp), "save%i.xml", slot );
 
     if (ch_userdir())
     {
         DBG_WARN("could not enter user directory");
-        return;
+        return -1;
     }
 
     fp = fopen(temp, "w");
 
     if (!fp)
-        return;
+        return -1;
 
     DBG_LOG("writing save xml: %s", temp );
 
-    fprintf( fp, "<?xml version=\"1.0\"?>\n" );
-    tree = mxmlNewElement( MXML_NO_PARENT, "save" );
-
-    snprintf(temp, sizeof(temp), "%i", (int) time(NULL));
-    save_opaque(tree, "time", temp);
+    fputs("<?xml version=\"1.0\"?>\n<save>\n", fp);
+    fprintf(fp, "<time>%i</time>\n<white>", (int)time(NULL));
 
     if (get_config()->player[WHITE] == PLAYER_UI)
-        save_opaque(tree, "white", "ui");
+        fputs("ui", fp);
     else
-        save_opaque(tree, "white", "engine");
+        fputs("engine", fp);
+
+    fputs("</white>\n<black>", fp);
 
     if (get_config()->player[BLACK] == PLAYER_UI)
-        save_opaque(tree, "black", "ui");
+        fputs("ui", fp);
     else
-        save_opaque(tree, "black", "engine");
+        fputs("engine", fp);
 
-    snprintf(temp, sizeof(temp), "%i", get_config()->cpu_level);
-    save_opaque(tree, "level", temp);
+    fputs("</black>\n", fp);
 
-    snprintf(temp, sizeof(temp), "%i", get_config()->difficulty);
-    save_opaque(tree, "difficulty", temp);
+    fprintf(fp, "<level>%i</level>\n", get_config()->cpu_level);
+    fprintf(fp, "<difficulty>%i</difficulty>\n", get_config()->difficulty);
 
     fen = fen_encode(get_board());
     if (!fen)
     {
-        DBG_ERROR( "error encoding FEN");
+        DBG_ERROR("error encoding FEN");
+        retval = -1;
     }
     else
     {
-        save_opaque(tree, "fen", fen);
+        fprintf(fp, "<fen>%s</fen>\n", fen);
         free(fen);
     }
 
-    mxmlSaveFile(tree, fp, whitespace_cb);
+    fputs("</save>\n", fp);
+
+    if (ferror(fp)) {
+        DBG_ERROR("error writing XML file for savegame in slot %d", slot);
+        retval = -1;
+    }
+
     fclose(fp);
+
+    return retval;
 }
 
 /*static void load_opaque(mxml_node_t *top, char *name, char *dest);*/
