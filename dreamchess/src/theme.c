@@ -327,7 +327,7 @@ void theme_find_music_packs(void)
 
         if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
             "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\DreamChess Music",
-            0, KEY_QUERY_VALUE, &key) != ERROR_SUCCESS)
+            0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key) != ERROR_SUCCESS)
         {
             DBG_LOG("couldn't find music pack in registry");
             return;
