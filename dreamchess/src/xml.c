@@ -83,7 +83,7 @@ static void copy_attrs(state *s, char **attrs) {
 	free_attrs(s);
 	s->attrs = malloc((count + 1) * sizeof(char *));
 
-	for (int i = 0; i < count; ++i) {
+	for (i = 0; i < count; ++i) {
 		s->attrs[i] = malloc(strlen(attrs[i]) + 1);
 		strcpy(s->attrs[i], attrs[i]);
 	}
