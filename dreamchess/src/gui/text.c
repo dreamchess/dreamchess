@@ -187,6 +187,8 @@ void generate_text_chars(void)
         exit(1);
     }
 
+    fclose(f);
+
     for (i = 0; i < 16; i++ )
     {
         int xpos = 0;
