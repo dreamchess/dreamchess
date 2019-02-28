@@ -93,7 +93,7 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 
 	gg_dialog_close();
 
-	if (!set_resolution(0)) {
+	if (set_resolution(0)) {
 		config_load();
 
 		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
