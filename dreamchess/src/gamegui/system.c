@@ -175,34 +175,24 @@ void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mod
         x_offset = dest_c.x - dest.x;
         y_offset = dest.y + dest.height - dest_c.y - dest_c.height;
 
-        switch (mode_h)
-        {
-        case GG_MODE_SCALE:
-            {
-                /* Magnification factor. */
-                float x_mag = dest.width / (float) source.width;
+        if (mode_h == GG_MODE_SCALE) {
+            /* Magnification factor. */
+            float x_mag = dest.width / (float) source.width;
 
-                source_c.x = source.x + x_offset / x_mag;
-                source_c.width = dest_c.width / x_mag;
-            }
-            break;
-        case GG_MODE_TILE:
+            source_c.x = source.x + x_offset / x_mag;
+            source_c.width = dest_c.width / x_mag;
+        } else {
             source_c.x = source.x + x_offset % source.width;
             /* Width is undefined for GG_MODE_TILE. */
         }
 
-        switch (mode_v)
-        {
-        case GG_MODE_SCALE:
-            {
-                /* Magnification factor. */
-                float y_mag = dest.height / (float) source.height;
+        if (mode_v == GG_MODE_SCALE) {
+            /* Magnification factor. */
+            float y_mag = dest.height / (float) source.height;
 
-                source_c.y = source.y + y_offset / y_mag;
-                source_c.height = dest_c.height / y_mag;
-            }
-            break;
-        case GG_MODE_TILE:
+            source_c.y = source.y + y_offset / y_mag;
+            source_c.height = dest_c.height / y_mag;
+        } else {
             source_c.y = source.y + y_offset % source.height;
             /* Height is undefined for GG_MODE_TILE. */
         }
