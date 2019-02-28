@@ -170,20 +170,12 @@ static void option_cb(void *user_data, const char *element, char *const *attrs, 
 
 int option_group_load_xml(option_group_t *group)
 {
-	FILE *f;
 	char *filename;
 	int retval = 0;
 
 	filename = malloc(strlen(group->name) + 4 + 1);
 	strcpy(filename, group->name);
 	strcat(filename, ".xml");
-
-	f = fopen(filename, "r");
-	if (!f) {
-		DBG_WARN("failed to open '%s'", filename);
-		free(filename);
-		return -1;
-	}
 
 	if (xml_parse(filename, "options", option_cb, NULL, NULL, group)) {
 		DBG_ERROR("failed to parse '%s'", filename);
