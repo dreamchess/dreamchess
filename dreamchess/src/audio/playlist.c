@@ -19,24 +19,17 @@
 */
 
 #include <stdlib.h>
-#include <mxml.h>
+#include <string.h>
 
 #include "debug.h"
 #include "playlist.h"
+#include "xml.h"
 
-static char *read_opaque(mxml_node_t *top, char *name)
-{
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-        {
-            return node->value.opaque;
-        }
-    }
-    return NULL;
-}
+typedef struct {
+	playlist_t *playlist;
+	char *dir;
+	playlist_entry_t *entry;
+} state;
 
 playlist_t *playlist_create(void)
 {
@@ -61,67 +54,78 @@ void playlist_destroy(playlist_t *playlist)
 	}
 }
 
-static void playlist_add_track(playlist_t *playlist, char *title, char *album,
-		  char *artist, char *filename)
+static void track_open_cb(void *user_data)
 {
-	playlist_entry_t *entry = malloc(sizeof(playlist_entry_t));
+	state *s = (state *)user_data;
+	s->entry = malloc(sizeof(playlist_entry_t));
+	memset(s->entry, 0, sizeof(playlist_entry_t));
+	s->entry->title = strdup("Unknown title");
+	s->entry->album = strdup("Unknown album");
+	s->entry->artist = strdup("Unknown artist");
+}
 
-	entry->title = strdup(title);
-	entry->album = strdup(album);
-	entry->artist = strdup(artist);
-	entry->filename = strdup(filename);
+static void track_close_cb(void *user_data)
+{
+	state *s = (state *)user_data;
 
-	TAILQ_INSERT_TAIL(playlist, entry, entries);
+	if (s->entry->filename) {
+		TAILQ_INSERT_TAIL(s->playlist, s->entry, entries);
+	} else {
+		DBG_WARN("skipping playlist item without filename");
+		free(s->entry->title);
+		free(s->entry->album);
+		free(s->entry->artist);
+		free(s->entry);
+	}
+
+	s->entry = NULL;
+}
+
+static void set_string(char **s, const char *t)
+{
+	free(*s);
+	*s = strdup(t);
+}
+
+static void track_data_cb(void *user_data, const char *element, char *const *attrs, const char *text)
+{
+	state *s = (state *)user_data;
+
+	if (!strcmp(element, "title"))
+		set_string(&s->entry->title, text);
+	else if (!strcmp(element, "album"))
+		set_string(&s->entry->album, text);
+	else if (!strcmp(element, "artist"))
+		set_string(&s->entry->artist, text);
+	else if (!strcmp(element, "filename")) {
+		free(s->entry->filename);
+		s->entry->filename = malloc(strlen(s->dir) + strlen(text) + 2);
+		strcpy(s->entry->filename, s->dir);
+		strcat(s->entry->filename, "/");
+		strcat(s->entry->filename, text);
+	} else
+		DBG_WARN("skipping invalid playlist item property '%s'", element);
 }
 
 void playlist_add_tracks(playlist_t *playlist, char *dir)
 {
-	FILE *f;
-	mxml_node_t *tree = NULL, *track = NULL;
+	state s;
 	char *filename = malloc(strlen(dir) + strlen("/tracks.xml") + 1);
 
 	strcpy(filename, dir);
 	strcat(filename, "/tracks.xml");
 
-	f = fopen(filename, "r");
-	if (f)
-		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
-	else
-		DBG_ERROR("could not open tracks file");
+	s.playlist = playlist;
+	s.dir = dir;
+	s.entry = NULL;
 
-	track = tree;
+	if (xml_parse(filename, "track", track_data_cb, track_open_cb, track_close_cb, &s))
+		DBG_WARN("failed to load '%s'", filename);
 
-	while ((track = mxmlFindElement(track, tree, "track", NULL, NULL, MXML_DESCEND)))
-	{
-		char *title, *album, *artist, *filename, *fullname;
-
-		title = read_opaque(track, "title");
-		if (!title)
-			title = "Unknown title";
-
-		album = read_opaque(track, "album");
-		if (!album)
-			album = "Unknown album";
-
-		artist = read_opaque(track, "artist");
-		if (!artist)
-			artist = "Unknown artist";
-
-		filename = read_opaque(track, "filename");
-
-		if (!filename)
-			DBG_ERROR("could not parse XML file");
-
-		fullname = malloc(strlen(dir) + strlen(filename) + 2);
-		strcpy(fullname, dir);
-		strcat(fullname, "/");
-		strcat(fullname, filename);
-
-		playlist_add_track(playlist, title, album, artist, fullname);
-
-		free(fullname);
+	if (s.entry) {
+		free(s.entry->title);
+		free(s.entry->album);
+		free(s.entry->artist);
+		free(s.entry);
 	}
-
-	free(filename);
-	fclose(f);
 }

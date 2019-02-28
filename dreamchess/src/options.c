@@ -19,8 +19,10 @@
 */
 
 #include <stdlib.h>
-#include <mxml.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "xml.h"
 #include "options.h"
 #include "debug.h"
 #include "dir.h"
@@ -39,20 +41,7 @@ static char *remove_spaces(const char *str)
 	return sc;
 }
 
-static const char *whitespace_cb(mxml_node_t *node, int where)
-{
-	if ((!strcmp(node->value.element.name, "?xml version=\"1.0\"?")
-            || !strcmp(node->value.element.name, "options"))
-               && (where == MXML_WS_AFTER_OPEN))
-		return "\n";
-
-	if (where == MXML_WS_AFTER_CLOSE)
-		return "\n";
-
-	return NULL;
-}
-
-option_group_t *option_group_create(char *name)
+option_group_t *option_group_create(const char *name)
 {
 	option_group_t *group = malloc(sizeof(option_group_t));
 
@@ -61,7 +50,7 @@ option_group_t *option_group_create(char *name)
 	return group;
 }
 
-option_t *option_group_add_option(option_group_t *group, char *name)
+option_t *option_group_add_option(option_group_t *group, const char *name)
 {
 	option_t *option = malloc(sizeof(option_t));
 
@@ -74,7 +63,7 @@ option_t *option_group_add_option(option_group_t *group, char *name)
 	return option;
 }
 
-option_t *option_group_add_int(option_group_t *group, char *name)
+option_t *option_group_add_int(option_group_t *group, const char *name)
 {
 	option_t *option = malloc(sizeof(option_t));
 
@@ -84,7 +73,7 @@ option_t *option_group_add_int(option_group_t *group, char *name)
 	return option;
 }
 
-option_t *option_group_add_string(option_group_t *group, char *name)
+option_t *option_group_add_string(option_group_t *group, const char *name)
 {
 	option_t *option = malloc(sizeof(option_t));
 
@@ -149,82 +138,62 @@ int option_group_save_xml(option_group_t *group)
 	return error;
 }
 
-static void option_group_load(option_group_t *group, mxml_node_t *tree)
+static void option_cb(void *user_data, const char *element, char *const *attrs, const char *text)
 {
-	mxml_node_t *node;
+	option_t *option;
+	option_group_t *group = (option_group_t *)user_data;
 
-	node = tree;
-	while ((node = mxmlWalkNext(node, tree, MXML_DESCEND))) {
-		if (node->type == MXML_ELEMENT) {
-			option_t *option;
-			node = mxmlWalkNext(node, tree, MXML_DESCEND);
-			if (!node)
-				break;
-			option = option_group_find_option(group, node->parent->value.opaque);
-			if (!option) {
-				DBG_WARN("option '%s' does not exist", node->parent->value.opaque);
-				continue;
-			}
-			if (option->type == OPTION_TYPE_OPTION) {
-				if (option_select_value_by_name(option, node->value.opaque) == -1)
-					DBG_WARN("option '%s' has no value '%s'", option->name, node->value.opaque);
-				DBG_LOG("setting option '%s' to '%s'", option->name, node->value.opaque);
-			} else if (option->type == OPTION_TYPE_INT) {
-				int val;
-
-				errno = 0;
-				val = strtol(node->value.opaque, NULL, 10);
-				if (errno) {
-					DBG_WARN("value '%s' for option '%s' is not an integer", node->value.opaque, option->name);
-				} else {
-					option->value = val;
-				}
-			} else
-                                option->string = strdup(node->value.opaque);
-		}
+	option = option_group_find_option(group, element);
+	if (!option) {
+		DBG_WARN("option '%s' does not exist", element);
+		return;
 	}
+
+	if (option->type == OPTION_TYPE_OPTION) {
+		if (option_select_value_by_name(option, text) == -1)
+			DBG_WARN("option '%s' has no value '%s'", element, text);
+		DBG_LOG("setting option '%s' to '%s'", element, text);
+	} else if (option->type == OPTION_TYPE_INT) {
+		int val;
+
+		errno = 0;
+		val = strtol(text, NULL, 10);
+		if (errno) {
+			DBG_WARN("value '%s' for option '%s' is not an integer", text, element);
+		} else {
+			option->value = val;
+		}
+	} else
+		option->string = strdup(text);
 }
 
 int option_group_load_xml(option_group_t *group)
 {
 	FILE *f;
-	mxml_node_t *tree;
-	mxml_node_t *node;
 	char *filename;
+	int retval = 0;
 
 	filename = malloc(strlen(group->name) + 4 + 1);
 	strcpy(filename, group->name);
 	strcat(filename, ".xml");
 
 	f = fopen(filename, "r");
-	if (f)
-		tree = mxmlLoadFile(NULL, f, MXML_OPAQUE_CALLBACK);
-	else {
+	if (!f) {
 		DBG_WARN("failed to open '%s'", filename);
 		free(filename);
 		return -1;
 	}
 
-	fclose(f);
-
-	if (!tree) {
+	if (xml_parse(filename, "options", option_cb, NULL, NULL, group)) {
 		DBG_ERROR("failed to parse '%s'", filename);
-		free(filename);
-		return -1;
+		retval = -1;
 	}
 
-	node = mxmlFindElement(tree, tree, "options", NULL, NULL, MXML_DESCEND);
-
-	if (!node)
-		node = tree;
-
 	free(filename);
-	option_group_load(group, tree);
-
-	return 0;
+	return retval;
 }
 
-void option_add_value(option_t *option, char *name, void *data)
+void option_add_value(option_t *option, const char *name, void *data)
 {
 	option_value_t *value = malloc(sizeof(option_value_t));
 
@@ -236,7 +205,7 @@ void option_add_value(option_t *option, char *name, void *data)
 		option->selected = value;
 }
 
-int option_select_value_by_name(option_t *option, char *name)
+int option_select_value_by_name(option_t *option, const char *name)
 {
 	option_value_t *value;
 
@@ -293,7 +262,7 @@ int option_select_prev_value(option_t *option)
         return 0;
 }
 
-option_t *option_group_find_option(option_group_t *group, char *name)
+option_t *option_group_find_option(option_group_t *group, const char *name)
 {
 	char *namews = remove_spaces(name);
 	option_t *option;
@@ -307,7 +276,7 @@ option_t *option_group_find_option(option_group_t *group, char *name)
 	return option;
 }
 
-void option_string_set_text(option_t *option, char *text)
+void option_string_set_text(option_t *option, const char *text)
 {
 	if (option->string)
 		free(option->string);

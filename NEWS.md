@@ -2,13 +2,13 @@
 
 Most important changes:
 - Now uses SDL2 instead of SDL1
+- Now uses Expat instead of mxml
 - CMake build system
 - Fixed issue with chess piece selection on some AMD GPUs
 - Fixed issue with rotating chess board on some Linux machines
 - DreamChess no longer auto-exits when audio fails to open
 - Board is automatically flipped when playing with black
 - Pondering support in Dreamer chess engine
-- Now supports building with mxml > 2.2
 - New icon
 - Music pack support on OS X
 

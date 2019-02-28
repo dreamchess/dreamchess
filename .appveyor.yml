@@ -1,6 +1,5 @@
 image: Visual Studio 2017
 environment:
-  PREFIX: C:\Deps
   matrix:
     - COMPILER: msvc
     - COMPILER: msys2
@@ -11,7 +10,6 @@ cache:
   - C:\ProgramData\chocolatey\bin -> .appveyor.yml
   - C:\ProgramData\chocolatey\lib -> .appveyor.yml
   - c:\tools\vcpkg\installed\ -> .appveyor.yml
-  - '%PREFIX% -> .appveyor.yml'
 install:
   - |-
     if %COMPILER% NEQ msvc set MSVC=rem
@@ -25,29 +23,14 @@ install:
     if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
     %MSYS2% set PATH=%MSYS2_PREFIX%\bin;%PATH%
     choco install -y winflexbison
-    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows glew:%PLATFORM%-windows
-    %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-glew
-    %DEP% cd %TEMP%
-    %DEP% mkdir %PREFIX%\bin
-    %DEP% mkdir %PREFIX%\include
-    %DEP% mkdir %PREFIX%\lib
-    %MSYS2% set MSYS2_BASH=C:\msys64\usr\bin\bash -lc
-  # Mini-XML
-  - |-
-    %DEP% appveyor DownloadFile https://github.com/michaelrsweet/mxml/releases/download/v2.12/mxml-2.12.tar.gz
-    %DEP% 7z x mxml-2.12.tar.gz > nul
-    %DEP% 7z x mxml-2.12.tar > nul
-    %MSVC% %DEP% msbuild mxml-2.12\vcnet\mxmlstat.vcxproj /p:TargetPlatformVersion=10.0.14393.0 /p:Configuration=Release /p:Platform=%MSVC_PLATFORM%
-    %MSYS2% %DEP% %MSYS2_BASH% "MSYSTEM=%MSYS2_MSYSTEM% . /etc/profile && cd '%CD%'/mxml-2.12 && ./configure && make libmxml.a"
-    %DEP% copy mxml-2.12\mxml.h %PREFIX%\include > nul
-    %MSVC% %DEP% copy mxml-2.12\vcnet\Release\%MSVC_PLATFORM%\mxmlstat\*.lib %PREFIX%\lib > nul
-    %MSYS2% %DEP% copy mxml-2.12\libmxml.a %PREFIX%\lib > nul
+    %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows expat:%PLATFORM%-windows glew:%PLATFORM%-windows
+    %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-expat mingw-w64-%MSYS2_PLATFORM%-glew
 before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
-    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_PREFIX_PATH=%PREFIX% -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
-    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH="%PREFIX%;%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
+    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH="%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
   - |-
     cmake --build . --config Release

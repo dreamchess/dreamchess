@@ -18,13 +18,13 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_FEN_H
-#define DREAMCHESS_FEN_H
+#ifndef DREAMCHESS_XML_H
+#define DREAMCHESS_XML_H
 
-#include "board.h"
+typedef void (*xml_element_cb)(void *user_data, const char *element, char *const *attrs, const char *text);
+typedef void (*xml_parent_cb)(void *user_data);
 
-char *fen_encode(board_t *board);
-
-board_t *fen_decode(const char *fen);
+int xml_parse(const char *filename, const char *parent_element, xml_element_cb callback,
+              xml_parent_cb parent_open, xml_parent_cb parent_close, void *user_data);
 
 #endif

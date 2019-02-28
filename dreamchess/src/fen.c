@@ -97,7 +97,7 @@ char *fen_encode(board_t *board)
 	return fen;
 }
 
-board_t *fen_decode(char *fen)
+board_t *fen_decode(const char *fen)
 {
 	board_t *board;
 	char *space = strchr(fen, ' ');

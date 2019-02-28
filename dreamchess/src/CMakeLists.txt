@@ -13,7 +13,7 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(MXML REQUIRED)
+find_package(EXPAT REQUIRED)
 
 BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c)
 FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c)
@@ -45,6 +45,8 @@ add_executable(dreamchess MACOSX_BUNDLE
     system_config.c
     theme.c
     ui.h
+    xml.c
+    xml.h
     ${BISON_PgnParser_OUTPUTS}
     ${FLEX_PgnScanner_OUTPUTS}
     include/engine.h
@@ -204,7 +206,7 @@ target_include_directories(dreamchess
     ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
-    ${MXML_INCLUDE_DIRS}
+    ${EXPAT_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}
@@ -217,7 +219,7 @@ target_link_libraries(dreamchess
     ${SDL2_MIXER_LIBRARY}
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${MXML_LIBRARY}
+    ${EXPAT_LIBRARY}
 )
 
 if(VCPKG_TOOLCHAIN)

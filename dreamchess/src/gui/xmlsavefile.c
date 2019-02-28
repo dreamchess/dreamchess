@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "xml.h"
 
 static int slots;
 static char time_save[SAVEGAME_SLOTS][80];
@@ -48,34 +49,6 @@ void set_slots( int slots )
 int get_slots(void)
 {
     return slots;
-}
-
-static int load_opaque(mxml_node_t *top, char *name, char *dest)
-
-{
-
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-
-    if (node)
-
-    {
-
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-
-        if (node && node->type == MXML_OPAQUE)
-
-        {
-
-            strcpy(dest, node->value.opaque);
-
-            return 0;
-
-        }
-
-    }
-
-    return 1;
-
 }
 
 int write_save_xml(int slot)
@@ -144,80 +117,67 @@ int write_save_xml(int slot)
     return retval;
 }
 
-/*static void load_opaque(mxml_node_t *top, char *name, char *dest);*/
-void load_save_xml( int slot )
-{
-    FILE *fp;
-    char temp[256];
-    mxml_node_t *tree, *save;
+static void save_cb(void *user_data, const char *element, char *const *attrs, const char *text) {
+    int slot = *((int *)user_data);
 
-    snprintf( temp, sizeof(temp), "save%i.xml", slot );
-
-    if (ch_userdir())
-    {
-        DBG_WARN("could not enter user directory");
-        return;
-    }
-
-    fp = fopen(temp, "r");
-    if (fp)
-    {
-        DBG_LOG("reading save xml: %s", temp );
-        tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
-        slots |= (1 << slot);
-    }
-    else
-    {
-        /*printf( "Error opening theme file.\n" );*/
-        slots &= ~(1 << slot);
-        return;
-    }
-
-    fclose(fp);
-
-    save = tree;
-
-    while ((save = mxmlFindElement(save, tree, "save", NULL, NULL, MXML_DESCEND)))
-    {
+    if (!strcmp(element, "time")) {
         time_t time;
         struct tm *tm;
-        board_t *board;
 
-        load_opaque(save, "time", temp);
-
-        time = atoi(temp);
+        time = atoi(text);
         tm = localtime(&time);
-        snprintf(time_save[slot], sizeof(time_save[slot]), "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon+1,
-                tm->tm_hour, tm->tm_min);
-
-        load_opaque(save, "white", temp);
-        if (!strcmp(temp, "ui"))
+        snprintf(time_save[slot], sizeof(time_save[slot]), "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon + 1, tm->tm_hour, tm->tm_min);
+    } else if (!strcmp(element, "white")) {
+        if (!strcmp(text, "ui"))
             config_save[slot].player[WHITE] = PLAYER_UI;
         else
             config_save[slot].player[WHITE] = PLAYER_ENGINE;
-
-        load_opaque(save, "black", temp);
-        if (!strcmp(temp, "ui"))
+    } else if (!strcmp(element, "black")) {
+        if (!strcmp(text, "ui"))
             config_save[slot].player[BLACK] = PLAYER_UI;
         else
             config_save[slot].player[BLACK] = PLAYER_ENGINE;
-
-        load_opaque(save, "level", temp);
-        config_save[slot].cpu_level = atoi(temp);
-
-        if (!load_opaque(save, "difficulty", temp))
-            config_save[slot].difficulty = atoi(temp);
-        else
-            config_save[slot].difficulty = 1;
-
-        load_opaque(save, "fen", temp);
-        board = fen_decode(temp);
-        if (board)
-        {
+    } else if (!strcmp(element, "level")) {
+        config_save[slot].cpu_level = atoi(text);
+    } else if (!strcmp(element, "difficulty")) {
+        config_save[slot].difficulty = atoi(text);
+    } else if (!strcmp(element, "fen")) {
+        board_t *board = fen_decode(text);
+        if (board) {
             saved_board[slot] = *board;
             free(board);
         }
     }
+}
 
-    mxmlDelete(tree);
+void load_saves_xml(void) {
+    int slot;
+
+    for (slot = 0; slot < SAVEGAME_SLOTS; ++slot) {
+        snprintf(time_save[slot], sizeof(time_save[slot]), "Unknown");
+        config_save[slot].player[WHITE] = PLAYER_UI;
+        config_save[slot].player[BLACK] = PLAYER_ENGINE;
+        config_save[slot].cpu_level = 1;
+        config_save[slot].difficulty = 1;
+        board_setup(&saved_board[slot]);
+    }
+
+    if (ch_userdir()) {
+        DBG_WARN("could not enter user directory");
+        return;
+    }
+
+    slots = 0;
+
+    for (slot = 0; slot < SAVEGAME_SLOTS; ++slot) {
+        char temp[256];
+        snprintf(temp, sizeof(temp), "save%i.xml", slot);
+
+        DBG_LOG("reading save xml: %s", temp);
+
+        if (!xml_parse(temp, "save", save_cb, NULL, NULL, &slot))
+            slots |= (1 << slot);
+        else
+            DBG_LOG("failed to load: %s", temp );
+    }
 }

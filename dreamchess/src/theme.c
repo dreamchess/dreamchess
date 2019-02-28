@@ -18,7 +18,6 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <mxml.h>
 #include <limits.h>
 
 #ifdef _WIN32
@@ -30,6 +29,7 @@
 #endif
 
 #include "dreamchess.h"
+#include "xml.h"
 #include "theme.h"
 #include "debug.h"
 #include "options.h"
@@ -39,125 +39,117 @@
 
 static music_packs_t music_packs;
 
-static int load_opaque(mxml_node_t *top, char *name, char **dest)
+typedef struct {
+	option_t *option;
+    struct theme_struct *theme;
+} state;
+
+static void theme_open_cb(void *user_data)
 {
-    mxml_node_t *node = mxmlFindElement(top, top, name, NULL, NULL, MXML_DESCEND);
-    if (node)
-    {
-        node = mxmlWalkNext(node, node, MXML_DESCEND);
-        if (node && node->type == MXML_OPAQUE)
-        {
-            free(*dest);
-            *dest = strdup(node->value.opaque);
-            return 0;
-        }
-    }
-    return 1;
+    state *s = (state *)user_data;
+
+    s->theme = malloc(sizeof(struct theme_struct));
+    memset(s->theme, 0, sizeof(struct theme_struct));
+    s->theme->name = strdup("Untitled");
+    s->theme->style = strdup("default");
+    s->theme->pieces = strdup("classiclow");
+    s->theme->board = strdup("classic");
+    s->theme->white_name = strdup("White");
+    s->theme->black_name = strdup("Black");
+    s->theme->lighting = TRUE;
+    s->theme->selector.colour[0] = 1.0;
+    s->theme->selector.colour[1] = 1.0;
+    s->theme->selector.colour[2] = 1.0;
+    s->theme->selector.colour[3] = 1.0;
+    s->theme->selector.spinspeed = 0;
+    s->theme->selector.size = 1;
+    s->theme->selector.bouncespeed = 0;
 }
 
-static void theme_add_theme( char *xmlfile, option_t *option )
+static void theme_close_cb(void *user_data)
 {
-    FILE *fp = NULL;
-    mxml_node_t *tree=NULL, *theme=NULL;
+	state *s = (state *)user_data;
 
-    fp = fopen(xmlfile, "r");
-    if (fp)
-        tree = mxmlLoadFile(NULL, fp, MXML_OPAQUE_CALLBACK);
-    else
-        DBG_ERROR("error opening theme file" );
+    DBG_LOG("added theme: %s %s", s->theme->name, s->theme->style);
+    option_add_value(s->option, s->theme->name, s->theme);
+    s->theme = NULL;
+}
 
-    fclose(fp);
+static void set_string(char **s, const char *t)
+{
+	free(*s);
+	*s = strdup(t);
+}
 
-    theme = tree;
+static int parse_rgba(const char *rgba, float *r, float *g, float *b, float *a)
+{
+    float r_, g_, b_, a_;
 
-    DBG_LOG("loading %s", xmlfile );
-    while ((theme = mxmlFindElement(theme, tree, "theme", NULL, NULL, MXML_DESCEND)))
-    {
-        struct theme_struct *cur_theme = malloc(sizeof(struct theme_struct));
-        mxml_node_t *node, *node2;
-        /* Set theme to defaults.. incase we have missing bits..*/
-        cur_theme->name = strdup("Untitled");
-        cur_theme->style = strdup("default");
-        cur_theme->pieces = strdup("classiclow");
-        cur_theme->board = strdup("classic");
-        cur_theme->white_name = strdup("White");
-        cur_theme->black_name = strdup("Black");
-        cur_theme->lighting=TRUE;
-        cur_theme->selector.colour[0]=1.0;
-        cur_theme->selector.colour[1]=1.0;
-        cur_theme->selector.colour[2]=1.0;
-        cur_theme->selector.colour[3]=1.0;  
-        cur_theme->selector.spinspeed=0;
-        cur_theme->selector.size=1;
-        cur_theme->selector.bouncespeed=0;
-
-        load_opaque(theme, "name", &cur_theme->name);
-        load_opaque(theme, "style", &cur_theme->style);
-        load_opaque(theme, "pieces", &cur_theme->pieces);
-        load_opaque(theme, "board", &cur_theme->board);
-        load_opaque(theme, "white_name", &cur_theme->white_name);
-        load_opaque(theme, "black_name", &cur_theme->black_name);
-
-        node = mxmlFindElement(theme, theme, "selector", NULL, NULL, MXML_DESCEND);
-        if (node)
-        {
-            char *temp=(char*)mxmlElementGetAttr(node, "spinspeed");
-            if ( temp )
-                cur_theme->selector.spinspeed=atof(temp);
-
-            temp=(char*)mxmlElementGetAttr(node, "size");
-            if ( temp )
-                cur_theme->selector.size=atof(temp);
-
-            temp=(char*)mxmlElementGetAttr(node, "bouncespeed");
-            if ( temp )
-            {
-                cur_theme->selector.bouncespeed=atof(temp);
-            }
-
-            node = mxmlWalkNext(node, node, MXML_DESCEND);
-            node = mxmlFindElement(node, node, "colour", NULL, NULL, MXML_DESCEND);
-            if (node)
-            {
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "red", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[0]=atof(node2->value.opaque);
-                }       
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "green", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[1]=atof(node2->value.opaque);
-                }       
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "blue", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[2]=atof(node2->value.opaque);
-                }        
-
-                node2 = mxmlWalkNext(node, node, MXML_DESCEND);
-                node2 = mxmlFindElement(node2, node2, "alpha", NULL, NULL, MXML_DESCEND);  
-                if (node2)
-                {
-                    node2 = mxmlWalkNext(node2, node2, MXML_DESCEND);
-                    cur_theme->selector.colour[3]=atof(node2->value.opaque);
-                }               
-            }
-        }
-
-        DBG_LOG("added theme: %s %s", cur_theme->name, cur_theme->style );
-        option_add_value(option, cur_theme->name, cur_theme);
+    if (sscanf(rgba, "rgba(%f,%f,%f,%f)", &r_, &g_, &b_, &a_) < 4) {
+        DBG_ERROR("failed to parse rgba color: '%s'", rgba);
+        return -1;
     }
 
-    mxmlDelete(tree);
+    *r = r_;
+    *g = g_;
+    *b = b_;
+    *a = a_;
+
+    return 0;
+}
+
+static void theme_data_cb(void *user_data, const char *element, char *const *attrs, const char *text)
+{
+	state *s = (state *)user_data;
+
+    if (!strcmp(element, "name"))
+        set_string(&s->theme->name, text);
+    else if (!strcmp(element, "style"))
+        set_string(&s->theme->style, text);
+    else if (!strcmp(element, "pieces"))
+        set_string(&s->theme->pieces, text);
+    else if (!strcmp(element, "board"))
+        set_string(&s->theme->board, text);
+    else if (!strcmp(element, "white_name"))
+        set_string(&s->theme->white_name, text);
+    else if (!strcmp(element, "black_name"))
+        set_string(&s->theme->black_name, text);
+    else if (!strcmp(element, "selector")) {
+        int i = 0;
+        while (attrs[i] && attrs[i + 1]) {
+            if (!strcmp(attrs[i], "spinspeed"))
+                s->theme->selector.spinspeed = atof(attrs[i + 1]);
+            else if (!strcmp(attrs[i], "size"))
+                s->theme->selector.size = atof(attrs[i + 1]);
+            else if (!strcmp(attrs[i], "bouncespeed"))
+                s->theme->selector.bouncespeed = atof(attrs[i + 1]);
+            else if (!strcmp(attrs[i] , "colour"))
+                parse_rgba(attrs[i + 1], &s->theme->selector.colour[0], &s->theme->selector.colour[1],
+                           &s->theme->selector.colour[2], &s->theme->selector.colour[3]);
+            i += 2;
+        }
+    }
+}
+
+static void theme_add_theme(char *xmlfile, option_t *option)
+{
+    state s;
+
+    s.option = option;
+    s.theme = NULL;
+
+    if (xml_parse(xmlfile, "theme", theme_data_cb, theme_open_cb, theme_close_cb, &s))
+        DBG_ERROR("error loading theme file '%s'", xmlfile);
+
+    if (s.theme) {
+        free(s.theme->name);
+        free(s.theme->style);
+        free(s.theme->pieces);
+        free(s.theme->board);
+        free(s.theme->white_name);
+        free(s.theme->black_name);
+        free(s.theme);
+    }
 }
 
 #ifdef _WIN32

@@ -28,7 +28,6 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
-#include <mxml.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -156,7 +155,7 @@ int draw_sonic_fade( int inout );
 float get_ui_trans_pos(void);
 
 /* xmlsavefile.c */
-void load_save_xml( int slot );
+void load_saves_xml( void );
 int write_save_xml( int slot );
 int get_slots(void);
 void set_slots( int slots );
