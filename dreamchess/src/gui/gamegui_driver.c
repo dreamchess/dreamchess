@@ -37,9 +37,7 @@ extern SDL_Window *sdl_window;
 
 gg_event_t convert_event(SDL_Event *event)
 {
-    gg_event_t gg_event;
-
-    gg_event.type=GG_EVENT_NONE;
+    gg_event_t gg_event = { GG_EVENT_NONE };
 
     switch (event->type)
     {
