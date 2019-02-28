@@ -115,7 +115,7 @@ board_t *fen_decode(const char *fen)
 		char c = fen[i];
 		char piece=0;
 
-		if ((c >= '1') && (c <= '9'))
+		if ((c >= '1') && (c <= '8'))
 		{
 			for (j = 0; j < c - '0'; j++)
 				board->square[square++] = NONE;
