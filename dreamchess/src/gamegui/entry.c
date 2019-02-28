@@ -59,7 +59,7 @@ void gg_entry_render(gg_widget_t * widget, int x, int y, int focus)
     gg_entry_t *entry = GG_ENTRY(widget);
     gg_rect_t rect;
     int len = string_width(entry->text, entry->cursor_pos);
-    gg_colour_t *colour;
+    gg_colour_t *colour = &col_text;
 
     switch (focus)
     {
@@ -69,9 +69,6 @@ void gg_entry_render(gg_widget_t * widget, int x, int y, int focus)
     case GG_FOCUS_ONE:
     case GG_FOCUS_ALL:
         colour = &col_texthighlight;
-        break;
-    case GG_FOCUS_NONE:
-        colour = &col_text;
     }
 
 	/* TODO Fix temporary hack */
