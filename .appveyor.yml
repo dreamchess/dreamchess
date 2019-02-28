@@ -22,7 +22,7 @@ install:
     if %PLATFORM%==x86 (set MSYS2_PREFIX=C:\msys64\mingw32) else set MSYS2_PREFIX=C:\msys64\mingw64
     if "%APPVEYOR_REPO_TAG%"=="false" set TAG=rem
     %MSYS2% set PATH=%MSYS2_PREFIX%\bin;%PATH%
-    choco install -y winflexbison
+    choco install -y winflexbison3
     %MSVC% vcpkg install sdl2:%PLATFORM%-windows sdl2-image:%PLATFORM%-windows sdl2-mixer:%PLATFORM%-windows expat:%PLATFORM%-windows glew:%PLATFORM%-windows
     %MSYS2% C:\msys64\usr\bin\pacman -S --needed --noconfirm mingw-w64-%MSYS2_PLATFORM%-cmake mingw-w64-%MSYS2_PLATFORM%-SDL2 mingw-w64-%MSYS2_PLATFORM%-SDL2_image mingw-w64-%MSYS2_PLATFORM%-SDL2_mixer mingw-w64-%MSYS2_PLATFORM%-expat mingw-w64-%MSYS2_PLATFORM%-glew
 before_build:
