@@ -718,7 +718,9 @@ move_t* san_to_move(board_t *board, char *move_s)
         return NULL;
     }
 
-    return find_unique_move(board, san_move);
+    move_t *move = find_unique_move(board, san_move);
+    free(san_move);
+    return move;
 }
 
 char* san_to_fan(board_t *board, char *move_s)
