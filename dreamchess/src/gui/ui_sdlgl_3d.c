@@ -299,18 +299,21 @@ static mesh_t *dcm_load(char *filename)
             || ((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M')))
     {
         DBG_ERROR("invalid DCM file header");
+        fclose(f);
         return NULL;
     }
 
     if (version != 100)
     {
         DBG_ERROR( "DCM version %i not supported", version);
+        fclose(f);
         return NULL;
     }
 
     if (fscanf(f, "%d\n", &vertices) != 1)
     {
         DBG_ERROR("error reading DCM file");
+        fclose(f);
         return NULL;
     }
 
