@@ -122,6 +122,8 @@ void playlist_add_tracks(playlist_t *playlist, char *dir)
 	if (xml_parse(filename, "track", track_data_cb, track_open_cb, track_close_cb, &s))
 		DBG_WARN("failed to load '%s'", filename);
 
+	free(filename);
+
 	if (s.entry) {
 		free(s.entry->title);
 		free(s.entry->album);
