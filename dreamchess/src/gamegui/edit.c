@@ -58,7 +58,7 @@ void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
 {
     gg_edit_t *edit = GG_EDIT(widget);
     gg_rect_t rect;
-    gg_colour_t *colour;
+    gg_colour_t *colour = &col_text;
     struct gg_edit_line *line;
 
     switch (focus)
@@ -69,9 +69,6 @@ void gg_edit_render(gg_widget_t * widget, int x, int y, int focus)
     case GG_FOCUS_ONE:
     case GG_FOCUS_ALL:
         colour = &col_texthighlight;
-        break;
-    case GG_FOCUS_NONE:
-        colour = &col_text;
     }
 
 	/* TODO Fix temporary hack */
