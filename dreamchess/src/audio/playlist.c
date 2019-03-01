@@ -31,8 +31,7 @@ typedef struct {
 	playlist_entry_t *entry;
 } state;
 
-playlist_t *playlist_create(void)
-{
+playlist_t *playlist_create(void) {
 	playlist_t *playlist = malloc(sizeof(playlist_t));
 
 	TAILQ_INIT(playlist);
@@ -40,8 +39,7 @@ playlist_t *playlist_create(void)
 	return playlist;
 }
 
-void playlist_destroy(playlist_t *playlist)
-{
+void playlist_destroy(playlist_t *playlist) {
 	playlist_entry_t *entry;
 
 	while ((entry = TAILQ_FIRST(playlist))) {
@@ -54,8 +52,7 @@ void playlist_destroy(playlist_t *playlist)
 	}
 }
 
-static void track_open_cb(void *user_data)
-{
+static void track_open_cb(void *user_data) {
 	state *s = (state *)user_data;
 	s->entry = malloc(sizeof(playlist_entry_t));
 	memset(s->entry, 0, sizeof(playlist_entry_t));
@@ -64,8 +61,7 @@ static void track_open_cb(void *user_data)
 	s->entry->artist = strdup("Unknown artist");
 }
 
-static void track_close_cb(void *user_data)
-{
+static void track_close_cb(void *user_data) {
 	state *s = (state *)user_data;
 
 	if (s->entry->filename) {
@@ -81,14 +77,12 @@ static void track_close_cb(void *user_data)
 	s->entry = NULL;
 }
 
-static void set_string(char **s, const char *t)
-{
+static void set_string(char **s, const char *t) {
 	free(*s);
 	*s = strdup(t);
 }
 
-static void track_data_cb(void *user_data, const char *element, char *const *attrs, const char *text)
-{
+static void track_data_cb(void *user_data, const char *element, char *const *attrs, const char *text) {
 	state *s = (state *)user_data;
 
 	if (!strcmp(element, "title"))
@@ -107,8 +101,7 @@ static void track_data_cb(void *user_data, const char *element, char *const *att
 		DBG_WARN("skipping invalid playlist item property '%s'", element);
 }
 
-void playlist_add_tracks(playlist_t *playlist, char *dir)
-{
+void playlist_add_tracks(playlist_t *playlist, char *dir) {
 	state s;
 	char *filename = malloc(strlen(dir) + strlen("/tracks.xml") + 1);
 

@@ -23,70 +23,60 @@
 #include <string.h>
 
 #include "board.h"
-#include "move.h"
 #include "history.h"
+#include "move.h"
 
 static int history[2][64][64];
 
-static inline int
-move_compare(move_t move1, move_t move2, int current_side)
-{
+static inline int move_compare(move_t move1, move_t move2, int current_side) {
 
-    if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
-        return -1;
+	if ((move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && !(move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+		return -1;
 
-    if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
-        return 1;
+	if (!(move1 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)) && (move2 & (CAPTURE_MOVE | CAPTURE_MOVE_EN_PASSANT)))
+		return 1;
 
-    if (history[current_side][MOVE_GET(move1, SOURCE)][MOVE_GET(move1, DEST)]
-            > history[current_side][MOVE_GET(move2, SOURCE)][MOVE_GET(move2, DEST)])
-        return -1;
-    else
-        return 1;
+	if (history[current_side][MOVE_GET(move1, SOURCE)][MOVE_GET(move1, DEST)] >
+		history[current_side][MOVE_GET(move2, SOURCE)][MOVE_GET(move2, DEST)])
+		return -1;
+	else
+		return 1;
 }
 
-void best_first(int ply, move_t move)
-{
-    int i;
-    for (i = moves_start[ply]; i < moves_start[ply + 1]; i++)
-        if (move == moves[i])
-        {
-            move_t swap = moves[moves_start[ply]];
-            moves[moves_start[ply]] = moves[i];
-            moves[i] = swap;
-            return;
-        }
+void best_first(int ply, move_t move) {
+	int i;
+	for (i = moves_start[ply]; i < moves_start[ply + 1]; i++)
+		if (move == moves[i]) {
+			move_t swap = moves[moves_start[ply]];
+			moves[moves_start[ply]] = moves[i];
+			moves[i] = swap;
+			return;
+		}
 }
 
-void
-sort_next(int ply, int side)
-{
-    int i, min;
-    move_t swap;
- 
-    min = moves_cur[ply];
+void sort_next(int ply, int side) {
+	int i, min;
+	move_t swap;
 
-    for (i = moves_cur[ply] + 1; i < moves_start[ply + 1]; i++)
-       if (move_compare(moves[i], moves[min], side) < 0)
-          min = i;
+	min = moves_cur[ply];
 
-    swap = moves[moves_cur[ply]];
-    moves[moves_cur[ply]] = moves[min];
-    moves[min] = swap;
+	for (i = moves_cur[ply] + 1; i < moves_start[ply + 1]; i++)
+		if (move_compare(moves[i], moves[min], side) < 0)
+			min = i;
+
+	swap = moves[moves_cur[ply]];
+	moves[moves_cur[ply]] = moves[min];
+	moves[min] = swap;
 }
 
-void
-add_count(move_t move, int side)
-{
-    history[side][MOVE_GET(move, SOURCE)][MOVE_GET(move, DEST)]++;
+void add_count(move_t move, int side) {
+	history[side][MOVE_GET(move, SOURCE)][MOVE_GET(move, DEST)]++;
 }
 
-void
-forget_history(void)
-{
-    int i,j,k;
-    for (i = 0; i < 2; i++)
-        for (j = 0; j < 64; j++)
-            for (k = 0; k < 64; k++)
-                history[i][j][k] = 0;
+void forget_history(void) {
+	int i, j, k;
+	for (i = 0; i < 2; i++)
+		for (j = 0; j < 64; j++)
+			for (k = 0; k < 64; k++)
+				history[i][j][k] = 0;
 }

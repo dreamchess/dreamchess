@@ -18,22 +18,21 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "board.h"
-#include "move.h"
 #include "hashing.h"
+#include "move.h"
 
 /* square_bit[i] is a bitboard that marks square 'i' on the board. */
 bitboard_t square_bit[64];
 
 /* Pieces values are used to calculate the material balance of the board. */
-static int piece_value[] = {100, 100, 300, 300, 350, 350, 500, 500, 900, 900,
-                            2000, 2000};
+static int piece_value[] = {100, 100, 300, 300, 350, 350, 500, 500, 900, 900, 2000, 2000};
 
 static void add_piece(board_t *board, int square, int piece)
 /* Adds a piece to a board.
@@ -42,14 +41,14 @@ static void add_piece(board_t *board, int square, int piece)
 **             (int) square: The square where the piece should be added.
 */
 {
-    board->bitboard[piece] |= square_bit[square];
-    board->bitboard[ALL + (piece & 1)] |= square_bit[square];
-    board->material_value[piece & 1] += piece_value[piece];
+	board->bitboard[piece] |= square_bit[square];
+	board->bitboard[ALL + (piece & 1)] |= square_bit[square];
+	board->material_value[piece & 1] += piece_value[piece];
 
-    if ((piece & PIECE_MASK) == PAWN)
-        board->num_pawns[piece & 1]++;
+	if ((piece & PIECE_MASK) == PAWN)
+		board->num_pawns[piece & 1]++;
 
-    board->hash_key ^= pieces_hash[piece][square];
+	board->hash_key ^= pieces_hash[piece][square];
 }
 
 static void remove_piece(board_t *board, int square, int piece)
@@ -60,61 +59,57 @@ static void remove_piece(board_t *board, int square, int piece)
 **             (int) square: The square where to remove the piece from.
 */
 {
-    board->bitboard[piece] ^= square_bit[square];
-    board->bitboard[ALL + (piece & 1)] ^= square_bit[square];
-    board->material_value[piece & 1] -= piece_value[piece];
+	board->bitboard[piece] ^= square_bit[square];
+	board->bitboard[ALL + (piece & 1)] ^= square_bit[square];
+	board->material_value[piece & 1] -= piece_value[piece];
 
-    if ((piece & PIECE_MASK) == PAWN)
-        board->num_pawns[piece & 1]--;
+	if ((piece & PIECE_MASK) == PAWN)
+		board->num_pawns[piece & 1]--;
 
-    board->hash_key ^= pieces_hash[piece][square];
+	board->hash_key ^= pieces_hash[piece][square];
 }
 
-void setup_board(board_t *board)
-{
-    int i;
+void setup_board(board_t *board) {
+	int i;
 
-    clear_board(board);
+	clear_board(board);
 
-    add_piece(board, SQUARE_A1, WHITE_ROOK);
-    add_piece(board, SQUARE_B1, WHITE_KNIGHT);
-    add_piece(board, SQUARE_C1, WHITE_BISHOP);
-    add_piece(board, SQUARE_D1, WHITE_QUEEN);
-    add_piece(board, SQUARE_E1, WHITE_KING);
-    add_piece(board, SQUARE_F1, WHITE_BISHOP);
-    add_piece(board, SQUARE_G1, WHITE_KNIGHT);
-    add_piece(board, SQUARE_H1, WHITE_ROOK);
-    add_piece(board, SQUARE_A8, BLACK_ROOK);
-    add_piece(board, SQUARE_B8, BLACK_KNIGHT);
-    add_piece(board, SQUARE_C8, BLACK_BISHOP);
-    add_piece(board, SQUARE_D8, BLACK_QUEEN);
-    add_piece(board, SQUARE_E8, BLACK_KING);
-    add_piece(board, SQUARE_F8, BLACK_BISHOP);
-    add_piece(board, SQUARE_G8, BLACK_KNIGHT);
-    add_piece(board, SQUARE_H8, BLACK_ROOK);
+	add_piece(board, SQUARE_A1, WHITE_ROOK);
+	add_piece(board, SQUARE_B1, WHITE_KNIGHT);
+	add_piece(board, SQUARE_C1, WHITE_BISHOP);
+	add_piece(board, SQUARE_D1, WHITE_QUEEN);
+	add_piece(board, SQUARE_E1, WHITE_KING);
+	add_piece(board, SQUARE_F1, WHITE_BISHOP);
+	add_piece(board, SQUARE_G1, WHITE_KNIGHT);
+	add_piece(board, SQUARE_H1, WHITE_ROOK);
+	add_piece(board, SQUARE_A8, BLACK_ROOK);
+	add_piece(board, SQUARE_B8, BLACK_KNIGHT);
+	add_piece(board, SQUARE_C8, BLACK_BISHOP);
+	add_piece(board, SQUARE_D8, BLACK_QUEEN);
+	add_piece(board, SQUARE_E8, BLACK_KING);
+	add_piece(board, SQUARE_F8, BLACK_BISHOP);
+	add_piece(board, SQUARE_G8, BLACK_KNIGHT);
+	add_piece(board, SQUARE_H8, BLACK_ROOK);
 
-    for (i = SQUARE_A2; i <= SQUARE_H2; i++)
-        add_piece(board, i, WHITE_PAWN);
+	for (i = SQUARE_A2; i <= SQUARE_H2; i++)
+		add_piece(board, i, WHITE_PAWN);
 
-    for (i = SQUARE_A7; i <= SQUARE_H7; i++)
-        add_piece(board, i, BLACK_PAWN);
+	for (i = SQUARE_A7; i <= SQUARE_H7; i++)
+		add_piece(board, i, BLACK_PAWN);
 
-    board->castle_flags = WHITE_CAN_CASTLE_KINGSIDE
-                          | BLACK_CAN_CASTLE_KINGSIDE
-                          | WHITE_CAN_CASTLE_QUEENSIDE
-                          | BLACK_CAN_CASTLE_QUEENSIDE;
+	board->castle_flags =
+		WHITE_CAN_CASTLE_KINGSIDE | BLACK_CAN_CASTLE_KINGSIDE | WHITE_CAN_CASTLE_QUEENSIDE | BLACK_CAN_CASTLE_QUEENSIDE;
 
-    board->en_passant = 0LL;
+	board->en_passant = 0LL;
 
-    board->current_player = SIDE_WHITE;
+	board->current_player = SIDE_WHITE;
 
-    board->hash_key = hash_key(board);
+	board->hash_key = hash_key(board);
 
-    board->fifty_moves = 0;
+	board->fifty_moves = 0;
 }
 
-int setup_board_fen(board_t *board, char *fen)
-{
+int setup_board_fen(board_t *board, char *fen) {
 	int i = 0;
 	int square = 56;
 	int len = strlen(fen);
@@ -123,46 +118,43 @@ int setup_board_fen(board_t *board, char *fen)
 
 	clear_board(board);
 
-	while (done < 64)
-	{
+	while (done < 64) {
 		char c;
-		char piece=0;
+		char piece = 0;
 
 		if (i == len)
 			return 1;
 
 		c = fen[i++];
 
-		if ((c >= '1') && (c <= '8'))
-		{
+		if ((c >= '1') && (c <= '8')) {
 			square += c - '0';
 			done += c - '0';
 			continue;
 		}
 
-		switch(toupper(c))
-		{
-			case 'P':
-				piece = PAWN;
-				break;
-			case 'N':
-				piece = KNIGHT;
-				break;
-			case 'B':
-				piece = BISHOP;
-				break;
-			case 'R':
-				piece = ROOK;
-				break;
-			case 'Q':
-				piece = QUEEN;
-				break;
-			case 'K':
-				piece = KING;
-				break;
-			case '/':
-				square -= 16;
-				continue;
+		switch (toupper(c)) {
+		case 'P':
+			piece = PAWN;
+			break;
+		case 'N':
+			piece = KNIGHT;
+			break;
+		case 'B':
+			piece = BISHOP;
+			break;
+		case 'R':
+			piece = ROOK;
+			break;
+		case 'Q':
+			piece = QUEEN;
+			break;
+		case 'K':
+			piece = KING;
+			break;
+		case '/':
+			square -= 16;
+			continue;
 		}
 
 		if (c >= 'a')
@@ -197,8 +189,7 @@ int setup_board_fen(board_t *board, char *fen)
 
 	if (fen[i] != '-')
 		while ((i < len) && (fen[i] != ' '))
-			switch (fen[i++])
-			{
+			switch (fen[i++]) {
 			case 'K':
 				board->castle_flags |= WHITE_CAN_CASTLE_KINGSIDE;
 				break;
@@ -220,8 +211,7 @@ int setup_board_fen(board_t *board, char *fen)
 
 	board->en_passant = 0LL;
 
-	if (fen[i] != '-')
-	{
+	if (fen[i] != '-') {
 		if ((fen[i] < 'a') || (fen[i] > 'h'))
 			return 1;
 
@@ -256,545 +246,471 @@ int setup_board_fen(board_t *board, char *fen)
 	return 0;
 }
 
-void board_init(void)
-{
-    int i;
-    for (i = 0; i < 64; i++)
-        square_bit[i] = 1LL << i;
+void board_init(void) {
+	int i;
+	for (i = 0; i < 64; i++)
+		square_bit[i] = 1LL << i;
 }
 
-void clear_board(board_t *board)
-{
-    int i;
-    for (i = 0; i < NR_BITBOARDS; i++)
-        board->bitboard[i] = 0LL;
+void clear_board(board_t *board) {
+	int i;
+	for (i = 0; i < NR_BITBOARDS; i++)
+		board->bitboard[i] = 0LL;
 
-    board->num_pawns[SIDE_WHITE] = 0;
-    board->num_pawns[SIDE_BLACK] = 0;
+	board->num_pawns[SIDE_WHITE] = 0;
+	board->num_pawns[SIDE_BLACK] = 0;
 
-    board->material_value[SIDE_WHITE] = 0;
-    board->material_value[SIDE_BLACK] = 0;
+	board->material_value[SIDE_WHITE] = 0;
+	board->material_value[SIDE_BLACK] = 0;
 }
 
-int find_black_piece(board_t *board, int square)
-{
-    bitboard_t mask = square_bit[square];
+int find_black_piece(board_t *board, int square) {
+	bitboard_t mask = square_bit[square];
 
-    /* We need to check kings first because a fake king might be on the
-    ** same square as a rook. In that case we want to find the king so
-    ** that the illegality of the previous move can be detected.
-    */
-    if (board->bitboard[BLACK_KING] & square_bit[square])
-        return BLACK_KING;
+	/* We need to check kings first because a fake king might be on the
+	** same square as a rook. In that case we want to find the king so
+	** that the illegality of the previous move can be detected.
+	*/
+	if (board->bitboard[BLACK_KING] & square_bit[square])
+		return BLACK_KING;
 
-    /* Check for other pieces in order of frequency. */
-    if (board->bitboard[BLACK_PAWN] & mask)
-        return BLACK_PAWN;
-    if (board->bitboard[BLACK_KNIGHT] & mask)
-        return BLACK_KNIGHT;
-    if (board->bitboard[BLACK_BISHOP] & mask)
-        return BLACK_BISHOP;
-    if (board->bitboard[BLACK_ROOK] & mask)
-        return BLACK_ROOK;
-    if (board->bitboard[BLACK_QUEEN] & mask)
-        return BLACK_QUEEN;
+	/* Check for other pieces in order of frequency. */
+	if (board->bitboard[BLACK_PAWN] & mask)
+		return BLACK_PAWN;
+	if (board->bitboard[BLACK_KNIGHT] & mask)
+		return BLACK_KNIGHT;
+	if (board->bitboard[BLACK_BISHOP] & mask)
+		return BLACK_BISHOP;
+	if (board->bitboard[BLACK_ROOK] & mask)
+		return BLACK_ROOK;
+	if (board->bitboard[BLACK_QUEEN] & mask)
+		return BLACK_QUEEN;
 
-    return NONE;
+	return NONE;
 }
 
-int find_white_piece(board_t *board, int square)
-{
-    bitboard_t mask = square_bit[square];
+int find_white_piece(board_t *board, int square) {
+	bitboard_t mask = square_bit[square];
 
-    /* We need to check kings first because a fake king might be on the
-    ** same square as a rook. In that case we want to find the king so
-    ** that the illegality of the previous move can be detected.
-    */
-    if (board->bitboard[WHITE_KING] & mask)
-        return WHITE_KING;
+	/* We need to check kings first because a fake king might be on the
+	** same square as a rook. In that case we want to find the king so
+	** that the illegality of the previous move can be detected.
+	*/
+	if (board->bitboard[WHITE_KING] & mask)
+		return WHITE_KING;
 
-    /* Check for other pieces in order of frequency. */
-    if (board->bitboard[WHITE_PAWN] & mask)
-        return WHITE_PAWN;
-    if (board->bitboard[WHITE_KNIGHT] & mask)
-        return WHITE_KNIGHT;
-    if (board->bitboard[WHITE_BISHOP] & mask)
-        return WHITE_BISHOP;
-    if (board->bitboard[WHITE_ROOK] & mask)
-        return WHITE_ROOK;
-    if (board->bitboard[WHITE_QUEEN] & mask)
-        return WHITE_QUEEN;
+	/* Check for other pieces in order of frequency. */
+	if (board->bitboard[WHITE_PAWN] & mask)
+		return WHITE_PAWN;
+	if (board->bitboard[WHITE_KNIGHT] & mask)
+		return WHITE_KNIGHT;
+	if (board->bitboard[WHITE_BISHOP] & mask)
+		return WHITE_BISHOP;
+	if (board->bitboard[WHITE_ROOK] & mask)
+		return WHITE_ROOK;
+	if (board->bitboard[WHITE_QUEEN] & mask)
+		return WHITE_QUEEN;
 
-    return NONE;
+	return NONE;
 }
 
-void execute_move(board_t *board, move_t move)
-{
-    if (board->current_player)
-    {
-        /* Black is the side to move. Remove white phantom kings from the
-        ** board.
-        */
-        if (board->castle_flags & WHITE_PHANTOM_KINGS_KINGSIDE)
-        {
-            board->castle_flags ^= WHITE_PHANTOM_KINGS_KINGSIDE;
-            board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_KINGSIDE;
-            board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_KINGSIDE;
-            board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
-        }
-        else if (board->castle_flags & WHITE_PHANTOM_KINGS_QUEENSIDE)
-        {
-            board->castle_flags ^= WHITE_PHANTOM_KINGS_QUEENSIDE;
-            board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_QUEENSIDE;
-            board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_QUEENSIDE;
-            board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
-        }
-    }
-    else
-    {
-        /* White is the side to move. Remove black phantom kings from the
-        ** board.
-        */
-        if (board->castle_flags & BLACK_PHANTOM_KINGS_KINGSIDE)
-        {
-            board->castle_flags ^= BLACK_PHANTOM_KINGS_KINGSIDE;
-            board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_KINGSIDE;
-            board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_KINGSIDE;
-            board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
-        }
-        else if (board->castle_flags & BLACK_PHANTOM_KINGS_QUEENSIDE)
-        {
-            board->castle_flags ^= BLACK_PHANTOM_KINGS_QUEENSIDE;
-            board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_QUEENSIDE;
-            board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_QUEENSIDE;
-            board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
-        }
-    }
+void execute_move(board_t *board, move_t move) {
+	if (board->current_player) {
+		/* Black is the side to move. Remove white phantom kings from the
+		** board.
+		*/
+		if (board->castle_flags & WHITE_PHANTOM_KINGS_KINGSIDE) {
+			board->castle_flags ^= WHITE_PHANTOM_KINGS_KINGSIDE;
+			board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_KINGSIDE;
+			board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_KINGSIDE;
+			board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
+		} else if (board->castle_flags & WHITE_PHANTOM_KINGS_QUEENSIDE) {
+			board->castle_flags ^= WHITE_PHANTOM_KINGS_QUEENSIDE;
+			board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_QUEENSIDE;
+			board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_QUEENSIDE;
+			board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
+		}
+	} else {
+		/* White is the side to move. Remove black phantom kings from the
+		** board.
+		*/
+		if (board->castle_flags & BLACK_PHANTOM_KINGS_KINGSIDE) {
+			board->castle_flags ^= BLACK_PHANTOM_KINGS_KINGSIDE;
+			board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_KINGSIDE;
+			board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_KINGSIDE;
+			board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
+		} else if (board->castle_flags & BLACK_PHANTOM_KINGS_QUEENSIDE) {
+			board->castle_flags ^= BLACK_PHANTOM_KINGS_QUEENSIDE;
+			board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_QUEENSIDE;
+			board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_QUEENSIDE;
+			board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
+		}
+	}
 
-    switch (move & MOVE_NO_PROMOTION_MASK)
-    {
-    case NORMAL_MOVE:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        if ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN)
-            board->fifty_moves = 0;
-        else
-            board->fifty_moves++;
-        break;
+	switch (move & MOVE_NO_PROMOTION_MASK) {
+	case NORMAL_MOVE:
+		remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		if ((MOVE_GET(move, PIECE) & PIECE_MASK) == PAWN)
+			board->fifty_moves = 0;
+		else
+			board->fifty_moves++;
+		break;
 
-    case CAPTURE_MOVE:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        board->fifty_moves = 0;
-        break;
+	case CAPTURE_MOVE:
+		remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		board->fifty_moves = 0;
+		break;
 
-    case CAPTURE_MOVE_EN_PASSANT:
-        remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+	case CAPTURE_MOVE_EN_PASSANT:
+		remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
 
-        /* Remove the captured pawn. */
-        remove_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1? 8 : -8),
-                     MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        board->fifty_moves = 0;
-        break;
+		/* Remove the captured pawn. */
+		remove_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1 ? 8 : -8), MOVE_GET(move, CAPTURED));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		board->fifty_moves = 0;
+		break;
 
-    case CASTLING_MOVE_KINGSIDE:
-        {
-            /* We have to move the rook as well. */
-            int rook = ROOK + board->current_player;
+	case CASTLING_MOVE_KINGSIDE: {
+		/* We have to move the rook as well. */
+		int rook = ROOK + board->current_player;
 
-            remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) - 1, rook);
+		remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
+		add_piece(board, MOVE_GET(move, DEST) - 1, rook);
 
-            /* Add phantom kings to detect whether or not
-            ** this move is legal.
-            */
-            if (!board->current_player)
-            {
-                /* White castling. */
-                board->castle_flags |= WHITE_PHANTOM_KINGS_KINGSIDE
-                                       | WHITE_HAS_CASTLED;
-                board->bitboard[WHITE_KING] |= WHITE_PHANTOM_KINGSIDE;
-                board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_KINGSIDE;
-            }
-            else
-            {
-                /* Black castling. */
-                board->castle_flags |= BLACK_PHANTOM_KINGS_KINGSIDE
-                                       | BLACK_HAS_CASTLED;
-                board->bitboard[BLACK_KING] |= BLACK_PHANTOM_KINGSIDE;
-                board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_KINGSIDE;
-            }
-            board->fifty_moves++;
-            break;
-        }
-    case CASTLING_MOVE_QUEENSIDE:
-        {
-            /* We have to move the rook as well. */
-            int rook = ROOK + board->current_player;
+		/* Add phantom kings to detect whether or not
+		** this move is legal.
+		*/
+		if (!board->current_player) {
+			/* White castling. */
+			board->castle_flags |= WHITE_PHANTOM_KINGS_KINGSIDE | WHITE_HAS_CASTLED;
+			board->bitboard[WHITE_KING] |= WHITE_PHANTOM_KINGSIDE;
+			board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_KINGSIDE;
+		} else {
+			/* Black castling. */
+			board->castle_flags |= BLACK_PHANTOM_KINGS_KINGSIDE | BLACK_HAS_CASTLED;
+			board->bitboard[BLACK_KING] |= BLACK_PHANTOM_KINGSIDE;
+			board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_KINGSIDE;
+		}
+		board->fifty_moves++;
+		break;
+	}
+	case CASTLING_MOVE_QUEENSIDE: {
+		/* We have to move the rook as well. */
+		int rook = ROOK + board->current_player;
 
-            remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            remove_piece(board, MOVE_GET(move, DEST) - 2, rook);
-            add_piece(board, MOVE_GET(move, DEST) + 1, rook);
+		remove_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		remove_piece(board, MOVE_GET(move, DEST) - 2, rook);
+		add_piece(board, MOVE_GET(move, DEST) + 1, rook);
 
-            /* Add phantom kings to detect whether or not
-            ** this move is legal.
-            */
-            if (!board->current_player)
-            {
-                /* White castling. */
-                board->castle_flags |= WHITE_PHANTOM_KINGS_QUEENSIDE
-                                       | WHITE_HAS_CASTLED;
-                board->bitboard[WHITE_KING] |= WHITE_PHANTOM_QUEENSIDE;
-                board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_QUEENSIDE;
-            }
-            else
-            {
-                /* Black castling. */
-                board->castle_flags |= BLACK_PHANTOM_KINGS_QUEENSIDE
-                                       | BLACK_HAS_CASTLED;
-                board->bitboard[BLACK_KING] |= BLACK_PHANTOM_QUEENSIDE;
-                board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_QUEENSIDE;
-            }
-            board->fifty_moves++;
-            break;
-        }
-    case RESIGN_MOVE:
-        /* Resign or checkmate, do nothing. */
-        return;
-    case STALEMATE_MOVE:
-        /* Stalemate, do nothing. */
-        return;
-    }
+		/* Add phantom kings to detect whether or not
+		** this move is legal.
+		*/
+		if (!board->current_player) {
+			/* White castling. */
+			board->castle_flags |= WHITE_PHANTOM_KINGS_QUEENSIDE | WHITE_HAS_CASTLED;
+			board->bitboard[WHITE_KING] |= WHITE_PHANTOM_QUEENSIDE;
+			board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_QUEENSIDE;
+		} else {
+			/* Black castling. */
+			board->castle_flags |= BLACK_PHANTOM_KINGS_QUEENSIDE | BLACK_HAS_CASTLED;
+			board->bitboard[BLACK_KING] |= BLACK_PHANTOM_QUEENSIDE;
+			board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_QUEENSIDE;
+		}
+		board->fifty_moves++;
+		break;
+	}
+	case RESIGN_MOVE:
+		/* Resign or checkmate, do nothing. */
+		return;
+	case STALEMATE_MOVE:
+		/* Stalemate, do nothing. */
+		return;
+	}
 
-    /* Promotion moves. */
-    switch (move & MOVE_PROMOTION_MASK)
-    {
-    case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
-        break;
-    case PROMOTION_MOVE_ROOK:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
-        break;
-    case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
-    }
+	/* Promotion moves. */
+	switch (move & MOVE_PROMOTION_MASK) {
+	case PROMOTION_MOVE_KNIGHT:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
+		break;
+	case PROMOTION_MOVE_BISHOP:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
+		break;
+	case PROMOTION_MOVE_ROOK:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
+		break;
+	case PROMOTION_MOVE_QUEEN:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
+	}
 
-    /* Reset en passant possibility. */
-    if (board->en_passant)
-    {
-        int square;
-        for (square = 0; square < 64; square++)
-        {
-            if (board->en_passant & square_bit[square])
-            {
-                board->hash_key ^= ep_hash[square];
-                break;
-            }
-        }
-        board->en_passant = 0LL;
-    }
+	/* Reset en passant possibility. */
+	if (board->en_passant) {
+		int square;
+		for (square = 0; square < 64; square++) {
+			if (board->en_passant & square_bit[square]) {
+				board->hash_key ^= ep_hash[square];
+				break;
+			}
+		}
+		board->en_passant = 0LL;
+	}
 
-    /* Set en passant possibility in case of a double pawn push. */
-    if ((MOVE_GET(move, PIECE) == WHITE_PAWN) && (MOVE_GET(move, DEST) -
-        MOVE_GET(move, SOURCE) == 16))
-    {
-        board->en_passant = square_bit[MOVE_GET(move, SOURCE) + 8];
-        board->hash_key ^= ep_hash[MOVE_GET(move, SOURCE) + 8];
-    }
-    else if ((MOVE_GET(move, PIECE) == BLACK_PAWN) && (MOVE_GET(move, SOURCE) -
-             MOVE_GET(move, DEST) == 16))
-    {
-        board->en_passant = square_bit[MOVE_GET(move, DEST) + 8];
-        board->hash_key ^= ep_hash[MOVE_GET(move, DEST) + 8];
-    }
+	/* Set en passant possibility in case of a double pawn push. */
+	if ((MOVE_GET(move, PIECE) == WHITE_PAWN) && (MOVE_GET(move, DEST) - MOVE_GET(move, SOURCE) == 16)) {
+		board->en_passant = square_bit[MOVE_GET(move, SOURCE) + 8];
+		board->hash_key ^= ep_hash[MOVE_GET(move, SOURCE) + 8];
+	} else if ((MOVE_GET(move, PIECE) == BLACK_PAWN) && (MOVE_GET(move, SOURCE) - MOVE_GET(move, DEST) == 16)) {
+		board->en_passant = square_bit[MOVE_GET(move, DEST) + 8];
+		board->hash_key ^= ep_hash[MOVE_GET(move, DEST) + 8];
+	}
 
-    /* Set castling possibilities. If the king moves castling is not allowed. */
-    switch (MOVE_GET(move, PIECE))
-    {
-    case WHITE_KING:
-        if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
-        }
-        if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
-        }
-        break;
-    case BLACK_KING:
-        if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
-        }
-        if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
-        }
-    }
+	/* Set castling possibilities. If the king moves castling is not allowed. */
+	switch (MOVE_GET(move, PIECE)) {
+	case WHITE_KING:
+		if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
+		}
+		if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
+		}
+		break;
+	case BLACK_KING:
+		if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
+		}
+		if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
+		}
+	}
 
-    /* Any activety in the corners will make castling impossible, either
-    ** because the rook moves, or because it is captured.
-    */
-    switch (MOVE_GET(move, SOURCE))
-    {
-    case SQUARE_A1:
-        if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
-        }
-        break;
-    case SQUARE_H1:
-        if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
-        }
-        break;
-    case SQUARE_A8:
-        if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
-        }
-        break;
-    case SQUARE_H8:
-        if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
-        }
-    }
-    switch (MOVE_GET(move, DEST))
-    {
-    case SQUARE_A1:
-        if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
-        }
-        break;
-    case SQUARE_H1:
-        if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
-            board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
-        }
-        break;
-    case SQUARE_A8:
-        if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
-        }
-        break;
-    case SQUARE_H8:
-        if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE)
-        {
-            board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
-            board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
-        }
-    }
+	/* Any activety in the corners will make castling impossible, either
+	** because the rook moves, or because it is captured.
+	*/
+	switch (MOVE_GET(move, SOURCE)) {
+	case SQUARE_A1:
+		if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
+		}
+		break;
+	case SQUARE_H1:
+		if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
+		}
+		break;
+	case SQUARE_A8:
+		if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
+		}
+		break;
+	case SQUARE_H8:
+		if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
+		}
+	}
+	switch (MOVE_GET(move, DEST)) {
+	case SQUARE_A1:
+		if (board->castle_flags & WHITE_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_QUEENSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_QUEENSIDE;
+		}
+		break;
+	case SQUARE_H1:
+		if (board->castle_flags & WHITE_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_WHITE + CASTLE_KINGSIDE];
+			board->castle_flags ^= WHITE_CAN_CASTLE_KINGSIDE;
+		}
+		break;
+	case SQUARE_A8:
+		if (board->castle_flags & BLACK_CAN_CASTLE_QUEENSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_QUEENSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_QUEENSIDE;
+		}
+		break;
+	case SQUARE_H8:
+		if (board->castle_flags & BLACK_CAN_CASTLE_KINGSIDE) {
+			board->hash_key ^= castle_hash[SIDE_BLACK + CASTLE_KINGSIDE];
+			board->castle_flags ^= BLACK_CAN_CASTLE_KINGSIDE;
+		}
+	}
 
-    /* Switch players. */
-    board->current_player = OPPONENT(board->current_player);
-    board->hash_key ^= black_to_move;
+	/* Switch players. */
+	board->current_player = OPPONENT(board->current_player);
+	board->hash_key ^= black_to_move;
 }
 
-void unmake_move(board_t *board, move_t move, bitboard_t
-                 old_en_passant,                int
-                 old_castle_flags, int old_fifty_moves)
-{
-    int castle_diff;
+void unmake_move(board_t *board, move_t move, bitboard_t old_en_passant, int old_castle_flags, int old_fifty_moves) {
+	int castle_diff;
 
-    /* Switch players. */
-    board->current_player = OPPONENT(board->current_player);
-    board->hash_key ^= black_to_move;
+	/* Switch players. */
+	board->current_player = OPPONENT(board->current_player);
+	board->hash_key ^= black_to_move;
 
-    /* Promotion moves. */
-    switch (move & MOVE_PROMOTION_MASK)
-    {
-    case PROMOTION_MOVE_KNIGHT:
-        remove_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        break;
-    case PROMOTION_MOVE_BISHOP:
-        remove_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        break;
-    case PROMOTION_MOVE_ROOK:
-        remove_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        break;
-    case PROMOTION_MOVE_QUEEN:
-        remove_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-    }
+	/* Promotion moves. */
+	switch (move & MOVE_PROMOTION_MASK) {
+	case PROMOTION_MOVE_KNIGHT:
+		remove_piece(board, MOVE_GET(move, DEST), KNIGHT + board->current_player);
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		break;
+	case PROMOTION_MOVE_BISHOP:
+		remove_piece(board, MOVE_GET(move, DEST), BISHOP + board->current_player);
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		break;
+	case PROMOTION_MOVE_ROOK:
+		remove_piece(board, MOVE_GET(move, DEST), ROOK + board->current_player);
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		break;
+	case PROMOTION_MOVE_QUEEN:
+		remove_piece(board, MOVE_GET(move, DEST), QUEEN + board->current_player);
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+	}
 
-    switch (move & MOVE_NO_PROMOTION_MASK)
-    {
-    case NORMAL_MOVE:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        break;
+	switch (move & MOVE_NO_PROMOTION_MASK) {
+	case NORMAL_MOVE:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		break;
 
-    case CAPTURE_MOVE:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        break;
+	case CAPTURE_MOVE:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, CAPTURED));
+		add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		break;
 
-    case CAPTURE_MOVE_EN_PASSANT:
-        remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-        add_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1? 8 : -8),
-                  MOVE_GET(move, CAPTURED));
-        add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
-        break;
+	case CAPTURE_MOVE_EN_PASSANT:
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, DEST) + (MOVE_GET(move, PIECE) & 1 ? 8 : -8), MOVE_GET(move, CAPTURED));
+		add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		break;
 
-    case CASTLING_MOVE_KINGSIDE:
-        {
-            /* We have to move the rook as well. */
-            int rook = ROOK + board->current_player;
+	case CASTLING_MOVE_KINGSIDE: {
+		/* We have to move the rook as well. */
+		int rook = ROOK + board->current_player;
 
-            /* Remove the phantom kings. */
-            if (!board->current_player)
-            {
-                board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_KINGSIDE;
-                board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_KINGSIDE;
+		/* Remove the phantom kings. */
+		if (!board->current_player) {
+			board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_KINGSIDE;
+			board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_KINGSIDE;
 
-                /* Put back the rook. */
-                board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
-                board->castle_flags ^= WHITE_HAS_CASTLED
-                                       | WHITE_PHANTOM_KINGS_KINGSIDE;
-            }
-            else
-            {
-                board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_KINGSIDE;
-                board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_KINGSIDE;
+			/* Put back the rook. */
+			board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
+			board->castle_flags ^= WHITE_HAS_CASTLED | WHITE_PHANTOM_KINGS_KINGSIDE;
+		} else {
+			board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_KINGSIDE;
+			board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_KINGSIDE;
 
-                /* Put back the rook. */
-                board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
-                board->castle_flags ^= BLACK_HAS_CASTLED
-                                       | BLACK_PHANTOM_KINGS_KINGSIDE;
-            }
+			/* Put back the rook. */
+			board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
+			board->castle_flags ^= BLACK_HAS_CASTLED | BLACK_PHANTOM_KINGS_KINGSIDE;
+		}
 
-            remove_piece(board, MOVE_GET(move, DEST) - 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		remove_piece(board, MOVE_GET(move, DEST) - 1, rook);
+		add_piece(board, MOVE_GET(move, DEST) + 1, rook);
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
 
-            break;
-        }
-    case CASTLING_MOVE_QUEENSIDE:
-        {
-            /* We have to move the rook as well. */
-            int rook = ROOK + board->current_player;
+		break;
+	}
+	case CASTLING_MOVE_QUEENSIDE: {
+		/* We have to move the rook as well. */
+		int rook = ROOK + board->current_player;
 
-            /* Remove the phantom kings. */
-            if (!board->current_player)
-            {
-                board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_QUEENSIDE;
-                board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_QUEENSIDE;
+		/* Remove the phantom kings. */
+		if (!board->current_player) {
+			board->bitboard[WHITE_KING] ^= WHITE_PHANTOM_QUEENSIDE;
+			board->bitboard[WHITE_ALL] ^= WHITE_PHANTOM_QUEENSIDE;
 
-                /* Put back the rook. */
-                board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
-                board->castle_flags ^= WHITE_HAS_CASTLED
-                                       | WHITE_PHANTOM_KINGS_QUEENSIDE;
-            }
-            else
-            {
-                board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_QUEENSIDE;
-                board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_QUEENSIDE;
+			/* Put back the rook. */
+			board->bitboard[WHITE_ALL] |= board->bitboard[WHITE_ROOK];
+			board->castle_flags ^= WHITE_HAS_CASTLED | WHITE_PHANTOM_KINGS_QUEENSIDE;
+		} else {
+			board->bitboard[BLACK_KING] ^= BLACK_PHANTOM_QUEENSIDE;
+			board->bitboard[BLACK_ALL] ^= BLACK_PHANTOM_QUEENSIDE;
 
-                /* Put back the rook. */
-                board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
-                board->castle_flags ^= BLACK_HAS_CASTLED
-                                       | BLACK_PHANTOM_KINGS_QUEENSIDE;
-            }
+			/* Put back the rook. */
+			board->bitboard[BLACK_ALL] |= board->bitboard[BLACK_ROOK];
+			board->castle_flags ^= BLACK_HAS_CASTLED | BLACK_PHANTOM_KINGS_QUEENSIDE;
+		}
 
-            remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
-            add_piece(board, MOVE_GET(move, DEST) - 2, rook);
-            remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
-            add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
+		remove_piece(board, MOVE_GET(move, DEST) + 1, rook);
+		add_piece(board, MOVE_GET(move, DEST) - 2, rook);
+		remove_piece(board, MOVE_GET(move, DEST), MOVE_GET(move, PIECE));
+		add_piece(board, MOVE_GET(move, SOURCE), MOVE_GET(move, PIECE));
 
-            break;
-        }
-    case RESIGN_MOVE:
-        /* Resign or checkmate, do nothing. */
-        return;
-    case STALEMATE_MOVE:
-        /* Stalemate, do nothing. */
-        return;
-    }
+		break;
+	}
+	case RESIGN_MOVE:
+		/* Resign or checkmate, do nothing. */
+		return;
+	case STALEMATE_MOVE:
+		/* Stalemate, do nothing. */
+		return;
+	}
 
-    /* Restore en passant possibility. */
-    if (board->en_passant || old_en_passant)
-    {
-        int square;
-        for (square = 0; square < 64; square++)
-        {
-            if (board->en_passant & square_bit[square])
-                board->hash_key ^= ep_hash[square];
-            if (old_en_passant & square_bit[square])
-                board->hash_key ^= ep_hash[square];
-        }
-        board->en_passant = old_en_passant;
-    }
+	/* Restore en passant possibility. */
+	if (board->en_passant || old_en_passant) {
+		int square;
+		for (square = 0; square < 64; square++) {
+			if (board->en_passant & square_bit[square])
+				board->hash_key ^= ep_hash[square];
+			if (old_en_passant & square_bit[square])
+				board->hash_key ^= ep_hash[square];
+		}
+		board->en_passant = old_en_passant;
+	}
 
-    castle_diff = board->castle_flags ^ old_castle_flags;
+	castle_diff = board->castle_flags ^ old_castle_flags;
 
-    /* Restore phantom kings. */
-    switch ((castle_diff & PHANTOM_FLAGS) & old_castle_flags)
-    {
-    case WHITE_PHANTOM_KINGS_KINGSIDE:
-        board->castle_flags |= WHITE_PHANTOM_KINGS_KINGSIDE;
-        board->bitboard[WHITE_KING] |= WHITE_PHANTOM_KINGSIDE;
-        board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_KINGSIDE;
-        break;
+	/* Restore phantom kings. */
+	switch ((castle_diff & PHANTOM_FLAGS) & old_castle_flags) {
+	case WHITE_PHANTOM_KINGS_KINGSIDE:
+		board->castle_flags |= WHITE_PHANTOM_KINGS_KINGSIDE;
+		board->bitboard[WHITE_KING] |= WHITE_PHANTOM_KINGSIDE;
+		board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_KINGSIDE;
+		break;
 
-    case WHITE_PHANTOM_KINGS_QUEENSIDE:
-        board->castle_flags |= WHITE_PHANTOM_KINGS_QUEENSIDE;
-        board->bitboard[WHITE_KING] |= WHITE_PHANTOM_QUEENSIDE;
-        board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_QUEENSIDE;
-        break;
+	case WHITE_PHANTOM_KINGS_QUEENSIDE:
+		board->castle_flags |= WHITE_PHANTOM_KINGS_QUEENSIDE;
+		board->bitboard[WHITE_KING] |= WHITE_PHANTOM_QUEENSIDE;
+		board->bitboard[WHITE_ALL] |= WHITE_PHANTOM_QUEENSIDE;
+		break;
 
-    case BLACK_PHANTOM_KINGS_KINGSIDE:
-        board->castle_flags |= BLACK_PHANTOM_KINGS_KINGSIDE;
-        board->bitboard[BLACK_KING] |= BLACK_PHANTOM_KINGSIDE;
-        board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_KINGSIDE;
-        break;
+	case BLACK_PHANTOM_KINGS_KINGSIDE:
+		board->castle_flags |= BLACK_PHANTOM_KINGS_KINGSIDE;
+		board->bitboard[BLACK_KING] |= BLACK_PHANTOM_KINGSIDE;
+		board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_KINGSIDE;
+		break;
 
-    case BLACK_PHANTOM_KINGS_QUEENSIDE:
-        board->castle_flags |= BLACK_PHANTOM_KINGS_QUEENSIDE;
-        board->bitboard[BLACK_KING] |= BLACK_PHANTOM_QUEENSIDE;
-        board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_QUEENSIDE;
-        break;
-    }
+	case BLACK_PHANTOM_KINGS_QUEENSIDE:
+		board->castle_flags |= BLACK_PHANTOM_KINGS_QUEENSIDE;
+		board->bitboard[BLACK_KING] |= BLACK_PHANTOM_QUEENSIDE;
+		board->bitboard[BLACK_ALL] |= BLACK_PHANTOM_QUEENSIDE;
+		break;
+	}
 
-    /* Restore castle flags. */
-    if (castle_diff & 15)
-    {
-        int i;
-        for (i = 0; i < 4; i++)
-            if (castle_diff & (1 << i))
-                board->hash_key ^= castle_hash[i];
-        board->castle_flags = old_castle_flags;
-    }
-    board->fifty_moves = old_fifty_moves;
+	/* Restore castle flags. */
+	if (castle_diff & 15) {
+		int i;
+		for (i = 0; i < 4; i++)
+			if (castle_diff & (1 << i))
+				board->hash_key ^= castle_hash[i];
+		board->castle_flags = old_castle_flags;
+	}
+	board->fifty_moves = old_fifty_moves;
 }

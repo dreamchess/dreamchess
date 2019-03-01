@@ -32,13 +32,10 @@
 #define MAX_NODE 0
 #define MIN_NODE 1
 
-move_t
-find_best_move(state_t *state);
+move_t find_best_move(state_t *state);
 
-void
-pv_clear(void);
+void pv_clear(void);
 
-move_t
-ponder(state_t *state);
+move_t ponder(state_t *state);
 
 #endif

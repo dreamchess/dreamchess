@@ -18,9 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "board.h"
 #include "fen.h"
@@ -28,53 +28,47 @@
 /* FIXME: Add support for castling rights and move counters. */
 /* FIXME: Error checking. */
 
-char *fen_encode(board_t *board)
-{
+char *fen_encode(board_t *board) {
 	const size_t fen_max_size = 255;
 	char *fen = malloc(fen_max_size + 1);
 	int feni = 0;
 	int file, rank;
 
-	for (rank = 7; rank >= 0; rank--)
-	{
+	for (rank = 7; rank >= 0; rank--) {
 		int empty = 0;
-		for (file = 0; file < 8; file++)
-		{
-			int piece = board->square[rank*8+file];
-			int c=0;
+		for (file = 0; file < 8; file++) {
+			int piece = board->square[rank * 8 + file];
+			int c = 0;
 
-			if (piece == NONE)
-			{
+			if (piece == NONE) {
 				empty++;
 				continue;
 			}
 
-			if (empty)
-			{
+			if (empty) {
 				if (feni < fen_max_size)
 					fen[feni++] = '0' + empty;
 				empty = 0;
 			}
 
-			switch(PIECE(piece))
-			{
-				case PAWN:
-					c = 'p';
-					break;
-				case KNIGHT:
-					c = 'n';
-					break;
-				case BISHOP:
-					c = 'b';
-					break;
-				case ROOK:
-					c = 'r';
-					break;
-				case QUEEN:
-					c = 'q';
-					break;
-				case KING:
-					c = 'k';
+			switch (PIECE(piece)) {
+			case PAWN:
+				c = 'p';
+				break;
+			case KNIGHT:
+				c = 'n';
+				break;
+			case BISHOP:
+				c = 'b';
+				break;
+			case ROOK:
+				c = 'r';
+				break;
+			case QUEEN:
+				c = 'q';
+				break;
+			case KING:
+				c = 'k';
 			}
 
 			if (IS_WHITE(piece))
@@ -83,8 +77,7 @@ char *fen_encode(board_t *board)
 			if (feni < fen_max_size)
 				fen[feni++] = c;
 		}
-		if (empty)
-		{
+		if (empty) {
 			if (feni < fen_max_size)
 				fen[feni++] = '0' + empty;
 			empty = 0;
@@ -97,8 +90,7 @@ char *fen_encode(board_t *board)
 	return fen;
 }
 
-board_t *fen_decode(const char *fen)
-{
+board_t *fen_decode(const char *fen) {
 	board_t *board;
 	char *space = strchr(fen, ' ');
 	int i;
@@ -109,42 +101,39 @@ board_t *fen_decode(const char *fen)
 
 	board = malloc(sizeof(board_t));
 
-	for (i = 0; i < space - fen; i++)
-	{
+	for (i = 0; i < space - fen; i++) {
 		int j;
 		char c = fen[i];
-		char piece=0;
+		char piece = 0;
 
-		if ((c >= '1') && (c <= '8'))
-		{
+		if ((c >= '1') && (c <= '8')) {
 			for (j = 0; j < c - '0'; j++)
 				board->square[square++] = NONE;
 			continue;
 		}
 
-		switch(toupper(c))
-		{
-			case 'P':
-				piece = PAWN;
-				break;
-			case 'N':
-				piece = KNIGHT;
-				break;
-			case 'B':
-				piece = BISHOP;
-				break;
-			case 'R':
-				piece = ROOK;
-				break;
-			case 'Q':
-				piece = QUEEN;
-				break;
-			case 'K':
-				piece = KING;
-				break;
-			case '/':
-				square -= 16;
-				continue;
+		switch (toupper(c)) {
+		case 'P':
+			piece = PAWN;
+			break;
+		case 'N':
+			piece = KNIGHT;
+			break;
+		case 'B':
+			piece = BISHOP;
+			break;
+		case 'R':
+			piece = ROOK;
+			break;
+		case 'Q':
+			piece = QUEEN;
+			break;
+		case 'K':
+			piece = KING;
+			break;
+		case '/':
+			square -= 16;
+			continue;
 		}
 
 		if (c >= 'a')

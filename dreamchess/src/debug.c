@@ -18,9 +18,9 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "config.h"
 #include "debug.h"
@@ -34,9 +34,8 @@ static int dbg_level = 1;
 ** 3: Errors + Warnings + Log
 */
 
-void dbg_set_level(int level)
-{
-    dbg_level = level;
+void dbg_set_level(int level) {
+	dbg_level = level;
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -45,21 +44,21 @@ void dbg_error(char *file, int line, const char *fmt, ...)
 void dbg_error(const char *fmt, ...)
 #endif
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 1)
-        return;
+	if (dbg_level < 1)
+		return;
 
 #ifdef HAVE_VARARGS_MACROS
-    fprintf(stderr, "%s:%d: ", file, line);
+	fprintf(stderr, "%s:%d: ", file, line);
 #endif
-    fprintf(stderr, "error: ");
+	fprintf(stderr, "error: ");
 
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
 
-    fprintf(stderr, "\n");
+	fprintf(stderr, "\n");
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -68,21 +67,21 @@ void dbg_warn(char *file, int line, const char *fmt, ...)
 void dbg_warn(const char *fmt, ...)
 #endif
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 2)
-        return;
+	if (dbg_level < 2)
+		return;
 
 #ifdef HAVE_VARARGS_MACROS
-    printf("%s:%d: ", file, line);
+	printf("%s:%d: ", file, line);
 #endif
-    printf("warning: ");
+	printf("warning: ");
 
-    va_start(ap, fmt);
-    vprintf(fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 
-    printf("\n");
+	printf("\n");
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -91,18 +90,18 @@ void dbg_log(char *file, int line, const char *fmt, ...)
 void dbg_log(const char *fmt, ...)
 #endif
 {
-    va_list ap;
+	va_list ap;
 
-    if (dbg_level < 3)
-        return;
+	if (dbg_level < 3)
+		return;
 
 #ifdef HAVE_VARARGS_MACROS
-    printf("%s:%d: ", file, line);
+	printf("%s:%d: ", file, line);
 #endif
 
-    va_start(ap, fmt);
-    vprintf(fmt, ap);
-    va_end(ap);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 
-    printf("\n");
+	printf("\n");
 }

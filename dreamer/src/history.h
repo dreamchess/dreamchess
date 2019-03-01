@@ -23,19 +23,14 @@
 
 #include "board.h"
 
-void
-sort_moves(int ply, int side, move_t best_move);
+void sort_moves(int ply, int side, move_t best_move);
 
-void
-sort_next(int ply, int side);
+void sort_next(int ply, int side);
 
-void
-add_count(move_t move, int side);
+void add_count(move_t move, int side);
 
-void
-forget_history(void);
+void forget_history(void);
 
-void
-best_first(int ply, move_t move);
+void best_first(int ply, move_t move);
 
 #endif

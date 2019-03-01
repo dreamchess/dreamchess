@@ -26,16 +26,14 @@
 #define OPTION_FOREACH(A, B) TAILQ_FOREACH(A, &B->options, entries)
 #define OPTION_VALUE_FOREACH(A, B) TAILQ_FOREACH(A, &B->values, entries)
 
-typedef struct option_value
-{
+typedef struct option_value {
 	char *name;
 	void *data;
 	int index;
 	TAILQ_ENTRY(option_value) entries;
 } option_value_t;
 
-typedef struct option_data
-{
+typedef struct option_data {
 	int type;
 	char *name;
 
@@ -52,8 +50,7 @@ typedef struct option_data
 	TAILQ_ENTRY(option_data) entries;
 } option_t;
 
-typedef struct option_group
-{
+typedef struct option_group {
 	char *name;
 	TAILQ_HEAD(options_head, option_data) options;
 } option_group_t;

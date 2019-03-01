@@ -47,16 +47,12 @@
 #define SQUARE_BIT(A) (1LL << (A))
 
 /* Empty squares required for kingside castle. */
-#define WHITE_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F1) \
-| SQUARE_BIT(SQUARE_G1))
-#define BLACK_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F8) \
-| SQUARE_BIT(SQUARE_G8))
+#define WHITE_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F1) | SQUARE_BIT(SQUARE_G1))
+#define BLACK_EMPTY_KINGSIDE (SQUARE_BIT(SQUARE_F8) | SQUARE_BIT(SQUARE_G8))
 
 /* Empty squares required for queenside castle. */
-#define WHITE_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B1) | SQUARE_BIT(SQUARE_C1) \
-| SQUARE_BIT(SQUARE_D1))
-#define BLACK_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B8) | SQUARE_BIT(SQUARE_C8) \
-| SQUARE_BIT(SQUARE_D8))
+#define WHITE_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B1) | SQUARE_BIT(SQUARE_C1) | SQUARE_BIT(SQUARE_D1))
+#define BLACK_EMPTY_QUEENSIDE (SQUARE_BIT(SQUARE_B8) | SQUARE_BIT(SQUARE_C8) | SQUARE_BIT(SQUARE_D8))
 
 /* Squares where phantom kings are placed during a kingside castle to detect an
 ** illegal move.
@@ -77,8 +73,8 @@
 
 /* Chess piece mask. */
 #define PIECE_MASK 14
-#define PIECE_IS_WHITE(A) (!((A) & 1)) /* A % 1 */
-#define PIECE_IS_BLACK(A) ((A) & 1)
+#define PIECE_IS_WHITE(A) (!((A)&1)) /* A % 1 */
+#define PIECE_IS_BLACK(A) ((A)&1)
 
 /* Castling. */
 
@@ -177,35 +173,33 @@
 typedef unsigned long long bitboard_t;
 
 /* Struct describing the current state of the board. */
-typedef struct board
-{
-    bitboard_t bitboard[NR_BITBOARDS];
+typedef struct board {
+	bitboard_t bitboard[NR_BITBOARDS];
 
-    /* Hash key of the current board. */
-    long long hash_key;
+	/* Hash key of the current board. */
+	long long hash_key;
 
-    /* 0-3 can_castle flags
-    ** 4-5 has_castled flags
-    ** 6-9 phantom kings flags
-    */
-    int castle_flags;
+	/* 0-3 can_castle flags
+	** 4-5 has_castled flags
+	** 6-9 phantom kings flags
+	*/
+	int castle_flags;
 
-    /* bitboard containing the current en_passant flags, if any. */
-    bitboard_t en_passant;
+	/* bitboard containing the current en_passant flags, if any. */
+	bitboard_t en_passant;
 
-    /* Current player. 0 = white, 1 = black. */
-    int current_player;
+	/* Current player. 0 = white, 1 = black. */
+	int current_player;
 
-    /* Current total material value for both black and white. */
-    int material_value[2];
+	/* Current total material value for both black and white. */
+	int material_value[2];
 
-    /* Number of pawns on the board for both black and white. */
-    int num_pawns[2];
+	/* Number of pawns on the board for both black and white. */
+	int num_pawns[2];
 
-    /* 50-move counter. */
-    int fifty_moves;
-}
-board_t;
+	/* 50-move counter. */
+	int fifty_moves;
+} board_t;
 
 typedef int move_t;
 #if 0
@@ -233,8 +227,7 @@ extern bitboard_t square_bit[64];
 
 extern board_t chess_board;
 
-int
-find_black_piece(board_t *board, int square);
+int find_black_piece(board_t *board, int square);
 /* Looks for a black piece on the board at a specified location.
 ** Parameters: (board_t *) board: Pointer to the board to search.
 **             (int) square: The square to search.
@@ -244,8 +237,7 @@ find_black_piece(board_t *board, int square);
 **                 of the rook.
 */
 
-int
-find_white_piece(board_t *board, int square);
+int find_white_piece(board_t *board, int square);
 /* Looks for a white piece on the board at a specified location.
 ** Parameters: (board_t *) board: Pointer to the board to search.
 **             (int) square: The square to search.
@@ -255,38 +247,32 @@ find_white_piece(board_t *board, int square);
 **                 of the rook.
 */
 
-void
-board_init(void);
+void board_init(void);
 /* Initialises the global array square_bit.
 ** Parameters: (void)
 ** Returns   : (void)
 */
 
-void
-clear_board(board_t *board);
+void clear_board(board_t *board);
 /* Clears a board.
 ** Parameters: (board_t *) board: Pointer to the board to clear.
 ** Returns   : (void)
 */
 
-void
-setup_board(board_t *board);
+void setup_board(board_t *board);
 /* Sets up a board to the starting position.
 ** Parameters: (board_t *) board: Pointer to the board to set up.
 ** Returns   : (void)
 */
 
-void
-execute_move(board_t *board, move_t move);
+void execute_move(board_t *board, move_t move);
 /* Makes a move on a board.
 ** Parameters: (board_t *) board: Board to make the move on.
 **             (move_t) move: The move to make.
 ** Returns   : (void)
 */
 
-void
-unmake_move(board_t *board, move_t move, bitboard_t old_en_passant,
-            int old_castle_flags, int old_fifty_moves);
+void unmake_move(board_t *board, move_t move, bitboard_t old_en_passant, int old_castle_flags, int old_fifty_moves);
 /* Unmakes a move on a board.
 ** Parameters: (board_t *) board: Board to unmake the move on.
 **             (move_t) move: The move to unmake.

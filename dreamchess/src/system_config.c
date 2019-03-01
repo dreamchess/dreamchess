@@ -18,19 +18,18 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "theme.h"
-#include "options.h"
 #include "audio.h"
+#include "options.h"
 #include "system_config.h"
+#include "theme.h"
 
 static option_group_t *config;
 
-static void add_resolution(option_t *option, int w, int h)
-{
+static void add_resolution(option_t *option, int w, int h) {
 	config_resolution_t *res;
 	char str[10];
 
@@ -43,8 +42,7 @@ static void add_resolution(option_t *option, int w, int h)
 		free(res);
 }
 
-void config_init(void)
-{
+void config_init(void) {
 	option_t *option;
 	int i;
 
@@ -75,31 +73,31 @@ void config_init(void)
 	option_select_value_by_name(option, "8");
 
 	option = option_group_add_option(config, "time_moves");
-    option_add_value(option, "Whole game", NULL);
-    option_add_value(option, "10", NULL);
-    option_add_value(option, "20", NULL);
-    option_add_value(option, "30", NULL);
-    option_add_value(option, "40", NULL);
+	option_add_value(option, "Whole game", NULL);
+	option_add_value(option, "10", NULL);
+	option_add_value(option, "20", NULL);
+	option_add_value(option, "30", NULL);
+	option_add_value(option, "40", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_moves");
 	option->value = 40;
 
 	option = option_group_add_option(config, "time_time");
-    option_add_value(option, "20", NULL);
-    option_add_value(option, "30", NULL);
-    option_add_value(option, "60", NULL);
-    option_add_value(option, "120", NULL);
+	option_add_value(option, "20", NULL);
+	option_add_value(option, "30", NULL);
+	option_add_value(option, "60", NULL);
+	option_add_value(option, "120", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_time");
 	option->value = 60;
 
 	option = option_group_add_option(config, "time_increment");
-    option_add_value(option, "0", NULL);
-    option_add_value(option, "10", NULL);
-    option_add_value(option, "30", NULL);
-    option_add_value(option, "60", NULL);
+	option_add_value(option, "0", NULL);
+	option_add_value(option, "10", NULL);
+	option_add_value(option, "30", NULL);
+	option_add_value(option, "60", NULL);
 	option_add_value(option, "Custom", NULL);
 
 	option = option_group_add_int(config, "custom_time_increment");
@@ -155,8 +153,7 @@ void config_init(void)
 	config_load();
 }
 
-void config_set_failsafe_video(void)
-{
+void config_set_failsafe_video(void) {
 	option_t *option = option_group_find_option(config, "resolution");
 	option_select_value_by_name(option, "640x480");
 
@@ -172,17 +169,14 @@ void config_set_failsafe_video(void)
 	option_select_value_by_name(option, "Off");
 }
 
-int config_save(void)
-{
+int config_save(void) {
 	return option_group_save_xml(config);
 }
 
-int config_load(void)
-{
+int config_load(void) {
 	return option_group_load_xml(config);
 }
 
-option_t *config_get_option(char *name)
-{
+option_t *config_get_option(char *name) {
 	return option_group_find_option(config, name);
 }

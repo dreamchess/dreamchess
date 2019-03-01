@@ -24,8 +24,7 @@
 
 #include <gamegui/widget.h>
 
-typedef struct signal
-{
+typedef struct signal {
 	gg_class_id class;
 	char *name;
 } signal_t;
@@ -34,16 +33,12 @@ static signal_t *signals;
 static int signals_nr;
 static int signals_max;
 
-gg_signal_t gg_signal_lookup(gg_class_id class, char *name)
-{
+gg_signal_t gg_signal_lookup(gg_class_id class, char *name) {
 	int i;
 
 	for (i = 0; i < signals_nr; i++) {
 		/* Check for name in parent classes as well */
-		if (!strcmp(name, signals[i].name)
-		    && ((signals[i].class == class)
-		        || gg_is_parent(signals[i].class, class)))
-		{
+		if (!strcmp(name, signals[i].name) && ((signals[i].class == class) || gg_is_parent(signals[i].class, class))) {
 			return i;
 		}
 	}
@@ -51,8 +46,7 @@ gg_signal_t gg_signal_lookup(gg_class_id class, char *name)
 	return -1;
 }
 
-int gg_signal_register(gg_class_id class, char *name)
-{
+int gg_signal_register(gg_class_id class, char *name) {
 	if (gg_signal_lookup(class, name) != -1)
 		return -1;
 
@@ -68,11 +62,9 @@ int gg_signal_register(gg_class_id class, char *name)
 	return signals_nr - 1;
 }
 
-void gg_signal_init(void)
-{
+void gg_signal_init(void) {
 }
 
-void gg_signal_exit(void)
-{
+void gg_signal_exit(void) {
 	free(signals);
 }

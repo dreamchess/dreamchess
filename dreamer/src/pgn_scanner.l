@@ -32,64 +32,64 @@ extern int pgn_parse(void);
 
 int pgn_parse_file(char *filename)
 {
-    int retval = 0;
+	int retval = 0;
 
-    pgn_in = fopen(filename, "r");
+	pgn_in = fopen(filename, "r");
 
-    if (!pgn_in)
-    {
-        printf("Couldn't open file\n");
-        return 1;
-    }
+	if (!pgn_in)
+	{
+		printf("Couldn't open file\n");
+		return 1;
+	}
 
-    YY_NEW_FILE;
+	YY_NEW_FILE;
 
-    if (pgn_parse())
-    {
-        retval = 1;
-        printf("Parse error\n");
-    }
+	if (pgn_parse())
+	{
+		retval = 1;
+		printf("Parse error\n");
+	}
 
-    fclose(pgn_in);
+	fclose(pgn_in);
 
-    return retval;
+	return retval;
 }
 %}
 
 %%
 
 \"([^\t\n\r\f\v\\\"]|(\\[\\\"]))*\" {
-        pgn_lval.yycharp = make_string();
-        return STRING;
-    }
+		pgn_lval.yycharp = make_string();
+		return STRING;
+	}
 
 \*|1-0|0-1|1\/2-1\/2 {
-        return GAMETERM;
-    }
+		return GAMETERM;
+	}
 
 [0-9]+ {
-        pgn_lval.yyint = atoi(pgn_text);
-        return INTEGER;
-    }
+		pgn_lval.yyint = atoi(pgn_text);
+		return INTEGER;
+	}
 
 $[[:digit:]]+ {
-        pgn_lval.yyint = atoi(pgn_text + 1);
-        return NAG;
-    }
+		pgn_lval.yyint = atoi(pgn_text + 1);
+		return NAG;
+	}
 
 [[:alnum:]][[:alnum:]_\+#=:-]* {
-        pgn_lval.yycharp = strdup(pgn_text);
-        return SYMBOL;
-    }
+		pgn_lval.yycharp = strdup(pgn_text);
+		return SYMBOL;
+	}
 
 [ \t\n\r]
-        /* Skip whitespace. */
+		/* Skip whitespace. */
 
 \{[^\{]*\} printf("Skipping: %s\n", pgn_text);
-        /* Skip multiline comments. */
+		/* Skip multiline comments. */
 
 ;.*\n
-        /* Skip end-of-line comments. */
+		/* Skip end-of-line comments. */
 
 .       return pgn_text[0];
 
@@ -97,25 +97,25 @@ $[[:digit:]]+ {
 
 static char *make_string(void)
 {
-    int i;
-    int len = 0;
-    char *string;
+	int i;
+	int len = 0;
+	char *string;
 
-    /* We need at least yyleng bytes, plus 1 for the '\0' and minus 2 for the
-     * opening and closing quotes that will be removed.
-     */
-    string = malloc(pgn_leng - 1);
+	/* We need at least yyleng bytes, plus 1 for the '\0' and minus 2 for the
+	 * opening and closing quotes that will be removed.
+	 */
+	string = malloc(pgn_leng - 1);
 
-    /* Skip quotes. */
-    for (i = 1; i < pgn_leng - 1; i++)
-    {
-        /* Remove escapes. */
-        if (pgn_text[i] == '\\')
-            i++;
+	/* Skip quotes. */
+	for (i = 1; i < pgn_leng - 1; i++)
+	{
+		/* Remove escapes. */
+		if (pgn_text[i] == '\\')
+			i++;
 
-        string[len++] = pgn_text[i];
-    }
+		string[len++] = pgn_text[i];
+	}
 
-    string[len] = '\0';
-    return string;
+	string[len] = '\0';
+	return string;
 }

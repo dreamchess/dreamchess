@@ -24,13 +24,31 @@
 #include "config.h"
 
 #ifdef HAVE_C99_VARARGS_MACROS
-#define DBG_ERROR(...) do {dbg_error(__FILE__, __LINE__, __VA_ARGS__);} while (0)
-#define DBG_WARN(...) do {dbg_warn(__FILE__, __LINE__, __VA_ARGS__);} while (0)
-#define DBG_LOG(...) do {dbg_log(__FILE__, __LINE__, __VA_ARGS__);} while (0)
+#define DBG_ERROR(...)                                                                                                 \
+	do {                                                                                                               \
+		dbg_error(__FILE__, __LINE__, __VA_ARGS__);                                                                    \
+	} while (0)
+#define DBG_WARN(...)                                                                                                  \
+	do {                                                                                                               \
+		dbg_warn(__FILE__, __LINE__, __VA_ARGS__);                                                                     \
+	} while (0)
+#define DBG_LOG(...)                                                                                                   \
+	do {                                                                                                               \
+		dbg_log(__FILE__, __LINE__, __VA_ARGS__);                                                                      \
+	} while (0)
 #elif defined(HAVE_GNUC_VARARGS_MACROS)
-#define DBG_ERROR(args...) do {dbg_error(__FILE__, __LINE__, args);} while (0)
-#define DBG_WARN(args...) do {dbg_warn(__FILE__, __LINE__, args);} while (0)
-#define DBG_LOG(args...) do {dbg_log(__FILE__, __LINE__, args);} while (0)
+#define DBG_ERROR(args...)                                                                                             \
+	do {                                                                                                               \
+		dbg_error(__FILE__, __LINE__, args);                                                                           \
+	} while (0)
+#define DBG_WARN(args...)                                                                                              \
+	do {                                                                                                               \
+		dbg_warn(__FILE__, __LINE__, args);                                                                            \
+	} while (0)
+#define DBG_LOG(args...)                                                                                               \
+	do {                                                                                                               \
+		dbg_log(__FILE__, __LINE__, args);                                                                             \
+	} while (0)
 #else
 #define DBG_ERROR dbg_error
 #define DBG_WARN dbg_warn

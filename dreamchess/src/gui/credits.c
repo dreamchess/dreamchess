@@ -30,96 +30,86 @@
 
 #include "ui_sdlgl.h"
 
-void draw_credits(int init)
-{
-    static int section, nr, state;
-    int diff;
-    static Uint32 start;
-    char ***credits;
-    Uint32 now;
-    int x = get_gl_width() - 20;
-    int y = 270;
-    gg_colour_t col_cap = {0.55f, 0.65f, 0.95f, 0.0f};
-    gg_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};
+void draw_credits(int init) {
+	static int section, nr, state;
+	int diff;
+	static Uint32 start;
+	char ***credits;
+	Uint32 now;
+	int x = get_gl_width() - 20;
+	int y = 270;
+	gg_colour_t col_cap = {0.55f, 0.65f, 0.95f, 0.0f};
+	gg_colour_t col_item = {1.0f, 1.0f, 1.0f, 0.0f};
 
-    now = SDL_GetTicks();
-    credits = get_credits();
+	now = SDL_GetTicks();
+	credits = get_credits();
 
-    if (init)
-    {
-        section = 0;
-        nr = 1;
-        state = 0;
-        start = now;
-        return;
-    }
+	if (init) {
+		section = 0;
+		nr = 1;
+		state = 0;
+		start = now;
+		return;
+	}
 
-    switch (state)
-    {
-    case 0:
-        diff = now - start;
+	switch (state) {
+	case 0:
+		diff = now - start;
 
-        if (diff < 1000)
-            col_cap.a = diff / (float) 1000;
-        else
-        {
-            col_cap.a = 1.0f;
-            start = now;
-            state = 1;
-        }
+		if (diff < 1000)
+			col_cap.a = diff / (float)1000;
+		else {
+			col_cap.a = 1.0f;
+			start = now;
+			state = 1;
+		}
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
-        break;
+		break;
 
-    case 1:
-        col_cap.a = 1.0f;
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+	case 1:
+		col_cap.a = 1.0f;
+		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
-        diff = now - start;
+		diff = now - start;
 
-        if (diff < 1000)
-            col_item.a = diff / (float) 1000;
-        else if (diff < 2000)
-            col_item.a = 1.0f;
-        else if (diff < 3000)
-            col_item.a = 1.0f - (diff - 2000) / (float) 1000;
-        else
-        {
-            start = now;
-            nr++;
-            if (!credits[section][nr])
-            {
-                nr = 1;
-                state = 2;
-            }
-            return;
-        }
+		if (diff < 1000)
+			col_item.a = diff / (float)1000;
+		else if (diff < 2000)
+			col_item.a = 1.0f;
+		else if (diff < 3000)
+			col_item.a = 1.0f - (diff - 2000) / (float)1000;
+		else {
+			start = now;
+			nr++;
+			if (!credits[section][nr]) {
+				nr = 1;
+				state = 2;
+			}
+			return;
+		}
 
-        text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
+		text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
 
-        break;
+		break;
 
-    case 2:
-        diff = now - start;
+	case 2:
+		diff = now - start;
 
-        if (diff < 1000)
-            col_cap.a = 1.0f - diff / (float) 1000;
-        else
-            if (credits[section + 1])
-            {
-                section++;
-                start = now;
-                state = 0;
-            }
-            else
-            {
-                state = 3;
-                return;
-            }
+		if (diff < 1000)
+			col_cap.a = 1.0f - diff / (float)1000;
+		else if (credits[section + 1]) {
+			section++;
+			start = now;
+			state = 0;
+		} else {
+			state = 3;
+			return;
+		}
 
-        text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
 
-        break;
-    }
+		break;
+	}
 }

@@ -18,46 +18,41 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <windows.h>
 #include <stdio.h>
+#include <windows.h>
 
 #include "e_comm.h"
 #include "pipe_win32.h"
 
-void e_comm_init(void)
-{
-    HANDLE h_in, h_out;
-    DWORD mode;
+void e_comm_init(void) {
+	HANDLE h_in, h_out;
+	DWORD mode;
 
-    h_in = GetStdHandle(STD_INPUT_HANDLE);
-    h_out = GetStdHandle(STD_OUTPUT_HANDLE);
+	h_in = GetStdHandle(STD_INPUT_HANDLE);
+	h_out = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    if ((h_out == INVALID_HANDLE_VALUE) || (h_in == INVALID_HANDLE_VALUE))
-    {
-        fprintf(stderr, "Error: could not get handles for standard input and output.");
-        exit(1);
-    }
+	if ((h_out == INVALID_HANDLE_VALUE) || (h_in == INVALID_HANDLE_VALUE)) {
+		fprintf(stderr, "Error: could not get handles for standard input and output.");
+		exit(1);
+	}
 
-    pipe_win32_init(h_in, h_out, GetConsoleMode(h_in, &mode) != 0);
+	pipe_win32_init(h_in, h_out, GetConsoleMode(h_in, &mode) != 0);
 }
 
-void e_comm_exit(void)
-{
-    pipe_win32_exit();
+void e_comm_exit(void) {
+	pipe_win32_exit();
 }
 
-void e_comm_send_str(const char *str)
-{
-    pipe_win32_send(str);
+void e_comm_send_str(const char *str) {
+	pipe_win32_send(str);
 }
 
-char *e_comm_poll(void)
-{
-    int error;
-    char *retval = pipe_win32_poll(&error);
+char *e_comm_poll(void) {
+	int error;
+	char *retval = pipe_win32_poll(&error);
 
-    if (error)
-        exit(1);
+	if (error)
+		exit(1);
 
-    return retval;
+	return retval;
 }

@@ -29,20 +29,18 @@
 
 #define GG_ENTRY(W) GG_CHECK_CAST(W, gg_entry_get_class_id(), gg_entry_t)
 
-#define GG_ENTRY_DATA \
-    GG_WIDGET_DATA \
-    char text[ENTRY_MAX_LEN + 1]; \
-    int max_len; \
-    int cursor_pos; \
-    int display_pos; \
-    gg_signal_t action_pressed;
+#define GG_ENTRY_DATA                                                                                                  \
+	GG_WIDGET_DATA                                                                                                     \
+	char text[ENTRY_MAX_LEN + 1];                                                                                      \
+	int max_len;                                                                                                       \
+	int cursor_pos;                                                                                                    \
+	int display_pos;                                                                                                   \
+	gg_signal_t action_pressed;
 
 /** Text entry widget state. */
-typedef struct w_entry
-{
-    GG_ENTRY_DATA
-}
-gg_entry_t;
+typedef struct w_entry {
+	GG_ENTRY_DATA
+} gg_entry_t;
 
 gg_class_id gg_entry_get_class_id(void);
 
@@ -61,4 +59,3 @@ int gg_entry_set_text(gg_entry_t *entry, char *text);
 void gg_entry_set_max_len(gg_entry_t *entry, int len);
 
 #endif
-

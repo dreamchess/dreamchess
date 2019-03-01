@@ -21,23 +21,21 @@
 #ifndef GAMEGUI_LABEL_H
 #define GAMEGUI_LABEL_H
 
-#include <gamegui/system.h>
 #include <gamegui/align.h>
+#include <gamegui/system.h>
 
 #define GG_LABEL(W) GG_CHECK_CAST(W, gg_label_get_class_id(), gg_label_t)
 
-#define GG_LABEL_DATA \
-    GG_ALIGN_DATA \
-    char *label; \
-    gg_colour_t colour; \
-    gg_colour_t bgcolour; \
-    int bouncy;
+#define GG_LABEL_DATA                                                                                                  \
+	GG_ALIGN_DATA                                                                                                      \
+	char *label;                                                                                                       \
+	gg_colour_t colour;                                                                                                \
+	gg_colour_t bgcolour;                                                                                              \
+	int bouncy;
 
-typedef struct gg_label
-{
-    GG_LABEL_DATA
-}
-gg_label_t;
+typedef struct gg_label {
+	GG_LABEL_DATA
+} gg_label_t;
 
 gg_class_id gg_label_get_class_id(void);
 

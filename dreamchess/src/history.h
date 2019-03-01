@@ -28,35 +28,31 @@
 #include "board.h"
 
 /** History list entry. */
-typedef struct step
-{
-    /** Linked list pointers. */
-    struct step *prev, *next;
+typedef struct step {
+	/** Linked list pointers. */
+	struct step *prev, *next;
 
-    /** Board position. */
-    board_t *board;
+	/** Board position. */
+	board_t *board;
 
-    /** Move done from this board position (if any), NULL otherwise. */
-    move_t *move;
-}
-step_t;
+	/** Move done from this board position (if any), NULL otherwise. */
+	move_t *move;
+} step_t;
 
 /** History list. The last step never contains a move. */
-typedef struct history
-{
-    /** Currently viewed history step. */
-    step_t *view;
+typedef struct history {
+	/** Currently viewed history step. */
+	step_t *view;
 
-    /** First step in list. */
-    step_t *first;
+	/** First step in list. */
+	step_t *first;
 
-    /** Last step in list. */
-    step_t *last;
+	/** Last step in list. */
+	step_t *last;
 
-    /** Game result (if any), NULL otherwise. */
-    result_t *result;
-}
-history_t;
+	/** Game result (if any), NULL otherwise. */
+	result_t *result;
+} history_t;
 
 /** @brief Allocates a new history list containing one step.
  *

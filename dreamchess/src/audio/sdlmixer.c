@@ -31,13 +31,10 @@
 
 #include "debug.h"
 #include "playlist.h"
-#include "theme.h"
 #include "system_config.h"
+#include "theme.h"
 
-static sound_t sounds[AUDIO_SOUNDS] =
-{
-	{AUDIO_MOVE, "move1.wav"}
-};
+static sound_t sounds[AUDIO_SOUNDS] = {{AUDIO_MOVE, "move1.wav"}};
 
 static audio_music_callback_t music_callback = NULL;
 static Mix_Music *music = NULL;
@@ -51,8 +48,7 @@ static Mix_Chunk *wav_data[AUDIO_SOUNDS];
 
 static int sound_volume, music_volume;
 
-static void load_sounds(void)
-{
+static void load_sounds(void) {
 	int i;
 
 	for (i = 0; i < AUDIO_SOUNDS; i++) {
@@ -65,22 +61,19 @@ static void load_sounds(void)
 	}
 }
 
-static void free_sounds(void)
-{
+static void free_sounds(void) {
 	int i;
 
 	for (i = 0; i < AUDIO_SOUNDS; i++)
 		Mix_FreeChunk(wav_data[i]);
 }
 
-static void music_finished(void)
-{
+static void music_finished(void) {
 	next_song = 1;
 }
 
-void audio_init(void)
-{
-        music_packs_t *music_packs;
+void audio_init(void) {
+	music_packs_t *music_packs;
 	int audio_rate = 44100;
 	Uint16 audio_format = AUDIO_S16;
 	int audio_channels = 2;
@@ -115,21 +108,18 @@ void audio_init(void)
 
 	playlist = playlist_create();
 	TAILQ_FOREACH(music_pack, music_packs, entries)
-		playlist_add_tracks(playlist, music_pack->dir);
+	playlist_add_tracks(playlist, music_pack->dir);
 
 	/* Check for at least two songs */
-	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist)))
-	{
+	if ((TAILQ_FIRST(playlist) != TAILQ_LAST(playlist, playlist))) {
 		current_song = TAILQ_LAST(playlist, playlist);
 		have_songs = 1;
 		next_song = 1;
-	}
-	else
+	} else
 		have_songs = 0;
 }
 
-void audio_exit(void)
-{
+void audio_exit(void) {
 	if (!have_audio)
 		return;
 
@@ -138,21 +128,19 @@ void audio_exit(void)
 	playlist_destroy(playlist);
 }
 
-void audio_poll(int title)
-{
+void audio_poll(int title) {
 	if (!have_audio)
 		return;
 
-        /* Less than two songs or volume off, abort. */
-        if (!have_songs || !music_volume)
-                return;
+	/* Less than two songs or volume off, abort. */
+	if (!have_songs || !music_volume)
+		return;
 
 	/* Start a new song when the previous one is finished. Is also
 	** triggered when going from the title-screen to in-game and back
 	*/
-	if ((next_song == 1) || (!title && (current_song == TAILQ_FIRST(playlist)))
-		|| (title && (current_song != TAILQ_FIRST(playlist))))
-	{
+	if ((next_song == 1) || (!title && (current_song == TAILQ_FIRST(playlist))) ||
+		(title && (current_song != TAILQ_FIRST(playlist)))) {
 		if (title)
 			current_song = TAILQ_FIRST(playlist);
 		else {
@@ -179,13 +167,11 @@ void audio_poll(int title)
 	}
 }
 
-void audio_set_music_callback(audio_music_callback_t callback)
-{
+void audio_set_music_callback(audio_music_callback_t callback) {
 	music_callback = callback;
 }
 
-void audio_play_sound(int id)
-{
+void audio_play_sound(int id) {
 	if (!have_audio)
 		return;
 
@@ -196,8 +182,7 @@ void audio_play_sound(int id)
 		DBG_WARN("failed to play sound %i", id);
 }
 
-void audio_set_sound_volume(int vol)
-{
+void audio_set_sound_volume(int vol) {
 	if (!have_audio)
 		return;
 
@@ -205,8 +190,7 @@ void audio_set_sound_volume(int vol)
 	Mix_Volume(0, sound_volume);
 }
 
-void audio_set_music_volume(int vol)
-{
+void audio_set_music_volume(int vol) {
 	if (!have_audio)
 		return;
 
@@ -216,8 +200,7 @@ void audio_set_music_volume(int vol)
 
 	if (music_volume == 0) {
 		Mix_HaltMusic();
-	}
-	else if (restart) {
+	} else if (restart) {
 		next_song = 1;
 	}
 }

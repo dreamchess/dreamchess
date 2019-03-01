@@ -18,18 +18,17 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "xml.h"
-#include "options.h"
 #include "debug.h"
 #include "dir.h"
+#include "options.h"
+#include "xml.h"
 
-static char *remove_spaces(const char *str)
-{
+static char *remove_spaces(const char *str) {
 	char *sc = strdup(str);
 	char *s = sc;
 
@@ -42,8 +41,7 @@ static char *remove_spaces(const char *str)
 	return sc;
 }
 
-option_group_t *option_group_create(const char *name)
-{
+option_group_t *option_group_create(const char *name) {
 	option_group_t *group = malloc(sizeof(option_group_t));
 
 	group->name = remove_spaces(name);
@@ -51,8 +49,7 @@ option_group_t *option_group_create(const char *name)
 	return group;
 }
 
-option_t *option_group_add_option(option_group_t *group, const char *name)
-{
+option_t *option_group_add_option(option_group_t *group, const char *name) {
 	option_t *option = malloc(sizeof(option_t));
 
 	option->type = OPTION_TYPE_OPTION;
@@ -64,8 +61,7 @@ option_t *option_group_add_option(option_group_t *group, const char *name)
 	return option;
 }
 
-option_t *option_group_add_int(option_group_t *group, const char *name)
-{
+option_t *option_group_add_int(option_group_t *group, const char *name) {
 	option_t *option = malloc(sizeof(option_t));
 
 	option->type = OPTION_TYPE_INT;
@@ -74,8 +70,7 @@ option_t *option_group_add_int(option_group_t *group, const char *name)
 	return option;
 }
 
-option_t *option_group_add_string(option_group_t *group, const char *name)
-{
+option_t *option_group_add_string(option_group_t *group, const char *name) {
 	option_t *option = malloc(sizeof(option_t));
 
 	option->type = OPTION_TYPE_STRING;
@@ -85,8 +80,7 @@ option_t *option_group_add_string(option_group_t *group, const char *name)
 	return option;
 }
 
-static void option_group_save(option_group_t *group, FILE *f)
-{
+static void option_group_save(option_group_t *group, FILE *f) {
 	option_t *option;
 
 	fputs("<?xml version=\"1.0\"?>\n<options>\n", f);
@@ -107,8 +101,7 @@ static void option_group_save(option_group_t *group, FILE *f)
 	fputs("</options>\n", f);
 }
 
-int option_group_save_xml(option_group_t *group)
-{
+int option_group_save_xml(option_group_t *group) {
 	FILE *f;
 	char *filename;
 	int error = 0;
@@ -139,8 +132,7 @@ int option_group_save_xml(option_group_t *group)
 	return error;
 }
 
-static void option_cb(void *user_data, const char *element, char *const *attrs, const char *text)
-{
+static void option_cb(void *user_data, const char *element, char *const *attrs, const char *text) {
 	option_t *option;
 	option_group_t *group = (option_group_t *)user_data;
 
@@ -168,8 +160,7 @@ static void option_cb(void *user_data, const char *element, char *const *attrs, 
 		option->string = strdup(text);
 }
 
-int option_group_load_xml(option_group_t *group)
-{
+int option_group_load_xml(option_group_t *group) {
 	char *filename;
 	int retval = 0;
 
@@ -186,8 +177,7 @@ int option_group_load_xml(option_group_t *group)
 	return retval;
 }
 
-void option_add_value(option_t *option, const char *name, void *data)
-{
+void option_add_value(option_t *option, const char *name, void *data) {
 	option_value_t *value = malloc(sizeof(option_value_t));
 
 	value->name = strdup(name);
@@ -198,8 +188,7 @@ void option_add_value(option_t *option, const char *name, void *data)
 		option->selected = value;
 }
 
-int option_select_value_by_name(option_t *option, const char *name)
-{
+int option_select_value_by_name(option_t *option, const char *name) {
 	option_value_t *value;
 
 	TAILQ_FOREACH(value, &option->values, entries) {
@@ -231,8 +220,7 @@ int option_select_value_by_index(option_t *option, int index) {
 	return -1;
 }
 
-int option_select_next_value(option_t *option)
-{
+int option_select_next_value(option_t *option) {
 	if (!option->selected)
 		return -1;
 
@@ -240,11 +228,10 @@ int option_select_next_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_NEXT(option->selected, entries);
-        return 0;
+	return 0;
 }
 
-int option_select_prev_value(option_t *option)
-{
+int option_select_prev_value(option_t *option) {
 	if (!option->selected)
 		return -1;
 
@@ -252,11 +239,10 @@ int option_select_prev_value(option_t *option)
 		return -1;
 
 	option->selected = TAILQ_PREV(option->selected, values_head, entries);
-        return 0;
+	return 0;
 }
 
-option_t *option_group_find_option(option_group_t *group, const char *name)
-{
+option_t *option_group_find_option(option_group_t *group, const char *name) {
 	char *namews = remove_spaces(name);
 	option_t *option;
 
@@ -269,11 +255,9 @@ option_t *option_group_find_option(option_group_t *group, const char *name)
 	return option;
 }
 
-void option_string_set_text(option_t *option, const char *text)
-{
+void option_string_set_text(option_t *option, const char *text) {
 	if (option->string)
 		free(option->string);
 
 	option->string = strdup(text);
 }
-

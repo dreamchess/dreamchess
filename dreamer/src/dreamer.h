@@ -30,49 +30,44 @@
 #define MODE_FORCE 3
 #define MODE_QUIT 4
 
-#define FLAG_IGNORE_MOVE (1<<0)
-#define FLAG_NEW_GAME (1<<1)
-#define FLAG_PONDER (1<<2)
-#define FLAG_DELAY_MOVE (1<<2)
+#define FLAG_IGNORE_MOVE (1 << 0)
+#define FLAG_NEW_GAME (1 << 1)
+#define FLAG_PONDER (1 << 2)
+#define FLAG_DELAY_MOVE (1 << 2)
 
 #define MAX_DEPTH 30
 
-typedef struct
-{
-    bitboard_t en_passant;
-    int castle_flags;
-    int fifty_moves;
-    move_t move;
-}
-undo_data_t;
+typedef struct {
+	bitboard_t en_passant;
+	int castle_flags;
+	int fifty_moves;
+	move_t move;
+} undo_data_t;
 
-struct time_control
-{
-    int mps;
-    int base;
-    int inc;
+struct time_control {
+	int mps;
+	int base;
+	int inc;
 };
 
-typedef struct state
-{
-    int done;
-    int mode;
-    int flags;
-    int depth;
-    board_t board;
-    board_t root_board;
-    undo_data_t *undo_data;
-    int moves;
-    int options;
-    struct time_control time;
-    timer engine_time;
-    timer move_time;
-    move_t hint;
-    move_t ponder_opp_move;
-    move_t ponder_my_move;
-    move_t ponder_actual_move;
-}
-state_t;
+typedef struct state {
+	int done;
+	int mode;
+	int flags;
+	int depth;
+	board_t board;
+	board_t root_board;
+	undo_data_t *undo_data;
+	int moves;
+	int options;
+	struct time_control time;
+	timer engine_time;
+	timer move_time;
+	move_t hint;
+	move_t ponder_opp_move;
+	move_t ponder_my_move;
+	move_t ponder_actual_move;
+} state_t;
 
 int my_turn(state_t *state);
 

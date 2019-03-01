@@ -21,9 +21,8 @@
 #ifndef GAMEGUI_SIGNAL_H
 #define GAMEGUI_SIGNAL_H
 
-#include <gamegui/system.h>
-#include <gamegui/widget.h>
 #include <gamegui/queue.h>
+#include <gamegui/system.h>
 
 typedef int gg_signal_t;
 

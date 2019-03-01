@@ -18,14 +18,14 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "board.h"
 #include "hashing.h"
-#include "transposition.h"
-#include "search.h"
 #include "move.h"
+#include "search.h"
+#include "transposition.h"
 
 /* #define DEBUG */
 
@@ -39,134 +39,121 @@ int hits;
 
 int collisions;
 
-typedef struct entry
-{
-    int eval_type;
-    int eval;
-    int depth;
-    unsigned long long hash_key;
-    int time_stamp;
-    move_t move;
-}
-entry_t;
+typedef struct entry {
+	int eval_type;
+	int eval;
+	int depth;
+	unsigned long long hash_key;
+	int time_stamp;
+	move_t move;
+} entry_t;
 
 entry_t *table;
 
-void
-store_board(board_t *board, int eval, int eval_type, int depth, int ply,
-            int time_stamp, move_t move)
-{
-    int index = board->hash_key & (ENTRIES - 1);
+void store_board(board_t *board, int eval, int eval_type, int depth, int ply, int time_stamp, move_t move) {
+	int index = board->hash_key & (ENTRIES - 1);
 
-    if ((table[index].eval_type != EVAL_NONE) && (table[index].hash_key == board->hash_key)
-            && (table[index].depth > depth))
-        /* Do not overwrite entries for this board at greater depth. */
-        return;
+	if ((table[index].eval_type != EVAL_NONE) && (table[index].hash_key == board->hash_key) &&
+		(table[index].depth > depth))
+		/* Do not overwrite entries for this board at greater depth. */
+		return;
 
-    /* Make mate-in-n values relative to board that's to be stored */
-    if (eval < ALPHABETA_MIN + 1000)
-        eval -= ply;
-    else if (eval > ALPHABETA_MAX - 1000)
-        eval += ply;
+	/* Make mate-in-n values relative to board that's to be stored */
+	if (eval < ALPHABETA_MIN + 1000)
+		eval -= ply;
+	else if (eval > ALPHABETA_MAX - 1000)
+		eval += ply;
 
-    table[index].hash_key = board->hash_key;
-    table[index].eval = eval;
-    table[index].eval_type = eval_type;
-    table[index].depth = depth;
-    table[index].time_stamp = time_stamp;
-    table[index].move = move;
+	table[index].hash_key = board->hash_key;
+	table[index].eval = eval;
+	table[index].eval_type = eval_type;
+	table[index].depth = depth;
+	table[index].time_stamp = time_stamp;
+	table[index].move = move;
 }
 
-void
-set_best_move(board_t *board, move_t move)
-{
-    int index = board->hash_key & (ENTRIES - 1);
+void set_best_move(board_t *board, move_t move) {
+	int index = board->hash_key & (ENTRIES - 1);
 
-    if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
-        store_board(board, 0, EVAL_PV, 0, 0, 0, move);
-    else
-        table[index].move = move;
+	if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
+		store_board(board, 0, EVAL_PV, 0, 0, 0, move);
+	else
+		table[index].move = move;
 }
 
-int
-lookup_board(board_t *board, int depth, int ply, int *eval)
-{
-    int index = board->hash_key & (ENTRIES - 1);
+int lookup_board(board_t *board, int depth, int ply, int *eval) {
+	int index = board->hash_key & (ENTRIES - 1);
 
 #ifdef DEBUG
-    if (queries == 100000) {e_comm_send("TT hit rate:: %.2f%%\n", hits / (float) queries * 100); queries = 0; hits = 0;}
-    queries++;
+	if (queries == 100000) {
+		e_comm_send("TT hit rate:: %.2f%%\n", hits / (float)queries * 100);
+		queries = 0;
+		hits = 0;
+	}
+	queries++;
 #endif
-    if (table[index].eval_type == EVAL_NONE)
-        return EVAL_NONE;
+	if (table[index].eval_type == EVAL_NONE)
+		return EVAL_NONE;
 
-    if (table[index].hash_key != board->hash_key)
-        return EVAL_NONE;
+	if (table[index].hash_key != board->hash_key)
+		return EVAL_NONE;
 #ifdef DEBUG
-    hits++;
+	hits++;
 #endif
 
-    if (table[index].depth < depth || table[index].eval_type == EVAL_PV)
-        return EVAL_NONE;
+	if (table[index].depth < depth || table[index].eval_type == EVAL_PV)
+		return EVAL_NONE;
 
-    *eval = table[index].eval;
+	*eval = table[index].eval;
 
-    /* Make mate-in-n values relative to current game position */
-    if (*eval < ALPHABETA_MIN + 1000)
-        *eval += ply;
-    else if (*eval > ALPHABETA_MAX - 1000)
-        *eval -= ply;
+	/* Make mate-in-n values relative to current game position */
+	if (*eval < ALPHABETA_MIN + 1000)
+		*eval += ply;
+	else if (*eval > ALPHABETA_MAX - 1000)
+		*eval -= ply;
 
-    return table[index].eval_type;
+	return table[index].eval_type;
 }
 
-move_t
-lookup_best_move(board_t *board)
-{
-    int index = board->hash_key & (ENTRIES - 1);
+move_t lookup_best_move(board_t *board) {
+	int index = board->hash_key & (ENTRIES - 1);
 
-    if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
-        return NO_MOVE;
+	if ((table[index].eval_type == EVAL_NONE) || (table[index].hash_key != board->hash_key))
+		return NO_MOVE;
 
-    return table[index].move;
+	return table[index].move;
 }
 
-void
-clear_table(void)
-{
-    int i;
-    for (i = 0; i < ENTRIES; i++)
-    {
-        table[i].eval_type = EVAL_NONE;
-    }
+void clear_table(void) {
+	int i;
+	for (i = 0; i < ENTRIES; i++) {
+		table[i].eval_type = EVAL_NONE;
+	}
 }
 
-void transposition_init(int megabytes)
-{
-    int i = 0;
-    int x = 2;
+void transposition_init(int megabytes) {
+	int i = 0;
+	int x = 2;
 
-    int max_entries = megabytes * 1024768 / sizeof(entry_t);
+	int max_entries = megabytes * 1024768 / sizeof(entry_t);
 
-    while (x <= max_entries) {
-        x *= 2;
-        i++;
-    }
+	while (x <= max_entries) {
+		x *= 2;
+		i++;
+	}
 
-    x /= 2;
-    power_of_two = i;
+	x /= 2;
+	power_of_two = i;
 
-    printf("Hash table size: %i MB\n", x * (int)sizeof(entry_t) / 1024768);
-    table = malloc(x * sizeof(entry_t));
+	printf("Hash table size: %i MB\n", x * (int)sizeof(entry_t) / 1024768);
+	table = malloc(x * sizeof(entry_t));
 
-    if (!table)
-    {
-         fprintf(stderr, "Failed to allocate memory for hash table\n");
-         exit(1);
-    }
+	if (!table) {
+		fprintf(stderr, "Failed to allocate memory for hash table\n");
+		exit(1);
+	}
 }
 
-void transposition_exit(void)
-{
-    free(table);
+void transposition_exit(void) {
+	free(table);
 }

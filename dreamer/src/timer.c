@@ -18,23 +18,21 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "timer.h"
 #include <assert.h>
 #include <stdlib.h>
-#include "timer.h"
 
 #ifdef _MSC_VER
 
 #define _W32_FT_OFFSET (116444736000000000ULL)
 
-int gettimeofday(struct timeval *tp, void *tzp)
-{
+int gettimeofday(struct timeval *tp, void *tzp) {
 	union {
 		unsigned long long ns100;
 		FILETIME ft;
-	}  _now;
+	} _now;
 
-	if (tp)
-	{
+	if (tp) {
 		GetSystemTimeAsFileTime(&_now.ft);
 		tp->tv_usec = (long)((_now.ns100 / 10ULL) % 1000000ULL);
 		tp->tv_sec = (long)((_now.ns100 - _W32_FT_OFFSET) / 10000000ULL);
@@ -46,8 +44,7 @@ int gettimeofday(struct timeval *tp, void *tzp)
 #endif
 
 /* Borrowed from libc.info */
-static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)
-{
+static int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y) {
 	/* Perform the carry for the later subtraction by updating y. */
 	if (x->tv_usec < y->tv_usec) {
 		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
@@ -69,8 +66,7 @@ static int timeval_subtract(struct timeval *result, struct timeval *x, struct ti
 	return x->tv_sec < y->tv_sec;
 }
 
-static int get_time(timer *c)
-{
+static int get_time(timer *c) {
 	struct timeval tv;
 
 	if (!(c->flags & TIMER_RUNNING))
@@ -82,30 +78,26 @@ static int get_time(timer *c)
 	return tv.tv_sec * 100 + tv.tv_usec / 10000;
 }
 
-int timer_get(timer *c)
-{
-	return c->val + (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
+int timer_get(timer *c) {
+	return c->val + (c->flags & TIMER_DOWN ? -get_time(c) : get_time(c));
 }
 
-void timer_set(timer *c, int val)
-{
+void timer_set(timer *c, int val) {
 	timer_stop(c);
 	c->val = val;
 }
 
-void timer_start(timer *c)
-{
-        gettimeofday(&c->start_time, NULL);
+void timer_start(timer *c) {
+	gettimeofday(&c->start_time, NULL);
 	c->flags |= TIMER_RUNNING;
 }
 
-void timer_stop(timer *c)
-{	c->val += (c->flags & TIMER_DOWN? -get_time(c) : get_time(c));
+void timer_stop(timer *c) {
+	c->val += (c->flags & TIMER_DOWN ? -get_time(c) : get_time(c));
 	c->flags &= ~TIMER_RUNNING;
 }
 
-void timer_init(timer *c, int down)
-{
+void timer_init(timer *c, int down) {
 	timer_set(c, 0);
-	c->flags = (down? TIMER_DOWN : 0);
+	c->flags = (down ? TIMER_DOWN : 0);
 }

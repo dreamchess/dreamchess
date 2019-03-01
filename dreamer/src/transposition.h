@@ -29,18 +29,13 @@
 #define EVAL_UPPERBOUND 3
 #define EVAL_PV 4
 
-void
-store_board(board_t *board, int eval, int eval_type, int depth, int ply,
-            int time_stamp, move_t best_move);
+void store_board(board_t *board, int eval, int eval_type, int depth, int ply, int time_stamp, move_t best_move);
 
-int
-lookup_board(board_t *board, int depth, int ply, int *eval);
+int lookup_board(board_t *board, int depth, int ply, int *eval);
 
-void
-set_best_move(board_t *board, move_t move);
+void set_best_move(board_t *board, move_t move);
 
-void
-clear_table(void);
+void clear_table(void);
 
 void transposition_init(int megabytes);
 void transposition_exit(void);

@@ -21,11 +21,11 @@
 #ifndef GAMEGUI_EDIT_H
 #define GAMEGUI_EDIT_H
 
-#include <gamegui/system.h>
-#include <gamegui/widget.h>
 #include <gamegui/container.h>
 #include <gamegui/queue.h>
 #include <gamegui/scrollbarv.h>
+#include <gamegui/system.h>
+#include <gamegui/widget.h>
 
 #define EDIT_SPACING 2
 #define EDIT_LINE_SPACING 2
@@ -37,19 +37,17 @@ struct gg_edit_line {
 	char *text;
 };
 
-#define GG_EDIT_DATA \
-    GG_CONTAINER_DATA \
-    TAILQ_HEAD(lines_head, gg_edit_line) lines; \
-    int lines_nr; \
-    int display_pos; \
-    int line_height;
+#define GG_EDIT_DATA                                                                                                   \
+	GG_CONTAINER_DATA                                                                                                  \
+	TAILQ_HEAD(lines_head, gg_edit_line) lines;                                                                        \
+	int lines_nr;                                                                                                      \
+	int display_pos;                                                                                                   \
+	int line_height;
 
 /** Text entry widget state. */
-typedef struct w_edit
-{
-    GG_EDIT_DATA
-}
-gg_edit_t;
+typedef struct w_edit {
+	GG_EDIT_DATA
+} gg_edit_t;
 
 gg_class_id gg_edit_get_class_id(void);
 
@@ -66,4 +64,3 @@ int gg_edit_add_line(gg_edit_t *edit, char *text);
 void gg_edit_append(gg_edit_t *edit, char *text);
 
 #endif
-

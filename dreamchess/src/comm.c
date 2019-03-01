@@ -18,44 +18,42 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "comm.h"
 #include "debug.h"
 
-void comm_send(const char *fmt, ...)
-{
-    /* Code adapted from example in PRINTF(3) */
-    /* Guess we need no more than 100 bytes. */
-    int n, size = 100;
-    char *p;
-    va_list ap;
-    p = malloc(size);
-    while (1)
-    {
-        /* Try to print in the allocated space. */
-        va_start(ap, fmt);
-        n = vsnprintf(p, size, fmt, ap);
-        va_end(ap);
-        /* If that worked, return the string. */
-        if (n > -1 && n < size)
-            break;
-        /* Else try again with more space. */
-        if (n > -1)
-            /* glibc 2.1, set size to precisely what's needed. */
-            size = n+1;
-        else
-            /* glibc 2.0, try with twice the old size. */
-            size *= 2;
-        p = realloc(p, size);
-    }
+void comm_send(const char *fmt, ...) {
+	/* Code adapted from example in PRINTF(3) */
+	/* Guess we need no more than 100 bytes. */
+	int n, size = 100;
+	char *p;
+	va_list ap;
+	p = malloc(size);
+	while (1) {
+		/* Try to print in the allocated space. */
+		va_start(ap, fmt);
+		n = vsnprintf(p, size, fmt, ap);
+		va_end(ap);
+		/* If that worked, return the string. */
+		if (n > -1 && n < size)
+			break;
+		/* Else try again with more space. */
+		if (n > -1)
+			/* glibc 2.1, set size to precisely what's needed. */
+			size = n + 1;
+		else
+			/* glibc 2.0, try with twice the old size. */
+			size *= 2;
+		p = realloc(p, size);
+	}
 
-    comm_send_str(p);
-    if (p[strlen(p) - 1] == '\n')
-        p[strlen(p) - 1] = 0;
-    DBG_LOG("message to engine: '%s'", p);
-    free(p);
+	comm_send_str(p);
+	if (p[strlen(p) - 1] == '\n')
+		p[strlen(p) - 1] = 0;
+	DBG_LOG("message to engine: '%s'", p);
+	free(p);
 }

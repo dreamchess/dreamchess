@@ -23,92 +23,75 @@
 
 #include <gamegui/label.h>
 
-static gg_colour_t col_grey = {
-    0.5f, 0.5f, 0.5f, 1.0f
-};
+static gg_colour_t col_grey = {0.5f, 0.5f, 0.5f, 1.0f};
 
-static gg_colour_t col_trans =
-    {
-        0.0f, 0.0f, 0.0f, 0.0f
-    };
+static gg_colour_t col_trans = {0.0f, 0.0f, 0.0f, 0.0f};
 
-static gg_colour_t col_texthighlight =
-    {
-        0.55f, 0.65f, 0.95f, 1.0f
-    };
+static gg_colour_t col_texthighlight = {0.55f, 0.65f, 0.95f, 1.0f};
 
-static gg_colour_t col_text =
-    {
-        1.0f, 1.0f, 1.0f, 1.0f
-    };
+static gg_colour_t col_text = {1.0f, 1.0f, 1.0f, 1.0f};
 
-gg_class_id gg_label_get_class_id(void)
-{
-    GG_CHILD(gg_align_get_class_id())
+gg_class_id gg_label_get_class_id(void) {
+	GG_CHILD(gg_align_get_class_id())
 }
 
 /** Implements widget::render for text widgets. */
-void gg_label_render(gg_widget_t *widget, int x, int y, int focus)
-{
-    gg_label_t *label = GG_LABEL(widget);
+void gg_label_render(gg_widget_t *widget, int x, int y, int focus) {
+	gg_label_t *label = GG_LABEL(widget);
 
-    if (label->bgcolour.a != 0.0f)
-        gg_system_draw_filled_rect(x, y, label->width_a, label->height_a, &label->bgcolour);
+	if (label->bgcolour.a != 0.0f)
+		gg_system_draw_filled_rect(x, y, label->width_a, label->height_a, &label->bgcolour);
 
-    x += label->xalign * (label->width_a - label->width);
-    y += (1.0f - label->yalign) * (label->height_a - label->height);
+	x += label->xalign * (label->width_a - label->width);
+	y += (1.0f - label->yalign) * (label->height_a - label->height);
 
 	/* TODO Fix temporary hack */
 	if (!widget->enabled)
-        gg_system_draw_string(label->label, x, y, &col_grey, 0, 0);
-    else if (focus != GG_FOCUS_NONE)
-        gg_system_draw_string(label->label, x, y, &col_texthighlight, label->bouncy, 0);
-    else
-        gg_system_draw_string(label->label, x, y, &label->colour, 0, 0);
+		gg_system_draw_string(label->label, x, y, &col_grey, 0, 0);
+	else if (focus != GG_FOCUS_NONE)
+		gg_system_draw_string(label->label, x, y, &col_texthighlight, label->bouncy, 0);
+	else
+		gg_system_draw_string(label->label, x, y, &label->colour, 0, 0);
 }
 
-void gg_label_set_bouncy(gg_label_t *label, int bouncy)
-{
-    label->bouncy = bouncy;
+void gg_label_set_bouncy(gg_label_t *label, int bouncy) {
+	label->bouncy = bouncy;
 }
 
-void gg_label_set_colour(gg_label_t *label, gg_colour_t *colour, gg_colour_t *bgcolour)
-{
-    if (colour)
-        label->colour = *colour;
+void gg_label_set_colour(gg_label_t *label, gg_colour_t *colour, gg_colour_t *bgcolour) {
+	if (colour)
+		label->colour = *colour;
 
-    if (bgcolour)
-        label->bgcolour = *bgcolour;
+	if (bgcolour)
+		label->bgcolour = *bgcolour;
 }
 
 /** @brief Destroys a text widget.
  *
  *  @param widget The text widget.
  */
-void gg_label_destroy(gg_widget_t *widget)
-{
-    gg_label_t *label = GG_LABEL(widget);
+void gg_label_destroy(gg_widget_t *widget) {
+	gg_label_t *label = GG_LABEL(widget);
 
-    if (label->label)
-        free(label->label);
+	if (label->label)
+		free(label->label);
 
-    gg_widget_destroy(widget);
+	gg_widget_destroy(widget);
 }
 
-void gg_label_init(gg_label_t *label, char *text)
-{
-    gg_align_init((gg_align_t *) label);
+void gg_label_init(gg_label_t *label, char *text) {
+	gg_align_init((gg_align_t *)label);
 
-    label->render = gg_label_render;
-    label->destroy = gg_label_destroy;
-    label->id = gg_label_get_class_id();
-    label->label = strdup(text);
-    label->bouncy = 0;
+	label->render = gg_label_render;
+	label->destroy = gg_label_destroy;
+	label->id = gg_label_get_class_id();
+	label->label = strdup(text);
+	label->bouncy = 0;
 	label->enabled = 1;
-    label->colour = col_text;
-    label->bgcolour = col_trans;
-    gg_system_get_string_size(text, &label->width, &label->height);
-    label->height += GG_BOUNCE_AMP;
+	label->colour = col_text;
+	label->bgcolour = col_trans;
+	gg_system_get_string_size(text, &label->width, &label->height);
+	label->height += GG_BOUNCE_AMP;
 }
 
 /** @brief Creates a text widget.
@@ -119,11 +102,10 @@ void gg_label_init(gg_label_t *label, char *text)
  *  @param string The text for the widget.
  *  @return The created text widget.
  */
-gg_widget_t *gg_label_create(char *string)
-{
-    gg_label_t *label = malloc(sizeof(gg_label_t));
+gg_widget_t *gg_label_create(char *string) {
+	gg_label_t *label = malloc(sizeof(gg_label_t));
 
-    gg_label_init(label, string);
+	gg_label_init(label, string);
 
-    return GG_WIDGET(label);
+	return GG_WIDGET(label);
 }

@@ -50,11 +50,11 @@
 #define CHAR_BISHOP 20
 #define CHAR_PAWN 21
 
-#define IS_WHITE(P) (!((P) & 1))
-#define IS_BLACK(P) ((P) & 1)
+#define IS_WHITE(P) (!((P)&1))
+#define IS_BLACK(P) ((P)&1)
 
-#define COLOUR(P) ((P) & 1)
-#define PIECE(P) ((P) & 0xe)
+#define COLOUR(P) ((P)&1)
+#define PIECE(P) ((P)&0xe)
 
 #define OPPONENT(P) (1 - (P))
 
@@ -79,38 +79,32 @@
 #define BOARD_CHECKMATE 2
 #define BOARD_STALEMATE 3
 
-typedef struct board
-{
-    int turn;
-    int square[64];
-    int captured[10];
-    int state;
-}
-board_t;
+typedef struct board {
+	int turn;
+	int square[64];
+	int captured[10];
+	int state;
+} board_t;
 
-typedef struct move
-{
-    /* Source and destination squares. */
-    int source, destination;
-    /* Promotion piece (if any). */
-    int promotion_piece;
-    /* Move type. */
-    int type;
-    /* Board state after move. */
-    int state;
-}
-move_t;
+typedef struct move {
+	/* Source and destination squares. */
+	int source, destination;
+	/* Promotion piece (if any). */
+	int promotion_piece;
+	/* Move type. */
+	int type;
+	/* Board state after move. */
+	int state;
+} move_t;
 
 #define RESULT_WHITE_WINS 0
 #define RESULT_BLACK_WINS 1
 #define RESULT_DRAW 2
 
-typedef struct result
-{
-    int code;
-    char *reason;
-}
-result_t;
+typedef struct result {
+	int code;
+	char *reason;
+} result_t;
 
 void board_setup(board_t *board);
 char *move_to_fullalg(board_t *board, move_t *move);
@@ -120,6 +114,6 @@ int make_move(board_t *board, move_t *move);
 void move_set_attr(board_t *b, move_t *move);
 int move_is_valid(board_t *b, move_t *move);
 char *move_to_san(board_t *board, move_t *move);
-char* san_to_fan(board_t *board, char *move_s);
+char *san_to_fan(board_t *board, char *move_s);
 
 #endif

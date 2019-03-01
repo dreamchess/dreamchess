@@ -18,42 +18,38 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <signal.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include <signal.h>
 
 #include "e_comm.h"
 #include "pipe_unix.h"
 
-void e_comm_init(void)
-{
-    /* xboard ui's may send SIGINT to stop thinking or pondering.
-    ** We don't need this signal, so we ignore it.
-    */
-    signal(SIGINT, SIG_IGN);
-    
-    /* Setup stdin (0) as input and stdout (1) as output. */
-    pipe_unix_init(0, 1);
+void e_comm_init(void) {
+	/* xboard ui's may send SIGINT to stop thinking or pondering.
+	** We don't need this signal, so we ignore it.
+	*/
+	signal(SIGINT, SIG_IGN);
+
+	/* Setup stdin (0) as input and stdout (1) as output. */
+	pipe_unix_init(0, 1);
 }
 
-void e_comm_exit(void)
-{
-    pipe_unix_exit();
+void e_comm_exit(void) {
+	pipe_unix_exit();
 }
 
-void e_comm_send_str(const char *str)
-{
-    pipe_unix_send(str);
+void e_comm_send_str(const char *str) {
+	pipe_unix_send(str);
 }
 
-char *e_comm_poll(void)
-{
-    int error;
-    char *retval = pipe_unix_poll(&error);
+char *e_comm_poll(void) {
+	int error;
+	char *retval = pipe_unix_poll(&error);
 
-    if (error)
-        exit(1);
+	if (error)
+		exit(1);
 
-    return retval;
+	return retval;
 }

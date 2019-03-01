@@ -18,13 +18,13 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <errno.h>
 #include <expat.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
 
-#include "xml.h"
 #include "debug.h"
+#include "xml.h"
 
 #define BUFF_SIZE 1024
 
@@ -32,16 +32,16 @@
 
 typedef struct {
 	XML_Parser parser;
-	int depth; /* Current parsing depth */
-	int children_depth; /* The depth where we need to return elements and characters for, or -1 */
-	const char *parent_element; /* Parent element to search for */
-	xml_element_cb element_cb; /* Element callback */
-	xml_parent_cb parent_open_cb; /* Parent element open callback */
+	int depth;					   /* Current parsing depth */
+	int children_depth;			   /* The depth where we need to return elements and characters for, or -1 */
+	const char *parent_element;	   /* Parent element to search for */
+	xml_element_cb element_cb;	   /* Element callback */
+	xml_parent_cb parent_open_cb;  /* Parent element open callback */
 	xml_parent_cb parent_close_cb; /* Parent element close callback */
-	void *cb_user_data; /* User data pointer to pass in callbacks */
-	char *char_buf; /* Buffer for receiving character data */
-	int char_buf_len; /* Length of character buffer */
-	char **attrs; /* Attribute data, terminated by a NULL pointer */
+	void *cb_user_data;			   /* User data pointer to pass in callbacks */
+	char *char_buf;				   /* Buffer for receiving character data */
+	int char_buf_len;			   /* Length of character buffer */
+	char **attrs;				   /* Attribute data, terminated by a NULL pointer */
 } state;
 
 static void free_char_buf(state *s) {
@@ -61,7 +61,7 @@ static void free_attrs(state *s) {
 		return;
 
 	char **attr = s->attrs;
-	while(*attr) {
+	while (*attr) {
 		free(*attr);
 		++attr;
 	}
@@ -75,7 +75,7 @@ static void copy_attrs(state *s, char **attrs) {
 	int i;
 
 	char **attr = attrs;
-	while(*attr) {
+	while (*attr) {
 		++count;
 		++attr;
 	}
@@ -135,8 +135,8 @@ static void end_element(void *userData, const XML_Char *name) {
 	}
 }
 
-int xml_parse(const char *filename, const char *parent_element, xml_element_cb element_cb,
-              xml_parent_cb parent_open_cb, xml_parent_cb parent_close_cb, void *cb_user_data) {
+int xml_parse(const char *filename, const char *parent_element, xml_element_cb element_cb, xml_parent_cb parent_open_cb,
+			  xml_parent_cb parent_close_cb, void *cb_user_data) {
 	FILE *f;
 	state s;
 
@@ -158,7 +158,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 	s.parent_open_cb = parent_open_cb;
 	s.parent_close_cb = parent_close_cb;
 	s.cb_user_data = cb_user_data;
- 	XML_SetUserData(s.parser, &s);
+	XML_SetUserData(s.parser, &s);
 
 	for (;;) {
 		size_t bytes_read;
@@ -192,7 +192,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 			free_char_buf(&s);
 			return -1;
 		}
-		
+
 		if (bytes_read == 0)
 			break;
 	}

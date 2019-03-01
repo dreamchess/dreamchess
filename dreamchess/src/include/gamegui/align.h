@@ -26,16 +26,14 @@
 
 #define GG_ALIGN(W) GG_CHECK_CAST(W, gg_align_get_class_id(), gg_align_t)
 
-#define GG_ALIGN_DATA \
-    GG_WIDGET_DATA \
-    float xalign; \
-    float yalign;
+#define GG_ALIGN_DATA                                                                                                  \
+	GG_WIDGET_DATA                                                                                                     \
+	float xalign;                                                                                                      \
+	float yalign;
 
-typedef struct gg_align
-{
-    GG_ALIGN_DATA
-}
-gg_align_t;
+typedef struct gg_align {
+	GG_ALIGN_DATA
+} gg_align_t;
 
 gg_class_id gg_align_get_class_id(void);
 

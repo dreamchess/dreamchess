@@ -53,12 +53,11 @@
 #define MOVE_PIECE_MASK 0x3c000000
 #define MOVE_PIECE_SHIFT 26
 
-#define MOVE_GET(M, P) (((M) & MOVE_##P##_MASK) >>  MOVE_##P##_SHIFT)
+#define MOVE_GET(M, P) (((M)&MOVE_##P##_MASK) >> MOVE_##P##_SHIFT)
 #define MOVE_SET(M, P, V) ((M) = ((M) & ~MOVE_##P##_MASK) | ((V) << MOVE_##P##_SHIFT))
-#define MOVE(PIECE, SOURCE, DEST, TYPE, CAPTURED) \
-    (((PIECE) << MOVE_PIECE_SHIFT) | ((SOURCE) << MOVE_SOURCE_SHIFT) \
-    | ((DEST) << MOVE_DEST_SHIFT) | ((TYPE) << MOVE_TYPE_SHIFT) \
-    | ((CAPTURED) << MOVE_CAPTURED_SHIFT))
+#define MOVE(PIECE, SOURCE, DEST, TYPE, CAPTURED)                                                                      \
+	(((PIECE) << MOVE_PIECE_SHIFT) | ((SOURCE) << MOVE_SOURCE_SHIFT) | ((DEST) << MOVE_DEST_SHIFT) |                   \
+	 ((TYPE) << MOVE_TYPE_SHIFT) | ((CAPTURED) << MOVE_CAPTURED_SHIFT))
 
 #define MOVE_IS_REGULAR(M) (((M) != NO_MOVE) && ((M) != RESIGN_MOVE) && ((M) != STALEMATE_MOVE))
 
@@ -66,16 +65,12 @@ extern move_t moves[(MAX_DEPTH + 1) * 256];
 extern int moves_start[MAX_DEPTH + 2];
 extern int moves_cur[MAX_DEPTH + 1];
 
-void
-move_init(void);
+void move_init(void);
 
-void
-move_exit(void);
+void move_exit(void);
 
-int
-compute_legal_moves(board_t *board, int ply);
+int compute_legal_moves(board_t *board, int ply);
 
-move_t
-move_next(board_t *board, int ply);
+move_t move_next(board_t *board, int ply);
 
 #endif

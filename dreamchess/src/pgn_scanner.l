@@ -32,64 +32,64 @@ int yyparse(void);
 
 int pgn_parse_file(char *filename)
 {
-    int retval = 0;
+	int retval = 0;
 
-    yyin = fopen(filename, "r");
+	yyin = fopen(filename, "r");
 
-    if (!yyin)
-    {
-        printf("Couldn't open file\n");
-        return 1;
-    }
+	if (!yyin)
+	{
+		printf("Couldn't open file\n");
+		return 1;
+	}
 
-    YY_NEW_FILE;
+	YY_NEW_FILE;
 
-    if (yyparse())
-    {
-        retval = 1;
-        printf("Parse error\n");
-    }
+	if (yyparse())
+	{
+		retval = 1;
+		printf("Parse error\n");
+	}
 
-    fclose(yyin);
+	fclose(yyin);
 
-    return retval;
+	return retval;
 }
 %}
 
 %%
 
 \"([^\t\n\r\f\v\\\"]|(\\[\\\"]))*\" {
-        yylval.yycharp = make_string();
-        return STRING;
-    }
+		yylval.yycharp = make_string();
+		return STRING;
+	}
 
 \*|1-0|0-1|1\/2-1\/2 {
-        return GAMETERM;
-    }
+		return GAMETERM;
+	}
 
 [0-9]+ {
-        yylval.yyint = atoi(yytext);
-        return INTEGER;
-    }
+		yylval.yyint = atoi(yytext);
+		return INTEGER;
+	}
 
 $[[:digit:]]+ {
-        yylval.yyint = atoi(yytext + 1);
-        return NAG;
-    }
+		yylval.yyint = atoi(yytext + 1);
+		return NAG;
+	}
 
 [[:alnum:]][[:alnum:]_\+#=:-]* {
-        yylval.yycharp = strdup(yytext);
-        return SYMBOL;
-    }
+		yylval.yycharp = strdup(yytext);
+		return SYMBOL;
+	}
 
 [ \t\n\r]
-        /* Skip whitespace. */
+		/* Skip whitespace. */
 
 \{[^\{]*\} printf("Skipping: %s\n", yytext);
-        /* Skip multiline comments. */
+		/* Skip multiline comments. */
 
 ;.*\n
-        /* Skip end-of-line comments. */
+		/* Skip end-of-line comments. */
 
 .       return yytext[0];
 
@@ -97,25 +97,25 @@ $[[:digit:]]+ {
 
 static char *make_string(void)
 {
-    int i;
-    int len = 0;
-    char *string;
+	int i;
+	int len = 0;
+	char *string;
 
-    /* We need at least yyleng bytes, plus 1 for the '\0' and minus 2 for the
-     * opening and closing quotes that will be removed.
-     */
-    string = malloc(yyleng - 1);
+	/* We need at least yyleng bytes, plus 1 for the '\0' and minus 2 for the
+	 * opening and closing quotes that will be removed.
+	 */
+	string = malloc(yyleng - 1);
 
-    /* Skip quotes. */
-    for (i = 1; i < yyleng - 1; i++)
-    {
-        /* Remove escapes. */
-        if (yytext[i] == '\\')
-            i++;
+	/* Skip quotes. */
+	for (i = 1; i < yyleng - 1; i++)
+	{
+		/* Remove escapes. */
+		if (yytext[i] == '\\')
+			i++;
 
-        string[len++] = yytext[i];
-    }
+		string[len++] = yytext[i];
+	}
 
-    string[len] = '\0';
-    return string;
+	string[len] = '\0';
+	return string;
 }

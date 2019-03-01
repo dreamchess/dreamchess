@@ -25,54 +25,47 @@
 #include "options.h"
 
 /* Define our booleans */
-#define TRUE  1
+#define TRUE 1
 #define FALSE 0
 
-typedef struct theme_selector
-{
-    float colour[4];
-    float spinspeed;
-    float size;
-    float bouncespeed;
+typedef struct theme_selector {
+	float colour[4];
+	float spinspeed;
+	float size;
+	float bouncespeed;
 } theme_selector_t;
 
-typedef struct theme_struct
-{
-    char *name;
-    char *style;
-    char *pieces;
-    char *board;
-    char *white_name;
-    char *black_name;
-    char lighting;
-    theme_selector_t selector;
-}
-theme;
+typedef struct theme_struct {
+	char *name;
+	char *style;
+	char *pieces;
+	char *board;
+	char *white_name;
+	char *black_name;
+	char lighting;
+	theme_selector_t selector;
+} theme;
 
 typedef TAILQ_HEAD(, music_pack) music_packs_t;
 
-typedef struct
-{
-    char *name;
+typedef struct {
+	char *name;
 
-}theme_style_t;
+} theme_style_t;
 
-typedef struct
-{
-    char *name;
+typedef struct {
+	char *name;
 
-}theme_pieces_t;
+} theme_pieces_t;
 
-typedef struct
-{
-    char *name;
+typedef struct {
+	char *name;
 
-}theme_board_t;
+} theme_board_t;
 
-typedef struct music_pack
-{
-    char *dir;
-    TAILQ_ENTRY(music_pack) entries;
+typedef struct music_pack {
+	char *dir;
+	TAILQ_ENTRY(music_pack) entries;
 } music_pack_t;
 
 void theme_find_themes(option_t *option);

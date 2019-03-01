@@ -36,10 +36,9 @@ int gettimeofday(struct timeval *tp, void *tzp);
 #define TIMER_DOWN (1 << 0)
 #define TIMER_RUNNING (1 << 1)
 
-typedef struct
-{
+typedef struct {
 	int flags;
-	int val; /* Current value */
+	int val;				   /* Current value */
 	struct timeval start_time; /* Time when clock was started */
 } timer;
 
