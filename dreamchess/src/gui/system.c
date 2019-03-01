@@ -183,8 +183,8 @@ void gl_swap(void)
     blit_fbo();
     
     now = SDL_GetTicks();
-//    if (now - last < 1000 / FPS)
-//        SDL_Delay(1000 / FPS - (now - last));
+    if (now - last < 1000 / FPS)
+        SDL_Delay(1000 / FPS - (now - last));
     last = SDL_GetTicks();
 
     frames++;
