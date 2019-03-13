@@ -29,11 +29,11 @@ before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
-    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
-    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_PREFIX_PATH="%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
+    %MSVC% cmake -G"Visual Studio 15 2017%MSVC_GENERATOR_APPEND%" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+    %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_PREFIX_PATH="%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
   - |-
-    cmake --build . --config Release
+    cmake --build . --config RelWithDebInfo
 after_build:
   - |-
     %MSVC% %TAG% cpack -G ZIP -C Release

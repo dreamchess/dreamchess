@@ -219,17 +219,13 @@ target_link_libraries(dreamchess
     ${SDL2_MIXER_LIBRARY}
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
+    ${EXPAT_LIBRARY}
 )
 
 if(VCPKG_TOOLCHAIN)
     target_link_libraries(dreamchess
         SDL2::SDL2
         SDL2::SDL2main
-        EXPAT::EXPAT
-    )
-else()
-    target_link_libraries(dreamchess
-        ${EXPAT_LIBRARY}
     )
 endif()
 
