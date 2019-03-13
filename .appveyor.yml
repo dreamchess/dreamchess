@@ -36,8 +36,8 @@ build_script:
     cmake --build . --config RelWithDebInfo
 after_build:
   - |-
-    %MSVC% %TAG% cpack -G ZIP -C Release
-    %MSVC% %TAG% cpack -G WIX -C Release
+    %MSVC% %TAG% cpack -G ZIP -C RelWithDebInfo
+    %MSVC% %TAG% cpack -G WIX -C RelWithDebInfo
 artifacts:
   - path: 'build/*.zip'
     name: portable
