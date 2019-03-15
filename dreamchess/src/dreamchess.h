@@ -23,11 +23,6 @@
 
 #include "board.h"
 
-typedef struct arguments {
-	int argc;
-	char **argv;
-} arguments_t;
-
 #define PLAYER_UI 0
 #define PLAYER_ENGINE 1
 

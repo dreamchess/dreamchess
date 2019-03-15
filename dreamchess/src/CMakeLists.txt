@@ -40,7 +40,6 @@ add_executable(dreamchess MACOSX_BUNDLE
     fen.h
     history.c
     history.h
-    main.c
     options.c
     system_config.c
     theme.c

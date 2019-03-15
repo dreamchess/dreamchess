@@ -31,6 +31,7 @@
 #define HAVE_GETOPT_LONG
 #endif /* HAVE_GETOPT_H */
 #include <errno.h>
+#include <SDL.h>
 
 #include "audio.h"
 #include "board.h"
@@ -390,6 +391,12 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 							   {"verbose", required_argument, NULL, 'v'},
 							   {0, 0, 0, 0}};
 
+	/* On macOS (under certain circumstances) a process serial number will be passed in. In this
+	 * case we skip parsing the command line options.
+	 */ 
+	if (argc > 1 && strncmp(argv[1], "-psn_", 5) == 0)
+		return;
+
 	while ((c = getopt_long(argc, argv, "1:fhv:W:H:", options, &optindex)) > -1) {
 #else
 
@@ -472,15 +479,14 @@ static void set_cl_options(cl_options_t *cl_options) {
 	}
 }
 
-int dreamchess(void *data) {
+int main(int argc, char **argv) {
 	cl_options_t cl_options = {0};
-	arguments_t *arg = data;
 
 	ui = &ui_sdlgl;
 
 	printf("DreamChess %s\n", g_version);
 
-	parse_options(arg->argc, arg->argv, &ui, &cl_options);
+	parse_options(argc, argv, &ui, &cl_options);
 	config_init();
 	set_cl_options(&cl_options);
 
