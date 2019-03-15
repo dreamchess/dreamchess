@@ -23,19 +23,21 @@
 #include <stdlib.h>
 
 #include "config.h"
+#include "dir.h"
 #include "debug.h"
 
-static int dbg_level = 1;
+static FILE *dbg_file;
 
-/* Debug levels:
-** 0: Silent
-** 1: Errors
-** 2: Errors + Warnings
-** 3: Errors + Warnings + Log
-*/
+void dbg_init(void) {
+	ch_userdir();
+	dbg_file = fopen("dreamchess.log", "w");
+}
 
-void dbg_set_level(int level) {
-	dbg_level = level;
+void dbg_exit(void) {
+	if (dbg_file) {
+		fclose(dbg_file);
+		dbg_file = NULL;
+	}
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -44,21 +46,22 @@ void dbg_error(char *file, int line, const char *fmt, ...)
 void dbg_error(const char *fmt, ...)
 #endif
 {
-	va_list ap;
+	if (dbg_file) {
+		va_list ap;
 
-	if (dbg_level < 1)
-		return;
+		fputs("ERROR: ", dbg_file);
+
+		va_start(ap, fmt);
+		vfprintf(dbg_file, fmt, ap);
+		va_end(ap);
 
 #ifdef HAVE_VARARGS_MACROS
-	fprintf(stderr, "%s:%d: ", file, line);
+		fprintf(dbg_file, " (%s:%d)", file, line);
 #endif
-	fprintf(stderr, "error: ");
 
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
-
-	fprintf(stderr, "\n");
+		fputs("\n", dbg_file);
+		fflush(dbg_file);
+	}
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -67,21 +70,22 @@ void dbg_warn(char *file, int line, const char *fmt, ...)
 void dbg_warn(const char *fmt, ...)
 #endif
 {
-	va_list ap;
+	if (dbg_file) {
+		va_list ap;
 
-	if (dbg_level < 2)
-		return;
+		fputs("WARNING: ", dbg_file);
+
+		va_start(ap, fmt);
+		vfprintf(dbg_file, fmt, ap);
+		va_end(ap);
 
 #ifdef HAVE_VARARGS_MACROS
-	printf("%s:%d: ", file, line);
+		fprintf(dbg_file, " (%s:%d)", file, line);
 #endif
-	printf("warning: ");
 
-	va_start(ap, fmt);
-	vprintf(fmt, ap);
-	va_end(ap);
-
-	printf("\n");
+		fputs("\n", dbg_file);
+		fflush(dbg_file);
+	}
 }
 
 #ifdef HAVE_VARARGS_MACROS
@@ -90,18 +94,18 @@ void dbg_log(char *file, int line, const char *fmt, ...)
 void dbg_log(const char *fmt, ...)
 #endif
 {
-	va_list ap;
+	if (dbg_file) {
+		va_list ap;
 
-	if (dbg_level < 3)
-		return;
+		va_start(ap, fmt);
+		vfprintf(dbg_file, fmt, ap);
+		va_end(ap);
 
 #ifdef HAVE_VARARGS_MACROS
-	printf("%s:%d: ", file, line);
+		fprintf(dbg_file, " (%s:%d)", file, line);
 #endif
 
-	va_start(ap, fmt);
-	vprintf(fmt, ap);
-	va_end(ap);
-
-	printf("\n");
+		fputs("\n", dbg_file);
+		fflush(dbg_file);
+	}
 }

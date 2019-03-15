@@ -31,6 +31,7 @@
 
 %{
 #include "dreamchess.h"
+#include "debug.h"
 
 extern char *yystring;
 
@@ -53,10 +54,10 @@ tag_section              : tag_pair tag_section
 tag_pair                 : '[' tag_name tag_value ']'
 ;
 
-tag_name                 : SYMBOL {/*printf("Tag name: %s\n", yylval.yycharp);*/}
+tag_name                 : SYMBOL
 ;
 
-tag_value                : STRING {/*printf("Tag value: %s\n", yylval.yycharp);*/}
+tag_value                : STRING
 ;
 
 movetext_section         : element_sequence game_termination
@@ -78,7 +79,7 @@ recursive_variation      : '(' element_sequence ')'
 game_termination         : GAMETERM
 ;
 
-san_move                 : SYMBOL {game_make_move_str(yylval.yycharp, 0);/*printf("Found move: %s\n", yylval.yycharp);*/}
+san_move                 : SYMBOL {game_make_move_str(yylval.yycharp, 0);}
 ;
 
 move_number_indication   : INTEGER periods
@@ -98,6 +99,6 @@ empty                    :
 
 int yyerror(const char *s)
 {
-    printf("Error: %s\n", s);
+    DBG_WARN("parse error: %s", s);
     return 1;
 }

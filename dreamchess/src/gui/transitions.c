@@ -93,7 +93,6 @@ int draw_sonic_fade(int inout) {
 		text_draw_string((640 * amount * 2) - 1000, 480 - (480 / 3) - 50, "Zone", 3.0f, &col_white);
 		text_draw_string((640 * amount * 2) - 860, 480 - (480 / 3) - 60, "1", 4.0f, &col_yellow);
 	}
-	/*printf( "Drawing sonic fade.. :%i,%f\n", inout, amount );*/
 
 	if (amount >= 1.0f) {
 		return FALSE;

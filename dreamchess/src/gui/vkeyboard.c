@@ -47,8 +47,6 @@ static int dialog_vkeyboard_key(gg_widget_t *widget, gg_widget_t *emitter, void 
 		gg_dialog_input_current(event);
 	}
 
-	printf("Pressed a keyyy... it was uh.. '%c' .. right?\n\r", *(ui_event_t *)data);
-
 	return 1;
 }
 

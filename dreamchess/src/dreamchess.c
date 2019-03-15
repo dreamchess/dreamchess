@@ -388,7 +388,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 							   {"width", required_argument, NULL, 'W'},
 							   {"height", required_argument, NULL, 'H'},
 							   {"1st-engine", required_argument, NULL, '1'},
-							   {"verbose", required_argument, NULL, 'v'},
 							   {0, 0, 0, 0}};
 
 	/* On macOS (under certain circumstances) a process serial number will be passed in. In this
@@ -397,10 +396,10 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 	if (argc > 1 && strncmp(argv[1], "-psn_", 5) == 0)
 		return;
 
-	while ((c = getopt_long(argc, argv, "1:fhv:W:H:", options, &optindex)) > -1) {
+	while ((c = getopt_long(argc, argv, "1:fhW:H:", options, &optindex)) > -1) {
 #else
 
-	while ((c = getopt(argc, argv, "1:fhv:W:H:")) > -1) {
+	while ((c = getopt(argc, argv, "1:fhW:H:")) > -1) {
 #endif /* HAVE_GETOPT_LONG */
 		switch (c) {
 		case 'h':
@@ -412,14 +411,7 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 				   OPTION_TEXT("--width\t", "-W<num>", "set screen width")
 				   OPTION_TEXT("--height\t", "-H<num>", "set screen height")
 				   OPTION_TEXT("--1st-engine <eng>", "-1<eng>", "use <eng> as first chess engine")
-				   OPTION_TEXT("\t\t", "\t", "  defaults to 'dreamer'")
-				   OPTION_TEXT("--verbose <level>", "-v<level>", "set verbosity to <level>")
-				   OPTION_TEXT("\t\t", "\t", "  verbosity levels:")
-				   OPTION_TEXT("\t\t", "\t", "  0 - silent")
-				   OPTION_TEXT("\t\t", "\t", "  1 - errors only")
-				   OPTION_TEXT("\t\t", "\t", "  2 - errors and warnings")
-				   OPTION_TEXT("\t\t", "\t", "  3 - all")
-				   OPTION_TEXT("\t\t", "\t", "  defaults to 1"));
+				   OPTION_TEXT("\t\t", "\t", "  defaults to 'dreamer'"));
 			exit(0);
 		case '1':
 			cl_options->engine = optarg;
@@ -432,21 +424,6 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 			break;
 		case 'H':
 			cl_options->height = atoi(optarg);
-			break;
-		case 'v': {
-			int level;
-			char *endptr;
-
-			errno = 0;
-			level = strtol(optarg, &endptr, 10);
-
-			if (errno || (optarg == endptr) || (level < 0) || (level > 3)) {
-				DBG_ERROR("illegal verbosity level specified");
-				exit(1);
-			}
-
-			dbg_set_level(level);
-		}
 		}
 	}
 }
@@ -481,6 +458,9 @@ static void set_cl_options(cl_options_t *cl_options) {
 
 int main(int argc, char **argv) {
 	cl_options_t cl_options = {0};
+
+	dbg_init();
+	DBG_LOG("version %s", g_version);
 
 	ui = &ui_sdlgl;
 
@@ -627,5 +607,6 @@ int main(int argc, char **argv) {
 		move_list_exit(&fullalg_list);
 	}
 	ui->exit();
+	dbg_exit();
 	return 0;
 }

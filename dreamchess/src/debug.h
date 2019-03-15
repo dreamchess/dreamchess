@@ -59,7 +59,8 @@
 #define HAVE_VARARGS_MACROS
 #endif
 
-void dbg_set_level(int level);
+void dbg_init(void);
+void dbg_exit(void);
 #ifdef HAVE_VARARGS_MACROS
 void dbg_error(char *file, int line, const char *fmt, ...);
 void dbg_warn(char *file, int line, const char *fmt, ...);

@@ -24,6 +24,7 @@
 %option never-interactive
 
 %{
+#include "debug.h"
 #include "pgn_scanner.h"
 #include "pgn_parser.h"
 
@@ -38,7 +39,7 @@ int pgn_parse_file(char *filename)
 
 	if (!yyin)
 	{
-		printf("Couldn't open file\n");
+		DBG_WARN("failed to open '%s'", filename);
 		return 1;
 	}
 
@@ -47,7 +48,7 @@ int pgn_parse_file(char *filename)
 	if (yyparse())
 	{
 		retval = 1;
-		printf("Parse error\n");
+		DBG_WARN("failed to parse '%s'", filename);
 	}
 
 	fclose(yyin);
@@ -85,7 +86,7 @@ $[[:digit:]]+ {
 [ \t\n\r]
 		/* Skip whitespace. */
 
-\{[^\{]*\} printf("Skipping: %s\n", yytext);
+\{[^\{]*\}
 		/* Skip multiline comments. */
 
 ;.*\n
