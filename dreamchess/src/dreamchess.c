@@ -393,8 +393,10 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 	/* On macOS (under certain circumstances) a process serial number will be passed in. In this
 	 * case we skip parsing the command line options.
 	 */ 
-	if (argc > 1 && strncmp(argv[1], "-psn_", 5) == 0)
+	if (argc > 1 && strncmp(argv[1], "-psn_", 5) == 0) {
+		DBG_WARN("received '%s'; ignoring all command line arguments", argv[1]);
 		return;
+	}
 
 	while ((c = getopt_long(argc, argv, "1:fhW:H:", options, &optindex)) > -1) {
 #else
