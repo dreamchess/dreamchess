@@ -49,7 +49,7 @@ int comm_init(char *engine) {
 	/* Create a pipe for input from child. */
 
 	if (!CreatePipe(&from_child_rd, &from_child_wr, &sa_attr, 0)) {
-		DBG_ERROR("failed to create stdout pipe");
+		DBG_ERROR("Failed to create stdout pipe");
 		exit(1);
 	}
 
@@ -59,7 +59,7 @@ int comm_init(char *engine) {
 
 	if (!DuplicateHandle(GetCurrentProcess(), from_child_rd, GetCurrentProcess(), &from_child_rd_dup, 0, FALSE,
 						 DUPLICATE_SAME_ACCESS)) {
-		DBG_ERROR("failed to duplicate read handle");
+		DBG_ERROR("Failed to duplicate read handle");
 		exit(1);
 	}
 	CloseHandle(from_child_rd);
@@ -67,7 +67,7 @@ int comm_init(char *engine) {
 	/* Create a pipe for output to child. */
 
 	if (!CreatePipe(&to_child_rd, &to_child_wr, &sa_attr, 0)) {
-		DBG_ERROR("failed to create stdin pipe");
+		DBG_ERROR("Failed to create stdin pipe");
 		exit(1);
 	}
 
@@ -77,7 +77,7 @@ int comm_init(char *engine) {
 
 	if (!DuplicateHandle(GetCurrentProcess(), to_child_wr, GetCurrentProcess(), &to_child_wr_dup, 0, FALSE,
 						 DUPLICATE_SAME_ACCESS)) {
-		DBG_ERROR("failed to duplicate write handle");
+		DBG_ERROR("Failed to duplicate write handle");
 		exit(1);
 	}
 	CloseHandle(to_child_wr);
@@ -94,7 +94,7 @@ int comm_init(char *engine) {
 	start_info.dwFlags |= STARTF_USESTDHANDLES;
 
 	if (!CreateProcess(NULL, engine, NULL, NULL, TRUE, DETACHED_PROCESS, NULL, NULL, &start_info, &proc_info)) {
-		DBG_ERROR("failed to create child process");
+		DBG_ERROR("Failed to create child process");
 		init_ok = 0;
 		return 1;
 	}
@@ -111,13 +111,13 @@ int comm_init(char *engine) {
 
 void comm_exit(void) {
 	if (init_ok) {
-		DBG_LOG("waiting for engine to exit");
+		DBG_LOG("Waiting for engine to exit");
 
 		if (WaitForSingleObject(hProcess, INFINITE) != WAIT_FAILED) {
-			DBG_LOG("engine exitted succesfully");
+			DBG_LOG("Engine exitted succesfully");
 			CloseHandle(hProcess);
 		} else {
-			DBG_ERROR("error while waiting for engine to quit");
+			DBG_ERROR("Error while waiting for engine to quit");
 			exit(1);
 		}
 
@@ -142,7 +142,7 @@ char *comm_poll(void) {
 			if (!error)
 				return retval;
 		} else {
-			DBG_ERROR("engine process has terminated");
+			DBG_ERROR("Engine process has terminated");
 		}
 
 		pipe_win32_exit();

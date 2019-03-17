@@ -52,12 +52,12 @@ static int menu_title_start(gg_widget_t *widget, gg_widget_t *emitter, void *dat
 	option = config_get_option("level");
 	selected_level = option->selected->index;
 
-	DBG_LOG("starting a new game - difficulty: %i - level: %i - player scheme: %i", selected_difficulty, selected_level,
+	DBG_LOG("Starting a new game - difficulty: %i - level: %i - player scheme: %i", selected_difficulty, selected_level,
 			selected_player_layout);
 
 	if (get_egg_req()) {
 		set_show_egg(TRUE);
-		DBG_LOG("easter egg enabled");
+		DBG_LOG("Easter egg enabled");
 	}
 
 	gg_dialog_close();

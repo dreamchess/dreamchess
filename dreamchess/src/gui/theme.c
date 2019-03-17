@@ -132,7 +132,7 @@ void load_theme(struct theme_struct *theme) {
 	if (ld_style(theme->style)) {
 		ch_datadir();
 		if (ld_style(theme->style)) {
-			DBG_ERROR("failed to find style '%s'", theme->style);
+			DBG_ERROR("Failed to find style '%s'", theme->style);
 			exit(1);
 		}
 	}
@@ -141,7 +141,7 @@ void load_theme(struct theme_struct *theme) {
 	if (ld_pieces(theme->pieces)) {
 		ch_datadir();
 		if (ld_pieces(theme->pieces)) {
-			DBG_ERROR("failed to find pieces '%s'", theme->pieces);
+			DBG_ERROR("Failed to find pieces '%s'", theme->pieces);
 			exit(1);
 		}
 	}
@@ -150,7 +150,7 @@ void load_theme(struct theme_struct *theme) {
 	if (ld_board(theme->board)) {
 		ch_datadir();
 		if (ld_board(theme->board)) {
-			DBG_ERROR("failed to find board '%s'", theme->board);
+			DBG_ERROR("Failed to find board '%s'", theme->board);
 			exit(1);
 		}
 	}

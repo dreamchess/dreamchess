@@ -114,7 +114,7 @@ int option_group_save_xml(option_group_t *group) {
 	f = fopen(filename, "w");
 
 	if (!f) {
-		DBG_ERROR("failed to open '%s'", filename);
+		DBG_ERROR("Failed to open '%s'", filename);
 		free(filename);
 		return -1;
 	}
@@ -122,7 +122,7 @@ int option_group_save_xml(option_group_t *group) {
 	option_group_save(group, f);
 
 	if (ferror(f)) {
-		DBG_ERROR("failed to write '%s'", filename);
+		DBG_ERROR("Failed to write '%s'", filename);
 		error = -1;
 	}
 
@@ -138,21 +138,21 @@ static void option_cb(void *user_data, const char *element, char *const *attrs, 
 
 	option = option_group_find_option(group, element);
 	if (!option) {
-		DBG_WARN("option '%s' does not exist", element);
+		DBG_WARN("Option '%s' does not exist", element);
 		return;
 	}
 
 	if (option->type == OPTION_TYPE_OPTION) {
 		if (option_select_value_by_name(option, text) == -1)
-			DBG_WARN("option '%s' has no value '%s'", element, text);
-		DBG_LOG("setting option '%s' to '%s'", element, text);
+			DBG_WARN("Option '%s' has no value '%s'", element, text);
+		DBG_LOG("Setting option '%s' to '%s'", element, text);
 	} else if (option->type == OPTION_TYPE_INT) {
 		int val;
 
 		errno = 0;
 		val = strtol(text, NULL, 10);
 		if (errno) {
-			DBG_WARN("value '%s' for option '%s' is not an integer", text, element);
+			DBG_WARN("Value '%s' for option '%s' is not an integer", text, element);
 		} else {
 			option->value = val;
 		}
@@ -169,7 +169,7 @@ int option_group_load_xml(option_group_t *group) {
 	strcat(filename, ".xml");
 
 	if (xml_parse(filename, "options", option_cb, NULL, NULL, group)) {
-		DBG_ERROR("failed to parse '%s'", filename);
+		DBG_ERROR("Failed to parse '%s'", filename);
 		retval = -1;
 	}
 

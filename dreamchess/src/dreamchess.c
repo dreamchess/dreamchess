@@ -175,7 +175,7 @@ int game_save(int slot) {
 		snprintf(temp, sizeof(temp), "save%i.pgn", slot);
 		retval = history_save_pgn(history, temp);
 	} else {
-		DBG_ERROR("failed to enter user directory");
+		DBG_ERROR("Failed to enter user directory");
 		retval = 1;
 	}
 
@@ -195,7 +195,7 @@ static int do_move(move_t *move, int ui_update) {
 	board_t new_board;
 
 	if (!move_is_valid(history->last->board, move)) {
-		DBG_WARN("move is illegal");
+		DBG_WARN("Move is illegal");
 		return 0;
 	}
 
@@ -207,7 +207,7 @@ static int do_move(move_t *move, int ui_update) {
 	move_san = move_to_san(&new_board, move);
 	move_f = san_to_fan(&new_board, move_san);
 
-	DBG_LOG("processing move %s (%s)", move_s, move_san);
+	DBG_LOG("Processing move %s (%s)", move_s, move_san);
 
 	move_list_play(&san_list, move_san);
 	move_list_play(&fan_list, move_f);
@@ -261,7 +261,7 @@ void game_make_move(move_t *move, int ui_update) {
 		comm_send("%s\n", fullalg_list.move[fullalg_list.entries - 1]);
 	} else {
 		char *move_str = move_to_fullalg(history->last->board, move);
-		DBG_WARN("ignoring illegal move %s", move_str);
+		DBG_WARN("Ignoring illegal move %s", move_str);
 		free(move_str);
 	}
 }
@@ -276,7 +276,7 @@ int game_load(int slot) {
 	board_t *board;
 
 	if (ch_userdir()) {
-		DBG_ERROR("failed to enter user directory");
+		DBG_ERROR("Failed to enter user directory");
 		return 1;
 	}
 
@@ -286,7 +286,7 @@ int game_load(int slot) {
 	retval = pgn_parse_file(temp);
 
 	if (retval) {
-		DBG_ERROR("failed to parse PGN file '%s'", temp);
+		DBG_ERROR("Failed to parse PGN file '%s'", temp);
 		return 1;
 	}
 
@@ -310,7 +310,7 @@ void game_make_move_str(char *move_str, int ui_update) {
 	board_t new_board = *history->last->board;
 	move_t *engine_move;
 
-	DBG_LOG("parsing move string '%s'", move_str);
+	DBG_LOG("Parsing move string '%s'", move_str);
 
 	engine_move = san_to_move(&new_board, move_str);
 
@@ -320,7 +320,7 @@ void game_make_move_str(char *move_str, int ui_update) {
 		game_make_move(engine_move, ui_update);
 		free(engine_move);
 	} else
-		DBG_ERROR("failed to parse move string '%s'", move_str);
+		DBG_ERROR("Failed to parse move string '%s'", move_str);
 }
 
 void game_get_move_list(char ***list, int *total, int *view) {
@@ -360,7 +360,7 @@ int set_resolution(int init) {
 
 static void init_resolution(void) {
 	if (set_resolution(1)) {
-		DBG_LOG("switching to failsafe video mode defaults");
+		DBG_LOG("Switching to failsafe video mode defaults");
 		config_set_failsafe_video();
 		config_save();
 
@@ -394,7 +394,7 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 	 * case we skip parsing the command line options.
 	 */ 
 	if (argc > 1 && strncmp(argv[1], "-psn_", 5) == 0) {
-		DBG_WARN("received '%s'; ignoring all command line arguments", argv[1]);
+		DBG_WARN("Received '%s'; ignoring all command line arguments", argv[1]);
 		return;
 	}
 
@@ -462,7 +462,7 @@ int main(int argc, char **argv) {
 	cl_options_t cl_options = {0};
 
 	dbg_init();
-	DBG_LOG("version %s", g_version);
+	DBG_LOG("Version %s", g_version);
 
 	ui = &ui_sdlgl;
 
@@ -473,7 +473,7 @@ int main(int argc, char **argv) {
 	set_cl_options(&cl_options);
 
 	if (!ui) {
-		DBG_ERROR("failed to find a user interface driver");
+		DBG_ERROR("Failed to find a user interface driver");
 		exit(1);
 	}
 
@@ -538,7 +538,7 @@ int main(int argc, char **argv) {
 
 		if (pgn_slot >= 0)
 			if (game_load(pgn_slot)) {
-				DBG_ERROR("failed to load savegame in slot %i", pgn_slot);
+				DBG_ERROR("Failed to load savegame in slot %i", pgn_slot);
 				exit(1);
 			}
 
@@ -547,7 +547,7 @@ int main(int argc, char **argv) {
 			char *s;
 
 			if ((s = comm_poll())) {
-				DBG_LOG("message from engine: '%s'", s);
+				DBG_LOG("Message from engine: '%s'", s);
 				if (!history->result) {
 					if ((!strncmp(s, "move ", 4) || strstr(s, "... ")) &&
 						config->player[history->last->board->turn] == PLAYER_ENGINE) {
@@ -555,7 +555,7 @@ int main(int argc, char **argv) {
 						board_t new_board = *history->last->board;
 						move_t *engine_move;
 
-						DBG_LOG("parsing move string '%s'", move_str);
+						DBG_LOG("Parsing move string '%s'", move_str);
 
 						engine_move = san_to_move(&new_board, move_str);
 						if (!engine_move)
@@ -565,7 +565,7 @@ int main(int argc, char **argv) {
 							do_move(engine_move, 1);
 							free(engine_move);
 						} else
-							DBG_ERROR("failed to parse move string '%s'", move_str);
+							DBG_ERROR("Failed to parse move string '%s'", move_str);
 					} else if (strstr(s, "llegal move"))
 						game_undo();
 					/* Ignore result message if we've already determined a result ourselves. */

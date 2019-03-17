@@ -110,7 +110,7 @@ static int san_piece(int piece) {
 		return SAN_PAWN;
 	}
 
-	DBG_ERROR("failed to convert user interface piece to SAN piece");
+	DBG_ERROR("Failed to convert user interface piece to SAN piece");
 	exit(1);
 }
 
@@ -366,7 +366,7 @@ static int in_check(board_t *board, int turn) {
 			break;
 
 	if (i == 64) {
-		DBG_ERROR("board is missing a king");
+		DBG_ERROR("Board is missing a king");
 		exit(1);
 	}
 
@@ -502,7 +502,7 @@ static int ui_piece(int san_piece) {
 		return NONE;
 	}
 
-	DBG_ERROR("failed to convert SAN piece to user interface piece");
+	DBG_ERROR("Failed to convert SAN piece to user interface piece");
 	exit(1);
 }
 
@@ -559,7 +559,7 @@ static move_t *find_unique_move(board_t *board, san_move_t *san_move) {
 	}
 
 	if (!found) {
-		DBG_ERROR("failed to find a legal move corresponding to SAN move");
+		DBG_ERROR("Failed to find a legal move corresponding to SAN move");
 		return NULL;
 	}
 
@@ -625,7 +625,7 @@ char *move_to_san(board_t *board, move_t *move) {
 					if (!u_move) {
 						char *move_s = move_to_fullalg(board, move);
 
-						DBG_ERROR("failed to convert move %s to SAN notation", move_s);
+						DBG_ERROR("Failed to convert move %s to SAN notation", move_s);
 
 						free(move_s);
 						return NULL;
@@ -645,7 +645,7 @@ move_t *san_to_move(board_t *board, char *move_s) {
 	san_move_t *san_move = san_parse(move_s);
 
 	if (!san_move) {
-		DBG_LOG("failed to parse SAN move string '%s'", move_s);
+		DBG_LOG("Failed to parse SAN move string '%s'", move_s);
 		return NULL;
 	}
 

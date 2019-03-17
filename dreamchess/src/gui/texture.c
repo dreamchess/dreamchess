@@ -177,7 +177,7 @@ void load_texture_png(texture_t *texture, char *filename, int alpha, int clamp) 
 	/* Create storage space for the texture */
 	SDL_Surface *texture_image;
 
-	DBG_LOG("loading texture: %s", filename);
+	DBG_LOG("Loading texture: %s", filename);
 
 	/* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
 	if ((texture_image = IMG_Load(filename))) {
@@ -188,7 +188,7 @@ void load_texture_png(texture_t *texture, char *filename, int alpha, int clamp) 
 		area.h = texture_image->h;
 		*texture = SDL_GL_LoadTexture(texture_image, &area, alpha, clamp);
 	} else {
-		DBG_ERROR("could not load texture: %s", filename);
+		DBG_ERROR("Could not load texture: %s", filename);
 		exit(1);
 	}
 

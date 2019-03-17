@@ -52,10 +52,10 @@ static void load_sounds(void) {
 	int i;
 
 	for (i = 0; i < AUDIO_SOUNDS; i++) {
-		DBG_LOG("loading %s", sounds[i].filename);
+		DBG_LOG("Loading %s", sounds[i].filename);
 		wav_data[sounds[i].id] = Mix_LoadWAV(sounds[i].filename);
 		if (!wav_data[sounds[i].id]) {
-			DBG_ERROR("failed to load %s", sounds[i].filename);
+			DBG_ERROR("Failed to load %s", sounds[i].filename);
 			exit(1);
 		}
 	}
@@ -89,7 +89,7 @@ void audio_init(void) {
 	}
 
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
-		DBG_ERROR("unable to open audio");
+		DBG_ERROR("Unable to open audio");
 		return;
 	}
 
@@ -162,7 +162,7 @@ void audio_poll(int title) {
 		if (music_callback)
 			music_callback(current_song->title, current_song->artist, current_song->album);
 
-		DBG_LOG("playing %s", current_song->filename);
+		DBG_LOG("Playing %s", current_song->filename);
 		Mix_PlayMusic(music, 0);
 	}
 }
@@ -179,7 +179,7 @@ void audio_play_sound(int id) {
 		return;
 
 	if (Mix_PlayChannel(0, wav_data[id], 0) == -1)
-		DBG_WARN("failed to play sound %i", id);
+		DBG_WARN("Failed to play sound %i", id);
 }
 
 void audio_set_sound_volume(int vol) {

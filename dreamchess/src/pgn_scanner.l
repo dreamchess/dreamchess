@@ -39,7 +39,7 @@ int pgn_parse_file(char *filename)
 
 	if (!yyin)
 	{
-		DBG_WARN("failed to open '%s'", filename);
+		DBG_WARN("Failed to open '%s'", filename);
 		return 1;
 	}
 
@@ -48,7 +48,7 @@ int pgn_parse_file(char *filename)
 	if (yyparse())
 	{
 		retval = 1;
-		DBG_WARN("failed to parse '%s'", filename);
+		DBG_WARN("Failed to parse '%s'", filename);
 	}
 
 	fclose(yyin);

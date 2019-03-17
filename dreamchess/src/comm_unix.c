@@ -85,7 +85,7 @@ int comm_init(char *engine) {
 		execvp(engine, argv);
 
 		/* Execute failed. */
-		DBG_ERROR("failed to exec '%s'", engine);
+		DBG_ERROR("Failed to exec '%s'", engine);
 		exit(1);
 	}
 	init_ok = 1;
@@ -95,11 +95,11 @@ int comm_init(char *engine) {
 void comm_exit(void) {
 	if (init_ok) {
 		int status;
-		DBG_LOG("waiting for engine to exit");
+		DBG_LOG("Waiting for engine to exit");
 
 		wait(&status);
 
-		DBG_LOG("engine exitted with status %i", status);
+		DBG_LOG("Engine exitted with status %i", status);
 
 		pipe_unix_exit();
 	}

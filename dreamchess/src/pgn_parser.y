@@ -99,6 +99,6 @@ empty                    :
 
 int yyerror(const char *s)
 {
-    DBG_WARN("parse error: %s", s);
+    DBG_WARN("Parse error: %s", s);
     return 1;
 }

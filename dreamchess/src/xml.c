@@ -143,7 +143,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 	f = fopen(filename, "r");
 
 	if (!f) {
-		DBG_WARN("failed to open '%s'", filename);
+		DBG_WARN("Failed to open '%s'", filename);
 		return -1;
 	}
 
@@ -165,7 +165,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 		void *buff = XML_GetBuffer(s.parser, BUFF_SIZE);
 
 		if (buff == NULL) {
-			DBG_ERROR("failed to allocate XML buffer");
+			DBG_ERROR("Failed to allocate XML buffer");
 			XML_ParserFree(s.parser);
 			fclose(f);
 			free_char_buf(&s);
@@ -175,7 +175,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 		errno = 0;
 		while ((bytes_read = fread(buff, 1, BUFF_SIZE, f)) == 0 && ferror(f)) {
 			if (errno != EINTR) {
-				DBG_ERROR("failed to read from XML file '%s'", filename);
+				DBG_ERROR("Failed to read from XML file '%s'", filename);
 				XML_ParserFree(s.parser);
 				fclose(f);
 				free_char_buf(&s);
@@ -186,7 +186,7 @@ int xml_parse(const char *filename, const char *parent_element, xml_element_cb e
 		}
 
 		if (!XML_ParseBuffer(s.parser, bytes_read, bytes_read == 0)) {
-			DBG_ERROR("failed to parse XML file '%s'", filename);
+			DBG_ERROR("Failed to parse XML file '%s'", filename);
 			XML_ParserFree(s.parser);
 			fclose(f);
 			free_char_buf(&s);

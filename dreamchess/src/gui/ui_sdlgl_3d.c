@@ -176,7 +176,7 @@ void init_fbo(void) {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		DBG_ERROR("failed to set up FBO");
+		DBG_ERROR("Failed to set up FBO");
 		exit(1);
 	}
 
@@ -235,7 +235,7 @@ static texture_t *load_piece_texture(char *filename) {
 
 	tex = malloc(sizeof(texture_t));
 
-	DBG_LOG("loading texture: %s", filename);
+	DBG_LOG("Loading texture: %s", filename);
 	load_texture_png(tex, filename, 1, 0);
 	data_col_add(&textures, filename, tex);
 	return tex;
@@ -252,13 +252,13 @@ static mesh_t *dcm_load(char *filename) {
 	f = fopen(filename, "r");
 
 	if (!f) {
-		DBG_ERROR("couldn't open %s", filename);
+		DBG_ERROR("Couldn't open %s", filename);
 		return NULL;
 	}
 
 	if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4) ||
 		((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M'))) {
-		DBG_ERROR("invalid DCM file header");
+		DBG_ERROR("Invalid DCM file header");
 		fclose(f);
 		return NULL;
 	}
@@ -270,7 +270,7 @@ static mesh_t *dcm_load(char *filename) {
 	}
 
 	if (fscanf(f, "%d\n", &vertices) != 1) {
-		DBG_ERROR("error reading DCM file");
+		DBG_ERROR("Error reading DCM file");
 		fclose(f);
 		return NULL;
 	}
@@ -283,7 +283,7 @@ static mesh_t *dcm_load(char *filename) {
 
 	for (i = 0; i < vertices * 3; i++) {
 		if (fscanf(f, "%f\n", &mesh->vertex[i]) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 	}
@@ -292,7 +292,7 @@ static mesh_t *dcm_load(char *filename) {
 
 	for (i = 0; i < vertices * 3; i++) {
 		if (fscanf(f, "%f\n", &mesh->normal[i]) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 	}
@@ -301,7 +301,7 @@ static mesh_t *dcm_load(char *filename) {
 
 	for (i = 0; i < vertices * 2; i++) {
 		if (fscanf(f, "%f\n", &mesh->tex_coord[i]) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 	}
@@ -311,7 +311,7 @@ static mesh_t *dcm_load(char *filename) {
 		mesh->tex_coord[i] = 1.0f - mesh->tex_coord[i];
 
 	if (fscanf(f, "%d\n", &mesh->groups) != 1) {
-		DBG_ERROR("error reading DCM file");
+		DBG_ERROR("Error reading DCM file");
 		exit(1);
 	}
 
@@ -329,12 +329,12 @@ static mesh_t *dcm_load(char *filename) {
 		else if (!strcmp(line, "TRIANGLES\n"))
 			mesh->group[i].type = PRIM_TRIANGLES;
 		else {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
 		if (fscanf(f, "%d\n", &group_len) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
@@ -344,7 +344,7 @@ static mesh_t *dcm_load(char *filename) {
 
 		for (j = 0; j < group_len; j++) {
 			if (fscanf(f, "%u\n", &mesh->group[i].data[j]) != 1) {
-				DBG_ERROR("error reading DCM file");
+				DBG_ERROR("Error reading DCM file");
 				exit(1);
 			}
 		}
@@ -368,13 +368,13 @@ mesh_t *dcm_load_new(char *filename) {
 	f = fopen(filename, "r");
 
 	if (!f) {
-		DBG_ERROR("couldn't open %s", filename);
+		DBG_ERROR("Couldn't open %s", filename);
 		return NULL;
 	}
 
 	if ((fscanf(f, "%c%c%c %d\n", &id[0], &id[1], &id[2], &version) != 4) ||
 		((id[0] != 'D') || (id[1] != 'C') || (id[2] != 'M'))) {
-		DBG_ERROR("invalid DCM file header");
+		DBG_ERROR("Invalid DCM file header");
 		return NULL;
 	}
 
@@ -384,7 +384,7 @@ mesh_t *dcm_load_new(char *filename) {
 	}
 
 	if (fscanf(f, "VERTICES %d\n", &vertices) != 1) {
-		DBG_ERROR("error reading DCM file");
+		DBG_ERROR("Error reading DCM file");
 		return NULL;
 	}
 
@@ -397,7 +397,7 @@ mesh_t *dcm_load_new(char *filename) {
 	for (i = 0; i < vertices; i++) {
 		if (fscanf(f, "%f %f %f %f %f %f\n", &mesh->vertex[i * 3], &mesh->vertex[i * 3 + 1], &mesh->vertex[i * 3 + 2],
 				   &mesh->normal[i * 3], &mesh->normal[i * 3 + 1], &mesh->normal[i * 3 + 2]) != 6) {
-			DBG_ERROR("error reading DCM file: %i of %i", i, vertices);
+			DBG_ERROR("Error reading DCM file: %i of %i", i, vertices);
 			exit(1);
 		}
 	}
@@ -425,7 +425,7 @@ mesh_t *dcm_load_new(char *filename) {
 		mesh->group[i].type = PRIM_TRIANGLES;
 
 		if (fscanf(f, "TRIANGLES %d\n", &group_len) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
@@ -436,14 +436,14 @@ mesh_t *dcm_load_new(char *filename) {
 		for (j = 0; j < group_len; j++) {
 			if (fscanf(f, "%u %u %u %f %f %f %f %f %f\n", &mesh->group[i].data[j * 3], &mesh->group[i].data[j * 3 + 1],
 					   &mesh->group[i].data[j * 3 + 2], &fl, &fl, &fl, &fl, &fl, &fl) != 9) {
-				DBG_ERROR("error reading DCM file");
+				DBG_ERROR("Error reading DCM file");
 				exit(1);
 			}
 		}
 	}
 
 	if (fscanf(f, "BONES %d\n", &bones) != 1) {
-		DBG_ERROR("error reading DCM file");
+		DBG_ERROR("Error reading DCM file");
 		return NULL;
 	}
 
@@ -455,18 +455,18 @@ mesh_t *dcm_load_new(char *filename) {
 
 		mesh->bone[i].name = malloc(256);
 		if (fscanf(f, "BONE %255s\n", mesh->bone[i].name) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
 		if (fscanf(f, "%f %f %f\n", &mesh->bone[i].offset[0], &mesh->bone[i].offset[1], &mesh->bone[i].offset[2]) !=
 			3) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
 		if (fscanf(f, "CHILDREN %d\n", &mesh->bone[i].children) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
@@ -475,13 +475,13 @@ mesh_t *dcm_load_new(char *filename) {
 
 		for (j = 0; j < mesh->bone[i].children; j++) {
 			if (fscanf(f, "%d\n", &mesh->bone[i].child[j]) != 1) {
-				DBG_ERROR("error reading DCM file");
+				DBG_ERROR("Error reading DCM file");
 				exit(1);
 			}
 		}
 
 		if (fscanf(f, "VERTEXWEIGHTS %d\n", &vw) != 1) {
-			DBG_ERROR("error reading DCM file");
+			DBG_ERROR("Error reading DCM file");
 			exit(1);
 		}
 
@@ -489,7 +489,7 @@ mesh_t *dcm_load_new(char *filename) {
 			float weight;
 			int vert_idx;
 			if (fscanf(f, "%i %f\n", &vert_idx, &weight) != 2) {
-				DBG_ERROR("error reading DCM file");
+				DBG_ERROR("Error reading DCM file");
 				exit(1);
 			}
 			mesh->bone_w[vert_idx] = i;
@@ -509,7 +509,7 @@ static mesh_t *load_mesh(char *filename) {
 		return mesh;
 	}
 
-	DBG_LOG("loading mesh: %s", filename);
+	DBG_LOG("Loading mesh: %s", filename);
 	mesh = dcm_load(filename);
 	data_col_add(&meshes, filename, mesh);
 	return mesh;
@@ -523,7 +523,7 @@ static mesh_t *load_mesh_new(char *filename) {
 		return mesh;
 	}
 
-	DBG_LOG("loading mesh: %s", filename);
+	DBG_LOG("Loading mesh: %s", filename);
 	mesh = dcm_load_new(filename);
 	data_col_add(&meshes, filename, mesh);
 	return mesh;
@@ -607,14 +607,14 @@ void loadmodels(char *filename) {
 	f = fopen(filename, "r");
 
 	if (!f) {
-		DBG_ERROR("couldn't open %s\n", filename);
+		DBG_ERROR("Couldn't open %s\n", filename);
 		exit(-1);
 	}
 
 	for (i = 0; i < 12; i++) {
 		if (!fgets(mesh, 256, f) || (mesh[strlen(mesh) - 1] != '\n') || !fgets(texture, 256, f) ||
 			(texture[strlen(texture) - 1] != '\n')) {
-			DBG_ERROR("error reading set file\n");
+			DBG_ERROR("Error reading set file\n");
 			exit(1);
 		}
 

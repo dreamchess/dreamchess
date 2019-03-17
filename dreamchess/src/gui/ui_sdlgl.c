@@ -62,7 +62,7 @@ static GLuint screen_fb, screen_temp_fb, screen_tex, screen_color_rb, screen_tem
 static int max_samples;
 
 static void music_callback(char *title, char *artist, char *album) {
-	DBG_LOG("now playing: %s - %s", artist, title);
+	DBG_LOG("Now playing: %s - %s", artist, title);
 }
 
 int get_screen_width(void) {
@@ -180,14 +180,14 @@ static int poll_event(gg_event_t *event) {
 		if ((sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
 			 sdl_event.key.keysym.sym == SDLK_RETURN) ||
 			(sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.sym == SDLK_F11)) {
-			DBG_LOG("toggled fullscreen");
+			DBG_LOG("Toggled fullscreen");
 			toggle_fullscreen();
 			continue;
 		}
 
 		if ((sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_CTRL &&
 			 sdl_event.key.keysym.sym == SDLK_f)) {
-			DBG_LOG("toggled fps counter");
+			DBG_LOG("Toggled fps counter");
 			toggle_show_fps();
 			continue;
 		}
@@ -213,7 +213,7 @@ static void init_screen_fbo_ms(int width, int height, int ms) {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, screen_depth_stencil_rb);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		DBG_ERROR("failed to set up screen FBO with %dx multisampling", ms);
+		DBG_ERROR("Failed to set up screen FBO with %dx multisampling", ms);
 		exit(1);
 	}
 }
@@ -226,7 +226,7 @@ static void init_screen_temp_fbo(int width, int height) {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, screen_temp_color_rb);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		DBG_ERROR("failed to set up temp FBO");
+		DBG_ERROR("Failed to set up temp FBO");
 		exit(1);
 	}
 }
@@ -304,7 +304,7 @@ static config_t *do_menu(int *pgn) {
 	set_fade_start(gg_system_get_ticks());
 	set_show_egg(FALSE);
 
-	DBG_LOG("entering title menu");
+	DBG_LOG("Entering title menu");
 
 	while (1) {
 		const Uint8 *keystate;
@@ -432,7 +432,7 @@ static void load_menu_tex(void) {
 
 static int set_fullscreen(int fullscreen) {
 	if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) > 0) {
-		DBG_ERROR("failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
+		DBG_ERROR("Failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
 		return 1;
 	}
 
@@ -440,7 +440,7 @@ static int set_fullscreen(int fullscreen) {
 }
 
 static int resize(int width, int height, int fullscreen, int ms) {
-	DBG_LOG("resizing video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
+	DBG_LOG("Resizing video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
 			ms);
 
 	if (ms > max_samples)
@@ -484,7 +484,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	int video_flags = SDL_WINDOW_OPENGL;
 
-	DBG_LOG("setting video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
+	DBG_LOG("Setting video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
 			ms);
 
 	if (fullscreen)
@@ -497,14 +497,14 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 		SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, video_flags);
 
 	if (!sdl_window) {
-		DBG_ERROR("failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s", width, height,
+		DBG_ERROR("Failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s", width, height,
 				  fullscreen ? "on" : "off", ms, SDL_GetError());
 		mode_set_failed = 1;
 		return 1;
 	}
 
 	if (!SDL_GL_CreateContext(sdl_window)) {
-		DBG_ERROR("failed to create GL context: %s", SDL_GetError());
+		DBG_ERROR("Failed to create GL context: %s", SDL_GetError());
 		SDL_DestroyWindow(sdl_window);
 		mode_set_failed = 1;
 		return 1;
@@ -512,7 +512,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	err = glewInit();
 	if (err != GLEW_OK) {
-		DBG_ERROR("failed to initialize GLEW: %s", glewGetErrorString(err));
+		DBG_ERROR("Failed to initialize GLEW: %s", glewGetErrorString(err));
 		exit(1);
 	}
 
@@ -661,7 +661,7 @@ static void poll_move(void) {
 		game_quit();
 		return;
 	} else if (quit_to_menu) {
-		DBG_LOG("returning to title menu");
+		DBG_LOG("Returning to title menu");
 		set_fading_out(TRUE);
 		reset_transition(FALSE);
 		set_fade_start(gg_system_get_ticks());

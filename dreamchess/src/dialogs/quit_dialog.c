@@ -27,7 +27,7 @@
 static int dialog_quit_ok(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
 	gg_dialog_close();
-	DBG_LOG("entering title menu");
+	DBG_LOG("Entering title menu");
 	set_quit_to_menu(1);
 	return 1;
 }

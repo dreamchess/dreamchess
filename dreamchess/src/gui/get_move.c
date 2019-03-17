@@ -92,7 +92,7 @@ int get_move(void) {
 
 		if ((event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_ALT && event.key.keysym.sym == SDLK_RETURN) ||
 			(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11)) {
-			DBG_LOG("toggled fullscreen");
+			DBG_LOG("Toggled fullscreen");
 			toggle_fullscreen();
 			continue;
 		}

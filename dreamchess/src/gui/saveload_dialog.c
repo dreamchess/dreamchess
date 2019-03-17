@@ -102,8 +102,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 	if (!changing_slot)
 		saveload_selected = 0;
 
-	/*DBG_LOG( "dialog opened with saveselected of %i", saveload_selected );*/
-
 	/* Right side.. */
 	if (!changing_slot) {
 		load_saves_xml();

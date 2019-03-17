@@ -55,7 +55,7 @@ int write_save_xml(int slot) {
 	snprintf(temp, sizeof(temp), "save%i.xml", slot);
 
 	if (ch_userdir()) {
-		DBG_WARN("could not enter user directory");
+		DBG_WARN("Could not enter user directory");
 		return -1;
 	}
 
@@ -64,7 +64,7 @@ int write_save_xml(int slot) {
 	if (!fp)
 		return -1;
 
-	DBG_LOG("writing save xml: %s", temp);
+	DBG_LOG("Writing save xml: %s", temp);
 
 	fputs("<?xml version=\"1.0\"?>\n<save>\n", fp);
 	fprintf(fp, "<time>%i</time>\n<white>", (int)time(NULL));
@@ -88,7 +88,7 @@ int write_save_xml(int slot) {
 
 	fen = fen_encode(get_board());
 	if (!fen) {
-		DBG_ERROR("error encoding FEN");
+		DBG_ERROR("Error encoding FEN");
 		retval = -1;
 	} else {
 		fprintf(fp, "<fen>%s</fen>\n", fen);
@@ -98,7 +98,7 @@ int write_save_xml(int slot) {
 	fputs("</save>\n", fp);
 
 	if (ferror(fp)) {
-		DBG_ERROR("error writing XML file for savegame in slot %d", slot);
+		DBG_ERROR("Error writing XML file for savegame in slot %d", slot);
 		retval = -1;
 	}
 
@@ -154,7 +154,7 @@ void load_saves_xml(void) {
 	}
 
 	if (ch_userdir()) {
-		DBG_WARN("could not enter user directory");
+		DBG_WARN("Could not enter user directory");
 		return;
 	}
 
@@ -164,11 +164,11 @@ void load_saves_xml(void) {
 		char temp[256];
 		snprintf(temp, sizeof(temp), "save%i.xml", slot);
 
-		DBG_LOG("reading save xml: %s", temp);
+		DBG_LOG("Reading save xml: %s", temp);
 
 		if (!xml_parse(temp, "save", save_cb, NULL, NULL, &slot))
 			slots |= (1 << slot);
 		else
-			DBG_LOG("failed to load: %s", temp);
+			DBG_LOG("Failed to load: %s", temp);
 	}
 }

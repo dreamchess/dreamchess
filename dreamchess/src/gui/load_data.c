@@ -46,7 +46,7 @@ void load_border(texture_t border[9], char *filename) {
 		/* Free up any memory we may have used */
 		SDL_FreeSurface(surface);
 	} else {
-		DBG_ERROR("could not load texture: %s", filename);
+		DBG_ERROR("Could not load texture: %s", filename);
 		exit(1);
 	}
 }

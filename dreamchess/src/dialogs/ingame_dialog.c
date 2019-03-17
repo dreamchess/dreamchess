@@ -25,25 +25,25 @@
  */
 
 static int retract_move(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
-	DBG_LOG("retracting move");
+	DBG_LOG("Retracting move");
 	game_retract_move();
 	return 1;
 }
 
 static int move_now(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
-	DBG_LOG("forcing dreamer to move");
+	DBG_LOG("Forcing dreamer to move");
 	game_move_now();
 	return 1;
 }
 
 static int view_prev(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
-	DBG_LOG("viewing previous move");
+	DBG_LOG("Viewing previous move");
 	game_view_prev();
 	return 1;
 }
 
 static int view_next(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
-	DBG_LOG("viewing next move");
+	DBG_LOG("Viewing next move");
 	game_view_next();
 	return 1;
 }

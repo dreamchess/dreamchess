@@ -70,7 +70,7 @@ static void theme_open_cb(void *user_data) {
 static void theme_close_cb(void *user_data) {
 	state *s = (state *)user_data;
 
-	DBG_LOG("added theme: %s %s", s->theme->name, s->theme->style);
+	DBG_LOG("Added theme: %s %s", s->theme->name, s->theme->style);
 	option_add_value(s->option, s->theme->name, s->theme);
 	s->theme = NULL;
 }
@@ -84,7 +84,7 @@ static int parse_rgba(const char *rgba, float *r, float *g, float *b, float *a) 
 	float r_, g_, b_, a_;
 
 	if (sscanf(rgba, "rgba(%f,%f,%f,%f)", &r_, &g_, &b_, &a_) < 4) {
-		DBG_ERROR("failed to parse rgba color: '%s'", rgba);
+		DBG_ERROR("Failed to parse rgba color: '%s'", rgba);
 		return -1;
 	}
 
@@ -135,7 +135,7 @@ static void theme_add_theme(char *xmlfile, option_t *option) {
 	s.theme = NULL;
 
 	if (xml_parse(xmlfile, "theme", theme_data_cb, theme_open_cb, theme_close_cb, &s))
-		DBG_ERROR("error loading theme file '%s'", xmlfile);
+		DBG_ERROR("Error loading theme file '%s'", xmlfile);
 
 	if (s.theme) {
 		free(s.theme->name);
@@ -216,7 +216,7 @@ static void find_music_packs(void) {
 	char *cur_dir = getcwd(NULL, 0);
 
 	if (!cur_dir)
-		DBG_ERROR("could not determine current directory");
+		DBG_ERROR("Could not determine current directory");
 
 	HANDLE hFind;
 	WIN32_FIND_DATA ffd;
@@ -252,13 +252,13 @@ static void find_music_packs(void) {
 	char cur_dir[PATH_MAX];
 
 	if (!getcwd(cur_dir, PATH_MAX))
-		DBG_ERROR("could not determine current directory");
+		DBG_ERROR("Could not determine current directory");
 #else
 	/* PATH_MAX not defined, try getcwd extension */
 	char *cur_dir = getcwd(NULL, 0);
 
 	if (!cur_dir)
-		DBG_ERROR("could not determine current directory");
+		DBG_ERROR("Could not determine current directory");
 #endif
 
 	if ((dir = opendir("music")) != NULL) {
@@ -303,17 +303,17 @@ void theme_find_music_packs(void) {
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
 						 "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\DreamChess Music", 0,
 						 KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key) != ERROR_SUCCESS) {
-			DBG_LOG("couldn't find music pack in registry");
+			DBG_LOG("Couldn't find music pack in registry");
 			return;
 		}
 
 		if (RegQueryValueEx(key, "InstallLocation", NULL, NULL, data, &size) != ERROR_SUCCESS) {
-			DBG_LOG("couldn't find music pack in registry");
+			DBG_LOG("Couldn't find music pack in registry");
 			return;
 		}
 
 		data[size] = 0;
-		DBG_LOG("music pack location: %s", data);
+		DBG_LOG("Music pack location: %s", data);
 
 		chdir(data);
 		find_music_packs();

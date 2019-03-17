@@ -67,7 +67,7 @@ static void track_close_cb(void *user_data) {
 	if (s->entry->filename) {
 		TAILQ_INSERT_TAIL(s->playlist, s->entry, entries);
 	} else {
-		DBG_WARN("skipping playlist item without filename");
+		DBG_WARN("Skipping playlist item without filename");
 		free(s->entry->title);
 		free(s->entry->album);
 		free(s->entry->artist);
@@ -98,7 +98,7 @@ static void track_data_cb(void *user_data, const char *element, char *const *att
 		strcat(s->entry->filename, "/");
 		strcat(s->entry->filename, text);
 	} else
-		DBG_WARN("skipping invalid playlist item property '%s'", element);
+		DBG_WARN("Skipping invalid playlist item property '%s'", element);
 }
 
 void playlist_add_tracks(playlist_t *playlist, char *dir) {
@@ -113,7 +113,7 @@ void playlist_add_tracks(playlist_t *playlist, char *dir) {
 	s.entry = NULL;
 
 	if (xml_parse(filename, "track", track_data_cb, track_open_cb, track_close_cb, &s))
-		DBG_WARN("failed to load '%s'", filename);
+		DBG_WARN("Failed to load '%s'", filename);
 
 	free(filename);
 
