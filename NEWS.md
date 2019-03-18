@@ -1,4 +1,4 @@
-### 2019-??-?? - DreamChess 0.3.0
+### 2019-03-18 - DreamChess 0.3.0
 
 DreamChess 0.3.0 is finally here. Eleven years have passed since the last
 official release, with only a few release candidates happening in between.
@@ -27,7 +27,7 @@ Most important changes:
 - Board is automatically flipped when playing with black
 - Pondering support in Dreamer chess engine
 - New icon
-- Music pack support on OS X
+- Music pack support on macOS
 
 ### 2007-11-17 - DreamChess v0.2.0
 
