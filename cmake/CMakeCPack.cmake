@@ -6,4 +6,8 @@ set(CPACK_WIX_UPGRADE_GUID 11F270FA-4B99-4398-B2EC-530643FCD4DF)
 set(CPACK_WIX_TEMPLATE ${CMAKE_SOURCE_DIR}/dist/wix/WIX.template.in)
 set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/dreamchess/src/win32.ico)
 
+if(APPLE)
+	set(CPACK_SYSTEM_NAME macOS)
+endif()
+
 include(CPack)
