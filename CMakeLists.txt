@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(DreamChess VERSION 0.3.0)
+project(DreamChess VERSION 0.4.0)
 
 set(DREAMCHESS_RELEASE FALSE)
 set(COPYRIGHT_YEAR 2019)
