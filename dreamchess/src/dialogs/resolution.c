@@ -23,6 +23,7 @@
 
 #include "dialogs.h"
 #include "system_config.h"
+#include "i18n.h"
 
 static gg_widget_t *entry1, *entry2, *label1, *label2, *container;
 
@@ -39,7 +40,7 @@ gg_dialog_t *dialog_error_create(gg_dialog_t *parent, char *message1, char *mess
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create(message1));
 	if (message2)
 		gg_container_append(GG_CONTAINER(vbox), gg_label_create(message2));
-	widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.5f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	dialog = gg_dialog_create(vbox, NULL, parent, GG_DIALOG_AUTOHIDE_PARENT);
@@ -90,7 +91,7 @@ static int dialog_ok_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, v
 	if (set_resolution(0)) {
 		config_load();
 
-		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), "Error: failed to change video mode", NULL));
+		gg_dialog_open(dialog_error_create(gg_dialog_get_active(), _("Error: failed to change video mode"), NULL));
 	} else {
 		// Recenter dialogs after switching to/from widescreen
 		gg_dialog_set_position(gg_dialog_get_active(), gg_system_get_screen_width() / 2, 23, 0.5f, 0.0f);
@@ -156,19 +157,19 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent) {
 	vbox = gg_vbox_create(0);
 	vbox2 = gg_vbox_create(0);
 
-	widget = gg_label_create("Resolution:");
+	widget = gg_label_create(_("Resolution:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	label2 = gg_label_create("Custom:");
+	label2 = gg_label_create(_("Custom:"));
 	gg_align_set_alignment(GG_ALIGN(label2), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), label2);
 
-	widget = gg_label_create("Full screen:");
+	widget = gg_label_create(_("Full screen:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	widget = gg_label_create("Multisampling:");
+	widget = gg_label_create(_("Multisampling:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
@@ -215,10 +216,10 @@ gg_dialog_t *dialog_resolution_create(gg_dialog_t *parent) {
 	gg_container_append(GG_CONTAINER(hbox), vbox2);
 	gg_container_append(GG_CONTAINER(vbox), hbox);
 
-	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_ok_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_cancel_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "playlist.h"
 #include "xml.h"
+#include "i18n.h"
 
 typedef struct {
 	playlist_t *playlist;
@@ -56,9 +57,9 @@ static void track_open_cb(void *user_data) {
 	state *s = (state *)user_data;
 	s->entry = malloc(sizeof(playlist_entry_t));
 	memset(s->entry, 0, sizeof(playlist_entry_t));
-	s->entry->title = strdup("Unknown title");
-	s->entry->album = strdup("Unknown album");
-	s->entry->artist = strdup("Unknown artist");
+	s->entry->title = strdup(_("Unknown title"));
+	s->entry->album = strdup(_("Unknown album"));
+	s->entry->artist = strdup(_("Unknown artist"));
 }
 
 static void track_close_cb(void *user_data) {

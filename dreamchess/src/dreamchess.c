@@ -44,15 +44,16 @@
 #include "pgn_scanner.h"
 #include "system_config.h"
 #include "ui.h"
+#include "i18n.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
 #ifdef HAVE_GETOPT_LONG
-#define OPTION_TEXT(L, S, T) "  " L "\t  " S "\t" T "\n"
+#define OPTION_TEXT(L, S) "  " L "\t  " S "\t%s\n"
 #else
-#define OPTION_TEXT(L, S, T) "  " S "\t" T "\n"
+#define OPTION_TEXT(L, S) "  " S "\t%s\n"
 #endif
 
 typedef struct move_list {
@@ -405,15 +406,15 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 #endif /* HAVE_GETOPT_LONG */
 		switch (c) {
 		case 'h':
-			printf("Usage: dreamchess [options]\n\n"
-				   "An xboard-compatible chess interface.\n\n"
-				   "Options:\n"
-                   OPTION_TEXT("--help\t", "-h\t", "show help")
-				   OPTION_TEXT("--fullscreen\t", "-f\t", "run fullscreen")
-				   OPTION_TEXT("--width\t", "-W<num>", "set screen width")
-				   OPTION_TEXT("--height\t", "-H<num>", "set screen height")
-				   OPTION_TEXT("--1st-engine <eng>", "-1<eng>", "use <eng> as first chess engine")
-				   OPTION_TEXT("\t\t", "\t", "  defaults to 'dreamer'"));
+			printf("%s\n\n%s\n\n%s\n", _("Usage: dreamchess [options]"),
+			                           _("An xboard-compatible chess interface."),
+			                           _("Options:"));
+			printf(OPTION_TEXT("--help\t", "-h\t"), _("show help"));
+			printf(OPTION_TEXT("--fullscreen\t", "-f\t"), _("run fullscreen"));
+			printf(OPTION_TEXT("--width\t", "-W<num>"), _("set screen width"));
+   			printf(OPTION_TEXT("--height\t", "-H<num>"), _("set screen height"));
+   			printf(OPTION_TEXT("--1st-engine <eng>", "-1<eng>"), _("use <eng> as first chess engine"));
+			printf(OPTION_TEXT("\t\t", "\t"), _("  defaults to 'dreamer'"));
 			exit(0);
 		case '1':
 			cl_options->engine = optarg;
@@ -462,6 +463,7 @@ int main(int argc, char **argv) {
 	cl_options_t cl_options = {0};
 
 	dbg_init();
+	init_i18n();
 	DBG_LOG("Version %s", g_version);
 
 	ui = &ui_sdlgl;

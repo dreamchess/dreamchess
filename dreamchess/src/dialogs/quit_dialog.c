@@ -19,6 +19,7 @@
 */
 
 #include "dialogs.h"
+#include "i18n.h"
 
 /** @brief Quits the current game.
  *
@@ -48,17 +49,17 @@ gg_dialog_t *dialog_quit_create(gg_dialog_t *parent) {
 	gg_widget_t *dialog;
 	gg_widget_t *vbox = gg_vbox_create(0);
 
-	gg_widget_t *widget = gg_label_create("Quit to Title?");
+	gg_widget_t *widget = gg_label_create(_("Quit to Title?"));
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
 	widget = gg_label_create("");
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_quit_ok, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	gg_vbox_set_selected(vbox, 3);

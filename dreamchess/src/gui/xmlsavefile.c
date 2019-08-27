@@ -20,6 +20,7 @@
 
 #include "ui_sdlgl.h"
 #include "xml.h"
+#include "i18n.h"
 
 static int slots;
 static char time_save[SAVEGAME_SLOTS][80];
@@ -116,7 +117,7 @@ static void save_cb(void *user_data, const char *element, char *const *attrs, co
 
 		time = atoi(text);
 		tm = localtime(&time);
-		snprintf(time_save[slot], sizeof(time_save[slot]), "%02i/%02i at %02i:%02i.", tm->tm_mday, tm->tm_mon + 1,
+		snprintf(time_save[slot], sizeof(time_save[slot]), _("%02i/%02i at %02i:%02i."), tm->tm_mday, tm->tm_mon + 1,
 				 tm->tm_hour, tm->tm_min);
 	} else if (!strcmp(element, "white")) {
 		if (!strcmp(text, "ui"))
@@ -145,7 +146,7 @@ void load_saves_xml(void) {
 	int slot;
 
 	for (slot = 0; slot < SAVEGAME_SLOTS; ++slot) {
-		snprintf(time_save[slot], sizeof(time_save[slot]), "Unknown");
+		snprintf(time_save[slot], sizeof(time_save[slot]), _("Unknown"));
 		config_save[slot].player[WHITE] = PLAYER_UI;
 		config_save[slot].player[BLACK] = PLAYER_ENGINE;
 		config_save[slot].cpu_level = 1;

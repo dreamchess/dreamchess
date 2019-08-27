@@ -26,6 +26,7 @@
 #include "dreamchess.h"
 #include "options.h"
 #include "system_config.h"
+#include "i18n.h"
 
 static gg_widget_t *entry;
 
@@ -87,19 +88,19 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent) {
 	vbox = gg_vbox_create(0);
 	vbox2 = gg_vbox_create(2);
 
-	widget = gg_label_create("Theme:");
+	widget = gg_label_create(_("Theme:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	widget = gg_label_create("Engine:");
+	widget = gg_label_create(_("Engine:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	widget = gg_label_create("Music Volume:");
+	widget = gg_label_create(_("Music Volume:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	widget = gg_label_create("Sound Volume:");
+	widget = gg_label_create(_("Sound Volume:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
@@ -133,11 +134,11 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent) {
 	gg_container_append(GG_CONTAINER(hbox), vbox2);
 	gg_container_append(GG_CONTAINER(vbox), hbox);
 
-	widget = gg_action_create_with_label("Change resolution..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Change resolution.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_resolution_load, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

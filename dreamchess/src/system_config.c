@@ -26,6 +26,7 @@
 #include "options.h"
 #include "system_config.h"
 #include "theme.h"
+#include "i18n.h"
 
 static option_group_t *config;
 
@@ -53,7 +54,7 @@ void config_init(void) {
 	theme_find_themes(option);
 
 	option = option_group_add_option(config, "music_volume");
-	option_add_value(option, "Off", NULL);
+	option_add_value(option, _N("Off"), NULL);
 	for (i = 1; i <= AUDIO_MAX_VOL; i++) {
 		char buf[3];
 
@@ -63,7 +64,7 @@ void config_init(void) {
 	option_select_value_by_name(option, "8");
 
 	option = option_group_add_option(config, "sound_volume");
-	option_add_value(option, "Off", NULL);
+	option_add_value(option, _N("Off"), NULL);
 	for (i = 1; i <= AUDIO_MAX_VOL; i++) {
 		char buf[3];
 
@@ -73,12 +74,12 @@ void config_init(void) {
 	option_select_value_by_name(option, "8");
 
 	option = option_group_add_option(config, "time_moves");
-	option_add_value(option, "Whole game", NULL);
+	option_add_value(option, _N("Whole game"), NULL);
 	option_add_value(option, "10", NULL);
 	option_add_value(option, "20", NULL);
 	option_add_value(option, "30", NULL);
 	option_add_value(option, "40", NULL);
-	option_add_value(option, "Custom", NULL);
+	option_add_value(option, _N("Custom"), NULL);
 
 	option = option_group_add_int(config, "custom_time_moves");
 	option->value = 40;
@@ -88,7 +89,7 @@ void config_init(void) {
 	option_add_value(option, "30", NULL);
 	option_add_value(option, "60", NULL);
 	option_add_value(option, "120", NULL);
-	option_add_value(option, "Custom", NULL);
+	option_add_value(option, _N("Custom"), NULL);
 
 	option = option_group_add_int(config, "custom_time_time");
 	option->value = 60;
@@ -98,7 +99,7 @@ void config_init(void) {
 	option_add_value(option, "10", NULL);
 	option_add_value(option, "30", NULL);
 	option_add_value(option, "60", NULL);
-	option_add_value(option, "Custom", NULL);
+	option_add_value(option, _N("Custom"), NULL);
 
 	option = option_group_add_int(config, "custom_time_increment");
 	option->value = 0;
@@ -111,11 +112,11 @@ void config_init(void) {
 	add_resolution(option, 1280, 720);
 	add_resolution(option, 1920, 1080);
 	add_resolution(option, 3840, 2160);
-	option_add_value(option, "Custom", NULL);
+	option_add_value(option, _N("Custom"), NULL);
 
 	option = option_group_add_option(config, "full_screen");
-	option_add_value(option, "Off", NULL);
-	option_add_value(option, "On", NULL);
+	option_add_value(option, _N("Off"), NULL);
+	option_add_value(option, _N("On"), NULL);
 
 	option = option_group_add_int(config, "custom_resolution_width");
 	option->value = 640;
@@ -123,7 +124,7 @@ void config_init(void) {
 	option->value = 480;
 
 	option = option_group_add_option(config, "multisampling");
-	option_add_value(option, "Off", NULL);
+	option_add_value(option, _N("Off"), NULL);
 	option_add_value(option, "2x", NULL);
 	option_add_value(option, "4x", NULL);
 	option_add_value(option, "6x", NULL);
@@ -133,13 +134,13 @@ void config_init(void) {
 	option->string = strdup("dreamer");
 
 	option = option_group_add_option(config, "game_mode");
-	option_add_value(option, "Human vs. CPU", NULL);
-	option_add_value(option, "CPU vs. Human", NULL);
-	option_add_value(option, "Human vs. Human", NULL);
+	option_add_value(option, _N("Human vs. CPU"), NULL);
+	option_add_value(option, _N("CPU vs. Human"), NULL);
+	option_add_value(option, _N("Human vs. Human"), NULL);
 
 	option = option_group_add_option(config, "difficulty");
-	option_add_value(option, "Easy", NULL);
-	option_add_value(option, "Normal", NULL);
+	option_add_value(option, _N("Easy"), NULL);
+	option_add_value(option, _N("Normal"), NULL);
 	option_select_value_by_name(option, "Normal");
 
 	option = option_group_add_option(config, "level");
@@ -158,7 +159,7 @@ void config_set_failsafe_video(void) {
 	option_select_value_by_name(option, "640x480");
 
 	option = option_group_find_option(config, "full_screen");
-	option_select_value_by_name(option, "Off");
+	option_select_value_by_name(option, _N("Off"));
 
 	option = option_group_find_option(config, "custom_resolution_width");
 	option->value = 640;
@@ -166,7 +167,7 @@ void config_set_failsafe_video(void) {
 	option->value = 480;
 
 	option = option_group_find_option(config, "multisampling");
-	option_select_value_by_name(option, "Off");
+	option_select_value_by_name(option, _N("Off"));
 }
 
 int config_save(void) {

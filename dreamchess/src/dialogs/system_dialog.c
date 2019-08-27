@@ -19,6 +19,7 @@
 */
 
 #include "dialogs.h"
+#include "i18n.h"
 
 /* System dialog. */
 
@@ -59,19 +60,19 @@ gg_dialog_t *dialog_system_create(void) {
 	gg_widget_t *vbox = gg_vbox_create(0);
 	gg_widget_t *widget;
 
-	widget = gg_action_create_with_label("Save game..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Save game.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_savegame_open, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Move Options..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Move Options.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_ingame_open, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Quit Game..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Quit Game.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_quit_open, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	gg_vbox_set_selected(vbox, 3);

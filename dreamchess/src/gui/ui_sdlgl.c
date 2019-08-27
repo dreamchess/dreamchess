@@ -32,6 +32,7 @@
 #include "options.h"
 #include "system_config.h"
 #include "theme.h"
+#include "i18n.h"
 #include <GL/glew.h>
 #include <SDL2/SDL_syswm.h>
 
@@ -297,7 +298,7 @@ static config_t *do_menu(int *pgn) {
 	open_title_root_dialog();
 	if (mode_set_failed) {
 		gg_dialog_open(
-			dialog_error_create(gg_dialog_get_active(), "Error: failed to set video mode; using defaults", NULL));
+			dialog_error_create(gg_dialog_get_active(), _("Error: failed to set video mode; using defaults"), NULL));
 		mode_set_failed = 0;
 	}
 
@@ -351,7 +352,7 @@ static config_t *do_menu(int *pgn) {
 				return NULL;
 
 			if (set_loading) {
-				gg_widget_t *widget = gg_label_create("Loading, please wait...");
+				gg_widget_t *widget = gg_label_create(_("Loading, please wait..."));
 				widget = gg_dialog_create(widget, NULL, NULL, 0);
 				gg_dialog_set_style(GG_DIALOG(widget), get_menu_style());
 				gg_dialog_open(GG_DIALOG(widget));

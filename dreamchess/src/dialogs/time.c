@@ -23,6 +23,7 @@
 
 #include "dialogs.h"
 #include "system_config.h"
+#include "i18n.h"
 
 static gg_widget_t *entry1, *entry2, *entry3, *label1, *label2, *label3, *label4, *time_increment;
 
@@ -156,27 +157,27 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent) {
 	vbox = gg_vbox_create(0);
 	vbox2 = gg_vbox_create(0);
 
-	widget = gg_label_create("Moves:");
+	widget = gg_label_create(_("Moves:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	label2 = gg_label_create("Custom:");
+	label2 = gg_label_create(_("Custom:"));
 	gg_align_set_alignment(GG_ALIGN(label2), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), label2);
 
-	widget = gg_label_create("Time(mins):");
+	widget = gg_label_create(_("Time(mins):"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
-	label1 = gg_label_create("Custom:");
+	label1 = gg_label_create(_("Custom:"));
 	gg_align_set_alignment(GG_ALIGN(label1), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), label1);
 
-	label4 = gg_label_create("Increments(secs):");
+	label4 = gg_label_create(_("Increments(secs):"));
 	gg_align_set_alignment(GG_ALIGN(label4), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), label4);
 
-	label3 = gg_label_create("Custom:");
+	label3 = gg_label_create(_("Custom:"));
 	gg_align_set_alignment(GG_ALIGN(label3), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), label3);
 
@@ -227,10 +228,10 @@ gg_dialog_t *dialog_time_create(gg_dialog_t *parent) {
 	gg_container_append(GG_CONTAINER(hbox), vbox2);
 	gg_container_append(GG_CONTAINER(vbox), hbox);
 
-	widget = gg_action_create_with_label("OK", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_ok_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_cancel_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

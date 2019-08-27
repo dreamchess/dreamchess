@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
@@ -37,19 +38,19 @@ gg_dialog_t *dialog_victory_create(result_t *result) {
 	case RESULT_WHITE_WINS:
 		image_l = gg_image_create(get_white_piece(GUI_PIECE_KING));
 		image_r = gg_image_create(get_white_piece(GUI_PIECE_QUEEN));
-		text = gg_label_create("White won the match!");
+		text = gg_label_create(_("White won the match!"));
 		break;
 
 	case RESULT_BLACK_WINS:
 		image_l = gg_image_create(get_black_piece(GUI_PIECE_KING));
 		image_r = gg_image_create(get_black_piece(GUI_PIECE_QUEEN));
-		text = gg_label_create("Black won the match!");
+		text = gg_label_create(_("Black won the match!"));
 		break;
 
 	default:
 		image_l = gg_image_create(get_white_piece(GUI_PIECE_KING));
 		image_r = gg_image_create(get_black_piece(GUI_PIECE_KING));
-		text = gg_label_create("The game ended in a draw!");
+		text = gg_label_create(_("The game ended in a draw!"));
 	}
 
 	gg_container_append(GG_CONTAINER(vbox), text);
@@ -57,7 +58,7 @@ gg_dialog_t *dialog_victory_create(result_t *result) {
 	gg_container_append(GG_CONTAINER(vbox), text);
 	text = gg_label_create("");
 	gg_container_append(GG_CONTAINER(vbox), text);
-	action = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+	action = gg_action_create_with_label(_("OK"), 0.5f, 0.5f);
 	gg_widget_subscribe_signal_name(action, action->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), action);
 	gg_container_append(GG_CONTAINER(hbox), image_l);

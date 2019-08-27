@@ -29,9 +29,11 @@
  */
 
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 void draw_credits(int init) {
 	static int section, nr, state;
+	static const char *header;
 	int diff;
 	static Uint32 start;
 	char ***credits;
@@ -49,6 +51,7 @@ void draw_credits(int init) {
 		nr = 1;
 		state = 0;
 		start = now;
+		header = gettext(credits[section][0]);
 		return;
 	}
 
@@ -64,13 +67,13 @@ void draw_credits(int init) {
 			state = 1;
 		}
 
-		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+		text_draw_string_right(x, y, header, 1, &col_cap);
 
 		break;
 
 	case 1:
 		col_cap.a = 1.0f;
-		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+		text_draw_string_right(x, y, header, 1, &col_cap);
 
 		diff = now - start;
 
@@ -101,6 +104,7 @@ void draw_credits(int init) {
 			col_cap.a = 1.0f - diff / (float)1000;
 		else if (credits[section + 1]) {
 			section++;
+			header = gettext(credits[section][0]);
 			start = now;
 			state = 0;
 		} else {
@@ -108,7 +112,7 @@ void draw_credits(int init) {
 			return;
 		}
 
-		text_draw_string_right(x, y, credits[section][0], 1, &col_cap);
+		text_draw_string_right(x, y, header, 1, &col_cap);
 
 		break;
 	}

@@ -19,6 +19,8 @@
 */
 
 #include "dir.h"
+#include "i18n.h"
+#include "debug.h"
 
 #ifdef _WIN32
 
@@ -28,19 +30,23 @@
 #include "shlwapi.h"
 #include <io.h>
 #include <windows.h>
+#include <strsafe.h>
+
+static void get_module_dir(LPSTR buf, size_t size) {
+	GetModuleFileName(NULL, buf, size);
+	buf[MAX_PATH - 1] = '\0';
+	PathRemoveFileSpec(buf);
+}
 
 int ch_datadir(void) {
-	char filename[MAX_PATH + 6];
-
-	GetModuleFileName(NULL, filename, MAX_PATH);
-	filename[MAX_PATH] = '\0';
-	PathRemoveFileSpec(filename);
-	strcat(filename, "/data");
-	return chdir(filename);
+	TCHAR datadir[MAX_PATH];
+	get_module_dir(datadir, MAX_PATH);
+	StringCbCatA(datadir, MAX_PATH, "\\data");
+	return chdir(datadir);
 }
 
 int ch_userdir(void) {
-	char appdir[MAX_PATH];
+	TCHAR appdir[MAX_PATH];
 
 	if (SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdir))
 		return -1;
@@ -58,6 +64,14 @@ int ch_userdir(void) {
 	return 0;
 }
 
+void init_i18n(void) {
+	TCHAR localedir[MAX_PATH];
+	get_module_dir(localedir, MAX_PATH);
+	StringCbCatA(localedir, MAX_PATH, "\\locale");
+	bindtextdomain("dreamchess", localedir);
+	textdomain("dreamchess");
+}
+
 #elif defined __APPLE__
 
 #include "CoreFoundation/CoreFoundation.h"
@@ -67,23 +81,20 @@ int ch_userdir(void) {
 #define USERDIR "Library/Application Support/DreamChess"
 
 int ch_datadir(void) {
-	char temp1[200];
-	char temp2[200];
-	char temp3[200];
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
 
-	CFURLRef bundledir = CFBundleCopyResourcesDirectoryURL(mainBundle);
-	CFURLRef resdir = CFBundleCopyBundleURL(mainBundle);
+	if (!resourcesURL)
+		return -1;
 
-	CFStringRef stringref = CFURLCopyFileSystemPath(bundledir, kCFURLPOSIXPathStyle);
-	CFStringGetCString(stringref, temp1, 200, kCFStringEncodingMacRoman);
+	char path[PATH_MAX];
+	if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) {
+		CFRelease(resourcesURL);
+		return -1;
+	}
 
-	stringref = CFURLCopyFileSystemPath(resdir, kCFURLPOSIXPathStyle);
-	CFStringGetCString(stringref, temp2, 200, kCFStringEncodingMacRoman);
-
-	snprintf(temp3, sizeof(temp3), "%s/%s", temp2, temp1);
-
-	return chdir(temp3);
+	CFRelease(resourcesURL);
+	return chdir(path);
 }
 
 int ch_userdir(void) {
@@ -105,6 +116,30 @@ int ch_userdir(void) {
 	return 0;
 }
 
+void init_i18n(void) {
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef sharedSupportURL = CFBundleCopySharedSupportURL(mainBundle);
+
+	if (!sharedSupportURL)
+		return;
+
+	CFURLRef localeURL = CFURLCreateCopyAppendingPathComponent(NULL, sharedSupportURL, CFSTR("locale"), TRUE);
+
+	CFRelease(sharedSupportURL);
+
+	if (!localeURL)
+		return;
+
+	char path[PATH_MAX];
+	if (CFURLGetFileSystemRepresentation(localeURL, TRUE, (UInt8 *)path, PATH_MAX)) {
+		setlocale(LC_ALL, "");
+		bindtextdomain("dreamchess", path);
+		textdomain("dreamchess");
+	}
+
+	CFRelease(localeURL);
+}
+
 #else /* !_WIN32 */
 
 #define USERDIR ".dreamchess"
@@ -113,6 +148,7 @@ int ch_userdir(void) {
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <locale.h>
 
 int ch_datadir(void) {
 	return chdir(DATADIR);
@@ -135,6 +171,12 @@ int ch_userdir(void) {
 	}
 
 	return 0;
+}
+
+void init_i18n(void) {
+	setlocale(LC_ALL, "");
+	bindtextdomain("dreamchess", LOCALEDIR);
+	textdomain("dreamchess");
 }
 
 #endif

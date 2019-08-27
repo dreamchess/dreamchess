@@ -54,6 +54,8 @@ add_executable(dreamchess MACOSX_BUNDLE
     include/theme.h
 )
 
+add_dependencies(dreamchess update-gmo)
+
 set(COPYRIGHT_STRING "Copyright © 2003-${COPYRIGHT_YEAR} DreamChess developers")
 
 set_target_properties(dreamchess PROPERTIES
@@ -195,7 +197,7 @@ source_group("Source Files\\gui" REGULAR_EXPRESSION /gui/.*.c$)
 source_group("Header Files\\gui" REGULAR_EXPRESSION /gui/.*.h$)
 
 if(UNIX)
-    target_compile_definitions(dreamchess PRIVATE -DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/dreamchess")
+    target_compile_definitions(dreamchess PRIVATE -DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/dreamchess" -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 endif()
 
 target_include_directories(dreamchess
@@ -206,6 +208,7 @@ target_include_directories(dreamchess
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
     ${EXPAT_INCLUDE_DIR}
+    ${Intl_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}
@@ -219,12 +222,14 @@ target_link_libraries(dreamchess
     ${SDL2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${EXPAT_LIBRARY}
+    ${Intl_LIBRARIES}
 )
 
 if(VCPKG_TOOLCHAIN)
     target_link_libraries(dreamchess
         SDL2::SDL2
         SDL2::SDL2main
+        unofficial::gettext::libintl
     )
 endif()
 

@@ -22,12 +22,13 @@
 #include "options.h"
 #include "system_config.h"
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 static void create_option_values(gg_option_t *widget, option_t *option) {
 	option_value_t *value;
 
 	OPTION_VALUE_FOREACH(value, option) {
-		gg_option_append_label(widget, value->name, 0.5f, 0.0f);
+		gg_option_append_label(widget, gettext(value->name), 0.5f, 0.0f);
 	}
 
 	gg_option_set_selected(widget, option->selected->index);
@@ -131,14 +132,14 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent) {
 
 	vbox = gg_vbox_create(0);
 
-	label = gg_label_create("Players:");
+	label = gg_label_create(_("Players:"));
 	vbox2 = gg_vbox_create(0);
 	gg_container_append(GG_CONTAINER(vbox2), label);
 
-	label = gg_label_create("Difficulty:");
+	label = gg_label_create(_("Difficulty:"));
 	gg_container_append(GG_CONTAINER(vbox2), label);
 
-	label = gg_label_create("Level:");
+	label = gg_label_create(_("Level:"));
 	gg_container_append(GG_CONTAINER(vbox2), label);
 
 	hbox = gg_hbox_create(20);
@@ -167,16 +168,16 @@ gg_dialog_t *dialog_title_newgame_create(gg_dialog_t *parent) {
 	gg_container_append(GG_CONTAINER(vbox), hbox);
 
 	if (0) {
-		widget = gg_action_create_with_label("Time options..", 0.0f, 0.0f);
+		widget = gg_action_create_with_label(_("Time options.."), 0.0f, 0.0f);
 		gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_time_load, NULL);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 	}
 
-	widget = gg_action_create_with_label("Start Game", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Start Game"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_start, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	gg_vbox_set_selected(vbox, 1);
@@ -194,19 +195,19 @@ gg_dialog_t *dialog_title_root_create(void) {
 	gg_widget_t *widget;
 
 	vbox = gg_vbox_create(0);
-	widget = gg_action_create_with_label("New Game..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("New Game.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_new, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Load Game..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Load Game.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_root_load, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Configuration..", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Configuration.."), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_open_systemopts, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Quit", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Quit"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", menu_title_quit, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

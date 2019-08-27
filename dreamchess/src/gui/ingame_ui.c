@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high);
 void draw_capture_list(coord3_t offset, gg_colour_t *col);
@@ -96,33 +97,38 @@ static void draw_health_bar(coord3_t position, coord3_t size, int white) {
 }
 
 static void draw_player_status(coord3_t offset, int white) {
+	char *tiedStr = _("Tied!");
+	char *checkMateStr = _("Checkmate!");
+	char *checkStr = _("Check!");
+	char *winStr = _("Victory!");
+
 	if (white) /* UGLY */
 	{
 		if (get_game_stalemate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, "Tied!", 1, get_col(COL_WHITE));
+			text_draw_string_bouncy(offset.x, offset.y, tiedStr, 1, get_col(COL_WHITE));
 		else if (get_white_in_checkmate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, "Checkmate!", 1, get_col(COL_RED));
+			text_draw_string_bouncy(offset.x, offset.y, checkMateStr, 1, get_col(COL_RED));
 		else if (get_white_in_check() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, "Check!", 1, get_col(COL_RED));
+			text_draw_string_bouncy(offset.x, offset.y, checkStr, 1, get_col(COL_RED));
 
 		if (get_black_in_checkmate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, "Victory!", 1, get_col(COL_WHITE));
+			text_draw_string_bouncy(offset.x, offset.y, winStr, 1, get_col(COL_WHITE));
 	} else {
 		int namew, nameh;
 
 		if (get_game_stalemate() == TRUE) {
-			gg_system_get_string_size("Tied!", &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, "Tied!", 1, get_col(COL_WHITE));
+			gg_system_get_string_size(tiedStr, &namew, &nameh);
+			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, tiedStr, 1, get_col(COL_WHITE));
 		} else if (get_black_in_checkmate() == TRUE) {
-			gg_system_get_string_size("Checkmate!", &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, "Checkmate!", 1, get_col(COL_RED));
+			gg_system_get_string_size(checkMateStr, &namew, &nameh);
+			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, checkMateStr, 1, get_col(COL_RED));
 		} else if (get_black_in_check() == TRUE) {
-			gg_system_get_string_size("Check!", &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, "Check!", 1, get_col(COL_RED));
+			gg_system_get_string_size(checkStr, &namew, &nameh);
+			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, checkStr, 1, get_col(COL_RED));
 		}
 		if (get_white_in_checkmate() == TRUE) {
-			gg_system_get_string_size("Victory!", &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, "Victory!", 1, get_col(COL_WHITE));
+			gg_system_get_string_size(winStr, &namew, &nameh);
+			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, winStr, 1, get_col(COL_WHITE));
 		}
 	}
 }

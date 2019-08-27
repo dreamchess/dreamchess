@@ -18,11 +18,12 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DIR_H
-#define DREAMCHESS_DIR_H
+#include <libintl.h>
 
-int ch_datadir(void);
-int ch_userdir(void);
-void init_i18n(void);
+#ifndef COMMON_I18N_H
+#define COMMON_I18N_H
+
+#define _(STRING) gettext(STRING)
+#define _N(STRING) STRING
 
 #endif

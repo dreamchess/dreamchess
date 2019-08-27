@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
@@ -78,9 +79,9 @@ static int dialog_savegame_save(gg_widget_t *widget, gg_widget_t *emitter, void 
 	gg_dialog_close();
 
 	if (!game_save(saveload_selected) && !write_save_xml(saveload_selected))
-		show_message_dialog("Save successful");
+		show_message_dialog(_("Save successful"));
 	else
-		show_message_dialog("Save failed");
+		show_message_dialog(_("Save failed"));
 
 	return 1;
 }
@@ -110,16 +111,16 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 	if (get_slots() & (1 << saveload_selected)) {
 		gg_widget_t *board_box = gg_vbox_create(0);
 
-		snprintf(temp, sizeof(temp), "Saved: %s", get_time_save(saveload_selected));
+		snprintf(temp, sizeof(temp), _("Saved: %s"), get_time_save(saveload_selected));
 		widget = gg_label_create(temp);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 
 		switch (get_config_save(saveload_selected)->player[WHITE]) {
 		case PLAYER_ENGINE:
-			whiteis = "CPU";
+			whiteis = _("CPU");
 			break;
 		case PLAYER_UI:
-			whiteis = "Human";
+			whiteis = _("Human");
 			break;
 		default:
 			/* Whoops */
@@ -129,10 +130,10 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 
 		switch (get_config_save(saveload_selected)->player[BLACK]) {
 		case PLAYER_ENGINE:
-			blackis = "CPU";
+			blackis = _("CPU");
 			break;
 		case PLAYER_UI:
-			blackis = "Human";
+			blackis = _("Human");
 			break;
 		default:
 			/* Whoops */
@@ -140,16 +141,16 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 			break;
 		}
 
-		snprintf(temp, sizeof(temp), "%s vs %s", whiteis, blackis);
+		snprintf(temp, sizeof(temp), _("%s vs %s"), whiteis, blackis);
 		widget = gg_label_create(temp);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 
-		snprintf(temp, sizeof(temp), "Difficulty: %s",
-				 get_config_save(saveload_selected)->difficulty ? "Normal" : "Easy");
+		snprintf(temp, sizeof(temp), _("Difficulty: %s"),
+				 get_config_save(saveload_selected)->difficulty ? _("Normal") : _("Easy"));
 		widget = gg_label_create(temp);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 
-		snprintf(temp, sizeof(temp), "Level: %i", get_config_save(saveload_selected)->cpu_level);
+		snprintf(temp, sizeof(temp), _("Level: %i"), get_config_save(saveload_selected)->cpu_level);
 		widget = gg_label_create(temp);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -201,7 +202,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 		}
 		gg_container_append(GG_CONTAINER(vbox), board_box);
 	} else {
-		snprintf(temp, sizeof(temp), "Empty slot");
+		snprintf(temp, sizeof(temp), _("Empty slot"));
 		widget = gg_label_create(temp);
 		gg_container_append(GG_CONTAINER(vbox), widget);
 
@@ -223,7 +224,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 
 	widget = gg_option_create();
 	for (i = 0; i < SAVEGAME_SLOTS; i++) {
-		snprintf(temp, sizeof(temp), "Save slot: %i", i + 1);
+		snprintf(temp, sizeof(temp), _("Save slot: %i"), i + 1);
 		gg_option_append_label(GG_OPTION(widget), temp, 0.5f, 0.0f);
 	}
 	gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_saveload_change, widget);
@@ -233,15 +234,15 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 		gg_option_set_selected(GG_OPTION(widget), saveload_selected);
 
 	if (saving) {
-		widget = gg_action_create_with_label("Save Game", 0.5f, 0.0f);
+		widget = gg_action_create_with_label(_("Save Game"), 0.5f, 0.0f);
 		gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_savegame_save, vbox);
 	} else {
-		widget = gg_action_create_with_label("Load Game", 0.5f, 0.0f);
+		widget = gg_action_create_with_label(_("Load Game"), 0.5f, 0.0f);
 		gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_loadgame_load, vbox);
 	}
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

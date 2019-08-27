@@ -19,6 +19,7 @@
 */
 
 #include "dialogs.h"
+#include "i18n.h"
 
 /** The in-game dialog. Provides a set of gameplay-related actions to the
  *  user.
@@ -61,23 +62,23 @@ gg_dialog_t *dialog_ingame_create(gg_dialog_t *parent) {
 	gg_widget_t *dialog, *widget;
 	gg_widget_t *vbox = gg_vbox_create(0);
 
-	widget = gg_action_create_with_label("Retract Move", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Retract Move"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", retract_move, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Move Now", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Move Now"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", move_now, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("View Previous Move", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("View Previous Move"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", view_prev, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("View Next Move", 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("View Next Move"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", view_next, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
-	widget = gg_action_create_with_label("Cancel", 0.5f, 0.0f);
+	widget = gg_action_create_with_label(_("Cancel"), 0.5f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 

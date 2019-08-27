@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "i18n.h"
 
 static int dialog_promote_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	set_dialog_promote_piece(*(int *)extra_data);
@@ -35,7 +36,7 @@ gg_dialog_t *dialog_promote_create(int colour) {
 	gg_widget_t *vbox = gg_vbox_create(0);
 	gg_widget_t *hbox = gg_hbox_create(0);
 	gg_widget_t *gg_image;
-	gg_widget_t *text = gg_label_create("Promotion! Choose new piece!");
+	gg_widget_t *text = gg_label_create(_("Promotion! Choose new piece!"));
 
 	set_dialog_promote_piece(NONE);
 	cb_pieces[0] = QUEEN + colour;

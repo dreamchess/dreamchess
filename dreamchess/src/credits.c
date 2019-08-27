@@ -22,10 +22,11 @@
 
 #include "config.h"
 #include "credits.h"
+#include "i18n.h"
 
-static char *programming[] = {"Programming", "Kris McAulay", "Walter van Niftrik", "Lawrence Sebald", NULL};
+static char *programming[] = {_N("Programming"), "Kris McAulay", "Walter van Niftrik", "Lawrence Sebald", NULL};
 
-static char *graphics[] = {"Graphics",
+static char *graphics[] = {_N("Graphics"),
 						   "Drew 'Hawke' Ball",
 						   "Annie Kirkpatrick",
 						   "Brandon May (melancholy)",
@@ -33,16 +34,16 @@ static char *graphics[] = {"Graphics",
 						   "Rogier van Schaijk",
 						   NULL};
 
-static char *modelling[] = {"3D Modelling", "Walter van Niftrik", "Rogier van Schaijk", NULL};
+static char *modelling[] = {_N("3D Modelling"), "Walter van Niftrik", "Rogier van Schaijk", NULL};
 
-static char *thanks[] = {"Special Thanks To",
+static char *thanks[] = {_N("Special Thanks To"),
 						 "Fran\xe7ois-Dominic Laram\xe9"
 						 "e",
 						 "Armando Hern\xe1ndez Marroqu\xedn", "Chris Noll (Christuserloeser)", NULL};
 
 static char *copyright[] = {"DreamChess", "\xa9 2003-" COPYRIGHT_YEAR, "https://www.dreamchess.org", NULL};
 
-static char *music[] = {"Music", "Matthew P. Smith", NULL};
+static char *music[] = {_N("Music"), "Matthew P. Smith", NULL};
 
 static char **credits[] = {copyright, programming, music, graphics, modelling, thanks, NULL};
 

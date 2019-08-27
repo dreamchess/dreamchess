@@ -19,6 +19,7 @@
 */
 
 #include "dialogs.h"
+#include "i18n.h"
 
 static int dialog_close_cb(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	gg_dialog_close();
@@ -34,7 +35,7 @@ gg_dialog_t *dialog_message_create(char *message) {
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create(""));*/
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create(message));
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create(""));
-	widget = gg_action_create_with_label("Ok", 0.5f, 0.5f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.5f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	dialog = gg_dialog_create(vbox, NULL, NULL, 0);
@@ -56,7 +57,7 @@ gg_dialog_t *dialog_engine_error_create(void) {
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create("A fatal error has occured while"));
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create("communicating with the chess engine."));
 	gg_container_append(GG_CONTAINER(vbox), gg_label_create("Please check your settings."));
-	widget = gg_action_create_with_label("OK", 0.5f, 0.5f);
+	widget = gg_action_create_with_label(_("OK"), 0.5f, 0.5f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_close_cb, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 	dialog = gg_dialog_create(vbox, NULL, NULL, 0);
