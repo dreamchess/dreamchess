@@ -406,9 +406,9 @@ static void parse_options(int argc, char **argv, ui_driver_t **ui_driver, cl_opt
 #endif /* HAVE_GETOPT_LONG */
 		switch (c) {
 		case 'h':
-			printf("%s\n\n%s\n\n%s\n", _("Usage: dreamchess [options]"),
-			                           _("An xboard-compatible chess interface."),
-			                           _("Options:"));
+			printf(_("Usage: dreamchess [options]\n\n"
+			         "An xboard-compatible chess interface.\n\n"
+			         "Options:\n"));
 			printf(OPTION_TEXT("--help\t", "-h\t"), _("show help"));
 			printf(OPTION_TEXT("--fullscreen\t", "-f\t"), _("run fullscreen"));
 			printf(OPTION_TEXT("--width\t", "-W<num>"), _("set screen width"));

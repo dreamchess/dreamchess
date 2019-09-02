@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess \n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-08-30 13:46+0200\n"
+"POT-Creation-Date: 2019-09-02 13:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,15 +38,13 @@ msgid "Music"
 msgstr ""
 
 #: dreamchess.c:409
-msgid "Usage: dreamchess [options]"
-msgstr ""
-
-#: dreamchess.c:410
-msgid "An xboard-compatible chess interface."
-msgstr ""
-
-#: dreamchess.c:411
-msgid "Options:"
+#, c-format
+msgid ""
+"Usage: dreamchess [options]\n"
+"\n"
+"An xboard-compatible chess interface.\n"
+"\n"
+"Options:\n"
 msgstr ""
 
 #: dreamchess.c:412
@@ -78,11 +76,6 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: system_config.c:77
-msgid "Whole game"
-msgstr ""
-
-#: system_config.c:82 system_config.c:92 system_config.c:102
 #: system_config.c:115
 msgid "Custom"
 msgstr ""
@@ -145,7 +138,7 @@ msgstr ""
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
-#: dialogs/resolution.c:219 dialogs/time.c:231 gui/victory_dialog.c:61
+#: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
 msgstr ""
 
@@ -166,8 +159,7 @@ msgid "View Next Move"
 msgstr ""
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 dialogs/time.c:234 gui/title_dialog.c:180
-#: gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
 msgid "Cancel"
 msgstr ""
 
@@ -183,8 +175,7 @@ msgstr ""
 msgid "Resolution:"
 msgstr ""
 
-#: dialogs/resolution.c:164 dialogs/time.c:164 dialogs/time.c:172
-#: dialogs/time.c:180
+#: dialogs/resolution.c:164
 msgid "Custom:"
 msgstr ""
 
@@ -206,18 +197,6 @@ msgstr ""
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
-msgstr ""
-
-#: dialogs/time.c:160
-msgid "Moves:"
-msgstr ""
-
-#: dialogs/time.c:168
-msgid "Time(mins):"
-msgstr ""
-
-#: dialogs/time.c:176
-msgid "Increments(secs):"
 msgstr ""
 
 #: gui/ingame_ui.c:100
