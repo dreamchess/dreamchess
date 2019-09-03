@@ -132,7 +132,8 @@ void init_i18n(void) {
 
 	char path[PATH_MAX];
 	if (CFURLGetFileSystemRepresentation(localeURL, TRUE, (UInt8 *)path, PATH_MAX)) {
-		setlocale(LC_ALL, "");
+		setlocale(LC_MESSAGES, "");
+		setlocale(LC_CTYPE, "");
 		bindtextdomain("dreamchess", path);
 		textdomain("dreamchess");
 	}
@@ -174,7 +175,8 @@ int ch_userdir(void) {
 }
 
 void init_i18n(void) {
-	setlocale(LC_ALL, "");
+	setlocale(LC_MESSAGES, "");
+	setlocale(LC_CTYPE, "");
 	bindtextdomain("dreamchess", LOCALEDIR);
 	textdomain("dreamchess");
 }
