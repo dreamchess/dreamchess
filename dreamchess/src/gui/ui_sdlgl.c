@@ -44,6 +44,7 @@ static int black_in_check;
 static int white_in_checkmate;
 static int black_in_checkmate;
 static board_t board;
+static int is_lettering;
 static int pgn_slot;
 static int quit_to_menu = FALSE;
 static int title_process_retval;
@@ -117,6 +118,14 @@ void set_pgn_slot(int slot) {
 
 board_t *get_board(void) {
 	return &board;
+}
+
+void set_is_lettering(int lettering) {
+	is_lettering = lettering;
+}
+
+int get_is_lettering(void) {
+	return is_lettering;
 }
 
 config_t config;
@@ -366,6 +375,8 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_LOAD: {
 			option_t *option = config_get_option("theme");
 			struct theme_struct *theme = option->selected->data;
+			option_t *option_lettering = config_get_option("lettering");
+			set_is_lettering(*((int *) option_lettering->selected->data));
 
 			load_theme(theme);
 			reset_transition(TRUE);

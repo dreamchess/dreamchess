@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess \n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2019-11-23 19:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,36 +71,44 @@ msgstr ""
 msgid "  defaults to 'dreamer'"
 msgstr ""
 
-#: system_config.c:57 system_config.c:67 system_config.c:118
-#: system_config.c:127 system_config.c:162 system_config.c:170
+#: system_config.c:61
+msgid "Active"
+msgstr ""
+
+#: system_config.c:62 system_config.c:63
+msgid "Inactive"
+msgstr ""
+
+#: system_config.c:66 system_config.c:76 system_config.c:127
+#: system_config.c:136 system_config.c:171 system_config.c:179
 msgid "Off"
 msgstr ""
 
-#: system_config.c:115
+#: system_config.c:124
 msgid "Custom"
 msgstr ""
 
-#: system_config.c:119
+#: system_config.c:128
 msgid "On"
 msgstr ""
 
-#: system_config.c:137
+#: system_config.c:146
 msgid "Human vs. CPU"
 msgstr ""
 
-#: system_config.c:138
+#: system_config.c:147
 msgid "CPU vs. Human"
 msgstr ""
 
-#: system_config.c:139
+#: system_config.c:148
 msgid "Human vs. Human"
 msgstr ""
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:151 gui/saveload_dialog.c:149
 msgid "Easy"
 msgstr ""
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:152 gui/saveload_dialog.c:149
 msgid "Normal"
 msgstr ""
 
@@ -116,27 +124,31 @@ msgstr ""
 msgid "Unknown artist"
 msgstr ""
 
-#: dialogs/configuration.c:91
+#: dialogs/configuration.c:97
 msgid "Theme:"
 msgstr ""
 
-#: dialogs/configuration.c:95
+#: dialogs/configuration.c:101
+msgid "Board Lettering:"
+msgstr ""
+
+#: dialogs/configuration.c:105
 msgid "Engine:"
 msgstr ""
 
-#: dialogs/configuration.c:99
+#: dialogs/configuration.c:109
 msgid "Music Volume:"
 msgstr ""
 
-#: dialogs/configuration.c:103
+#: dialogs/configuration.c:113
 msgid "Sound Volume:"
 msgstr ""
 
-#: dialogs/configuration.c:137
+#: dialogs/configuration.c:153
 msgid "Change resolution.."
 msgstr ""
 
-#: dialogs/configuration.c:141 dialogs/message_dialog.c:38
+#: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
@@ -309,11 +321,11 @@ msgstr ""
 msgid "Load Game"
 msgstr ""
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:310
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 
-#: gui/ui_sdlgl.c:355
+#: gui/ui_sdlgl.c:364
 msgid "Loading, please wait..."
 msgstr ""
 

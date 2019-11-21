@@ -53,6 +53,15 @@ void config_init(void) {
 	option = option_group_add_option(config, "theme");
 	theme_find_themes(option);
 
+	option = option_group_add_option(config, "lettering");
+	int *lettering_active = (int *) malloc(sizeof(int));
+	*lettering_active = TRUE;
+	int *lettering_inactive = (int *) malloc(sizeof(int));
+	*lettering_inactive = FALSE;
+	option_add_value(option, _N("Active"), lettering_active);
+	option_add_value(option, _N("Inactive"), lettering_inactive);
+	option_select_value_by_name(option, _N("Inactive"));
+
 	option = option_group_add_option(config, "music_volume");
 	option_add_value(option, _N("Off"), NULL);
 	for (i = 1; i <= AUDIO_MAX_VOL; i++) {
