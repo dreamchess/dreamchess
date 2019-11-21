@@ -120,6 +120,16 @@ board_t *get_board(void) {
 	return &board;
 }
 
+void set_is_lettering(int lettering) {
+	option_t* option_lettering = config_get_option("lettering");
+	option_lettering->selected->index = lettering;
+}
+
+int get_is_lettering(void) {
+	option_t* option_lettering = config_get_option("lettering");
+	return option_lettering->selected->index;
+}
+
 config_t config;
 
 config_t *get_config(void) {
@@ -365,6 +375,8 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_LOAD: {
 			option_t *option = config_get_option("theme");
 			struct theme_struct *theme = option->selected->data;
+			option_t *option_lettering = config_get_option("lettering");
+			set_is_lettering(option_lettering->selected->index);
 
 			load_theme(theme);
 			reset_transition(TRUE);
