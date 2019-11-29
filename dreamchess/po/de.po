@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2019-11-28 14:05+0000\n"
-"Last-Translator: No Name <maew_nyan@hotmail.com>\n"
+"PO-Revision-Date: 2019-11-30 16:05+0000\n"
+"Last-Translator: Johann150 <johann.galle@gmx.net>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/de/>\n"
 "Language: de\n"
@@ -192,7 +192,7 @@ msgstr "Vollbild:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr "Multisampling:"
+msgstr "Mehrfachabtastung:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
@@ -208,7 +208,7 @@ msgstr "Spiel Beenden.."
 
 #: gui/ingame_ui.c:100
 msgid "Tied!"
-msgstr ""
+msgstr "Remis!"
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
