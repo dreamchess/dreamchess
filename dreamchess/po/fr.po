@@ -1,0 +1,339 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR DreamChess authors
+# This file is distributed under the same license as the DreamChess package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: DreamChess\n"
+"Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
+"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: credits.c:27
+msgid "Programming"
+msgstr ""
+
+#: credits.c:29
+msgid "Graphics"
+msgstr ""
+
+#: credits.c:37
+msgid "3D Modelling"
+msgstr ""
+
+#: credits.c:39
+msgid "Special Thanks To"
+msgstr ""
+
+#: credits.c:46
+msgid "Music"
+msgstr ""
+
+#: dreamchess.c:409
+#, c-format
+msgid ""
+"Usage: dreamchess [options]\n"
+"\n"
+"An xboard-compatible chess interface.\n"
+"\n"
+"Options:\n"
+msgstr ""
+
+#: dreamchess.c:412
+msgid "show help"
+msgstr ""
+
+#: dreamchess.c:413
+msgid "run fullscreen"
+msgstr ""
+
+#: dreamchess.c:414
+msgid "set screen width"
+msgstr ""
+
+#: dreamchess.c:415
+msgid "set screen height"
+msgstr ""
+
+#: dreamchess.c:416
+msgid "use <eng> as first chess engine"
+msgstr ""
+
+#: dreamchess.c:417
+msgid "  defaults to 'dreamer'"
+msgstr ""
+
+#: system_config.c:57 system_config.c:67 system_config.c:118
+#: system_config.c:127 system_config.c:162 system_config.c:170
+msgid "Off"
+msgstr ""
+
+#: system_config.c:115
+msgid "Custom"
+msgstr ""
+
+#: system_config.c:119
+msgid "On"
+msgstr ""
+
+#: system_config.c:137
+msgid "Human vs. CPU"
+msgstr ""
+
+#: system_config.c:138
+msgid "CPU vs. Human"
+msgstr ""
+
+#: system_config.c:139
+msgid "Human vs. Human"
+msgstr ""
+
+#: system_config.c:142 gui/saveload_dialog.c:149
+msgid "Easy"
+msgstr ""
+
+#: system_config.c:143 gui/saveload_dialog.c:149
+msgid "Normal"
+msgstr ""
+
+#: audio/playlist.c:60
+msgid "Unknown title"
+msgstr ""
+
+#: audio/playlist.c:61
+msgid "Unknown album"
+msgstr ""
+
+#: audio/playlist.c:62
+msgid "Unknown artist"
+msgstr ""
+
+#: dialogs/configuration.c:91
+msgid "Theme:"
+msgstr ""
+
+#: dialogs/configuration.c:95
+msgid "Engine:"
+msgstr ""
+
+#: dialogs/configuration.c:99
+msgid "Music Volume:"
+msgstr ""
+
+#: dialogs/configuration.c:103
+msgid "Sound Volume:"
+msgstr ""
+
+#: dialogs/configuration.c:137
+msgid "Change resolution.."
+msgstr ""
+
+#: dialogs/configuration.c:141 dialogs/message_dialog.c:38
+#: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
+#: dialogs/resolution.c:219 gui/victory_dialog.c:61
+msgid "OK"
+msgstr ""
+
+#: dialogs/ingame_dialog.c:65
+msgid "Retract Move"
+msgstr ""
+
+#: dialogs/ingame_dialog.c:69
+msgid "Move Now"
+msgstr ""
+
+#: dialogs/ingame_dialog.c:73
+msgid "View Previous Move"
+msgstr ""
+
+#: dialogs/ingame_dialog.c:77
+msgid "View Next Move"
+msgstr ""
+
+#: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+msgid "Cancel"
+msgstr ""
+
+#: dialogs/quit_dialog.c:52
+msgid "Quit to Title?"
+msgstr ""
+
+#: dialogs/resolution.c:94
+msgid "Error: failed to change video mode"
+msgstr ""
+
+#: dialogs/resolution.c:160
+msgid "Resolution:"
+msgstr ""
+
+#: dialogs/resolution.c:164
+msgid "Custom:"
+msgstr ""
+
+#: dialogs/resolution.c:168
+msgid "Full screen:"
+msgstr ""
+
+#: dialogs/resolution.c:172
+msgid "Multisampling:"
+msgstr ""
+
+#: dialogs/system_dialog.c:63
+msgid "Save game.."
+msgstr ""
+
+#: dialogs/system_dialog.c:67
+msgid "Move Options.."
+msgstr ""
+
+#: dialogs/system_dialog.c:71
+msgid "Quit Game.."
+msgstr ""
+
+#: gui/ingame_ui.c:100
+msgid "Tied!"
+msgstr ""
+
+#: gui/ingame_ui.c:101
+msgid "Checkmate!"
+msgstr ""
+
+#: gui/ingame_ui.c:102
+msgid "Check!"
+msgstr ""
+
+#: gui/ingame_ui.c:103
+msgid "Victory!"
+msgstr ""
+
+#: gui/title_dialog.c:135
+msgid "Players:"
+msgstr ""
+
+#: gui/title_dialog.c:139
+msgid "Difficulty:"
+msgstr ""
+
+#: gui/title_dialog.c:142
+msgid "Level:"
+msgstr ""
+
+#: gui/title_dialog.c:171
+msgid "Time options.."
+msgstr ""
+
+#: gui/title_dialog.c:176
+msgid "Start Game"
+msgstr ""
+
+#: gui/title_dialog.c:198
+msgid "New Game.."
+msgstr ""
+
+#: gui/title_dialog.c:202
+msgid "Load Game.."
+msgstr ""
+
+#: gui/title_dialog.c:206
+msgid "Configuration.."
+msgstr ""
+
+#: gui/title_dialog.c:210
+msgid "Quit"
+msgstr ""
+
+#: gui/promote_dialog.c:39
+msgid "Promotion! Choose new piece!"
+msgstr ""
+
+#: gui/saveload_dialog.c:82
+msgid "Save successful"
+msgstr ""
+
+#: gui/saveload_dialog.c:84
+msgid "Save failed"
+msgstr ""
+
+#: gui/saveload_dialog.c:114
+#, c-format
+msgid "Saved: %s"
+msgstr ""
+
+#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+msgid "CPU"
+msgstr ""
+
+#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+msgid "Human"
+msgstr ""
+
+#: gui/saveload_dialog.c:144
+#, c-format
+msgid "%s vs %s"
+msgstr ""
+
+#: gui/saveload_dialog.c:148
+#, c-format
+msgid "Difficulty: %s"
+msgstr ""
+
+#: gui/saveload_dialog.c:153
+#, c-format
+msgid "Level: %i"
+msgstr ""
+
+#: gui/saveload_dialog.c:205
+#, c-format
+msgid "Empty slot"
+msgstr ""
+
+#: gui/saveload_dialog.c:227
+#, c-format
+msgid "Save slot: %i"
+msgstr ""
+
+#: gui/saveload_dialog.c:237
+msgid "Save Game"
+msgstr ""
+
+#: gui/saveload_dialog.c:240
+msgid "Load Game"
+msgstr ""
+
+#: gui/ui_sdlgl.c:301
+msgid "Error: failed to set video mode; using defaults"
+msgstr ""
+
+#: gui/ui_sdlgl.c:355
+msgid "Loading, please wait..."
+msgstr ""
+
+#: gui/victory_dialog.c:41
+msgid "White won the match!"
+msgstr ""
+
+#: gui/victory_dialog.c:47
+msgid "Black won the match!"
+msgstr ""
+
+#: gui/victory_dialog.c:53
+msgid "The game ended in a draw!"
+msgstr ""
+
+#: gui/xmlsavefile.c:120
+#, c-format
+msgid "%02i/%02i at %02i:%02i."
+msgstr ""
+
+#: gui/xmlsavefile.c:149
+#, c-format
+msgid "Unknown"
+msgstr ""
