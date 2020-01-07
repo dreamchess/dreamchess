@@ -67,13 +67,7 @@ void draw_scene(board_t *b, GLuint fb, int reflections) {
 	clock_minutes = (((SDL_GetTicks() - get_turn_counter()) / 1000) / 60);
 	clock_seconds = ((SDL_GetTicks() - get_turn_counter()) / 1000) - (clock_minutes * 60);
 	snprintf(temp, sizeof(temp), "%i:%02i", clock_minutes, clock_seconds);
-	/*text_draw_string( 303, 440, temp, 1, &col_black);*/
 	glPopMatrix();
-
-	/*if ( get_white_in_check() == TRUE )
-		text_draw_string_bouncy( 180, 420, "White is in check!", 1, get_col(COL_WHITE));
-	else if ( get_black_in_check() == TRUE )
-		text_draw_string_bouncy( 180, 420, "Black is in check!", 1, get_col(COL_WHITE));*/
 
 	gg_dialog_render_all();
 

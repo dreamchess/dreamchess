@@ -18,12 +18,18 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DREAMCHESS_DIR_H
-#define DREAMCHESS_DIR_H
+#ifndef GUI_UNICODE_H
+#define GUI_UNICODE_H
 
-int ch_datadir(void);
-int ch_userdir(void);
-void init_i18n(void);
-char *dir_get_real_path(const char *filename);
+#define UNICODE_FLAG_BOUNCY    (1 << 0)
+#define UNICODE_FLAG_NO_SHADOW (1 << 1)
+
+int unicode_init(float pt_size);
+int unicode_resize(float pt_size);
+void unicode_exit(void);
+void unicode_string_render(const char *text, float x, float y, float align, float scale, unsigned int flags, gg_colour_t colour);
+void unicode_render_atlas(void);
+float unicode_get_font_height(void);
+float unicode_get_string_width(const char *text);
 
 #endif

@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "unicode.h"
 
 static float zerodepth = 1.0f;
 
@@ -156,7 +157,7 @@ void gl_swap(void) {
 		char fps_s[16];
 
 		snprintf(fps_s, 16, "FPS: %.2f", fps);
-		text_draw_string(10, 10, fps_s, 1, get_col(COL_RED));
+		unicode_string_render(fps_s, 10, 10, 0.0f, 1.0f, 0, (gg_colour_t){1.0f, 0.0f, 0.0f, 1.0f});
 	}
 
 	blit_fbo();

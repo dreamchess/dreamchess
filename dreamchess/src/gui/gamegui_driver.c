@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "unicode.h"
 
 static unsigned int utf8_to_utf32(const char *utf8) {
 	unsigned int char_utf32 = 0;
@@ -73,10 +74,7 @@ gg_event_t convert_event(SDL_Event *event) {
 			gg_event.key = GG_KEY_ESCAPE;
 			break;
 		default:
-			if (event->key.keysym.sym >= 32 || event->key.keysym.sym < 255)
-				gg_event.key = event->key.keysym.sym;
-			else
-				gg_event.type = GG_EVENT_NONE;
+			gg_event.type = GG_EVENT_NONE;
 			return gg_event;
 		}
 		break;
@@ -84,7 +82,8 @@ gg_event_t convert_event(SDL_Event *event) {
 	case SDL_TEXTINPUT: {
 		unsigned int utf32 = utf8_to_utf32(event->text.text);
 
-		if (utf32 > 0 && utf32 <= 0xff) {
+		// Accept ASCII input only
+		if (utf32 >= 0x20 && utf32 < 0x80) {
 			gg_event.type = GG_EVENT_CHAR;
 			gg_event.key = utf32 & 0xff;
 			return gg_event;
@@ -154,16 +153,17 @@ static void draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mode_h
 					ysrc + height, en_h, en_v);
 }
 
-static void *get_char_image(int c) {
-	if (c < 0)
-		c += 256;
-
-	return get_text_character(c);
-	/*    return &text_characters[c];*/
+static unsigned int get_line_height(void) {
+	return (unsigned int)unicode_get_font_height();
 }
 
-static void draw_char(int c, int x, int y, gg_colour_t *colour) {
-	text_draw_char(x, y, 1.0f, c, colour);
+static unsigned int get_string_width(const char *text) {
+	return (unsigned int)unicode_get_string_width(text);
+}
+
+static void draw_string(const char *text, int x, int y, float align, int bounce, int no_shadow, gg_colour_t colour) {
+	const unsigned int flags = (bounce ? UNICODE_FLAG_BOUNCY : 0) | (no_shadow ? UNICODE_FLAG_NO_SHADOW : 0);
+	unicode_string_render(text, x, y, align, 1.0f, flags, colour);
 }
 
 static void get_image_size(void *image, int *width, int *height) {
@@ -176,17 +176,6 @@ static void get_image_size(void *image, int *width, int *height) {
 		*height = texture->height;
 }
 
-static void get_char_size(int c, int *width, int *height) {
-	if (c < 0)
-		c += 256;
-
-	if (width)
-		*width = get_text_character(c)->width;
-
-	if (height)
-		*height = get_text_character(c)->height;
-}
-
 static unsigned int get_ticks(void) {
 	return SDL_GetTicks();
 }
@@ -195,8 +184,9 @@ static float get_gl_screen_width(void) {
 	return get_gl_width();
 }
 
-gg_driver_t gg_driver_sdlgl = {draw_rect, draw_rect_fill, draw_rect_fill_gradient, draw_image, get_char_image,
-							   draw_char, get_image_size, get_char_size,		   get_ticks,  get_gl_screen_width};
+gg_driver_t gg_driver_sdlgl = {draw_rect, draw_rect_fill, draw_rect_fill_gradient, draw_image,
+							   get_image_size, get_ticks, get_gl_screen_width,
+							   get_line_height, get_string_width, draw_string};
 
 gg_driver_t *get_gg_driver_sdlgl(void) {
 	return &gg_driver_sdlgl;

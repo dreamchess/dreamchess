@@ -23,7 +23,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get -y install gettext libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libglew-dev
+        sudo apt-get -y install gettext libfreetype-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libglew-dev
 
     - uses: actions/checkout@v3
 
@@ -50,7 +50,7 @@ jobs:
       with:
         msystem: ${{ matrix.sys }}
         install: base-devel
-        pacboy: toolchain:p cmake:p SDL2:p SDL2_image:p SDL2_mixer:p expat:p glew:p
+        pacboy: toolchain:p cmake:p gettext:p freetype:p SDL2:p SDL2_image:p SDL2_mixer:p expat:p glew:p
 
     - uses: actions/checkout@v3
 

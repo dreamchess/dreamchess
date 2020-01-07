@@ -20,10 +20,11 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include <gamegui/clipping.h>
 #include <gamegui/entry.h>
-
+#include "debug.h"
 #define CURSOR_WIDTH 1
 
 static gg_colour_t col_grey = {0.5f, 0.5f, 0.5f, 1.0f};
@@ -132,33 +133,30 @@ int gg_entry_input(gg_widget_t *widget, gg_event_t event) {
 	}
 
 	if (event.type == GG_EVENT_CHAR) {
-		if ((event.key > 0) && (event.key <= 255)) {
-			int i;
+		// Key should be ASCII
+		assert((event.key >= 0x20) && (event.key < 0x80));
 
-			if (len >= entry->max_len)
-				return 1;
+		if (len >= entry->max_len)
+			return 1;
 
-			for (i = len; i >= entry->cursor_pos; i--)
-				entry->text[i + 1] = entry->text[i];
-			entry->text[entry->cursor_pos++] = event.key;
-		} else
-			return 0;
+		for (int i = len; i >= entry->cursor_pos; i--)
+			entry->text[i + 1] = entry->text[i];
+		entry->text[entry->cursor_pos++] = event.key;
 	}
 
 	if (event.type == GG_EVENT_MOUSE && event.mouse.type == GG_MOUSE_BUTTON_DOWN && event.mouse.button == 0) {
-		int total_width = 0;
+		int prev_width = 0;
 		int i;
 
 		for (i = 0; i < strlen(entry->text); i++) {
-			int width;
+			const int width = string_width(entry->text, i + 1);
 
-			gg_system_get_char_size(entry->text[i], &width, NULL);
-			total_width += width;
-			if (total_width > entry->display_pos + event.mouse.x) {
-				if (total_width - width / 2 < entry->display_pos + event.mouse.x)
+			if (width > entry->display_pos + event.mouse.x - ENTRY_SPACING) {
+				if (width - (width - prev_width) / 2 < entry->display_pos + event.mouse.x)
 					i++;
 				break;
 			}
+			prev_width = width;
 		}
 
 		entry->cursor_pos = i;
@@ -202,6 +200,11 @@ char *gg_entry_get_text(gg_entry_t *entry) {
 int gg_entry_set_text(gg_entry_t *entry, char *text) {
 	if (strlen(text) > entry->max_len)
 		return 1;
+
+	// ASCII-only
+	for (int i = 0; i < strlen(text); ++i)
+		if (text[i] < 0x20)
+			return 1;
 
 	strcpy(entry->text, text);
 	entry->cursor_pos = 0;

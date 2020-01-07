@@ -6,6 +6,7 @@
     "sdl2-mixer",
     "expat",
     "glew",
-    "gettext"
+    "gettext",
+    "freetype"
   ]
 }

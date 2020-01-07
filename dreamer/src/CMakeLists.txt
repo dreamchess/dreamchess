@@ -42,6 +42,8 @@ else()
     target_sources(dreamer PRIVATE e_comm_unix.c)
 endif()
 
+set_property(TARGET dreamer PROPERTY C_STANDARD 99)
+
 target_link_libraries(dreamer common)
 
 target_include_directories(dreamer

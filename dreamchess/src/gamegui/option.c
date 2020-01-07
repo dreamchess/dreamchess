@@ -34,8 +34,8 @@ gg_class_id gg_option_get_class_id(void) {
 	GG_CHILD(gg_select_get_class_id())
 }
 
-#define OPTION_ARROW_LEFT "\253 "
-#define OPTION_ARROW_RIGHT " \273"
+#define OPTION_ARROW_LEFT "\302\253 "
+#define OPTION_ARROW_RIGHT " \302\273"
 
 /** Implements widget::render for option widgets. */
 void gg_option_render(gg_widget_t *widget, int x, int y, int focus) {

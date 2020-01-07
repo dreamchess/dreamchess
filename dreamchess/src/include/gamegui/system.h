@@ -41,6 +41,9 @@
 /** Bouncy text speed in bounces per second. */
 #define GG_BOUNCE_SPEED 3
 
+#define GG_FLAG_BOUNCY    (1 << 0)
+#define GG_FLAG_NO_SHADOW (1 << 1)
+
 /** Unique value used to identify a class. */
 typedef int gg_class_id;
 
@@ -83,12 +86,14 @@ typedef struct gg_driver {
 	void (*draw_gradient_rect)(int x, int y, int width, int height, gg_colour_t *top_left, gg_colour_t *top_right,
 							   gg_colour_t *bottom_left, gg_colour_t *bottom_right);
 	void (*draw_image)(void *image, gg_rect_t source, gg_rect_t dest, int mode_h, int mode_v, gg_colour_t *colour);
-	void *(*get_char_image)(int c);
-	void (*draw_char)(int c, int x, int y, gg_colour_t *colour);
 	void (*get_image_size)(void *image, int *width, int *height);
-	void (*get_char_size)(int c, int *width, int *height);
 	unsigned int (*get_ticks)(void);
 	float (*get_screen_width)(void);
+
+	/* Unicode string interface */
+	unsigned int (*get_line_height)(void);
+	unsigned int (*get_string_width)(const char *text);
+	void (*draw_string)(const char *text, int x, int y, float align, int bounce, int no_shadow, gg_colour_t colour);
 } gg_driver_t;
 
 /** Value indicating an unregistered class. */
@@ -130,9 +135,7 @@ void gg_system_draw_char(int c, int x, int y, gg_colour_t *colour);
 
 void gg_system_get_image_size(void *image, int *width, int *height);
 
-void gg_system_get_char_size(int c, int *width, int *height);
-
-void gg_system_get_string_size(char *s, int *width, int *height);
+void gg_system_get_string_size(const char *s, int *width, int *height);
 
 void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align);
 

@@ -181,87 +181,20 @@ void gg_system_draw_image(void *image, gg_rect_t source, gg_rect_t dest, int mod
 		driver->draw_image(image, source, dest, mode_h, mode_v, colour);
 }
 
-void gg_system_draw_char(int c, int x, int y, gg_colour_t *colour) {
-	driver->draw_char(c, x, y, colour);
-}
-
 void gg_system_get_image_size(void *image, int *width, int *height) {
 	driver->get_image_size(image, width, height);
 }
 
-void gg_system_get_char_size(int c, int *width, int *height) {
-	driver->get_char_size(c, width, height);
-}
-
-void gg_system_get_string_size(char *s, int *width, int *height) {
-	int i;
-
+void gg_system_get_string_size(const char *s, int *width, int *height) {
 	if (width)
-		*width = 0;
+		*width = driver->get_string_width(s);
+
 	if (height)
-		*height = 0;
-
-	for (i = 0; i < strlen(s); i++) {
-		int c_width, c_height;
-		driver->get_char_size(s[i], &c_width, &c_height);
-
-		if (width)
-			*width += c_width;
-		if (height && (c_height > *height))
-			*height = c_height;
-	}
+		*height = driver->get_line_height();
 }
 
 void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align) {
-	int i;
-	unsigned int ticks = gg_system_get_ticks();
-	gg_rect_t rect_d;
-	rect_d.x = x;
-
-	if (align != 0.0f) {
-		int width;
-
-		gg_system_get_string_size(s, &width, NULL);
-
-		rect_d.x -= width * align;
-	}
-
-	for (i = 0; i < strlen((char *)s); i++) {
-		int y_off = 0;
-		void *image = driver->get_char_image(s[i]);
-		gg_rect_t rect_s = {0, 0};
-		gg_colour_t col_black = {0.0f, 0.0f, 0.0f, 1.0f};
-
-		if (bounce) {
-			float phase = ((ticks % (1000 / GG_BOUNCE_SPEED)) / (float)(1000 / GG_BOUNCE_SPEED));
-
-			if (phase < 0.5)
-				y_off = phase * 2 * (GG_BOUNCE_AMP + 1);
-			else
-				y_off = ((1.0 - phase) * 2) * (GG_BOUNCE_AMP + 1);
-		}
-
-		gg_system_get_image_size(image, &rect_s.width, &rect_s.height);
-		rect_d.width = rect_s.width;
-		rect_d.height = rect_s.height;
-		rect_d.y = y + y_off;
-
-		/* FIXME */
-		rect_d.x += 1;
-		rect_d.y -= 1;
-
-		/* FIXME  Magic alpha value to turn off shadow */
-		if (colour->a != 2.0f)
-			gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, &col_black);
-		rect_d.x -= 1;
-		rect_d.y += 1;
-
-		gg_system_draw_image(image, rect_s, rect_d, GG_MODE_SCALE, GG_MODE_SCALE, colour);
-
-		rect_d.x += rect_s.width;
-
-		ticks += 1000 / GG_BOUNCE_SPEED / GG_BOUNCE_LEN;
-	}
+	driver->draw_string(s, x, y, align, bounce, (colour->a == 2.0f ? 1 : 0), *colour);
 }
 
 gg_colour_t gg_colour(float r, float g, float b, float a) {

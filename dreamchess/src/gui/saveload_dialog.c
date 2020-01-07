@@ -30,24 +30,24 @@ int saveload_selected = 0;
 int changing_slot = FALSE;
 int change_saving = FALSE;
 
-static char xmlsquaretofont(int square) {
+static const char *xmlsquaretofont(int square) {
 
 	switch (PIECE(square)) {
 	case KING:
-		return CHAR_KING;
+		return UTF8_KING;
 	case QUEEN:
-		return CHAR_QUEEN;
+		return UTF8_QUEEN;
 	case ROOK:
-		return CHAR_ROOK;
+		return UTF8_ROOK;
 	case KNIGHT:
-		return CHAR_KNIGHT;
+		return UTF8_KNIGHT;
 	case BISHOP:
-		return CHAR_BISHOP;
+		return UTF8_BISHOP;
 	case PAWN:
-		return CHAR_PAWN;
+		return UTF8_PAWN;
 	}
 
-	return ' ';
+	return "";
 }
 
 static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
@@ -107,6 +107,8 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 	if (!changing_slot) {
 		load_saves_xml();
 	}
+
+	gg_set_requested_size(vbox, 250, 0);
 
 	if (get_slots() & (1 << saveload_selected)) {
 		gg_widget_t *board_box = gg_vbox_create(0);
@@ -168,7 +170,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 				};*/
 			hboxtemp = gg_hbox_create(0);
 			hboxtemp2 = gg_hbox_create(0);
-			gg_set_requested_size(hboxtemp2, 20, 20);
 			gg_container_append(GG_CONTAINER(hboxtemp), hboxtemp2);
 
 			for (j = 0; j < 8; j++) {
@@ -176,10 +177,8 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 				gg_colour_t col_yellow = {0.8, 0.7, 0.4, 1.0};
 				gg_colour_t front, *back;
 				int square = get_saved_board(saveload_selected)->square[i * 8 + j];
-
-				snprintf(temp, sizeof(temp), "%c", xmlsquaretofont(square));
-				widget = gg_label_create(temp);
-				gg_set_requested_size(widget, 20, 20);
+				widget = gg_label_create(xmlsquaretofont(square));
+				gg_set_requested_size(widget, 23, 23);
 				gg_align_set_alignment(GG_ALIGN(widget), 0.5, 0.5);
 
 				if (COLOUR(square) == WHITE)
@@ -198,6 +197,15 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 				gg_label_set_colour(GG_LABEL(widget), &front, back);
 				gg_container_append(GG_CONTAINER(hboxtemp), widget);
 			}
+
+			// Center the board manually
+			int width_total, width_board;
+			gg_vbox_get_requested_size(vbox, &width_total, NULL);
+			gg_hbox_get_requested_size(hboxtemp, &width_board, NULL);
+
+			if (width_total > width_board)
+				gg_set_requested_size(hboxtemp2, (width_total - width_board) / 2, 0);
+
 			gg_container_append(GG_CONTAINER(board_box), hboxtemp);
 		}
 		gg_container_append(GG_CONTAINER(vbox), board_box);
@@ -211,7 +219,6 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 			gg_container_append(GG_CONTAINER(vbox), widget);
 		}
 	}
-	gg_set_requested_size(vbox, 201, 0);
 	gg_container_append(GG_CONTAINER(hbox), gg_frame_create(vbox));
 
 	/* left side */

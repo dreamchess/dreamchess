@@ -79,7 +79,7 @@ void gg_label_destroy(gg_widget_t *widget) {
 	gg_widget_destroy(widget);
 }
 
-void gg_label_init(gg_label_t *label, char *text) {
+void gg_label_init(gg_label_t *label, const char *text) {
 	gg_align_init((gg_align_t *)label);
 
 	label->render = gg_label_render;
@@ -102,7 +102,7 @@ void gg_label_init(gg_label_t *label, char *text) {
  *  @param string The text for the widget.
  *  @return The created text widget.
  */
-gg_widget_t *gg_label_create(char *string) {
+gg_widget_t *gg_label_create(const char *string) {
 	gg_label_t *label = malloc(sizeof(gg_label_t));
 
 	gg_label_init(label, string);

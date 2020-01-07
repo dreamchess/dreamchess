@@ -37,11 +37,10 @@ static char *graphics[] = {_N("Graphics"),
 static char *modelling[] = {_N("3D Modelling"), "Walter van Niftrik", "Rogier van Schaijk", NULL};
 
 static char *thanks[] = {_N("Special Thanks To"),
-						 "Fran\xe7ois-Dominic Laram\xe9"
-						 "e",
-						 "Armando Hern\xe1ndez Marroqu\xedn", "Chris Noll (Christuserloeser)", NULL};
+						 "François-Dominic Laramée",
+						 "Armando Hernández Marroquín", "Chris Noll (Christuserloeser)", NULL};
 
-static char *copyright[] = {"DreamChess", "\xa9 2003-" COPYRIGHT_YEAR, "https://www.dreamchess.org", NULL};
+static char *copyright[] = {"DreamChess", "© 2003-" COPYRIGHT_YEAR, "https://www.dreamchess.org", NULL};
 
 static char *music[] = {_N("Music"), "Matthew P. Smith", NULL};
 

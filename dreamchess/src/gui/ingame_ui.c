@@ -20,6 +20,7 @@
 
 #include "ui_sdlgl.h"
 #include "i18n.h"
+#include "unicode.h"
 
 void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_high);
 void draw_capture_list(coord3_t offset, gg_colour_t *col);
@@ -97,39 +98,31 @@ static void draw_health_bar(coord3_t position, coord3_t size, int white) {
 }
 
 static void draw_player_status(coord3_t offset, int white) {
-	char *tiedStr = _("Tied!");
-	char *checkMateStr = _("Checkmate!");
-	char *checkStr = _("Check!");
-	char *winStr = _("Victory!");
+	const char *tiedStr = _("Tied!");
+	const char *checkMateStr = _("Checkmate!");
+	const char *checkStr = _("Check!");
+	const char *winStr = _("Victory!");
 
-	if (white) /* UGLY */
-	{
+	if (white) { /* UGLY */
 		if (get_game_stalemate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, tiedStr, 1, get_col(COL_WHITE));
+			unicode_string_render(tiedStr, offset.x, offset.y, 0.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_WHITE));
 		else if (get_white_in_checkmate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, checkMateStr, 1, get_col(COL_RED));
+			unicode_string_render(checkMateStr, offset.x, offset.y, 0.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_RED));
 		else if (get_white_in_check() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, checkStr, 1, get_col(COL_RED));
+			unicode_string_render(checkStr, offset.x, offset.y, 0.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_RED));
 
 		if (get_black_in_checkmate() == TRUE)
-			text_draw_string_bouncy(offset.x, offset.y, winStr, 1, get_col(COL_WHITE));
+			unicode_string_render(winStr, offset.x, offset.y, 0.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_WHITE));
 	} else {
-		int namew, nameh;
+		if (get_game_stalemate() == TRUE)
+			unicode_string_render(tiedStr, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_WHITE));
+		else if (get_black_in_checkmate() == TRUE)
+			unicode_string_render(checkMateStr, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_RED));
+		else if (get_black_in_check() == TRUE)
+			unicode_string_render(checkStr, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_RED));
 
-		if (get_game_stalemate() == TRUE) {
-			gg_system_get_string_size(tiedStr, &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, tiedStr, 1, get_col(COL_WHITE));
-		} else if (get_black_in_checkmate() == TRUE) {
-			gg_system_get_string_size(checkMateStr, &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, checkMateStr, 1, get_col(COL_RED));
-		} else if (get_black_in_check() == TRUE) {
-			gg_system_get_string_size(checkStr, &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, checkStr, 1, get_col(COL_RED));
-		}
-		if (get_white_in_checkmate() == TRUE) {
-			gg_system_get_string_size(winStr, &namew, &nameh);
-			text_draw_string_bouncy(get_gl_width() - offset.x - namew, offset.y, winStr, 1, get_col(COL_WHITE));
-		}
+		if (get_white_in_checkmate() == TRUE)
+			unicode_string_render(winStr, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, UNICODE_FLAG_BOUNCY, *get_col(COL_WHITE));
 	}
 }
 
@@ -207,15 +200,14 @@ void draw_ui_elements(void) {
 
 	/* Draw the names */
 	if (names) {
-		text_draw_string(name_offset.x, name_offset.y, white_name, 1, get_col(COL_WHITE));
-		text_draw_string(get_gl_width() - black_name_size.x - name_offset.x, name_offset.y, black_name, 1,
-						 get_col(COL_WHITE));
+		unicode_string_render(white_name, name_offset.x, name_offset.y, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
+		unicode_string_render(black_name, get_gl_width() - name_offset.x, name_offset.y, 1.0f, 1.0f, 0, *get_col(COL_WHITE));
 	}
 
 	/* Draw the clocks */
 	if (clocks) {
-		text_draw_string(clock_offset.x - white_clock_size.x, clock_offset.y, white_clock, 1, get_col(COL_WHITE));
-		text_draw_string(get_gl_width() - clock_offset.x, clock_offset.y, black_clock, 1, get_col(COL_WHITE));
+		unicode_string_render(white_clock, clock_offset.x, clock_offset.y, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
+		unicode_string_render(black_clock, get_gl_width() - clock_offset.x, clock_offset.y, 1.0f, 1.0f, 0, *get_col(COL_WHITE));
 	}
 
 	/* Draw the health bars. */
@@ -280,10 +272,10 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
 		if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
 			exit(1);
 		if (i != view)
-			text_draw_string(offset.x + 5, y - 5, s, 1, &col_normal2);
+			unicode_string_render(s, offset.x + 5, y - 5, 0.0f, 1.0f, 0, col_normal2);
 		else
-			text_draw_string(offset.x + 5, y - 5, s, 1, &col_high2);
-		y -= text_height();
+			unicode_string_render(s, offset.x + 5, y - 5, 0.0f, 1.0f, 0, col_high2);
+		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
 	}
@@ -291,16 +283,16 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
 	col_high2 = *col_normal;
 	y = offset.y;
 	if (IS_BLACK(get_board()->turn)) {
-		y -= text_height();
+		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
 	}
 	for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(get_board()->turn) ? 6 : 8); i -= 2) {
 		if (i != view)
-			text_draw_string_right(get_gl_width() - offset.x - 5, y - 5, list[i], 1, &col_normal2);
+			unicode_string_render(list[i], get_gl_width() - offset.x - 5, y - 5, 1.0f, 1.0f, 0, col_normal2);
 		else
-			text_draw_string_right(get_gl_width() - offset.x - 5, y - 5, list[i], 1, &col_high2);
-		y -= text_height();
+			unicode_string_render(list[i], get_gl_width() - offset.x - 5, y - 5, 1.0f, 1.0f, 0, col_high2);
+		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
 	}
@@ -323,18 +315,18 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 		{*/
 		if (snprintf(s, 4, "%i", get_board()->captured[i]) >= 4)
 			exit(1);
-		text_draw_string(offset.x, offset.y, s, 1, col);
+		unicode_string_render(s, offset.x, offset.y, 0.0f, 1.0f, 0, *col);
 		draw_texture(get_black_piece(i / 2), offset.x - 24, offset.y, 24, 24, 1.0f, get_col(COL_WHITE));
 		/* }*/
-		// offset.y -= 28; /*get_text_character('a')->height;*/
+		// offset.y -= 28;
 		/*if (get_board()->captured[i - 1] != 0)
 		{*/
 		if (snprintf(s, 4, "%i", get_board()->captured[i - 1]) >= 4)
 			exit(1);
-		text_draw_string_right(get_gl_width() - offset.x, offset.y, s, 1, col);
+		unicode_string_render(s, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, 0, *col);
 		draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x, offset.y, 24, 24, 1.0f,
 					 get_col(COL_WHITE));
 		/* }*/
-		offset.y -= 28; /*get_text_character('a')->height;*/
+		offset.y -= 28;
 	}
 }

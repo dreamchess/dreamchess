@@ -77,6 +77,7 @@ void init_i18n(void) {
 #include "CoreFoundation/CoreFoundation.h"
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #define USERDIR "Library/Application Support/DreamChess"
 
@@ -179,6 +180,20 @@ void init_i18n(void) {
 	setlocale(LC_CTYPE, "");
 	bindtextdomain("dreamchess", LOCALEDIR);
 	textdomain("dreamchess");
+}
+
+#endif
+
+#ifdef _WIN32
+
+char *dir_get_real_path(const char *filename) {
+	return _fullpath(NULL, filename, 0);
+}
+
+#else
+
+char *dir_get_real_path(const char *filename) {
+	return realpath(filename, NULL);
 }
 
 #endif

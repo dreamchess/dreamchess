@@ -472,8 +472,8 @@ int main(int argc, char **argv) {
 
 	parse_options(argc, argv, &ui, &cl_options);
 
-	// Switch to ISO-8859-1 for the GUI
-	bind_textdomain_codeset("dreamchess", "ISO-8859-1");
+	// Switch to UTF-8 for the GUI
+	bind_textdomain_codeset("dreamchess", "UTF-8");
 
 	config_init();
 	set_cl_options(&cl_options);

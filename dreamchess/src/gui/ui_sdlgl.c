@@ -33,6 +33,7 @@
 #include "system_config.h"
 #include "theme.h"
 #include "i18n.h"
+#include "unicode.h"
 #include <GL/glew.h>
 #include <SDL2/SDL_syswm.h>
 
@@ -322,11 +323,9 @@ static config_t *do_menu(int *pgn) {
 		glDisable(GL_DEPTH_TEST);
 		draw_texture_fullscreen(&menu_title_tex, 1.0f);
 		glEnable(GL_BLEND);
+		unicode_render_atlas();
 		glEnable(GL_DEPTH_TEST);
-		text_draw_string_right(get_gl_width() - 20, 20, g_version, 0.75f, get_col(COL_WHITE));
-
-		/*if (get_show_egg())
-			text_draw_string(560, 440, "Egg!", 1, get_col(COL_WHITE));*/
+		unicode_string_render(g_version, get_gl_width() - 20, 20, 1.0f, 0.75f, 0, (gg_colour_t){1.0f, 1.0f, 1.0f, 1.0f});
 
 		switch (menu_state) {
 		case MENU_STATE_FADE_IN:
@@ -415,15 +414,12 @@ static void free_menu_tex(void) {
 	glDeleteTextures(1, &menu_title_tex.id);
 	glDeleteTextures(1, &get_menu_mouse_cursor()->id);
 	glDeleteTextures(1, &get_menu_border()->id);
-	glDeleteTextures(1, &get_text_character(0)->id);
 }
 
 static void load_menu_tex(void) {
 	ch_datadir();
 	/* For the menu.. */
 	load_texture_png(&menu_title_tex, "menu_title.png", 0, 1);
-	/* New text stuff. */
-	generate_text_chars();
 
 	chdir("styles");
 	chdir("default");
@@ -439,6 +435,8 @@ static int set_fullscreen(int fullscreen) {
 
 	return 0;
 }
+
+static const float font_size = 16.0f;
 
 static int resize(int width, int height, int fullscreen, int ms) {
 	DBG_LOG("Resizing video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
@@ -470,6 +468,11 @@ static int resize(int width, int height, int fullscreen, int ms) {
 	screen_fs = fullscreen;
 	screen_ms = ms;
 	resize_window(screen_width, screen_height);
+
+	if (unicode_resize(font_size * get_screen_height() / get_gl_height())) {
+		DBG_ERROR("Failed to resize font system");
+		exit(1);
+	}
 
 	return 0;
 }
@@ -537,8 +540,14 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	}
 
 	init_screen_fbo(width, height, ms);
-
 	init_gl();
+	resize_window(width, height);
+
+	if (unicode_init(font_size * height / get_gl_height())) {
+		DBG_ERROR("Failed to initialize font system");
+		exit(1);
+	}
+
 	load_menu_tex();
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -563,9 +572,6 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	ch_datadir();
 	audio_init();
-
-	/* Make virtual keyboard table? */
-	populate_key_table();
 
 	update_fps_time();
 
@@ -630,6 +636,8 @@ static int sdlgl_exit(void) {
 	gg_system_exit();
 	free_menu_tex();
 	deinit_fbo();
+
+	unicode_exit();
 
 	SDL_Quit();
 	return 0;

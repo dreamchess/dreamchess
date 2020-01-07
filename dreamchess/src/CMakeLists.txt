@@ -7,7 +7,14 @@ unset(CMAKE_FIND_PACKAGE_PREFER_CONFIG)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(Freetype REQUIRED)
 find_package(EXPAT REQUIRED)
+
+include(CheckLibraryExists)
+check_library_exists(m cos "" HAVE_LIBM)
+if(HAVE_LIBM)
+    set(MATH_LIBRARY "m")
+endif()
 
 BISON_TARGET(PgnParser pgn_parser.y ${CMAKE_CURRENT_BINARY_DIR}/pgn_parser.c)
 FLEX_TARGET(PgnScanner pgn_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/pgn_scanner.c)
@@ -169,7 +176,6 @@ target_sources(dreamchess PRIVATE
     gui/promote_dialog.c
     gui/saveload_dialog.c
     gui/system.c
-    gui/text.c
     gui/texture.c
     gui/theme.c
     gui/title_dialog.c
@@ -178,9 +184,27 @@ target_sources(dreamchess PRIVATE
     gui/ui_sdlgl_3d.h
     gui/ui_sdlgl.c
     gui/ui_sdlgl.h
+    gui/unicode.c
+    gui/unicode.h
     gui/victory_dialog.c
-    gui/vkeyboard.c
     gui/xmlsavefile.c
+    gui/freetype-gl/distance-field.c
+    gui/freetype-gl/distance-field.h
+    gui/freetype-gl/edtaa3func.c
+    gui/freetype-gl/edtaa3func.h
+    gui/freetype-gl/freetype-gl-errdef.h
+    gui/freetype-gl/ftgl-utils.c
+    gui/freetype-gl/ftgl-utils.h
+    gui/freetype-gl/platform.c
+    gui/freetype-gl/platform.h
+    gui/freetype-gl/texture-atlas.c
+    gui/freetype-gl/texture-atlas.h
+    gui/freetype-gl/texture-font.c
+    gui/freetype-gl/texture-font.h
+    gui/freetype-gl/utf8-utils.c
+    gui/freetype-gl/utf8-utils.h
+    gui/freetype-gl/vector.c
+    gui/freetype-gl/vector.h
 )
 
 source_group("Source Files\\gui" REGULAR_EXPRESSION /gui/.*.c$)
@@ -195,6 +219,7 @@ target_include_directories(dreamchess PRIVATE
     ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
     ${EXPAT_INCLUDE_DIR}
     ${Intl_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -202,9 +227,12 @@ target_include_directories(dreamchess PRIVATE
     ${CMAKE_BINARY_DIR}
 )
 
+set_property(TARGET dreamchess PROPERTY C_STANDARD 99)
+
 target_link_libraries(dreamchess PRIVATE
     common
     GLEW::GLEW
+    Freetype::Freetype
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,$<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image-static>>
     ${SDL2_IMAGE_LIBRARY}
     $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,$<TARGET_NAME_IF_EXISTS:SDL2_mixer::SDL2_mixer-static>>
@@ -214,6 +242,7 @@ target_link_libraries(dreamchess PRIVATE
     ${OPENGL_LIBRARY}
     EXPAT::EXPAT
     ${Intl_LIBRARIES}
+    ${MATH_LIBRARY}
 )
 
 if(WIN32)

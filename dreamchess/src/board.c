@@ -654,25 +654,27 @@ move_t *san_to_move(board_t *board, char *move_s) {
 	return move;
 }
 
-char *san_to_fan(board_t *board, char *move_s) {
-	char *move = strdup(move_s);
+static char *make_fan_string(const char *san, const char *utf8) {
+	char *fan = malloc(strlen(san) + strlen(utf8));
+	strcpy(fan, utf8);
+	if (san[0] != '\0')
+		strcat(fan, san + 1);
+	return fan;
+}
 
-	switch (move[0]) {
+char *san_to_fan(board_t *board, char *move_s) {
+	switch (move_s[0]) {
 	case 'K':
-		move[0] = CHAR_KING;
-		break;
+		return make_fan_string(move_s, UTF8_KING);
 	case 'Q':
-		move[0] = CHAR_QUEEN;
-		break;
+		return make_fan_string(move_s, UTF8_QUEEN);
 	case 'R':
-		move[0] = CHAR_ROOK;
-		break;
+		return make_fan_string(move_s, UTF8_ROOK);
 	case 'N':
-		move[0] = CHAR_KNIGHT;
-		break;
+		return make_fan_string(move_s, UTF8_KNIGHT);
 	case 'B':
-		move[0] = CHAR_BISHOP;
+		return make_fan_string(move_s, UTF8_BISHOP);
 	}
 
-	return move;
+	return strdup(move_s);
 }

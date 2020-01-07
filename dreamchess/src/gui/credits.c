@@ -30,6 +30,7 @@
 
 #include "ui_sdlgl.h"
 #include "i18n.h"
+#include "unicode.h"
 
 void draw_credits(int init) {
 	static int section, nr, state;
@@ -67,13 +68,13 @@ void draw_credits(int init) {
 			state = 1;
 		}
 
-		text_draw_string_right(x, y, header, 1, &col_cap);
+		unicode_string_render(header, x, y, 1.0f, 1.0f, 0, col_cap);
 
 		break;
 
 	case 1:
 		col_cap.a = 1.0f;
-		text_draw_string_right(x, y, header, 1, &col_cap);
+		unicode_string_render(header, x, y, 1.0f, 1.0f, 0, col_cap);
 
 		diff = now - start;
 
@@ -93,7 +94,7 @@ void draw_credits(int init) {
 			return;
 		}
 
-		text_draw_string_right(x, y - 40, credits[section][nr], 1, &col_item);
+		unicode_string_render(credits[section][nr], x, y - 40, 1.0f, 1.0f, 0, col_item);
 
 		break;
 
@@ -112,7 +113,7 @@ void draw_credits(int init) {
 			return;
 		}
 
-		text_draw_string_right(x, y, header, 1, &col_cap);
+		unicode_string_render(header, x, y, 1.0f, 1.0f, 0, col_cap);
 
 		break;
 	}

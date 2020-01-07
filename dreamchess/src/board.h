@@ -50,6 +50,13 @@
 #define CHAR_BISHOP 20
 #define CHAR_PAWN 21
 
+#define UTF8_KING "♚"
+#define UTF8_QUEEN "♛"
+#define UTF8_ROOK "♜"
+#define UTF8_KNIGHT "♞"
+#define UTF8_BISHOP "♝"
+#define UTF8_PAWN "♟"
+
 #define IS_WHITE(P) (!((P)&1))
 #define IS_BLACK(P) ((P)&1)
 

@@ -18,9 +18,9 @@ DreamChess currently supports Windows, macOS and Linux. It is licensed under the
 
 ## Building
 
-The following dependencies are required for building DreamChess: [CMake](https://cmake.org/), [bison](https://www.gnu.org/software/bison/), [flex](https://github.com/westes/flex), [SDL 2.0](https://www.libsdl.org/), [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer 2.0](https://www.libsdl.org/projects/SDL_mixer/), [Expat](https://libexpat.github.io/) and [GLEW](http://glew.sourceforge.net/).
+The following dependencies are required for building DreamChess: [CMake](https://cmake.org/), [bison](https://www.gnu.org/software/bison/), [flex](https://github.com/westes/flex), [SDL 2.0](https://www.libsdl.org/), [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer 2.0](https://www.libsdl.org/projects/SDL_mixer/), [Expat](https://libexpat.github.io/), [GLEW](https://glew.sourceforge.net/) and [FreeType](https://freetype.org/).
 
-On Ubuntu this translates to the following package list: gcc, cmake, bison, flex, libsdl2-dev, libsdl2-image-dev, libsdl2-mixer-dev, libexpat1-dev and libglew-dev.
+On Ubuntu this translates to the following package list: gcc, cmake, bison, flex, libsdl2-dev, libsdl2-image-dev, libsdl2-mixer-dev, libexpat1-dev, libglew-dev and libfreetype-dev.
 
 ## Controls
 

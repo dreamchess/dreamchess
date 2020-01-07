@@ -47,8 +47,8 @@ void gg_label_set_colour(gg_label_t *label, gg_colour_t *colour, gg_colour_t *bg
 
 void gg_label_destroy(gg_widget_t *widget);
 
-void gg_label_init(gg_label_t *label, char *text);
+void gg_label_init(gg_label_t *label, const char *text);
 
-gg_widget_t *gg_label_create(char *string);
+gg_widget_t *gg_label_create(const char *string);
 
 #endif
