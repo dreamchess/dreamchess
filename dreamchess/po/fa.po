@@ -8,33 +8,36 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-02-22 06:33+0000\n"
+"Last-Translator: اسی مقیم <ase.mugem@gmail.com>\n"
+"Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
+"dreamchess/fa/>\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.11.1\n"
 
 #: credits.c:27
 msgid "Programming"
-msgstr ""
+msgstr "برنامه نویسی"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr ""
+msgstr "گرافیک"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr ""
+msgstr "حالت سه بعدی"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr ""
+msgstr "با تشکر از"
 
 #: credits.c:46
 msgid "Music"
-msgstr ""
+msgstr "موسیقی"
 
 #: dreamchess.c:409
 #, c-format
@@ -48,19 +51,19 @@ msgstr ""
 
 #: dreamchess.c:412
 msgid "show help"
-msgstr ""
+msgstr "نمایش کمک"
 
 #: dreamchess.c:413
 msgid "run fullscreen"
-msgstr ""
+msgstr "اجرا به صورت تمام صفحه"
 
 #: dreamchess.c:414
 msgid "set screen width"
-msgstr ""
+msgstr "تنظظیم عرض صفحه"
 
 #: dreamchess.c:415
 msgid "set screen height"
-msgstr ""
+msgstr "تنظیم ارتفاع صفحه"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
@@ -73,114 +76,122 @@ msgstr ""
 #: system_config.c:57 system_config.c:67 system_config.c:118
 #: system_config.c:127 system_config.c:162 system_config.c:170
 msgid "Off"
-msgstr ""
+msgstr "خاموش"
 
 #: system_config.c:115
 msgid "Custom"
-msgstr ""
+msgstr "سفارشی"
 
 #: system_config.c:119
 msgid "On"
-msgstr ""
+msgstr "روشن"
 
 #: system_config.c:137
+#, fuzzy
 msgid "Human vs. CPU"
-msgstr ""
+msgstr "انسان در مقابل کامپیوتر"
 
 #: system_config.c:138
+#, fuzzy
 msgid "CPU vs. Human"
-msgstr ""
+msgstr "کامپیوتر در مقابل انسان"
 
 #: system_config.c:139
 msgid "Human vs. Human"
-msgstr ""
+msgstr "انسان در مقابل انسان"
 
 #: system_config.c:142 gui/saveload_dialog.c:149
 msgid "Easy"
-msgstr ""
+msgstr "آسان"
 
 #: system_config.c:143 gui/saveload_dialog.c:149
 msgid "Normal"
-msgstr ""
+msgstr "معمولی"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
-msgstr ""
+msgstr "عنوان ناشناخته"
 
 #: audio/playlist.c:61
+#, fuzzy
 msgid "Unknown album"
-msgstr ""
+msgstr "آلبوم ناشناخته"
 
 #: audio/playlist.c:62
+#, fuzzy
 msgid "Unknown artist"
-msgstr ""
+msgstr "هنرمند ناشناخته"
 
 #: dialogs/configuration.c:91
+#, fuzzy
 msgid "Theme:"
-msgstr ""
+msgstr "تم:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
-msgstr ""
+msgstr "موتور:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
-msgstr ""
+msgstr "آهنگ :"
 
 #: dialogs/configuration.c:103
+#, fuzzy
 msgid "Sound Volume:"
-msgstr ""
+msgstr "صدا :"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution.."
-msgstr ""
+msgstr "تغییر وضوح نمایش .."
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr ""
+msgstr "خوب"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr ""
+msgstr "حرکت قبلی"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr ""
+msgstr "حرکت فعلی"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr ""
+msgstr "نمایش حرکت قبلی"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr ""
+msgstr "نمایش حرکت بعدی"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
 msgid "Cancel"
-msgstr ""
+msgstr "لغو"
 
 #: dialogs/quit_dialog.c:52
+#, fuzzy
 msgid "Quit to Title?"
-msgstr ""
+msgstr "برگشتن به منو؟"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "خطا : تغییر حالت ویدیو انجام نشد"
 
 #: dialogs/resolution.c:160
+#, fuzzy
 msgid "Resolution:"
-msgstr ""
+msgstr "وضوح نمایش :"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "سفارشی :"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
-msgstr ""
+msgstr "تمام صفحه:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
@@ -188,23 +199,24 @@ msgstr ""
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
-msgstr ""
+msgstr "ذخیره بازی .."
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options.."
-msgstr ""
+msgstr "گزینه های حرکت .."
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
-msgstr ""
+msgstr "خارج شدن از بازی .."
 
 #: gui/ingame_ui.c:100
+#, fuzzy
 msgid "Tied!"
-msgstr ""
+msgstr "تساوی !"
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
-msgstr ""
+msgstr "کیش ومات !"
 
 #: gui/ingame_ui.c:102
 msgid "Check!"
