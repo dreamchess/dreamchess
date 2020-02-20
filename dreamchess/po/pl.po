@@ -8,33 +8,37 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-02-22 06:33+0000\n"
+"Last-Translator: Michal Biesiada <blade-14@o2.pl>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/dreamchess/"
+"dreamchess/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 3.11.1\n"
 
 #: credits.c:27
 msgid "Programming"
-msgstr ""
+msgstr "Programowanie"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr ""
+msgstr "Grafika"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr ""
+msgstr "Modelowanie 3D"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr ""
+msgstr "Specjalne podziękowania dla"
 
 #: credits.c:46
 msgid "Music"
-msgstr ""
+msgstr "Muzyka"
 
 #: dreamchess.c:409
 #, c-format
@@ -48,7 +52,7 @@ msgstr ""
 
 #: dreamchess.c:412
 msgid "show help"
-msgstr ""
+msgstr "pokaż pomoc"
 
 #: dreamchess.c:413
 msgid "run fullscreen"
@@ -56,11 +60,11 @@ msgstr ""
 
 #: dreamchess.c:414
 msgid "set screen width"
-msgstr ""
+msgstr "ustaw szerokość ekranu"
 
 #: dreamchess.c:415
 msgid "set screen height"
-msgstr ""
+msgstr "ustaw wysokość ekranu"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
@@ -93,57 +97,57 @@ msgstr ""
 
 #: system_config.c:139
 msgid "Human vs. Human"
-msgstr ""
+msgstr "Człowiek vs. Człowiek"
 
 #: system_config.c:142 gui/saveload_dialog.c:149
 msgid "Easy"
-msgstr ""
+msgstr "Łatwe"
 
 #: system_config.c:143 gui/saveload_dialog.c:149
 msgid "Normal"
-msgstr ""
+msgstr "Normalne"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
-msgstr ""
+msgstr "Nieznany tytuł"
 
 #: audio/playlist.c:61
 msgid "Unknown album"
-msgstr ""
+msgstr "Nieznany album"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr ""
+msgstr "Nieznany artysta"
 
 #: dialogs/configuration.c:91
 msgid "Theme:"
-msgstr ""
+msgstr "Motyw:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
-msgstr ""
+msgstr "Silnik:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
-msgstr ""
+msgstr "Głośność muzyki:"
 
 #: dialogs/configuration.c:103
 msgid "Sound Volume:"
-msgstr ""
+msgstr "Głośność dźwięku:"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution.."
-msgstr ""
+msgstr "Zmień rozdzielczość.."
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr ""
+msgstr "Cofnij ruch"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
@@ -151,16 +155,16 @@ msgstr ""
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr ""
+msgstr "Podgląd poprzedniego ruchu"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr ""
+msgstr "Widok następnego ruchu"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
@@ -168,19 +172,19 @@ msgstr ""
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "Błąd: nie można zmienić trybu wideo"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr ""
+msgstr "Rozdzielczość:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "Niestandardowe:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
-msgstr ""
+msgstr "Pełny ekran:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
@@ -188,15 +192,15 @@ msgstr ""
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
-msgstr ""
+msgstr "Zapisz grę.."
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options.."
-msgstr ""
+msgstr "Opcje ruchu.."
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
-msgstr ""
+msgstr "Wyjdź z gry.."
 
 #: gui/ingame_ui.c:100
 msgid "Tied!"
@@ -204,27 +208,27 @@ msgstr ""
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
-msgstr ""
+msgstr "Szach-mat!"
 
 #: gui/ingame_ui.c:102
 msgid "Check!"
-msgstr ""
+msgstr "Szach!"
 
 #: gui/ingame_ui.c:103
 msgid "Victory!"
-msgstr ""
+msgstr "Zwycięstwo!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr ""
+msgstr "Gracze:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
-msgstr ""
+msgstr "Trudność:"
 
 #: gui/title_dialog.c:142
 msgid "Level:"
-msgstr ""
+msgstr "Poziom:"
 
 #: gui/title_dialog.c:171
 msgid "Time options.."
@@ -232,63 +236,63 @@ msgstr ""
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr ""
+msgstr "Rozpocznij grę"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr ""
+msgstr "Nowa gra.."
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
-msgstr ""
+msgstr "Wczytaj grę.."
 
 #: gui/title_dialog.c:206
 msgid "Configuration.."
-msgstr ""
+msgstr "Konfiguracja.."
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr ""
+msgstr "Wyjdź"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr ""
+msgstr "Promocja! Wybierz nową figurę!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "Zapisano pomyślnie"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "Zapis nieudany"
 
 #: gui/saveload_dialog.c:114
 #, c-format
 msgid "Saved: %s"
-msgstr ""
+msgstr "Zapisano: %s"
 
 #: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
 msgid "Human"
-msgstr ""
+msgstr "Człowiek"
 
 #: gui/saveload_dialog.c:144
-#, c-format
+#, c-format, fuzzy
 msgid "%s vs %s"
-msgstr ""
+msgstr "%s vs %s"
 
 #: gui/saveload_dialog.c:148
 #, c-format
 msgid "Difficulty: %s"
-msgstr ""
+msgstr "Trudność: %s"
 
 #: gui/saveload_dialog.c:153
 #, c-format
 msgid "Level: %i"
-msgstr ""
+msgstr "Poziom: %i"
 
 #: gui/saveload_dialog.c:205
 #, c-format
@@ -302,11 +306,11 @@ msgstr ""
 
 #: gui/saveload_dialog.c:237
 msgid "Save Game"
-msgstr ""
+msgstr "Zapisz grę"
 
 #: gui/saveload_dialog.c:240
 msgid "Load Game"
-msgstr ""
+msgstr "Wczytaj grę"
 
 #: gui/ui_sdlgl.c:301
 msgid "Error: failed to set video mode; using defaults"
@@ -314,19 +318,19 @@ msgstr ""
 
 #: gui/ui_sdlgl.c:355
 msgid "Loading, please wait..."
-msgstr ""
+msgstr "Ładowanie, proszę czekać..."
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr ""
+msgstr "Białe wygrały mecz!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr ""
+msgstr "Czarne wygrały mecz!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr ""
+msgstr "Gra zakończona remisem!"
 
 #: gui/xmlsavefile.c:120
 #, c-format
@@ -336,4 +340,4 @@ msgstr ""
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznane"
