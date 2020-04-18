@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2020-02-22 06:33+0000\n"
+"PO-Revision-Date: 2020-04-20 09:11+0000\n"
 "Last-Translator: اسی مقیم <ase.mugem@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/fa/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.11.1\n"
+"X-Generator: Weblate 4.0.2-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,7 +40,7 @@ msgid "Music"
 msgstr "موسیقی"
 
 #: dreamchess.c:409
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Usage: dreamchess [options]\n"
 "\n"
@@ -48,6 +48,11 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"طریقه استفاده:\"[گزینه] dreamchess\"\n"
+"\n"
+"یک رابط شطرنج سازگار با xboard .\n"
+"\n"
+"گزینه ها:\n"
 
 #: dreamchess.c:412
 msgid "show help"
@@ -67,11 +72,11 @@ msgstr "تنظیم ارتفاع صفحه"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
-msgstr ""
+msgstr "از <eng> به عنوان اولین موتور شطرنج استفاده کنید"
 
 #: dreamchess.c:417
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  به صورت پیش فرض به 'dreamer'"
 
 #: system_config.c:57 system_config.c:67 system_config.c:118
 #: system_config.c:127 system_config.c:162 system_config.c:170
@@ -87,14 +92,12 @@ msgid "On"
 msgstr "روشن"
 
 #: system_config.c:137
-#, fuzzy
 msgid "Human vs. CPU"
-msgstr "انسان در مقابل کامپیوتر"
+msgstr "انسانی در مقابل CPU"
 
 #: system_config.c:138
-#, fuzzy
 msgid "CPU vs. Human"
-msgstr "کامپیوتر در مقابل انسان"
+msgstr "CPU در مقابل انسان"
 
 #: system_config.c:139
 msgid "Human vs. Human"
@@ -125,7 +128,7 @@ msgstr "هنرمند ناشناخته"
 #: dialogs/configuration.c:91
 #, fuzzy
 msgid "Theme:"
-msgstr "تم:"
+msgstr "موضوع:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
@@ -136,9 +139,8 @@ msgid "Music Volume:"
 msgstr "آهنگ :"
 
 #: dialogs/configuration.c:103
-#, fuzzy
 msgid "Sound Volume:"
-msgstr "صدا :"
+msgstr "میزان صدا :"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution.."
@@ -181,7 +183,6 @@ msgid "Error: failed to change video mode"
 msgstr "خطا : تغییر حالت ویدیو انجام نشد"
 
 #: dialogs/resolution.c:160
-#, fuzzy
 msgid "Resolution:"
 msgstr "وضوح نمایش :"
 
@@ -195,7 +196,7 @@ msgstr "تمام صفحه:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "چند مرحله ای:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
@@ -210,9 +211,8 @@ msgid "Quit Game.."
 msgstr "خارج شدن از بازی .."
 
 #: gui/ingame_ui.c:100
-#, fuzzy
 msgid "Tied!"
-msgstr "تساوی !"
+msgstr "گره خورده است!"
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
@@ -220,132 +220,133 @@ msgstr "کیش ومات !"
 
 #: gui/ingame_ui.c:102
 msgid "Check!"
-msgstr ""
+msgstr "کیش!"
 
 #: gui/ingame_ui.c:103
 msgid "Victory!"
-msgstr ""
+msgstr "پیروزی!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr ""
+msgstr "بازیکنان:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
-msgstr ""
+msgstr "دشواری:"
 
 #: gui/title_dialog.c:142
 msgid "Level:"
-msgstr ""
+msgstr "سطح:"
 
 #: gui/title_dialog.c:171
 msgid "Time options.."
-msgstr ""
+msgstr "گزینه های زمان .."
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr ""
+msgstr "شروع بازی"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr ""
+msgstr "بازی جدید .."
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
-msgstr ""
+msgstr "بارگزاری بازی.."
 
 #: gui/title_dialog.c:206
 msgid "Configuration.."
-msgstr ""
+msgstr "پیکربندی.."
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr ""
+msgstr "خارج شدن"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr ""
+msgstr "ترفیع! مهره جدیدی انتخاب کنید!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "با موفقیت ذخیره شد"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "ذخیره نشد"
 
 #: gui/saveload_dialog.c:114
 #, c-format
 msgid "Saved: %s"
-msgstr ""
+msgstr "ذخیره شده: %s"
 
 #: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
 msgid "Human"
-msgstr ""
+msgstr "انسان"
 
 #: gui/saveload_dialog.c:144
 #, c-format
 msgid "%s vs %s"
-msgstr ""
+msgstr "%s درمقابل %s"
 
 #: gui/saveload_dialog.c:148
 #, c-format
 msgid "Difficulty: %s"
-msgstr ""
+msgstr "دشواری: %s"
 
 #: gui/saveload_dialog.c:153
 #, c-format
 msgid "Level: %i"
-msgstr ""
+msgstr "سطح: %i"
 
 #: gui/saveload_dialog.c:205
-#, c-format
+#, c-format, fuzzy
 msgid "Empty slot"
-msgstr ""
+msgstr "مکان خالی"
 
 #: gui/saveload_dialog.c:227
-#, c-format
+#, c-format, fuzzy
 msgid "Save slot: %i"
-msgstr ""
+msgstr "ذخیره مکان: %i"
 
 #: gui/saveload_dialog.c:237
 msgid "Save Game"
-msgstr ""
+msgstr "ذخیره بازی"
 
 #: gui/saveload_dialog.c:240
 msgid "Load Game"
-msgstr ""
+msgstr "بارگذاری بازی"
 
 #: gui/ui_sdlgl.c:301
+#, fuzzy
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "خطا: تنظیم حالت ویدیو انجام نشد. از پیش فرض استفاده میشود"
 
 #: gui/ui_sdlgl.c:355
 msgid "Loading, please wait..."
-msgstr ""
+msgstr "در حال بارگذاری لطفا منتظر بمانید..."
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr ""
+msgstr "سفید برنده شد!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr ""
+msgstr "سیاه برنده شد!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr ""
+msgstr "بازی با تساوی به پایان رسید!"
 
 #: gui/xmlsavefile.c:120
 #, c-format
 msgid "%02i/%02i at %02i:%02i."
-msgstr ""
+msgstr "%02i/%02i در %02i:%02i."
 
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr ""
+msgstr "ناشناخته"
