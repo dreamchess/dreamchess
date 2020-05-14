@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2020-02-22 06:33+0000\n"
-"Last-Translator: Michal Biesiada <blade-14@o2.pl>\n"
+"PO-Revision-Date: 2020-05-15 18:41+0000\n"
+"Last-Translator: Szylu <chipolade@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.11.1\n"
+"X-Generator: Weblate 4.1-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -49,6 +49,11 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"Zastosowanie: dreamchess [opcje]\n"
+"\n"
+"Interfejs szachowy kompatybilny z Xboard.\n"
+"\n"
+"Opcje:\n"
 
 #: dreamchess.c:412
 msgid "show help"
@@ -56,7 +61,7 @@ msgstr "pokaż pomoc"
 
 #: dreamchess.c:413
 msgid "run fullscreen"
-msgstr ""
+msgstr "uruchom tryb pełnoekranowy"
 
 #: dreamchess.c:414
 msgid "set screen width"
@@ -68,28 +73,28 @@ msgstr "ustaw wysokość ekranu"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
-msgstr ""
+msgstr "użyj <eng> jako pierwszego silnika szachowego"
 
 #: dreamchess.c:417
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  domyślnie to 'dreamer'"
 
 #: system_config.c:57 system_config.c:67 system_config.c:118
 #: system_config.c:127 system_config.c:162 system_config.c:170
 msgid "Off"
-msgstr ""
+msgstr "Wyłączony"
 
 #: system_config.c:115
 msgid "Custom"
-msgstr ""
+msgstr "Niestandardowy"
 
 #: system_config.c:119
 msgid "On"
-msgstr ""
+msgstr "Włączony"
 
 #: system_config.c:137
 msgid "Human vs. CPU"
-msgstr ""
+msgstr "Człowiek vs. CPU"
 
 #: system_config.c:138
 msgid "CPU vs. Human"
@@ -101,11 +106,11 @@ msgstr "Człowiek vs. Człowiek"
 
 #: system_config.c:142 gui/saveload_dialog.c:149
 msgid "Easy"
-msgstr "Łatwe"
+msgstr "Łatwy"
 
 #: system_config.c:143 gui/saveload_dialog.c:149
 msgid "Normal"
-msgstr "Normalne"
+msgstr "Normalny"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
@@ -151,7 +156,7 @@ msgstr "Cofnij ruch"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr ""
+msgstr "Wykonaj ruch"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
@@ -180,7 +185,7 @@ msgstr "Rozdzielczość:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr "Niestandardowe:"
+msgstr "Niestandardowa:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
@@ -188,7 +193,7 @@ msgstr "Pełny ekran:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "Multisampling:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
@@ -204,7 +209,7 @@ msgstr "Wyjdź z gry.."
 
 #: gui/ingame_ui.c:100
 msgid "Tied!"
-msgstr ""
+msgstr "Remis!"
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
@@ -280,7 +285,7 @@ msgid "Human"
 msgstr "Człowiek"
 
 #: gui/saveload_dialog.c:144
-#, c-format, fuzzy
+#, c-format
 msgid "%s vs %s"
 msgstr "%s vs %s"
 
@@ -297,12 +302,12 @@ msgstr "Poziom: %i"
 #: gui/saveload_dialog.c:205
 #, c-format
 msgid "Empty slot"
-msgstr ""
+msgstr "Puste miejsce"
 
 #: gui/saveload_dialog.c:227
 #, c-format
 msgid "Save slot: %i"
-msgstr ""
+msgstr "Zapisz miejsce: %i"
 
 #: gui/saveload_dialog.c:237
 msgid "Save Game"
@@ -314,7 +319,7 @@ msgstr "Wczytaj grę"
 
 #: gui/ui_sdlgl.c:301
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "Błąd: nie można ustawić trybu wideo; przy użyciu ustawień domyślnych"
 
 #: gui/ui_sdlgl.c:355
 msgid "Loading, please wait..."
@@ -340,4 +345,4 @@ msgstr ""
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr "Nieznane"
+msgstr "Nieznany"
