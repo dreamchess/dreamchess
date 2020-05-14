@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
 "PO-Revision-Date: 2020-05-15 18:41+0000\n"
-"Last-Translator: Szylu <chipolade@gmail.com>\n"
+"Last-Translator: Michal Biesiada <blade-14@o2.pl>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/pl/>\n"
 "Language: pl\n"
@@ -98,7 +98,7 @@ msgstr "Człowiek vs. CPU"
 
 #: system_config.c:138
 msgid "CPU vs. Human"
-msgstr ""
+msgstr "CPU vs. Człowiek"
 
 #: system_config.c:139
 msgid "Human vs. Human"
@@ -237,7 +237,7 @@ msgstr "Poziom:"
 
 #: gui/title_dialog.c:171
 msgid "Time options.."
-msgstr ""
+msgstr "Opcje czasu.."
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
