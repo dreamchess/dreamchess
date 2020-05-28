@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2019-11-15 18:13+0000\n"
-"Last-Translator: Walter van Niftrik <walter@vanniftrik-it.nl>\n"
+"PO-Revision-Date: 2020-05-29 19:41+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/nl/>\n"
 "Language: nl\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.10-dev\n"
+"X-Generator: Weblate 4.1-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -242,7 +242,7 @@ msgstr "Spel starten"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr "Nieuw spel.."
+msgstr "Nieuw spel…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
