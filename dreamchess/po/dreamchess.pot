@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess \n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-11-23 19:30+0100\n"
+"POT-Creation-Date: 2020-07-24 20:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,44 +71,37 @@ msgstr ""
 msgid "  defaults to 'dreamer'"
 msgstr ""
 
-#: system_config.c:61
-msgid "Active"
-msgstr ""
-
-#: system_config.c:62 system_config.c:63
-msgid "Inactive"
-msgstr ""
-
-#: system_config.c:66 system_config.c:76 system_config.c:127
-#: system_config.c:136 system_config.c:171 system_config.c:179
+#: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
+#: system_config.c:123 system_config.c:132 system_config.c:167
+#: system_config.c:175
 msgid "Off"
 msgstr ""
 
-#: system_config.c:124
-msgid "Custom"
-msgstr ""
-
-#: system_config.c:128
+#: system_config.c:58 system_config.c:124
 msgid "On"
 msgstr ""
 
-#: system_config.c:146
+#: system_config.c:120
+msgid "Custom"
+msgstr ""
+
+#: system_config.c:142
 msgid "Human vs. CPU"
 msgstr ""
 
-#: system_config.c:147
+#: system_config.c:143
 msgid "CPU vs. Human"
 msgstr ""
 
-#: system_config.c:148
+#: system_config.c:144
 msgid "Human vs. Human"
 msgstr ""
 
-#: system_config.c:151 gui/saveload_dialog.c:149
+#: system_config.c:147 gui/saveload_dialog.c:149
 msgid "Easy"
 msgstr ""
 
-#: system_config.c:152 gui/saveload_dialog.c:149
+#: system_config.c:148 gui/saveload_dialog.c:149
 msgid "Normal"
 msgstr ""
 
@@ -321,11 +314,11 @@ msgstr ""
 msgid "Load Game"
 msgstr ""
 
-#: gui/ui_sdlgl.c:310
+#: gui/ui_sdlgl.c:311
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:365
 msgid "Loading, please wait..."
 msgstr ""
 
