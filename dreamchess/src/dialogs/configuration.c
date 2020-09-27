@@ -45,6 +45,12 @@ static int dialog_title_theme(gg_widget_t *widget, gg_widget_t *emitter, void *d
 	return 1;
 }
 
+static int dialog_title_lettering(gg_widget_t *widget, gg_widget_t *emitter, void* data, void *extra_data) {
+	option_t *option = config_get_option("lettering");
+	option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
+	return 1;
+}
+
 static int dialog_title_music_vol(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	option_t *option = config_get_option("music_volume");
 	option_select_value_by_index(option, gg_option_get_selected(GG_OPTION(widget)));
@@ -92,6 +98,10 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent) {
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
+	widget = gg_label_create(_("Board Lettering:"));
+	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
+	gg_container_append(GG_CONTAINER(vbox2), widget);
+
 	widget = gg_label_create(_("Engine:"));
 	gg_align_set_alignment(GG_ALIGN(widget), 0.0f, 0.0f);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
@@ -114,6 +124,12 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent) {
 	gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_theme, NULL);
 	gg_container_append(GG_CONTAINER(vbox2), widget);
 
+	option = config_get_option("lettering");
+	widget = gg_option_create();
+	create_option_values(GG_OPTION(widget), option);
+	gg_widget_subscribe_signal_name(widget, widget->id, "option_changed", dialog_title_lettering, NULL);
+	gg_container_append(GG_CONTAINER(vbox2), widget);
+	
 	option = config_get_option("first_engine");
 	entry = gg_entry_create(100);
 	gg_entry_set_text(GG_ENTRY(entry), option->string);

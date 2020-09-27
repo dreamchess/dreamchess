@@ -226,6 +226,8 @@ int get_white_in_checkmate(void);
 int get_game_stalemate(void);
 void set_switch_to_menu(int sw);
 board_t *get_board(void);
+void set_is_lettering(int);
+int get_is_lettering(void);
 int get_fading_out(void);
 config_t *get_config(void);
 void set_pgn_slot(int slot);
