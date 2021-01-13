@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2021-01-11 14:32+0000\n"
+"PO-Revision-Date: 2021-01-14 13:32+0000\n"
 "Last-Translator: Vojtěch Šamla <auzkok@seznam.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/cs/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.4.1-dev\n"
+"X-Generator: Weblate 4.5-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -129,7 +129,7 @@ msgstr "Téma:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
-msgstr ""
+msgstr "Stroj:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
@@ -172,11 +172,11 @@ msgstr "Zrušit"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr ""
+msgstr "Odejít na úvodní obrazovku?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "Chyba: selhala změna video módu"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
@@ -192,7 +192,7 @@ msgstr "Celá obrazovka:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "Multisampling:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
@@ -200,7 +200,7 @@ msgstr "Uložit hru.."
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options.."
-msgstr ""
+msgstr "Možnosti tahu.."
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
@@ -264,11 +264,11 @@ msgstr "Proměna! Zvolte novou figuru!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "Uložení uspělo"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "Uložení selhalo"
 
 #: gui/saveload_dialog.c:114
 #, c-format
@@ -318,7 +318,7 @@ msgstr "Nahrát hru"
 
 #: gui/ui_sdlgl.c:301
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "Chyba: Nepodařilo se nastavit mód videa; byl použit výchozí"
 
 #: gui/ui_sdlgl.c:355
 msgid "Loading, please wait..."
