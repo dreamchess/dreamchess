@@ -134,7 +134,7 @@ gg_dialog_t *dialog_systemopts_create(gg_dialog_t *parent) {
 	gg_container_append(GG_CONTAINER(hbox), vbox2);
 	gg_container_append(GG_CONTAINER(vbox), hbox);
 
-	widget = gg_action_create_with_label(_("Change resolution.."), 0.0f, 0.0f);
+	widget = gg_action_create_with_label(_("Change resolution…"), 0.0f, 0.0f);
 	gg_widget_subscribe_signal_name(widget, widget->id, "action_pressed", dialog_title_resolution_load, NULL);
 	gg_container_append(GG_CONTAINER(vbox), widget);
 
