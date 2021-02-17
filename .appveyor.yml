@@ -17,8 +17,6 @@ install:
     if %COMPILER% NEQ msvc set MSVC=rem
     if %COMPILER% NEQ msys2 set MSYS2=rem
     if exist %PREFIX% set DEP=rem
-    if %PLATFORM%==x86 (set MSVC_PLATFORM=Win32) else set MSVC_PLATFORM=%PLATFORM%
-    if %PLATFORM%==x64 set MSVC_GENERATOR_APPEND= Win64
     if %PLATFORM%==x86 (set MSYS2_PLATFORM=i686) else set MSYS2_PLATFORM=x86_64
     if %PLATFORM%==x86 (set MSYS2_MSYSTEM=MINGW32) else set MSYS2_MSYSTEM=MINGW64
     if %PLATFORM%==x86 (set MSYS2_PREFIX=C:\msys64\mingw32) else set MSYS2_PREFIX=C:\msys64\mingw64
@@ -31,7 +29,7 @@ before_build:
   - |-
     mkdir %APPVEYOR_BUILD_FOLDER%\build
     cd %APPVEYOR_BUILD_FOLDER%\build
-    %MSVC% cmake -G"Visual Studio 16 2019%MSVC_GENERATOR_APPEND%" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
+    %MSVC% cmake -G"Visual Studio 16 2019" -A %PLATFORM% -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake ..
     %MSYS2% cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%MSYS2_PREFIX%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" ..
 build_script:
   - |-

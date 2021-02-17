@@ -229,7 +229,6 @@ if(VCPKG_TOOLCHAIN)
     target_link_libraries(dreamchess
         SDL2::SDL2
         SDL2::SDL2main
-        ${Intl_LIBRARY}
     )
 endif()
 
