@@ -9,11 +9,7 @@ option(BUILD_DREAMER "Build Dreamer chess engine" ON)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
-if(VCPKG_TOOLCHAIN)
-    find_package(unofficial-gettext CONFIG REQUIRED)
-else()
-    find_package(Intl REQUIRED)
-endif()
+find_package(Intl REQUIRED)
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
