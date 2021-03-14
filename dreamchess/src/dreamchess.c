@@ -220,7 +220,7 @@ static int do_move(move_t *move, int ui_update) {
 
 	move_set_attr(history->last->board, move);
 	new_board = *history->last->board;
-	move_s = move_to_fullalg(&new_board, move);
+	move_s = move_to_fullalg(move);
 	move_list_play(&fullalg_list, move_s);
 
 	move_san = move_to_san(&new_board, move);
@@ -276,7 +276,7 @@ void game_make_move(move_t *move, int ui_update) {
 	if (do_move(move, ui_update)) {
 		comm_send("%s\n", fullalg_list.move[fullalg_list.entries - 1]);
 	} else {
-		char *move_str = move_to_fullalg(history->last->board, move);
+		char *move_str = move_to_fullalg(move);
 		DBG_WARN("Ignoring illegal move %s", move_str);
 		free(move_str);
 	}

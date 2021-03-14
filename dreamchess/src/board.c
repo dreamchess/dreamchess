@@ -85,17 +85,17 @@ static void square_to_str(char *buf, int square) {
 	buf[1] = (square / 8) + '1';
 }
 
-char *move_to_fullalg(board_t *board, move_t *move) {
+char *move_to_fullalg(const move_t *move) {
 	char *s = (char *)malloc(6);
-	char prom[4] = "nbrq";
+	const char prom[4] = "nbrq";
 
 	square_to_str(s, move->source);
 	square_to_str(s + 2, move->destination);
 	s[4] = '\0';
 	s[5] = '\0';
 
-	if ((PIECE(board->square[move->source]) == PAWN) && ((move->destination < 8) || (move->destination >= 56)))
-		s[4] = prom[(move->promotion_piece - 2) / 2];
+	if (move->promotion_piece >= WHITE_KNIGHT && move->promotion_piece <= BLACK_QUEEN)
+		s[4] = prom[move->promotion_piece / 2 - 1];
 	return s;
 }
 
@@ -659,7 +659,7 @@ char *move_to_san(board_t *board, move_t *move) {
 					san_move.source_file = move->source % 8;
 					u_move = find_unique_move(board, &san_move);
 					if (!u_move) {
-						char *move_s = move_to_fullalg(board, move);
+						char *move_s = move_to_fullalg(move);
 
 						DBG_ERROR("Failed to convert move %s to SAN notation", move_s);
 

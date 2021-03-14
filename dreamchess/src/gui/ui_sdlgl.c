@@ -751,15 +751,17 @@ static void poll_move(void) {
 		return;
 	}
 
-	if ((needprom == 0) && (((board.square[source] == WHITE_PAWN) && (dest >= 56)) ||
-							((board.square[source] == BLACK_PAWN) && (dest <= 7)))) {
-		gg_dialog_open(dialog_promote_create(COLOUR(board.square[source])));
-		needprom = 1;
-		return;
-	}
-
 	move.source = source;
 	move.destination = dest;
+	if ((needprom == 0) && (((board.square[source] == WHITE_PAWN) && (dest >= 56)) ||
+							((board.square[source] == BLACK_PAWN) && (dest <= 7)))) {
+		move.promotion_piece = QUEEN + board.turn;
+		if (move_is_valid(&board, &move)) {
+			gg_dialog_open(dialog_promote_create(COLOUR(board.square[source])));
+			needprom = 1;
+			return;
+		}
+	}
 	if (needprom == 2)
 		move.promotion_piece = dialog_promote_piece;
 	else

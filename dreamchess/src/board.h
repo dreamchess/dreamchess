@@ -120,7 +120,7 @@ typedef struct result {
 } result_t;
 
 void board_setup(board_t *board);
-char *move_to_fullalg(board_t *board, move_t *move);
+char *move_to_fullalg(const move_t *move);
 move_t *fullalg_to_move(board_t *board, char *move_s);
 move_t *san_to_move(board_t *board, char *move_s);
 int make_move(board_t *board, move_t *move);
