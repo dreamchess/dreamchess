@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2021-05-19 15:03+0000\n"
+"PO-Revision-Date: 2021-05-25 22:31+0000\n"
 "Last-Translator: Eugenia Russell <eugenia.russell2019@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/el/>\n"
@@ -21,19 +21,19 @@ msgstr ""
 
 #: credits.c:27
 msgid "Programming"
-msgstr ""
+msgstr "Προγραμματισμός"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr ""
+msgstr "Γραφιστικά"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr ""
+msgstr "Τρισδιάστατη μοντελοποίηση"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr ""
+msgstr "Ιδιαίτερες ευχαριστίες προς"
 
 #: credits.c:46
 msgid "Music"
@@ -51,19 +51,19 @@ msgstr ""
 
 #: dreamchess.c:412
 msgid "show help"
-msgstr ""
+msgstr "Εμφάνιση βοηθείας"
 
 #: dreamchess.c:413
 msgid "run fullscreen"
-msgstr ""
+msgstr "Εκτέλεση πλήρους οθόνης"
 
 #: dreamchess.c:414
 msgid "set screen width"
-msgstr ""
+msgstr "ρύθμιση πλάτους οθόνης"
 
 #: dreamchess.c:415
 msgid "set screen height"
-msgstr ""
+msgstr "ρύθμιση ύψους οθόνης"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
