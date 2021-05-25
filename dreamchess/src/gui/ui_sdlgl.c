@@ -710,8 +710,9 @@ static void poll_move(void) {
 		return;
 	}
 
-	if ((needprom == 0) && (((board.square[source] == WHITE_PAWN) && (dest >= 56)) ||
-							((board.square[source] == BLACK_PAWN) && (dest <= 7)))) {
+	if ((last_move_is_valid(&move) == 1) && (needprom == 0) &&
+			(((board.square[source] == WHITE_PAWN) && (dest >= 56)) ||
+			 ((board.square[source] == BLACK_PAWN) && (dest <= 7)))) {
 		gg_dialog_open(dialog_promote_create(COLOUR(board.square[source])));
 		needprom = 1;
 		return;
