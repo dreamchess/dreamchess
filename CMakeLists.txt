@@ -55,8 +55,7 @@ endif()
 
 set(DOC_FILES
     LICENSE.txt
-    AUTHORS.txt
-)
+	)
 
 if(APPLE)
     install(FILES ${DOC_FILES} DESTINATION .)
