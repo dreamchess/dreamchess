@@ -12,4 +12,16 @@ set(CMAKE_CXX_COMPILER /bin/clang++)
 # MAIN SECTION
 #--------------
 
-add_executable(main_${PROJECT_NAME} main.cpp)
+set(SRC
+	${PROJECT_SOURCE_DIR}/main.cpp
+	${PROJECT_SOURCE_DIR}/src/Board.cpp
+)
+
+set(INC
+	${PROJECT_SOURCE_DIR}/include/Board.hpp
+	${PROJECT_SOURCE_DIR}/include/Piece.hpp
+)
+
+add_executable(main_${PROJECT_NAME} ${INC} ${SRC})
+
+target_include_directories(main_${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
