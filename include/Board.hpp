@@ -6,13 +6,16 @@
 #include <map>
 #include <string>
 
-namespace Board {
+namespace DreamChess::Base {
     class Board final {
+    public:
+        Board();
+        ~Board();
     private:
-        bool turn = 0;
+        bool turn = Piece::WHITE;
         uint16_t* squares;
 
-		const std::map<char, Piece> fen_to_piece {
+		const std::map<uint8_t , Piece> fen_to_piece {
 			{'p', Piece::PAWN},
 	        {'n', Piece::KNIGHT},
 	        {'b', Piece::BISHOP},
@@ -22,8 +25,5 @@ namespace Board {
 		};
 
 		void init_board();
-    public:
-        Board();
-        ~Board();
     };
-};
+}

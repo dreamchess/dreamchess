@@ -20,7 +20,7 @@ set(SRC
 set(INC
 	${PROJECT_SOURCE_DIR}/include/Board.hpp
 	${PROJECT_SOURCE_DIR}/include/Piece.hpp
-)
+	)
 
 add_executable(main_${PROJECT_NAME} ${INC} ${SRC})
 
