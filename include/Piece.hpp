@@ -2,10 +2,8 @@
 
 #include <cstdint>
 
-enum class Piece : uint16_t {
-	NONE = 0,
-
-    PAWN = 1,
+enum Piece : uint16_t {
+	PAWN = 1,
     KNIGHT = 2,
     BISHOP = 3,
     ROOK = 4,
