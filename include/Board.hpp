@@ -12,10 +12,16 @@ namespace Board {
         bool turn = 0;
         uint16_t* squares;
 
-		static std::map<char, Piece> fen_to_piece;
+		const std::map<char, Piece> fen_to_piece {
+			{'p', Piece::PAWN},
+	        {'n', Piece::KNIGHT},
+	        {'b', Piece::BISHOP},
+	        {'r', Piece::ROOK},
+	        {'q', Piece::QUEEN},
+			{'k', Piece::KING}
+		};
 
 		void init_board();
-		void set_squares(int pos, uint16_t value);
     public:
         Board();
         ~Board();
