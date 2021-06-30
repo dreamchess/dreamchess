@@ -1,21 +1,34 @@
+/**
+ * @copyright Dreamchess++
+ * @author Mattia Zorzan
+ * @version v1.0
+ * @date July, 2021
+ */
 #include "../include/Board.hpp"
 
 #include <array>
 #include <sstream>
 
 namespace DreamChess {
+    /**
+     * @brief "Constructs a `Board`"
+     * @details "Starts with the neutral FEN string, using `init_board()`"
+     */
     Board::Board() : squares{new uint16_t[64]} {
         init_board();
     }
 
-    Board::~Board() {
-        delete[] squares;
-    }
-
     // TODO Aggiungere linee per scacchiera
+    /**
+     * @brief "`out-stream` operator overloading"
+     * @details "Print each piece and ends line every 8 files"
+     * @param stream The new output stream
+     * @param board The printed board
+     * @return The output stream
+     */
     std::ostream& operator<<(std::ostream& stream, const Board& board) {
         for(uint64_t i = 0; i < 64; i++) {
-            stream << board.piece_repr.at(*(board.squares + i));
+            stream << board.piece_repr.at(board.squares[i]);
 
             if((i + 1) % 8 == 0) {
                 stream << std::endl;
@@ -25,12 +38,19 @@ namespace DreamChess {
         return stream;
     }
 
+    /**
+     * @brief "Used to init the board with the neutral FEN configuration"
+     * @details "Parse the FEN string and inits the board"
+     */
     void Board::init_board() {
         uint16_t file = 0;
         uint16_t rank = 7;
 
         std::array<std::string, 6> splitted_fen;
-        std::stringstream stream{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
+        std::stringstream stream{
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        };
+
         std::string tmp;
 
         for (uint64_t i = 0; i < 6; i++) {
@@ -47,7 +67,9 @@ namespace DreamChess {
                     file += sym - '0';
                 } else {
                     Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
-                    Piece type = Board::fen_to_piece.at(static_cast<uint8_t>(std::tolower(sym)));
+                    Piece type = Board::fen_to_piece.at(
+                        static_cast<uint8_t>(std::tolower(sym))
+                    );
 
                     squares[rank * 8 + file] = color | type;
                     file++;
