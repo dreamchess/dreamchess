@@ -1,15 +1,28 @@
 #include "../include/Board.hpp"
 
-#include <sstream>
 #include <array>
+#include <sstream>
 
-namespace DreamChess::Base {
+namespace DreamChess {
     Board::Board() : squares{new uint16_t[64]} {
         init_board();
     }
 
     Board::~Board() {
         delete[] squares;
+    }
+
+    // TODO Aggiungere linee per scacchiera
+    std::ostream& operator<<(std::ostream& stream, const Board& board) {
+        for(uint64_t i = 0; i < 64; i++) {
+            stream << board.piece_repr.at(*(board.squares + i));
+
+            if((i + 1) % 8 == 0) {
+                stream << std::endl;
+            }
+        }
+
+        return stream;
     }
 
     void Board::init_board() {
@@ -20,12 +33,12 @@ namespace DreamChess::Base {
         std::stringstream stream{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
         std::string tmp;
 
-        for(uint64_t i = 0; i < 6; i++) {
+        for (uint64_t i = 0; i < 6; i++) {
             std::getline(stream, tmp, ' ');
             splitted_fen[i] = tmp;
         }
 
-        for (auto& sym : splitted_fen[0]) {
+        for (auto &sym : splitted_fen[0]) {
             if (sym == '/') {
                 file = 0;
                 rank--;

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace DreamChess::Base {
+namespace DreamChess {
     enum Piece : uint16_t {
         PAWN = 1,
         KNIGHT = 2,
