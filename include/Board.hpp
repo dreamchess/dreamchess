@@ -28,16 +28,16 @@ namespace DreamChess {
         /**
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
-        bool turn = true;
+        bool m_turn = true;
         /**
          * @brief "Array describing the board's state"
          */
-        std::unique_ptr<uint16_t[]> squares;
+        std::unique_ptr<uint16_t[]> m_squares;
 
         /**
          * @brief "Convention for the FEN to DreamChess::Piece mapping"
          */
-        const std::map<uint8_t, Piece> fen_to_piece {
+        const std::map<uint8_t, Piece> m_fen_to_piece {
             { 'p', Piece::PAWN },
             { 'n', Piece::KNIGHT },
             { 'b', Piece::BISHOP },
@@ -49,7 +49,7 @@ namespace DreamChess {
         /**
          * @brief "Used in Piece to char conversion, while printing the board"
          */
-        const std::map<uint16_t, uint8_t> piece_repr {
+        const std::map<uint16_t, uint8_t> m_piece_repr {
             {0, ' '},
             {9, 'P'},
             {10, 'N'},

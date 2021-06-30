@@ -14,7 +14,7 @@ namespace DreamChess {
      * @brief "Constructs a `Board`"
      * @details "Starts with the neutral FEN string, using `init_board()`"
      */
-    Board::Board() : squares{new uint16_t[64]} {
+    Board::Board() : m_squares{new uint16_t[64]} {
         init_board();
     }
 
@@ -28,7 +28,7 @@ namespace DreamChess {
      */
     std::ostream& operator<<(std::ostream& stream, const Board& board) {
         for(uint64_t i = 0; i < 64; i++) {
-            stream << board.piece_repr.at(board.squares[i]);
+            stream << board.m_piece_repr.at(board.m_squares[i]);
 
             if((i + 1) % 8 == 0) {
                 stream << std::endl;
@@ -67,11 +67,11 @@ namespace DreamChess {
                     file += sym - '0';
                 } else {
                     Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
-                    Piece type = Board::fen_to_piece.at(
+                    Piece type = Board::m_fen_to_piece.at(
                         static_cast<uint8_t>(std::tolower(sym))
                     );
 
-                    squares[rank * 8 + file] = color | type;
+                    m_squares[rank * 8 + file] = color | type;
                     file++;
                 }
             }
