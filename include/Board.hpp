@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace DreamChess {
     /**
@@ -19,10 +20,22 @@ namespace DreamChess {
      */
     class Board final {
     public:
-        Board();
+        explicit Board();
         ~Board() = default;
 
-        friend std::ostream& operator<<(std::ostream&, const Board&);
+        friend std::ostream &operator<<(std::ostream &, const Board &);
+
+        /**
+         * @brief "Describes a `Move` for any piece in the board"
+         */
+        struct Move final {
+            uint16_t m_source;
+            uint16_t m_destination;
+
+            Piece m_piece;
+        };
+
+        std::vector<Move> legal_moves;
 
     private:
         /**
@@ -38,12 +51,12 @@ namespace DreamChess {
          * @brief "Convention for the FEN to DreamChess::Piece mapping"
          */
         const std::map<uint8_t, Piece> m_fen_to_piece {
-            { 'p', Piece::PAWN },
-            { 'n', Piece::KNIGHT },
-            { 'b', Piece::BISHOP },
-            { 'r', Piece::ROOK },
-            { 'q', Piece::QUEEN },
-            { 'k', Piece::KING }
+            {'p', Piece::PAWN},
+            {'n', Piece::KNIGHT},
+            {'b', Piece::BISHOP},
+            {'r', Piece::ROOK},
+            {'q', Piece::QUEEN},
+            {'k', Piece::KING}
         };
 
         /**
@@ -66,5 +79,6 @@ namespace DreamChess {
         };
 
         void init_board();
+        void generate_legal_moves();
     };
 }

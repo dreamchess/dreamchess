@@ -16,6 +16,7 @@ namespace DreamChess {
      */
     Board::Board() : m_squares{new uint16_t[64]} {
         init_board();
+        generate_legal_moves();
     }
 
     // TODO Aggiungere linee per scacchiera
@@ -26,11 +27,11 @@ namespace DreamChess {
      * @param board The printed board
      * @return The output stream
      */
-    std::ostream& operator<<(std::ostream& stream, const Board& board) {
-        for(uint64_t i = 0; i < 64; i++) {
+    std::ostream &operator<<(std::ostream &stream, const Board &board) {
+        for (uint64_t i = 0; i < 64; i++) {
             stream << board.m_piece_repr.at(board.m_squares[i]);
 
-            if((i + 1) % 8 == 0) {
+            if ((i + 1) % 8 == 0) {
                 stream << std::endl;
             }
         }
@@ -48,8 +49,7 @@ namespace DreamChess {
 
         std::array<std::string, 6> splitted_fen;
         std::stringstream stream{
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        };
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
 
         std::string tmp;
 
@@ -68,12 +68,19 @@ namespace DreamChess {
                 } else {
                     Piece color = isupper(sym) ? Piece::WHITE : Piece::BLACK;
                     Piece type = Board::m_fen_to_piece.at(
-                        static_cast<uint8_t>(std::tolower(sym))
-                    );
+                            static_cast<uint8_t>(std::tolower(sym)));
 
                     m_squares[rank * 8 + file] = color | type;
                     file++;
                 }
+            }
+        }
+    }
+
+    void Board::generate_legal_moves() {
+        for(uint64_t i = 0; i < 64; i++) {
+            if(m_squares[i] != 0) {
+                // TODO finisci legal_moves
             }
         }
     }
