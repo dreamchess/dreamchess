@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2021-05-25 22:31+0000\n"
+"PO-Revision-Date: 2021-07-02 14:33+0000\n"
 "Last-Translator: Eugenia Russell <eugenia.russell2019@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/el/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.8-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -100,166 +100,166 @@ msgstr ""
 
 #: system_config.c:142 gui/saveload_dialog.c:149
 msgid "Easy"
-msgstr ""
+msgstr "Εύκολο"
 
 #: system_config.c:143 gui/saveload_dialog.c:149
 msgid "Normal"
-msgstr ""
+msgstr "Κανονικό"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
-msgstr ""
+msgstr "Άγνωστος τίτλος"
 
 #: audio/playlist.c:61
 msgid "Unknown album"
-msgstr ""
+msgstr "Άγνωστο άλμπουμ"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr ""
+msgstr "Άγνωστος καλλιτέχνης"
 
 #: dialogs/configuration.c:91
 msgid "Theme:"
-msgstr ""
+msgstr "Θέμα:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
-msgstr ""
+msgstr "Μηχανή:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
-msgstr ""
+msgstr "Ένταση μουσικής:"
 
 #: dialogs/configuration.c:103
 msgid "Sound Volume:"
-msgstr ""
+msgstr "Ενταση ήχου:"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution.."
-msgstr ""
+msgstr "Αλλαγή ανάλυσης.."
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr ""
+msgstr "Εντάξει"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr ""
+msgstr "Ανάκληση μετακίνησης"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr ""
+msgstr "Μετακίνηση τώρα"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr ""
+msgstr "Προβολή προηγούμενης κίνησης"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr ""
+msgstr "Προβολή επόμενης κίνησης"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
 msgid "Cancel"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr ""
+msgstr "Παραίτηση από τον τίτλο;"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "Σφάλμα: απέτυχε η αλλαγή της λειτουργίας βίντεο"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr ""
+msgstr "Ανάλυση:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "Προσαρμοσμένο:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
-msgstr ""
+msgstr "Πλήρης οθόνη:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "Πολλαπλή δειγματοληψία:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
-msgstr ""
+msgstr "Αποθήκευση παιχνιδιού.."
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options.."
-msgstr ""
+msgstr "Μετακίνηση επιλογών .."
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
-msgstr ""
+msgstr "Παραιτηθείτε από το παιχνίδι.."
 
 #: gui/ingame_ui.c:100
 msgid "Tied!"
-msgstr ""
+msgstr "Ισοπαλία!"
 
 #: gui/ingame_ui.c:101
 msgid "Checkmate!"
-msgstr ""
+msgstr "Ρουά Ματ!"
 
 #: gui/ingame_ui.c:102
 msgid "Check!"
-msgstr ""
+msgstr "Ελέγξτε!"
 
 #: gui/ingame_ui.c:103
 msgid "Victory!"
-msgstr ""
+msgstr "Νίκη!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr ""
+msgstr "Παίκτες:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
-msgstr ""
+msgstr "Δυσκολία:"
 
 #: gui/title_dialog.c:142
 msgid "Level:"
-msgstr ""
+msgstr "Επίπεδο:"
 
 #: gui/title_dialog.c:171
 msgid "Time options.."
-msgstr ""
+msgstr "Επιλογές χρόνου.."
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr ""
+msgstr "Έναρξη παιχνιδιού"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr ""
+msgstr "Νέο παιχνίδι.."
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
-msgstr ""
+msgstr "Φορτώστε το παιχνίδι.."
 
 #: gui/title_dialog.c:206
 msgid "Configuration.."
-msgstr ""
+msgstr "Διαμόρφωση.."
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr ""
+msgstr "Εγκαταλείπω"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr ""
+msgstr "Προώθηση! Επιλέξτε νέο κομμάτι!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "Αποθήκευση με επιτυχία"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
