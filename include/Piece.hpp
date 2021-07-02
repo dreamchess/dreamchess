@@ -24,4 +24,4 @@ namespace DreamChess {
         WHITE = 8,
         BLACK = 16
     };
-}
+} // namespace DreamChess
