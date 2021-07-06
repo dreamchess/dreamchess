@@ -7,6 +7,7 @@
 #include "../include/Board.hpp"
 
 #include <array>
+#include <stdexcept>
 #include <sstream>
 
 namespace DreamChess {
@@ -14,9 +15,10 @@ namespace DreamChess {
      * @brief "Constructs a `Board`"
      * @details "Starts with the neutral FEN string, using `init_board()`"
      */
-    Board::Board() : m_squares {new uint16_t[64]} {
+    Board::Board()
+        : m_squares {new uint16_t[64]}
+        , m_captured {new uint16_t[10]} {
         init_board();
-        generate_legal_moves();
     }
 
     // TODO Aggiungere linee per scacchiera
@@ -75,16 +77,48 @@ namespace DreamChess {
         }
     }
 
-    void Board::generate_legal_moves() {
-        for(uint64_t i = 0; i < 64; i++) {
-            switch(m_squares[i]) {
-                case 9:
-                case 17:
-                    m_legal_moves.push_back(
-                        Move {m_squares[i], m_squares[i + 8], Piece::PAWN});
-                    m_legal_moves.push_back(
-                        Move {m_squares[i], m_squares[i + 16], Piece::PAWN});
+    void Board::make_move(const Move& move) {
+        if(move.is_valid()) {
+            // En-passant
+            if(move.m_piece == Piece::PAWN
+               && m_squares[move.m_destination] == 0) {
+                uint16_t en_passant
+                    = move.m_destination
+                    - 8 * (move.m_destination > move.m_source ? 1 : -1);
+                m_captured[m_squares[en_passant]]++;
+                m_squares[en_passant] = 0;
             }
+
+            // Updating captured pieces
+            if(move.m_destination != 0) {
+                m_captured[m_squares[move.m_destination]]++;
+            }
+
+            // kingside castle
+            if(move.m_piece == Piece::KING
+               && move.m_destination - move.m_source == 2) {
+                m_squares[move.m_destination - 1]
+                    = m_squares[move.m_destination + 1];
+                m_squares[move.m_destination + 1] = 0;
+            }
+
+            // Queenside castle
+            if(move.m_piece == Piece::KING
+               && move.m_source - move.m_destination == 2) {
+                m_squares[move.m_destination + 1]
+                    = m_squares[move.m_destination - 2];
+                m_squares[move.m_destination - 2] = 0;
+            }
+
+            if(move.is_promotion()) {
+                // Promotion
+                m_squares[move.m_destination] = move.m_promotion_piece;
+            } else {
+                // The actual move
+                m_squares[move.m_destination] = m_squares[move.m_source];
+            }
+        } else {
+            throw std::logic_error("Invalid move!");
         }
     }
 } // namespace DreamChess

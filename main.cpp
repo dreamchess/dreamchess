@@ -6,8 +6,12 @@
  */
 #include "../include/Board.hpp"
 
+#include <iostream>
+
 int main(int argc, char **argv) {
     DreamChess::Board board;
+
+    std::cout << board;
 
     return 0;
 }

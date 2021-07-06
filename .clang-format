@@ -38,7 +38,7 @@ BraceWrapping:
     SplitEmptyFunction: false
     SplitEmptyRecord: false
     SplitEmptyNamespace: false
-BreakConstructorInitializers: AfterColon
+BreakConstructorInitializers: BeforeColon
 ColumnLimit: 80
 IncludeBlocks: Regroup
 IncludeCategories:
