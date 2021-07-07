@@ -7,8 +7,8 @@
 #include "../include/Board.hpp"
 
 #include <array>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
 namespace DreamChess {
     /**
@@ -17,7 +17,8 @@ namespace DreamChess {
      */
     Board::Board()
         : m_squares {new uint16_t[64]}
-        , m_captured {new uint16_t[10]} {
+        , m_captured {new uint16_t[10]} 
+        , m_history {new History} {
         init_board();
     }
 
@@ -41,7 +42,7 @@ namespace DreamChess {
 
     /**
      * @brief "Used to init the board with the neutral FEN configuration"
-     * @details "Parse the FEN string and inits the board"
+     * @details "Parses the FEN string and inits the `Board`"
      */
     void Board::init_board() {
         uint16_t file = 0;
@@ -77,7 +78,12 @@ namespace DreamChess {
         }
     }
 
-    void Board::make_move(const Move& move) {
+    /**
+     * @brief "Makes a move in the current `Board`"
+     * @details "Checks if the `Move` is a "special move", makes a "normal move" otherwise"
+     * @param move The `Move` to make
+     */
+    void Board::make_move(const Move &move) {
         if(move.is_valid()) {
             // En-passant
             if(move.m_piece == Piece::PAWN
@@ -120,5 +126,30 @@ namespace DreamChess {
         } else {
             throw std::logic_error("Invalid move!");
         }
+    }
+
+    /**
+     * @brief "Updates the `Board`'s history"
+     */
+    void Board::update_history(const Move &move) {
+        m_history.get() -> add_step(*this, move); 
+    }
+
+    /**
+     * @brief "Checks if the move is valid"
+     * @details "A `Move` is valid if it's in the `Board` and actually moves the `Piece`"
+     */
+    bool Board::Move::is_valid() const {
+        return m_source >= 0 && m_source < 64 && m_destination >= 0
+            && m_destination < 64 && m_source != m_destination;
+    }
+
+    /**
+     * @brief "Checks if the move is a promotion move"
+     * @details "A `Move` is promotion if it's made by a pawn and the destination it's in the opposite player first file"
+     */
+    bool Board::Move::is_promotion() const {
+        return m_piece == Piece::PAWN
+            && (m_destination < 8 || m_destination > 55);
     }
 } // namespace DreamChess

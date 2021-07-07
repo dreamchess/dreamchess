@@ -6,12 +6,14 @@
  */
 #pragma once
 
-#include "../include/Piece.hpp"
+#include "History.hpp"
+#include "Piece.hpp"
 
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace DreamChess {
     /**
@@ -28,21 +30,30 @@ namespace DreamChess {
          * @brief "Describes a `Move` for any piece in the board"
          */
         struct Move final {
+            /**
+             * @brief "The move's source square"
+             */
             uint16_t m_source;
+            /**
+             * @brief "The move's destination square"
+             */
             uint16_t m_destination;
 
+            /**
+             * @brief "The piece which is making the move"
+             */
             Piece m_piece;
+            /**
+             * @brief "The declared promotion present, if promotion"
+             */
             Piece m_promotion_piece;
 
-            bool is_valid() const {
-                return m_source >= 0 && m_source < 64 && m_destination >= 0
-                    && m_destination < 64 && m_source != m_destination;
-            }
+            bool is_valid() const;
 
-            bool is_promotion() const {
-                return m_piece == Piece::PAWN
-                    && (m_destination < 8 || m_destination >= 56);
-            }
+            /**
+             * @brief "Checks if the move is a promotion move"
+             */
+            bool is_promotion() const;
         };
 
     private:
@@ -50,14 +61,26 @@ namespace DreamChess {
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
         bool m_turn = true;
+        
         /**
          * @brief "Array describing the board's state"
          */
         std::unique_ptr<uint16_t[]> m_squares;
+
         /**
          * @brief "Keeps track of captured pieces"
          */
         std::unique_ptr<uint16_t[]> m_captured;
+
+        /**
+         * @brief "Vector with all the possible moves for the current board state"
+         */
+        std::vector<Move> m_move_list;
+
+        /**
+         * @brief "This board's History"
+         */
+        std::unique_ptr<History> m_history;
 
         /**
          * @brief "Convention for the FEN to DreamChess::Piece mapping"
@@ -75,6 +98,7 @@ namespace DreamChess {
             {20, 'r'}, {21, 'q'}, {22, 'k'}};
 
         void init_board();
-        void make_move(const Move&);
+        void make_move(const Move &);
+        void update_history(const Move &);
     };
 } // namespace DreamChess
