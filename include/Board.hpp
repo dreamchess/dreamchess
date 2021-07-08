@@ -21,6 +21,7 @@ namespace DreamChess {
     class Board final {
     public:
         explicit Board();
+        Board(const Board &);
         ~Board() = default;
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
@@ -54,6 +55,8 @@ namespace DreamChess {
              */
             bool is_promotion() const;
         };
+
+        std::string to_fen() const;
 
     private:
         /**

@@ -11,5 +11,8 @@
 int main(int argc, char **argv) {
     DreamChess::Game game;
 
+    // TODO Qui da segfault!!!
+    std::cout << game.get_board();
+
     return 0;
 }

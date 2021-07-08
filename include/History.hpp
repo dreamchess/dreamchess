@@ -42,6 +42,7 @@ namespace DreamChess {
 
     public:
         explicit History();
+        ~History() = default;
 
         Step first();
         Step last();

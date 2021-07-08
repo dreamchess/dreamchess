@@ -13,6 +13,7 @@ namespace DreamChess {
     class Game final {
     public:
         explicit Game();
+        Board get_board() const;
 
     private:
         Board m_board;

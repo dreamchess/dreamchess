@@ -21,6 +21,10 @@ namespace DreamChess {
         init_board();
     }
 
+    Board::Board(const Board &board)
+        : m_squares(board.m_squares.get())
+        , m_captured(board.m_captured.get()) {}
+
     // TODO Aggiungere linee per scacchiera
     /**
      * @brief "`out-stream` operator overloading"
@@ -126,6 +130,19 @@ namespace DreamChess {
         } else {
             throw std::logic_error("Invalid move!");
         }
+    }
+
+    std::string Board::to_fen() const {
+        std::string fen;
+
+        for(uint64_t i = 0; i < 64; i++) {
+            fen.push_back(
+                static_cast<char>(this->m_piece_repr.at(this->m_squares[i])));
+
+            if((i + 1) % 8 == 0) { fen.push_back('/'); }
+        }
+
+        return fen;
     }
 
     /**

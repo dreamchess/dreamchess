@@ -8,9 +8,16 @@
 #include "../include/Game.hpp"
 
 namespace DreamChess {
+    /**
+     * @brief "Creates a `Game` object"
+     */
     Game::Game()
         : m_board(Board {})
         , m_history(History {}) {}
+
+    Board Game::get_board() const {
+        return m_board;
+    }
 
     /**
      * @brief "Updates the `Game`'s history"
