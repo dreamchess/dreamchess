@@ -14,14 +14,16 @@ set(CMAKE_CXX_COMPILER_ID "CLANG")
 
 set(SRC
 	${PROJECT_SOURCE_DIR}/main.cpp
-	${PROJECT_SOURCE_DIR}/src/Board.cpp
+	${PROJECT_SOURCE_DIR}/src/Game.cpp
 	${PROJECT_SOURCE_DIR}/src/History.cpp
+	${PROJECT_SOURCE_DIR}/src/Board.cpp
 )
 
 set(INC
 	${PROJECT_SOURCE_DIR}/include/Board.hpp
-	${PROJECT_SOURCE_DIR}/include/Piece.hpp
+	${PROJECT_SOURCE_DIR}/include/Game.hpp
 	${PROJECT_SOURCE_DIR}/include/History.hpp
+	${PROJECT_SOURCE_DIR}/include/Piece.hpp
 )
 
 add_executable(main_${PROJECT_NAME} ${INC} ${SRC})

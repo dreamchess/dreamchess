@@ -4,14 +4,12 @@
  * @version v1.0
  * @date July, 2021
  */
-#include "../include/Board.hpp"
+#include "../include/Game.hpp"
 
 #include <iostream>
 
 int main(int argc, char **argv) {
-    DreamChess::Board board;
-
-    std::cout << board;
+    DreamChess::Game game;
 
     return 0;
 }

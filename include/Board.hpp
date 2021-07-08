@@ -6,7 +6,6 @@
  */
 #pragma once
 
-#include "History.hpp"
 #include "Piece.hpp"
 
 #include <cstdint>
@@ -61,7 +60,7 @@ namespace DreamChess {
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
         bool m_turn = true;
-        
+
         /**
          * @brief "Array describing the board's state"
          */
@@ -73,14 +72,10 @@ namespace DreamChess {
         std::unique_ptr<uint16_t[]> m_captured;
 
         /**
-         * @brief "Vector with all the possible moves for the current board state"
+         * @brief "Vector with all the possible moves for the current board
+         * state"
          */
         std::vector<Move> m_move_list;
-
-        /**
-         * @brief "This board's History"
-         */
-        std::unique_ptr<History> m_history;
 
         /**
          * @brief "Convention for the FEN to DreamChess::Piece mapping"
@@ -99,6 +94,5 @@ namespace DreamChess {
 
         void init_board();
         void make_move(const Move &);
-        void update_history(const Move &);
     };
 } // namespace DreamChess

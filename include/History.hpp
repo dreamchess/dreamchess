@@ -9,6 +9,7 @@
 #include "Board.hpp"
 
 #include <list>
+#include <memory>
 #include <string>
 
 namespace DreamChess {
@@ -26,25 +27,25 @@ namespace DreamChess {
             /**
              * @brief "The board as it can be seen at this step"
              */
-            const Board& m_board_view;
+            const Board &m_board_view;
 
             /**
              * @brief "Last move which has been made"
              */
-            const Board::Move& m_move;
+            const Board::Move &m_move;
         };
 
         /**
          * @brief "Game history so far"
          */
-        std::unique_ptr<std::list<const Step>> m_game_history;
+        std::unique_ptr<std::list<Step>> m_game_history;
 
     public:
         explicit History();
 
-        const Step first();
-        const Step last();
+        Step first();
+        Step last();
 
         void add_step(const Board &, const Board::Move &);
     };
-}
+} // namespace DreamChess

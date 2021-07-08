@@ -12,20 +12,20 @@ namespace DreamChess {
      * @brief "Constructs the `History`"
      * @details "`History` can be seen as a list of `Step`s"
      */
-    History::History() : m_game_history{new std::list<const Step>} {}
+    History::History() : m_game_history{new std::list<Step>} {}
 
     /**
      * @brief "Returns the first move of the game"
      */
-    const History::Step History::first() { 
-        return m_game_history.get() -> front(); 
+    History::Step History::first() {
+        return m_game_history -> front();
     }
 
     /**
      * @brief "Returns the last played move"
      */
-    const History::Step History::last() { 
-        return m_game_history.get() -> back(); 
+    History::Step History::last() {
+        return m_game_history -> back();
     }
 
     /**
@@ -34,7 +34,7 @@ namespace DreamChess {
      * @params move "The last move made in the referenced board"
      */
     void History::add_step(const Board &board_view, const Board::Move &move) {
-        m_game_history.get() -> push_back(Step {board_view, move});
+        m_game_history -> push_back(Step {board_view, move});
     }
 
     /**
