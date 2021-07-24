@@ -26,6 +26,8 @@ set(INC
 	${PROJECT_SOURCE_DIR}/include/Piece.hpp
 )
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 add_executable(main_${PROJECT_NAME} ${INC} ${SRC})
 
 target_include_directories(main_${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
