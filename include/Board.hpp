@@ -22,7 +22,10 @@ namespace DreamChess {
     public:
         explicit Board();
         Board(const Board &);
+        Board(Board &&) noexcept;
         ~Board() = default;
+
+        // TODO: Aggiungere operator= per move e copy
 
         friend std::ostream &operator<<(std::ostream &, const Board &);
 
@@ -62,7 +65,7 @@ namespace DreamChess {
         /**
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
-        bool m_turn = true;
+        //bool m_turn = true;
 
         /**
          * @brief "Array describing the board's state"

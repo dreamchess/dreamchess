@@ -12,21 +12,30 @@ namespace DreamChess {
      * @brief "Constructs the `History`"
      * @details "`History` can be seen as a list of `Step`s"
      */
-    History::History() : m_game_history{new std::list<Step>} {}
+    History::History()
+        : m_game_history {new std::list<Step>} {}
+
+    /**
+     * @brief "Copy constructor of `History`"
+     */
+    History::History(const History &history)
+        : m_game_history(history.m_game_history.get()) {}
+
+    /**
+     * @brief "Move constructor of `History`"
+     */
+    History::History(History &&history) noexcept
+        : m_game_history(std::move(history.m_game_history)) {}
 
     /**
      * @brief "Returns the first move of the game"
      */
-    History::Step History::first() {
-        return m_game_history -> front();
-    }
+    History::Step History::first() { return m_game_history->front(); }
 
     /**
      * @brief "Returns the last played move"
      */
-    History::Step History::last() {
-        return m_game_history -> back();
-    }
+    History::Step History::last() { return m_game_history->back(); }
 
     /**
      * @brief "Adds a step to the `History` list"
@@ -34,14 +43,15 @@ namespace DreamChess {
      * @params move "The last move made in the referenced board"
      */
     void History::add_step(const Board &board_view, const Board::Move &move) {
-        m_game_history -> push_back(Step {board_view, move});
+        m_game_history->push_back(Step {board_view, move});
     }
 
     /**
      * @brief "Constructs the `Step`"
-     * @details "Each `Step` is a view of the board and the move which brought us here"
+     * @details "Each `Step` is a view of the board and the move which brought
+     * us here"
      */
-    History::Step::Step(const Board &board_view, const Board::Move &move) 
-        : m_board_view{board_view} 
-        , m_move{move} {}
-}
+    History::Step::Step(const Board &board_view, const Board::Move &move)
+        : m_board_view {board_view}
+        , m_move {move} {}
+} // namespace DreamChess

@@ -19,6 +19,10 @@ namespace DreamChess {
         return m_board;
     }
 
+    History Game::get_history() const {
+        return m_history;
+    }
+
     /**
      * @brief "Updates the `Game`'s history"
      */

@@ -7,6 +7,7 @@
 #include "../include/Board.hpp"
 
 #include <array>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -21,9 +22,19 @@ namespace DreamChess {
         init_board();
     }
 
+    /**
+     * @brief "Copy constructor of `Board`"
+     */
     Board::Board(const Board &board)
         : m_squares(board.m_squares.get())
         , m_captured(board.m_captured.get()) {}
+
+    /**
+     * @brief "Move constructor of `Board`"
+     */
+    Board::Board(Board &&board) noexcept
+        : m_squares(std::move(board.m_squares))
+        , m_captured(std::move(board.m_captured)) {}
 
     // TODO Aggiungere linee per scacchiera
     /**

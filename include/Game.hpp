@@ -14,6 +14,7 @@ namespace DreamChess {
     public:
         explicit Game();
         Board get_board() const;
+        History get_history() const;
 
     private:
         Board m_board;

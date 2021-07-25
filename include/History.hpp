@@ -42,7 +42,11 @@ namespace DreamChess {
 
     public:
         explicit History();
+        History(const History &);
+        History(History &&) noexcept;
         ~History() = default;
+
+        // TODO: Aggiungere operator= per move e copy
 
         Step first();
         Step last();

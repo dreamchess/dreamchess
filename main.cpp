@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-int main(int argc, char **argv) {
+int main() {
     DreamChess::Game game;
 
     // TODO Qui da segfault!!!
