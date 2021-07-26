@@ -22,12 +22,12 @@ namespace DreamChess {
          * @brief "A single step into the History"
          */
         struct Step final {
-            explicit Step(const Board &, const Board::Move &);
+            explicit Step(const std::string &, const Board::Move &);
 
             /**
              * @brief "The board as it can be seen at this step"
              */
-            const Board &m_board_view;
+            const std::string &m_board_fen;
 
             /**
              * @brief "Last move which has been made"
@@ -51,6 +51,6 @@ namespace DreamChess {
         Step first();
         Step last();
 
-        void add_step(const Board &, const Board::Move &);
+        void add_step(const std::string &, const Board::Move &);
     };
 } // namespace DreamChess

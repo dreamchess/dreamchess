@@ -9,9 +9,7 @@
 #include <iostream>
 
 int main() {
-    DreamChess::Board board {};
-
-    std::cout << board.to_fen() << std::endl;
+    DreamChess::Game game {};
 
     return 0;
 }

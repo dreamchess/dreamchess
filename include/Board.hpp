@@ -68,6 +68,11 @@ namespace DreamChess {
         bool m_turn = true;
 
         /**
+         * @brief "Counts the number of turns since the game started"
+         */
+        uint64_t m_turn_counter = 1;
+
+        /**
          * @brief "Array describing the board's state"
          */
         std::unique_ptr<uint16_t[]> m_squares;

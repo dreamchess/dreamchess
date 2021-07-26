@@ -154,23 +154,23 @@ namespace DreamChess {
     std::string Board::to_fen() const {
         std::string fen;
 
+        // Board representation
         for(uint64_t i = 0; i < 64; i++) {
             fen.push_back(static_cast<char>(m_piece_repr.at(m_squares[i])));
 
             if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
         }
 
+        // Removing whitespaces
         uint16_t counter = 0;
         for(uint64_t i = 0; i < fen.length(); i++) {
             if(fen.at(i) == ' ') {
                 counter++;
 
                 for(uint64_t j = i; j < i + 7; j++) {
-                    if(isblank(fen.at(j))) {
-                        counter++;
-                    } else {
-                        break;
-                    }
+                    if(!isblank(fen.at(j))) { break; }
+
+                    counter++;
                 }
 
                 fen.replace(i, counter, std::to_string(counter));
@@ -181,6 +181,128 @@ namespace DreamChess {
 
         std::string turn = m_turn ? "w" : "b";
         fen.append(" " + turn + " ");
+
+        std::string castle;
+
+        // TODO: Manca controllo se re è sotto scacco
+        // White can castle
+        if(m_squares[4] == (Piece::WHITE | Piece::KING)) {
+            // Kingside
+            if(m_squares[7] == (Piece::WHITE | Piece::ROOK)) {
+                castle.append("K");
+            }
+
+            // Queenside
+            if(m_squares[0] == (Piece::WHITE | Piece::ROOK)) {
+                castle.append("Q");
+            }
+        }
+
+        // Black can castle
+        if(m_squares[60] == (Piece::BLACK | Piece::KING)) {
+            // Kingside
+            if(m_squares[63] == (Piece::BLACK | Piece::ROOK)) {
+                castle.append("k");
+            }
+
+            // Queenside
+            if(m_squares[56] == (Piece::BLACK | Piece::ROOK)) {
+                castle.append("q");
+            }
+        }
+
+        if(!castle.empty()) {
+            fen.append(castle + " ");
+        } else {
+            // No castle is possible
+            fen.append("- ");
+        }
+
+        std::string en_passant;
+
+        // TODO Manca controllo mossa precedente
+        for(uint64_t i = 24; i < 32; i++) {
+            if(!m_turn) {
+                if(m_squares[i] == (Piece::BLACK | Piece::PAWN)) {
+                    if(m_squares[i + 1] == (Piece::WHITE | Piece::PAWN)
+                       || m_squares[i - 1] == (Piece::WHITE | Piece::PAWN)) {
+                        switch(i) {
+                            case 24:
+                                en_passant.append("a6");
+                                break;
+                            case 25:
+                                en_passant.append("b6");
+                                break;
+                            case 26:
+                                en_passant.append("c6");
+                                break;
+                            case 27:
+                                en_passant.append("d6");
+                                break;
+                            case 28:
+                                en_passant.append("e6");
+                                break;
+                            case 29:
+                                en_passant.append("f6");
+                                break;
+                            case 30:
+                                en_passant.append("g6");
+                                break;
+                            default:
+                                en_passant.append("h6");
+                                break;
+                        }
+                    }
+                }
+            } else {
+                if(m_squares[i] == (Piece::WHITE | Piece::PAWN)) {
+                    if(m_squares[i + 1] == (Piece::BLACK | Piece::PAWN)
+                       || m_squares[i - 1] == (Piece::BLACK | Piece::PAWN)) {
+                        switch(i) {
+                            case 24:
+                                en_passant.append("a3");
+                                break;
+                            case 25:
+                                en_passant.append("b3");
+                                break;
+                            case 26:
+                                en_passant.append("c3");
+                                break;
+                            case 27:
+                                en_passant.append("d3");
+                                break;
+                            case 28:
+                                en_passant.append("e3");
+                                break;
+                            case 29:
+                                en_passant.append("f3");
+                                break;
+                            case 30:
+                                en_passant.append("g3");
+                                break;
+                            default:
+                                en_passant.append("h3");
+                                break;
+                        }
+                    }
+                }
+            }
+
+            if(!en_passant.empty()) { break; }
+        }
+
+        if(!en_passant.empty()) {
+            fen.append(en_passant + " ");
+        } else {
+            fen.append("- ");
+        }
+
+        // Half-moves
+        // TODO Implementare
+        fen.append("0 ");
+
+        // Turn number
+        fen.append(std::to_string(m_turn_counter));
 
         return fen;
     }

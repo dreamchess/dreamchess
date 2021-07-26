@@ -42,8 +42,9 @@ namespace DreamChess {
      * @params board_view "The `Step`'s view of the board"
      * @params move "The last move made in the referenced board"
      */
-    void History::add_step(const Board &board_view, const Board::Move &move) {
-        m_game_history->push_back(Step {board_view, move});
+    void History::add_step(const std::string &board_fen,
+                           const Board::Move &move) {
+        m_game_history->push_back(Step {board_fen, move});
     }
 
     /**
@@ -51,7 +52,7 @@ namespace DreamChess {
      * @details "Each `Step` is a view of the board and the move which brought
      * us here"
      */
-    History::Step::Step(const Board &board_view, const Board::Move &move)
-        : m_board_view {board_view}
+    History::Step::Step(const std::string &board_fen, const Board::Move &move)
+        : m_board_fen {board_fen}
         , m_move {move} {}
 } // namespace DreamChess

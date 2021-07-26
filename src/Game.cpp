@@ -19,6 +19,6 @@ namespace DreamChess {
      * @brief "Updates the `Game`'s history"
      */
     void Game::update_history(const Board &board, const Board::Move &move) {
-        m_history.add_step(board, move);
+        m_history.add_step(board.to_fen(), move);
     }
 } // namespace DreamChess
