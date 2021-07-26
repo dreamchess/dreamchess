@@ -15,14 +15,6 @@ namespace DreamChess {
         : m_board(Board {})
         , m_history(History {}) {}
 
-    Board Game::get_board() const {
-        return m_board;
-    }
-
-    History Game::get_history() const {
-        return m_history;
-    }
-
     /**
      * @brief "Updates the `Game`'s history"
      */

@@ -13,8 +13,7 @@ namespace DreamChess {
     class Game final {
     public:
         explicit Game();
-        Board get_board() const;
-        History get_history() const;
+        ~Game() = default;
 
     private:
         Board m_board;

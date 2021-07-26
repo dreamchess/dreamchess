@@ -65,7 +65,7 @@ namespace DreamChess {
         /**
          * @brief "'false' for BLACK's or 'true' for WHITE's turn"
          */
-        //bool m_turn = true;
+        bool m_turn = true;
 
         /**
          * @brief "Array describing the board's state"

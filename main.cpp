@@ -9,10 +9,9 @@
 #include <iostream>
 
 int main() {
-    DreamChess::Game game;
+    DreamChess::Board board {};
 
-    // TODO Qui da segfault!!!
-    std::cout << game.get_board();
+    std::cout << board.to_fen() << std::endl;
 
     return 0;
 }

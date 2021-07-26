@@ -143,15 +143,44 @@ namespace DreamChess {
         }
     }
 
+    /**
+     * @brief "Converts the board to FEN notation"
+     * @details "First the method constructs the actual state of the Board, then
+     *          replaces consecutive whitespaces with the number of ' ' chars.
+     *          Finally it adds Move, Castle, En Passant, Semi-moves end Number
+     *          of Moves since the beginning"
+     * @return The FEN representation of the Board
+     */
     std::string Board::to_fen() const {
         std::string fen;
 
         for(uint64_t i = 0; i < 64; i++) {
-            fen.push_back(
-                static_cast<char>(this->m_piece_repr.at(this->m_squares[i])));
+            fen.push_back(static_cast<char>(m_piece_repr.at(m_squares[i])));
 
-            if((i + 1) % 8 == 0) { fen.push_back('/'); }
+            if((i + 1) % 8 == 0 && i != 63) { fen.push_back('/'); }
         }
+
+        uint16_t counter = 0;
+        for(uint64_t i = 0; i < fen.length(); i++) {
+            if(fen.at(i) == ' ') {
+                counter++;
+
+                for(uint64_t j = i; j < i + 7; j++) {
+                    if(isblank(fen.at(j))) {
+                        counter++;
+                    } else {
+                        break;
+                    }
+                }
+
+                fen.replace(i, counter, std::to_string(counter));
+                i++;
+                counter = 0;
+            }
+        }
+
+        std::string turn = m_turn ? "w" : "b";
+        fen.append(" " + turn + " ");
 
         return fen;
     }
