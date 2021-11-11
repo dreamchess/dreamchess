@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2021-10-21 15:41+0000\n"
+"PO-Revision-Date: 2021-11-12 15:52+0000\n"
 "Last-Translator: IllusiveMan196 <hamsterrv@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/uk/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.9.1-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -142,7 +142,7 @@ msgstr "Гучність звуку:"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution.."
-msgstr "Змінити роздільність.."
+msgstr "Змінити роздільність…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -197,15 +197,15 @@ msgstr "Мультисемплінг:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game.."
-msgstr "Зберегти гру.."
+msgstr "Зберегти гру…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options.."
-msgstr "Налаштування ходів.."
+msgstr "Налаштування ходів…"
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game.."
-msgstr "Вийти з гри.."
+msgstr "Вийти з гри…"
 
 #: gui/ingame_ui.c:100
 msgid "Tied!"
@@ -237,7 +237,7 @@ msgstr "Рівень:"
 
 #: gui/title_dialog.c:171
 msgid "Time options.."
-msgstr "Налаштування часу.."
+msgstr "Налаштування часу…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
@@ -245,15 +245,15 @@ msgstr "Почати гру"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr "Нова гра.."
+msgstr "Нова гра…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
-msgstr "Завантажити гру.."
+msgstr "Завантажити гру…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration.."
-msgstr "Конфігурація.."
+msgstr "Конфігурація…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -324,7 +324,7 @@ msgstr ""
 
 #: gui/ui_sdlgl.c:355
 msgid "Loading, please wait..."
-msgstr "Завантажується, будь ласка зачекайте..."
+msgstr "Завантажується, будь ласка зачекайте…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
