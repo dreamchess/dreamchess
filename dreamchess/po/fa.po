@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2020-09-15 08:36+0000\n"
-"Last-Translator: Seyed Mohammad Mirheydari <mohammad.mirheydari@live.com>\n"
+"PO-Revision-Date: 2021-12-02 16:52+0000\n"
+"Last-Translator: Yasin Huwsf <yasinbakhtiar521@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.10-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,7 +40,7 @@ msgid "Music"
 msgstr "موسیقی"
 
 #: dreamchess.c:409
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
 "\n"
@@ -48,9 +48,9 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
-"طریقه استفاده:\"[گزینه] dreamchess\"\n"
+"طریقه استفاده: \"[گزینه] Dream chess\"\n"
 "\n"
-"یک رابط شطرنج سازگار با xboard .\n"
+"یک رابط شطرنج سازگار با xboard.\n"
 "\n"
 "گزینه ها:\n"
 
@@ -64,7 +64,7 @@ msgstr "اجرا به صورت تمام صفحه"
 
 #: dreamchess.c:414
 msgid "set screen width"
-msgstr "تنظظیم عرض صفحه"
+msgstr "تنظیم عرض صفحه"
 
 #: dreamchess.c:415
 msgid "set screen height"
@@ -93,11 +93,11 @@ msgstr "روشن"
 
 #: system_config.c:137
 msgid "Human vs. CPU"
-msgstr "انسانی در مقابل CPU"
+msgstr "انسانی در مقابل کامپیوتر"
 
 #: system_config.c:138
 msgid "CPU vs. Human"
-msgstr "CPU در مقابل انسان"
+msgstr "کامپیوتر در مقابل انسان"
 
 #: system_config.c:139
 msgid "Human vs. Human"
@@ -109,25 +109,23 @@ msgstr "آسان"
 
 #: system_config.c:143 gui/saveload_dialog.c:149
 msgid "Normal"
-msgstr "معمولی"
+msgstr "متوسط"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
 msgstr "عنوان ناشناخته"
 
 #: audio/playlist.c:61
-#, fuzzy
 msgid "Unknown album"
-msgstr "آلبوم ناشناخته"
+msgstr "آهنگ ناشناخته"
 
 #: audio/playlist.c:62
-#, fuzzy
 msgid "Unknown artist"
-msgstr "هنرمند ناشناخته"
+msgstr "هنرمند ناشناس"
 
 #: dialogs/configuration.c:91
 msgid "Theme:"
-msgstr "قالب:"
+msgstr "تم:"
 
 #: dialogs/configuration.c:95
 msgid "Engine:"
@@ -135,7 +133,7 @@ msgstr "موتور:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
-msgstr "آهنگ :"
+msgstr "صدای آهنگ :"
 
 #: dialogs/configuration.c:103
 msgid "Sound Volume:"
@@ -149,7 +147,7 @@ msgstr "تغییر وضوح نمایش .."
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr "خوب"
+msgstr "تایید"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
@@ -173,9 +171,8 @@ msgid "Cancel"
 msgstr "لغو"
 
 #: dialogs/quit_dialog.c:52
-#, fuzzy
 msgid "Quit to Title?"
-msgstr "برگشتن به منو؟"
+msgstr "آیا میخواهید به منو باز گردید؟"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
@@ -247,7 +244,7 @@ msgstr "شروع بازی"
 
 #: gui/title_dialog.c:198
 msgid "New Game.."
-msgstr "بازی جدید …"
+msgstr "بازی جدید .."
 
 #: gui/title_dialog.c:202
 msgid "Load Game.."
@@ -302,14 +299,14 @@ msgid "Level: %i"
 msgstr "سطح: %i"
 
 #: gui/saveload_dialog.c:205
-#, c-format, fuzzy
+#, c-format
 msgid "Empty slot"
 msgstr "مکان خالی"
 
 #: gui/saveload_dialog.c:227
-#, c-format, fuzzy
+#, c-format
 msgid "Save slot: %i"
-msgstr "ذخیره مکان: %i"
+msgstr "ذخیره مکان:%i"
 
 #: gui/saveload_dialog.c:237
 msgid "Save Game"
@@ -320,7 +317,6 @@ msgid "Load Game"
 msgstr "بارگذاری بازی"
 
 #: gui/ui_sdlgl.c:301
-#, fuzzy
 msgid "Error: failed to set video mode; using defaults"
 msgstr "خطا: تنظیم حالت ویدیو انجام نشد. از پیش فرض استفاده میشود"
 
