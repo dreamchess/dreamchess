@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2020-06-29 15:41+0000\n"
-"Last-Translator: Szylu <chipolade@gmail.com>\n"
+"PO-Revision-Date: 2022-01-20 18:52+0000\n"
+"Last-Translator: Piotr <promantix@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.2-dev\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -173,7 +173,7 @@ msgstr "Anuluj"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr ""
+msgstr "Wyjść do ekranu tytułowego?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
