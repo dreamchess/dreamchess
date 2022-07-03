@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2019-09-02 13:57+0200\n"
-"PO-Revision-Date: 2022-02-01 17:56+0000\n"
-"Last-Translator: Calcitem <calcitem@outlook.com>\n"
+"PO-Revision-Date: 2022-07-04 14:20+0000\n"
+"Last-Translator: tmdakm <tmdakm@163.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "dreamchess/dreamchess/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -171,9 +171,8 @@ msgid "Cancel"
 msgstr "取消"
 
 #: dialogs/quit_dialog.c:52
-#, fuzzy
 msgid "Quit to Title?"
-msgstr "退出到标题？"
+msgstr "退出到主菜单？"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
