@@ -1,16 +1,10 @@
-# Disable our own FindSDL2.cmake for vcpkg
-if(VCPKG_TOOLCHAIN)
-    list(REMOVE_ITEM CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-endif()
+find_package(SDL2 CONFIG REQUIRED)
 
-find_package(SDL2 REQUIRED)
-
-if(VCPKG_TOOLCHAIN)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-endif()
-
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
+unset(CMAKE_FIND_PACKAGE_PREFER_CONFIG)
+
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(EXPAT REQUIRED)
@@ -84,8 +78,7 @@ if(MSVC)
     target_sources(dreamchess PRIVATE msvc/getopt.c msvc/getopt.h)
 endif()
 
-target_sources(dreamchess
-    PRIVATE
+target_sources(dreamchess PRIVATE
     audio/playlist.c
     audio/playlist.h
     audio/sdlmixer.c
@@ -95,8 +88,7 @@ target_sources(dreamchess
 source_group("Source Files\\audio" REGULAR_EXPRESSION /audio/.*.c$)
 source_group("Header Files\\audio" REGULAR_EXPRESSION /audio/.*.h$)
 
-target_sources(dreamchess
-    PRIVATE
+target_sources(dreamchess PRIVATE
     dialogs/configuration.c
     dialogs/ingame_dialog.c
     dialogs/message_dialog.c
@@ -111,8 +103,7 @@ target_sources(dreamchess
 source_group("Source Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.c$)
 source_group("Header Files\\dialogs" REGULAR_EXPRESSION /dialogs/.*.h$)
 
-target_sources(dreamchess
-    PRIVATE
+target_sources(dreamchess PRIVATE
     gamegui/action.c
     gamegui/align.c
     gamegui/bin.c
@@ -166,8 +157,7 @@ target_sources(dreamchess
 source_group("Source Files\\gamegui" REGULAR_EXPRESSION /gamegui/.*.c$)
 source_group("Header Files\\gamegui" REGULAR_EXPRESSION /include/gamegui/.*.h$)
 
-target_sources(dreamchess
-    PRIVATE
+target_sources(dreamchess PRIVATE
     gui/colours.c
     gui/credits.c
     gui/draw_scene.c
@@ -200,9 +190,7 @@ if(UNIX)
     target_compile_definitions(dreamchess PRIVATE -DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/dreamchess" -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 endif()
 
-target_include_directories(dreamchess
-    PRIVATE
-    ${SDL2_INCLUDE_DIR}
+target_include_directories(dreamchess PRIVATE
     ${SDL2_IMAGE_INCLUDE_DIR}
     ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
@@ -214,26 +202,24 @@ target_include_directories(dreamchess
     ${CMAKE_BINARY_DIR}
 )
 
-target_link_libraries(dreamchess
+target_link_libraries(dreamchess PRIVATE
     common
     GLEW::GLEW
+    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,$<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image-static>>
     ${SDL2_IMAGE_LIBRARY}
+    $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,$<TARGET_NAME_IF_EXISTS:SDL2_mixer::SDL2_mixer-static>>
     ${SDL2_MIXER_LIBRARY}
-    ${SDL2_LIBRARY}
+    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
     ${OPENGL_LIBRARY}
-    ${EXPAT_LIBRARY}
+    EXPAT::EXPAT
     ${Intl_LIBRARIES}
 )
 
-if(VCPKG_TOOLCHAIN)
-    target_link_libraries(dreamchess
-        SDL2::SDL2
-        SDL2::SDL2main
-    )
-endif()
-
 if(WIN32)
-    target_link_libraries(dreamchess shlwapi)
+    target_link_libraries(dreamchess PRIVATE shlwapi)
+elseif(APPLE)
+    target_link_libraries(dreamchess PRIVATE "-framework CoreFoundation")
 endif()
 
 if(MSVC)
@@ -255,7 +241,7 @@ if(WIN32)
 
     if(MSVC)
         install(CODE "
-            file(GLOB DLLS \"${CMAKE_CURRENT_BINARY_DIR}/\${CMAKE_INSTALL_CONFIG_NAME}/*.dll\")
+            file(GLOB DLLS \"$<TARGET_FILE_DIR:dreamchess>/*.dll\")
             file(INSTALL \${DLLS} DESTINATION \${CMAKE_INSTALL_PREFIX})
         ")
     endif()

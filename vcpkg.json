@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "sdl2",
+    "sdl2-image",
+    "sdl2-mixer",
+    "expat",
+    "glew",
+    "gettext"
+  ]
+}
