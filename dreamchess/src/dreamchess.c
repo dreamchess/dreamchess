@@ -471,6 +471,10 @@ int main(int argc, char **argv) {
 	printf("DreamChess %s\n", g_version);
 
 	parse_options(argc, argv, &ui, &cl_options);
+
+	// Switch to ISO-8859-1 for the GUI
+	bind_textdomain_codeset("dreamchess", "ISO-8859-1");
+
 	config_init();
 	set_cl_options(&cl_options);
 
