@@ -295,7 +295,7 @@ static config_t *do_menu(int *pgn) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	engine_error_shown = 0;
 	set_loading = FALSE;
-	draw_credits(1);
+	//draw_credits(1);
 	open_title_root_dialog();
 	if (mode_set_failed) {
 		gg_dialog_open(
@@ -335,7 +335,7 @@ static config_t *do_menu(int *pgn) {
 
 			if (!draw_fade(FADE_IN)) {
 				menu_state = MENU_STATE_IN_MENU;
-				draw_credits(1);
+				//draw_credits(1);
 			}
 			break;
 
@@ -356,8 +356,8 @@ static config_t *do_menu(int *pgn) {
 				gg_dialog_set_style(GG_DIALOG(widget), get_menu_style());
 				gg_dialog_open(GG_DIALOG(widget));
 				menu_state = MENU_STATE_LOAD;
-			} else
-				draw_credits(0);
+			} //else
+				//draw_credits(0);
 
 			gg_dialog_render_all();
 			break;
