@@ -216,7 +216,11 @@ macro(GettextTranslate)
 
   file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/LINGUAS LINGUAS 
       REGEX "^[^#].*")
-  string(REGEX MATCHALL "[^ ]+" languages ${LINGUAS})
+  set(languages "")
+  foreach(line IN LISTS LINGUAS)
+    string(REGEX MATCHALL "[^ ]+" appendlang ${line})
+    list(APPEND languages ${appendlang})
+  endforeach()
 
   foreach(lang ${languages})
     set(PO_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/${lang}.po")
