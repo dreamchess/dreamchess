@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2020-04-16 01:11+0000\n"
 "Last-Translator: Jeannette L <j.lavoie@net-c.ca>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,7 +35,7 @@ msgstr "Modèles 3D"
 msgid "Special Thanks To"
 msgstr "Remerciements"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Musique"
 
@@ -103,11 +103,11 @@ msgstr "Ordinateur vs Joueur"
 msgid "Human vs. Human"
 msgstr "Joueur vs Joueur"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Facile"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Normal"
 
@@ -140,7 +140,7 @@ msgid "Sound Volume:"
 msgstr "Volume du son :"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
+msgid "Change resolution…"
 msgstr "Modifier la résolution…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
@@ -166,7 +166,7 @@ msgid "View Next Move"
 msgstr "Voir le mouvement suivant"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -195,30 +195,30 @@ msgid "Multisampling:"
 msgstr "Multi-échantillonnage :"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
+msgid "Save game…"
 msgstr "Sauvegarder la partie…"
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
+msgid "Move Options…"
 msgstr "Options de déplacement…"
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
+msgid "Quit Game…"
 msgstr "Quitter la partie…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Serré !"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Échec et mat !"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Échec !"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Victoire !"
 
@@ -235,7 +235,7 @@ msgid "Level:"
 msgstr "Niveau :"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
+msgid "Time options…"
 msgstr "Options de temps…"
 
 #: gui/title_dialog.c:176
@@ -243,15 +243,15 @@ msgid "Start Game"
 msgstr "Démarrer la partie"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+msgid "New Game…"
 msgstr "Nouvelle partie…"
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
+msgid "Load Game…"
 msgstr "Charger la partie…"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
+msgid "Configuration…"
 msgstr "Configuration…"
 
 #: gui/title_dialog.c:210
@@ -270,60 +270,60 @@ msgstr "Sauvegarde réussie"
 msgid "Save failed"
 msgstr "Échec de la sauvegarde"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "Sauvegardé : %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "Ordinateur"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "Joueur"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s vs %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "Difficulté : %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "Niveau : %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "Emplacement vide"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "Emplacement de sauvegarde : %i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "Sauvegarder la partie"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "Charger la partie"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 "Erreur : Impossible de définir le mode vidéo, utilisation des paramètres par "
 "défaut"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
 msgstr "Chargement, veuillez patienter…"
 
 #: gui/victory_dialog.c:41
@@ -347,3 +347,6 @@ msgstr "%02i/%02i à %02i:%02i."
 #, c-format
 msgid "Unknown"
 msgstr "Inconnu"
+
+#~ msgid "Load Game.."
+#~ msgstr "Charger la partie…"

@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2021-07-02 14:33+0000\n"
 "Last-Translator: Eugenia Russell <eugenia.russell2019@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,7 +35,7 @@ msgstr "Τρισδιάστατη μοντελοποίηση"
 msgid "Special Thanks To"
 msgstr "Ιδιαίτερες ευχαριστίες προς"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Μουσική"
 
@@ -98,11 +98,11 @@ msgstr ""
 msgid "Human vs. Human"
 msgstr ""
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Εύκολο"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Κανονικό"
 
@@ -135,8 +135,8 @@ msgid "Sound Volume:"
 msgstr "Ενταση ήχου:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
-msgstr "Αλλαγή ανάλυσης.."
+msgid "Change resolution…"
+msgstr "Αλλαγή ανάλυσης…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -161,7 +161,7 @@ msgid "View Next Move"
 msgstr "Προβολή επόμενης κίνησης"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Ακύρωση"
 
@@ -190,30 +190,30 @@ msgid "Multisampling:"
 msgstr "Πολλαπλή δειγματοληψία:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
-msgstr "Αποθήκευση παιχνιδιού.."
+msgid "Save game…"
+msgstr "Αποθήκευση παιχνιδιού…"
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
-msgstr "Μετακίνηση επιλογών .."
+msgid "Move Options…"
+msgstr "Μετακίνηση επιλογών…"
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
-msgstr "Παραιτηθείτε από το παιχνίδι.."
+msgid "Quit Game…"
+msgstr "Παραιτηθείτε από το παιχνίδι…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Ισοπαλία!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Ρουά Ματ!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Ελέγξτε!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Νίκη!"
 
@@ -230,24 +230,24 @@ msgid "Level:"
 msgstr "Επίπεδο:"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
-msgstr "Επιλογές χρόνου.."
+msgid "Time options…"
+msgstr "Επιλογές χρόνου…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
 msgstr "Έναρξη παιχνιδιού"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
-msgstr "Νέο παιχνίδι.."
+msgid "New Game…"
+msgstr "Νέο παιχνίδι…"
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
-msgstr "Φορτώστε το παιχνίδι.."
+msgid "Load Game…"
+msgstr "Φορτώστε το παιχνίδι…"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
-msgstr "Διαμόρφωση.."
+msgid "Configuration…"
+msgstr "Διαμόρφωση…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -265,58 +265,58 @@ msgstr "Αποθήκευση με επιτυχία"
 msgid "Save failed"
 msgstr ""
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr ""
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr ""
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr ""
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr ""
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr ""
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
 msgstr ""
 
 #: gui/victory_dialog.c:41

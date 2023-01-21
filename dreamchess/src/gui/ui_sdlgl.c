@@ -351,7 +351,7 @@ static config_t *do_menu(int *pgn) {
 				return NULL;
 
 			if (set_loading) {
-				gg_widget_t *widget = gg_label_create(_("Loading, please wait..."));
+				gg_widget_t *widget = gg_label_create(_("Loading, please wait…"));
 				widget = gg_dialog_create(widget, NULL, NULL, 0);
 				gg_dialog_set_style(GG_DIALOG(widget), get_menu_style());
 				gg_dialog_open(GG_DIALOG(widget));

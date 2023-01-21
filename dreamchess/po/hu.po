@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2022-06-21 11:14+0000\n"
 "Last-Translator: Viktória Nagy <tindykmp@protonmail.ch>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,7 +35,7 @@ msgstr "3D-s Modellezés"
 msgid "Special Thanks To"
 msgstr "Külön köszönet"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Zene"
 
@@ -103,11 +103,11 @@ msgstr "CPU kontra Ember"
 msgid "Human vs. Human"
 msgstr "Ember kontra Ember"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Könnyű"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Normális"
 
@@ -140,8 +140,8 @@ msgid "Sound Volume:"
 msgstr "Hangerő:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
-msgstr "Változás felbontás.."
+msgid "Change resolution…"
+msgstr "Változás felbontás…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -166,7 +166,7 @@ msgid "View Next Move"
 msgstr "Következő lépés megtekintése"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Mégsem"
 
@@ -195,30 +195,30 @@ msgid "Multisampling:"
 msgstr "Több mintavétel:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
-msgstr "Játék mentése.."
+msgid "Save game…"
+msgstr "Játék mentése…"
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
-msgstr "Mozgási Lehetőségek..."
+msgid "Move Options…"
+msgstr "Mozgási Lehetőségek…"
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
-msgstr "Kilépés a Játékból..."
+msgid "Quit Game…"
+msgstr "Kilépés a Játékból…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Döntetlen!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Sakk-matt!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Sakk!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Győzelem!"
 
@@ -235,24 +235,24 @@ msgid "Level:"
 msgstr "Szint:"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
-msgstr "Időbeosztás..."
+msgid "Time options…"
+msgstr "Időbeosztás…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
 msgstr "Játék Kezdése"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
-msgstr "Új Játék..."
+msgid "New Game…"
+msgstr "Új Játék…"
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
-msgstr "Játék Betöltése..."
+msgid "Load Game…"
+msgstr "Játék Betöltése…"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
-msgstr "Konfiguráció..."
+msgid "Configuration…"
+msgstr "Konfiguráció…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -270,61 +270,61 @@ msgstr "Sikeres mentés"
 msgid "Save failed"
 msgstr "A mentés sikertelen"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "Mentve:%s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "CPU"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "Ember"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s kontra %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "Nehézség: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "Szint: %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "Üres hely"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "Hely mentése: %i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "Játék Mentése"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "Játék Betöltése"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 "Hiba: nem sikerült beállítani a videomódot; alapértelmezett beállítások "
 "használata"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
-msgstr "Betöltés, kérlek várj..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
+msgstr "Betöltés, kérlek várj…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
@@ -347,3 +347,6 @@ msgstr "%02i/%02i a %02i:%02i címen."
 #, c-format
 msgid "Unknown"
 msgstr "Ismeretlen"
+
+#~ msgid "Load Game.."
+#~ msgstr "Játék Betöltése..."

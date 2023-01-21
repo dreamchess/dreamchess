@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2019-11-04 22:04+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -35,7 +35,7 @@ msgstr "3D-modellering"
 msgid "Special Thanks To"
 msgstr "Spesiell takk rettes til"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Musikk"
 
@@ -105,11 +105,11 @@ msgstr "Maskin mot menneske"
 msgid "Human vs. Human"
 msgstr "Menneske mot menneske"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Lett"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Normalt"
 
@@ -144,8 +144,9 @@ msgid "Sound Volume:"
 msgstr "Lydstyrke:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
-msgstr "Endre oppløsning"
+#, fuzzy
+msgid "Change resolution…"
+msgstr "Endre oppløsning…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -172,7 +173,7 @@ msgid "View Next Move"
 msgstr "Vis neste trekk"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -205,32 +206,32 @@ msgstr "Multisampling:"
 
 #: dialogs/system_dialog.c:63
 #, fuzzy
-msgid "Save game.."
+msgid "Save game…"
 msgstr "Lagre spill…"
 
 #: dialogs/system_dialog.c:67
 #, fuzzy
-msgid "Move Options.."
+msgid "Move Options…"
 msgstr "Trekkalternativer…"
 
 #: dialogs/system_dialog.c:71
 #, fuzzy
-msgid "Quit Game.."
+msgid "Quit Game…"
 msgstr "Avslutt spill…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Uavgjort."
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Sjakk matt!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Sjakk!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Seier!"
 
@@ -248,7 +249,7 @@ msgstr "Nivå:"
 
 #: gui/title_dialog.c:171
 #, fuzzy
-msgid "Time options.."
+msgid "Time options…"
 msgstr "Tidsvalg…"
 
 #: gui/title_dialog.c:176
@@ -256,17 +257,18 @@ msgid "Start Game"
 msgstr "Start spill"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+#, fuzzy
+msgid "New Game…"
 msgstr "Nytt spill…"
 
 #: gui/title_dialog.c:202
 #, fuzzy
-msgid "Load Game.."
+msgid "Load Game…"
 msgstr "Last inn spill…"
 
 #: gui/title_dialog.c:206
 #, fuzzy
-msgid "Configuration.."
+msgid "Configuration…"
 msgstr "Oppsett…"
 
 #: gui/title_dialog.c:210
@@ -286,59 +288,60 @@ msgstr "Lagret"
 msgid "Save failed"
 msgstr "Lagring mislyktes"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "Lagret: %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "Datamaskin"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "Menneske"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s mot %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "Vanskelighetsgrad: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "Nivå: %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "Tom lagringsplass"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "Lagringsplass: %i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 #, fuzzy
 msgid "Save Game"
 msgstr "Lagre spillet"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "Last inn spill"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Feil: Klarte ikke å sette videomodus; bruker forvalg"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+#, fuzzy
+msgid "Loading, please wait…"
 msgstr "Laster inn, vent…"
 
 #: gui/victory_dialog.c:41
@@ -354,7 +357,7 @@ msgid "The game ended in a draw!"
 msgstr "Spillet endte uavgjort."
 
 #: gui/xmlsavefile.c:120
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "%02i/%02i at %02i:%02i."
 msgstr "%02i/%02i klokken %02i:%02i."
 
@@ -362,3 +365,7 @@ msgstr "%02i/%02i klokken %02i:%02i."
 #, c-format
 msgid "Unknown"
 msgstr "Ukjent"
+
+#, fuzzy
+#~ msgid "Load Game.."
+#~ msgstr "Last inn spill…"

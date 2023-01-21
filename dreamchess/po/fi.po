@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2020-11-17 18:29+0000\n"
 "Last-Translator: Tuomo Etelälahti <tuomo.etelalahti@meiliboxi.fi>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,7 +35,7 @@ msgstr "3D-mallinnus"
 msgid "Special Thanks To"
 msgstr "Erityiskiitokset"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Musiikki"
 
@@ -103,11 +103,11 @@ msgstr "Kone vs. Ihminen"
 msgid "Human vs. Human"
 msgstr "Ihminen vs. Ihminen"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Helppo"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Normaali"
 
@@ -140,8 +140,8 @@ msgid "Sound Volume:"
 msgstr "Äänenvoimakkuus:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
-msgstr "Muuta näytöntarkkuutta.."
+msgid "Change resolution…"
+msgstr "Muuta näytöntarkkuutta…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -166,7 +166,7 @@ msgid "View Next Move"
 msgstr "Näytä seuraava siirto"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -195,30 +195,30 @@ msgid "Multisampling:"
 msgstr "Näytönparannus:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
-msgstr "Tallenna peli.."
+msgid "Save game…"
+msgstr "Tallenna peli…"
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
-msgstr "Siirto Vaihtoehdot.."
+msgid "Move Options…"
+msgstr "Siirto Vaihtoehdot…"
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
-msgstr "Lopeta peli.."
+msgid "Quit Game…"
+msgstr "Lopeta peli…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Tasapeli!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Shakki ja matti!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Shakki!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Voitto!"
 
@@ -235,24 +235,24 @@ msgid "Level:"
 msgstr "Taso:"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
-msgstr "Aikavaihtoehdot.."
+msgid "Time options…"
+msgstr "Aikavaihtoehdot…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
 msgstr "Aloita peli"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
-msgstr "Uusi peli.."
+msgid "New Game…"
+msgstr "Uusi peli…"
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
-msgstr "Lataa peli.."
+msgid "Load Game…"
+msgstr "Lataa peli…"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
-msgstr "Asetukset.."
+msgid "Configuration…"
+msgstr "Asetukset…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -270,59 +270,59 @@ msgstr "Tallennus onnistui"
 msgid "Save failed"
 msgstr "Tallennus epäonnistui"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "Tallennettu: %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "Kone"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "Ihminen"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s vs %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "Vaikeustaso: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "Taso: %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "Tyhjä tila"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "Tallenna tila: %i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "Tallenna peli"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "Lataa peli"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Virhe: videotilan asetus epäonnistui; käytetään oletuksia"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
-msgstr "Lataa, ole hyvä ja odota..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
+msgstr "Lataa, ole hyvä ja odota…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
@@ -345,3 +345,6 @@ msgstr "%02i/%02i klo %02i:%02i."
 #, c-format
 msgid "Unknown"
 msgstr "Tuntematon"
+
+#~ msgid "Load Game.."
+#~ msgstr "Lataa peli.."

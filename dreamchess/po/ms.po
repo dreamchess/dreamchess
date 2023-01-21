@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2020-02-22 06:33+0000\n"
 "Last-Translator: zul <zulkiflih@gmail.com>\n"
 "Language-Team: Malay <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,12 +35,12 @@ msgstr "Model 3D"
 msgid "Special Thanks To"
 msgstr "Jutaan Terima Kasih kepada"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Muzik"
 
 #: dreamchess.c:409
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
 "\n"
@@ -103,11 +103,11 @@ msgstr ""
 msgid "Human vs. Human"
 msgstr ""
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr ""
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgid "Sound Volume:"
 msgstr ""
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
+msgid "Change resolution…"
 msgstr ""
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
@@ -166,7 +166,7 @@ msgid "View Next Move"
 msgstr ""
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr ""
 
@@ -195,30 +195,30 @@ msgid "Multisampling:"
 msgstr ""
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
+msgid "Save game…"
 msgstr ""
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
+msgid "Move Options…"
 msgstr ""
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
-msgstr ""
-
-#: gui/ingame_ui.c:100
-msgid "Tied!"
+msgid "Quit Game…"
 msgstr ""
 
 #: gui/ingame_ui.c:101
-msgid "Checkmate!"
+msgid "Tied!"
 msgstr ""
 
 #: gui/ingame_ui.c:102
-msgid "Check!"
+msgid "Checkmate!"
 msgstr ""
 
 #: gui/ingame_ui.c:103
+msgid "Check!"
+msgstr ""
+
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr ""
 
@@ -235,7 +235,7 @@ msgid "Level:"
 msgstr ""
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
+msgid "Time options…"
 msgstr ""
 
 #: gui/title_dialog.c:176
@@ -243,15 +243,15 @@ msgid "Start Game"
 msgstr ""
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+msgid "New Game…"
 msgstr ""
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
+msgid "Load Game…"
 msgstr ""
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
+msgid "Configuration…"
 msgstr ""
 
 #: gui/title_dialog.c:210
@@ -270,58 +270,58 @@ msgstr ""
 msgid "Save failed"
 msgstr ""
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr ""
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr ""
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr ""
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr ""
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr ""
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr ""
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
 msgstr ""
 
 #: gui/victory_dialog.c:41

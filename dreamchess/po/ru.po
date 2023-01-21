@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2021-11-12 15:52+0000\n"
 "Last-Translator: IllusiveMan196 <hamsterrv@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/dreamchess/"
@@ -36,7 +36,7 @@ msgstr "3D моделирование"
 msgid "Special Thanks To"
 msgstr "Отдельное спасибо"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "Музыка"
 
@@ -104,11 +104,11 @@ msgstr "Процессор против Человека"
 msgid "Human vs. Human"
 msgstr "Человек против Человека"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Легко"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Нормально"
 
@@ -141,7 +141,7 @@ msgid "Sound Volume:"
 msgstr "Громкость звука:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
+msgid "Change resolution…"
 msgstr "Изменить разрешение…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
@@ -167,7 +167,7 @@ msgid "View Next Move"
 msgstr "Посмотреть следующий ход"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -196,30 +196,30 @@ msgid "Multisampling:"
 msgstr "Мультисемплинг:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
+msgid "Save game…"
 msgstr "Сохранить игру…"
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
+msgid "Move Options…"
 msgstr "Настройки ходов…"
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
+msgid "Quit Game…"
 msgstr "Выйти из игры…"
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "Ничья!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "Мат!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "Шах!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "Победа!"
 
@@ -236,7 +236,7 @@ msgid "Level:"
 msgstr "Уровень:"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
+msgid "Time options…"
 msgstr "Настройки времени…"
 
 #: gui/title_dialog.c:176
@@ -244,15 +244,15 @@ msgid "Start Game"
 msgstr "Запустить игру"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+msgid "New Game…"
 msgstr "Новая игра…"
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
+msgid "Load Game…"
 msgstr "Загрузить игру…"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
+msgid "Configuration…"
 msgstr "Конфигурация…"
 
 #: gui/title_dialog.c:210
@@ -271,58 +271,58 @@ msgstr "Сохранено успешно"
 msgid "Save failed"
 msgstr "Сохранить не удалось"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "Сохранено: %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "Процессор"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "Человек"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s против %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "Сложность: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "Уровень: %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "Пустой слот"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "Сохранить слот: %i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "Сохранить игру"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "Загрузить игру"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Ошибка: не удалось установить видеорежим; используется по умолчанию"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+msgid "Loading, please wait…"
 msgstr "Загружается, пожалуйста подождите…"
 
 #: gui/victory_dialog.c:41
@@ -346,3 +346,6 @@ msgstr "%02i/%02i на %02i:%02i."
 #, c-format
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#~ msgid "Load Game.."
+#~ msgstr "Загрузить игру…"

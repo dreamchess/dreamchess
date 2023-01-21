@@ -256,7 +256,7 @@ macro(GettextTranslate)
         COMMAND ${GettextTranslate_MSGMERGE_EXECUTABLE} --lang=${lang}
           ${PO_FILE_NAME} ${TEMPLATE_FILE_ABS} 
           -o ${PO_FILE_NAME}.new
-        COMMAND mv ${PO_FILE_NAME}.new ${PO_FILE_NAME}
+        COMMAND ${CMAKE_COMMAND} -E rename ${PO_FILE_NAME}.new ${PO_FILE_NAME}
         DEPENDS ${TEMPLATE_FILE_ABS}
       )
 

@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2021-11-08 16:52+0000\n"
 "Last-Translator: Omer I.S. <omeritzicschwartz@gmail.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/dreamchess/"
@@ -36,7 +36,7 @@ msgstr "מידול תלת־ממד"
 msgid "Special Thanks To"
 msgstr ""
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "מוזיקה"
 
@@ -99,11 +99,11 @@ msgstr "המחשב נגד בן אדם"
 msgid "Human vs. Human"
 msgstr "בן אדם נגד בן אדם"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "קל"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "בינוני"
 
@@ -136,7 +136,8 @@ msgid "Sound Volume:"
 msgstr "עוצמת השמע:"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
+#, fuzzy
+msgid "Change resolution…"
 msgstr "שינוי רזולוציה.."
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
@@ -162,7 +163,7 @@ msgid "View Next Move"
 msgstr "הצגת המהלך הבא"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "ביטול"
 
@@ -191,30 +192,33 @@ msgid "Multisampling:"
 msgstr "דגימה מרובה:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
+#, fuzzy
+msgid "Save game…"
 msgstr "שמירת המשחק.."
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
+#, fuzzy
+msgid "Move Options…"
 msgstr "אפשרויות מהלכים.."
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
+#, fuzzy
+msgid "Quit Game…"
 msgstr "יציאה מהמשחק.."
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "תיקו!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "שחמט!"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "שח!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "ניצחון!"
 
@@ -231,7 +235,8 @@ msgid "Level:"
 msgstr ""
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
+#, fuzzy
+msgid "Time options…"
 msgstr "אפשרויות זמן.."
 
 #: gui/title_dialog.c:176
@@ -239,15 +244,18 @@ msgid "Start Game"
 msgstr "התחלת המשחק"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+#, fuzzy
+msgid "New Game…"
 msgstr "משחק חדש.."
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
-msgstr "טעינת משחק.."
+#, fuzzy
+msgid "Load Game…"
+msgstr "טעינת משחק"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
+#, fuzzy
+msgid "Configuration…"
 msgstr "הגדרה.."
 
 #: gui/title_dialog.c:210
@@ -266,58 +274,59 @@ msgstr "השמירה הצליחה"
 msgid "Save failed"
 msgstr "השמירה נכשלה"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "נשמר: %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "המחשב"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "בן אדם"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s נגד %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "רמת קושי: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr ""
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr ""
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "שמירת המשחק"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "טעינת משחק"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+#, fuzzy
+msgid "Loading, please wait…"
 msgstr "מתבצעת טעינה, נא להמתין..."
 
 #: gui/victory_dialog.c:41
@@ -341,3 +350,6 @@ msgstr ""
 #, c-format
 msgid "Unknown"
 msgstr "לא ידוע"
+
+#~ msgid "Load Game.."
+#~ msgstr "טעינת משחק.."

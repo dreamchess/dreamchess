@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2019-09-02 13:57+0200\n"
+"POT-Creation-Date: 2023-01-21 03:11+0100\n"
 "PO-Revision-Date: 2021-12-02 16:52+0000\n"
 "Last-Translator: Yasin Huwsf <yasinbakhtiar521@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
@@ -35,7 +35,7 @@ msgstr "حالت سه بعدی"
 msgid "Special Thanks To"
 msgstr "با تشکر از"
 
-#: credits.c:46
+#: credits.c:45
 msgid "Music"
 msgstr "موسیقی"
 
@@ -103,11 +103,11 @@ msgstr "کامپیوتر در مقابل انسان"
 msgid "Human vs. Human"
 msgstr "انسان در مقابل انسان"
 
-#: system_config.c:142 gui/saveload_dialog.c:149
+#: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "آسان"
 
-#: system_config.c:143 gui/saveload_dialog.c:149
+#: system_config.c:143 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "متوسط"
 
@@ -140,7 +140,8 @@ msgid "Sound Volume:"
 msgstr "میزان صدا :"
 
 #: dialogs/configuration.c:137
-msgid "Change resolution.."
+#, fuzzy
+msgid "Change resolution…"
 msgstr "تغییر وضوح نمایش .."
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
@@ -166,7 +167,7 @@ msgid "View Next Move"
 msgstr "نمایش حرکت بعدی"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
-#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:245
+#: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
 msgstr "لغو"
 
@@ -195,30 +196,33 @@ msgid "Multisampling:"
 msgstr "چند مرحله ای:"
 
 #: dialogs/system_dialog.c:63
-msgid "Save game.."
+#, fuzzy
+msgid "Save game…"
 msgstr "ذخیره بازی .."
 
 #: dialogs/system_dialog.c:67
-msgid "Move Options.."
+#, fuzzy
+msgid "Move Options…"
 msgstr "گزینه های حرکت .."
 
 #: dialogs/system_dialog.c:71
-msgid "Quit Game.."
+#, fuzzy
+msgid "Quit Game…"
 msgstr "خارج شدن از بازی .."
 
-#: gui/ingame_ui.c:100
+#: gui/ingame_ui.c:101
 msgid "Tied!"
 msgstr "گره خورده است!"
 
-#: gui/ingame_ui.c:101
+#: gui/ingame_ui.c:102
 msgid "Checkmate!"
 msgstr "کیش ومات !"
 
-#: gui/ingame_ui.c:102
+#: gui/ingame_ui.c:103
 msgid "Check!"
 msgstr "کیش!"
 
-#: gui/ingame_ui.c:103
+#: gui/ingame_ui.c:104
 msgid "Victory!"
 msgstr "پیروزی!"
 
@@ -235,7 +239,8 @@ msgid "Level:"
 msgstr "سطح:"
 
 #: gui/title_dialog.c:171
-msgid "Time options.."
+#, fuzzy
+msgid "Time options…"
 msgstr "گزینه های زمان .."
 
 #: gui/title_dialog.c:176
@@ -243,15 +248,18 @@ msgid "Start Game"
 msgstr "شروع بازی"
 
 #: gui/title_dialog.c:198
-msgid "New Game.."
+#, fuzzy
+msgid "New Game…"
 msgstr "بازی جدید .."
 
 #: gui/title_dialog.c:202
-msgid "Load Game.."
-msgstr "بارگزاری بازی.."
+#, fuzzy
+msgid "Load Game…"
+msgstr "بارگذاری بازی"
 
 #: gui/title_dialog.c:206
-msgid "Configuration.."
+#, fuzzy
+msgid "Configuration…"
 msgstr "پیکربندی.."
 
 #: gui/title_dialog.c:210
@@ -270,58 +278,59 @@ msgstr "با موفقیت ذخیره شد"
 msgid "Save failed"
 msgstr "ذخیره نشد"
 
-#: gui/saveload_dialog.c:114
+#: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
 msgstr "ذخیره شده: %s"
 
-#: gui/saveload_dialog.c:120 gui/saveload_dialog.c:133
+#: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
 msgstr "CPU"
 
-#: gui/saveload_dialog.c:123 gui/saveload_dialog.c:136
+#: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
 msgstr "انسان"
 
-#: gui/saveload_dialog.c:144
+#: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
 msgstr "%s درمقابل %s"
 
-#: gui/saveload_dialog.c:148
+#: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
 msgstr "دشواری: %s"
 
-#: gui/saveload_dialog.c:153
+#: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
 msgstr "سطح: %i"
 
-#: gui/saveload_dialog.c:205
+#: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
 msgstr "مکان خالی"
 
-#: gui/saveload_dialog.c:227
+#: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
 msgstr "ذخیره مکان:%i"
 
-#: gui/saveload_dialog.c:237
+#: gui/saveload_dialog.c:244
 msgid "Save Game"
 msgstr "ذخیره بازی"
 
-#: gui/saveload_dialog.c:240
+#: gui/saveload_dialog.c:247
 msgid "Load Game"
 msgstr "بارگذاری بازی"
 
-#: gui/ui_sdlgl.c:301
+#: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
 msgstr "خطا: تنظیم حالت ویدیو انجام نشد. از پیش فرض استفاده میشود"
 
-#: gui/ui_sdlgl.c:355
-msgid "Loading, please wait..."
+#: gui/ui_sdlgl.c:354
+#, fuzzy
+msgid "Loading, please wait…"
 msgstr "در حال بارگذاری لطفا منتظر بمانید..."
 
 #: gui/victory_dialog.c:41
@@ -345,3 +354,6 @@ msgstr "%02i/%02i در %02i:%02i."
 #, c-format
 msgid "Unknown"
 msgstr "ناشناخته"
+
+#~ msgid "Load Game.."
+#~ msgstr "بارگزاری بازی.."
