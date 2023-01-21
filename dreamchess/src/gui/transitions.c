@@ -70,10 +70,10 @@ int draw_sonic_fade(int inout) {
 		else if (amount >= 0.7f)
 			amount = 1.0f;
 
-		gg_system_draw_filled_rect(0, 480 - (480 * amount), 640, 480, &col_blue);
-		gg_system_draw_filled_rect(640 - (640 * amount), 0, 640, (480 / 3), &col_yellow);
+		gg_system_draw_filled_rect(0, 480 - (480 * amount), get_screen_width(), 480, &col_blue);
+		gg_system_draw_filled_rect(get_screen_width() - (get_screen_width() * amount), 0, get_screen_width(), (480 / 3), &col_yellow);
 
-		unicode_string_render("DreamChess the chess game", 640 - (640 * amount) + 280, (480 / 3) - 30, 0.0f, 1.2f, 0, col_white);
+		unicode_string_render("DreamChess the chess game", get_screen_width() - (get_screen_width() * amount) + 280, (480 / 3) - 30, 0.0f, 1.2f, 0, col_white);
 
 		gg_system_draw_filled_rect(0, 0, (((640 / 3) + (480 / 14)) * amount) - (480 / 14), 480, &col_red);
 
