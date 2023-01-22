@@ -18,8 +18,10 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <locale.h>
+#include <libintl.h>
+
 #include "dir.h"
-#include "i18n.h"
 #include "debug.h"
 
 static void init_locale(const char *dirname) {

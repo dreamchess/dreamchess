@@ -20,6 +20,7 @@
 
 #include <GL/glew.h>
 #include <string.h>
+#include <locale.h>
 #include <libintl.h>
 
 #include "debug.h"
