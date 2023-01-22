@@ -741,6 +741,7 @@ texture_font_load_glyph_gi( texture_font_t * self,
     if(!glyph_index) {
         texture_glyph_t * glyph;
         if ((glyph = texture_font_find_glyph(self, "\0"))) {
+            glyph = texture_glyph_clone(glyph);
             texture_font_index_glyph( self, glyph, ucodepoint );
             texture_font_close( self, MODE_AUTO_CLOSE, MODE_AUTO_CLOSE );
             return 1;
