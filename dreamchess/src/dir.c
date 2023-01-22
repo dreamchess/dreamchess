@@ -22,6 +22,13 @@
 #include "i18n.h"
 #include "debug.h"
 
+static void init_locale(const char *dirname) {
+	setlocale(LC_MESSAGES, "");
+	setlocale(LC_CTYPE, "");
+	bindtextdomain("dreamchess", dirname);
+	textdomain("dreamchess");
+}
+
 #ifdef _WIN32
 
 #define USERDIR "DreamChess"
@@ -68,8 +75,7 @@ void init_i18n(void) {
 	TCHAR localedir[MAX_PATH];
 	get_module_dir(localedir, MAX_PATH);
 	StringCbCatA(localedir, MAX_PATH, "\\locale");
-	bindtextdomain("dreamchess", localedir);
-	textdomain("dreamchess");
+	init_locale(localedir);
 }
 
 #elif defined __APPLE__
@@ -132,12 +138,8 @@ void init_i18n(void) {
 		return;
 
 	char path[PATH_MAX];
-	if (CFURLGetFileSystemRepresentation(localeURL, TRUE, (UInt8 *)path, PATH_MAX)) {
-		setlocale(LC_MESSAGES, "");
-		setlocale(LC_CTYPE, "");
-		bindtextdomain("dreamchess", path);
-		textdomain("dreamchess");
-	}
+	if (CFURLGetFileSystemRepresentation(localeURL, TRUE, (UInt8 *)path, PATH_MAX))
+		init_locale(path);
 
 	CFRelease(localeURL);
 }
@@ -176,10 +178,7 @@ int ch_userdir(void) {
 }
 
 void init_i18n(void) {
-	setlocale(LC_MESSAGES, "");
-	setlocale(LC_CTYPE, "");
-	bindtextdomain("dreamchess", LOCALEDIR);
-	textdomain("dreamchess");
+	init_locale(LOCALDIR);
 }
 
 #endif

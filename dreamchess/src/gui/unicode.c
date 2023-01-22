@@ -20,6 +20,7 @@
 
 #include <GL/glew.h>
 #include <string.h>
+#include <libintl.h>
 
 #include "debug.h"
 #include "ui_sdlgl.h"
@@ -51,13 +52,20 @@ texture_font_t *load_font(const char *filename, texture_atlas_t *atlas, float pt
 	free(font_path);
 
 	if (!font)
-		DBG_ERROR("Failed to load font file '%s", filename);
+		DBG_ERROR("Failed to load font file '%s'", filename);
 
 	return font;
 }
 
 static int load_fonts(float pt_size) {
-	font = load_font("fonts/NotoSans-Regular.ttf", atlas, pt_size);
+	const char *language = setlocale(LC_MESSAGES, NULL);
+	const char *filename = "fonts/NotoSans-Regular.ttf";
+
+	if (language)
+		if (!strncmp(language, "zh_CN", 5))
+			filename = "fonts/NotoSansSC-Regular.otf";
+
+	font = load_font(filename, atlas, pt_size);
 	symbol_font = load_font("fonts/NotoSansSymbols2-Regular.ttf", atlas, pt_size);
 
 	if (!font || !symbol_font)
