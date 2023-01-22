@@ -178,7 +178,7 @@ int ch_userdir(void) {
 }
 
 void init_i18n(void) {
-	init_locale(LOCALDIR);
+	init_locale(LOCALEDIR);
 }
 
 #endif
