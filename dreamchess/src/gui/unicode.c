@@ -76,7 +76,7 @@ static int load_fonts(float pt_size) {
 }
 
 int unicode_init(float pt_size) {
-	atlas  = texture_atlas_new(1024, 1024, 1);
+	atlas  = texture_atlas_new(2048, 2048, 1);
 
 	glGenTextures(1, &atlas->id);
 	glBindTexture(GL_TEXTURE_2D, atlas->id);
