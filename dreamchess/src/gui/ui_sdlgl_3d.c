@@ -156,21 +156,22 @@ static float piece_moving_dest_ypos;
 static float piece_moving_xpos;
 static float piece_moving_ypos;
 
-void init_fbo(void) {
-	const int width = 1920;
-	const int height = 1080;
-
+void init_colourpicking_fbo(int width, int height) {
 	glGenTextures(1, &colourpicking_tex);
+	glGenFramebuffers(1, &fb);
+	glGenRenderbuffers(1, &depth_rb);
+
+	resize_colourpicking_fbo(width, height);
+}
+
+void resize_colourpicking_fbo(int width, int height) {
 	glBindTexture(GL_TEXTURE_2D, colourpicking_tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 
-	glGenFramebuffers(1, &fb);
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourpicking_tex, 0);
-
-	glGenRenderbuffers(1, &depth_rb);
 	glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
@@ -183,7 +184,7 @@ void init_fbo(void) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void deinit_fbo(void) {
+void deinit_colourpicking_fbo(void) {
 	glDeleteTextures(1, &colourpicking_tex);
 	glDeleteRenderbuffers(1, &depth_rb);
 	glDeleteFramebuffers(1, &fb);

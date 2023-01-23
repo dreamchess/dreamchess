@@ -469,6 +469,8 @@ static int resize(int width, int height, int fullscreen, int ms) {
 	screen_ms = ms;
 	resize_window(screen_width, screen_height);
 
+	resize_colourpicking_fbo(screen_width, screen_height);
+
 	if (unicode_resize(font_size * get_screen_height() / get_gl_height())) {
 		DBG_ERROR("Failed to resize font system");
 		exit(1);
@@ -531,8 +533,6 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	}
 
 	glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
-	init_fbo();
-
 	if (ms > max_samples) {
 		SDL_DestroyWindow(sdl_window);
 		mode_set_failed = 1;
@@ -542,6 +542,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	init_screen_fbo(width, height, ms);
 	init_gl();
 	resize_window(width, height);
+	init_colourpicking_fbo(width, height);
 
 	if (unicode_init(font_size * height / get_gl_height())) {
 		DBG_ERROR("Failed to initialize font system");
@@ -635,7 +636,7 @@ static int sdlgl_exit(void) {
 
 	gg_system_exit();
 	free_menu_tex();
-	deinit_fbo();
+	deinit_colourpicking_fbo();
 
 	unicode_exit();
 

@@ -40,8 +40,9 @@ void select_piece(int square);
 void reset_3d(int flip);
 void loadmodels(char *filename);
 void load_board(char *dcm_name, char *texture_name);
-void init_fbo(void);
-void deinit_fbo(void);
+void init_colourpicking_fbo(int width, int height);
+void resize_colourpicking_fbo(int width, int height);
+void deinit_colourpicking_fbo(void);
 int find_square(int x, int y);
 void freemodels(void);
 
