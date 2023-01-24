@@ -76,6 +76,7 @@ static int convert_piece(int san_piece) {
 
 	/* We should never get here */
 	assert(0);
+	return 0;
 }
 
 static int san_piece(int piece) {
@@ -96,6 +97,7 @@ static int san_piece(int piece) {
 
 	/* We should never get here */
 	assert(0);
+	return 0;
 }
 
 static move_t get_san_move(board_t *board, int ply, san_move_t *san) {
