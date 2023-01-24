@@ -506,7 +506,7 @@ int main(int argc, char **argv) {
 		char temp1[200];
 		char temp2[200];
 
-		if (!strcmp(option->string, "dreamer") || !strcmp(option->string, "Dreamer")) {
+		if (!strcmp(option->string, "dreamer")) {
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
 
 			CFURLRef bundledir = CFBundleCopyBundleURL(mainBundle);
@@ -528,9 +528,15 @@ int main(int argc, char **argv) {
 		comm_send("random\n");
 
 		comm_send("sd %i\n", config->cpu_level);
-		comm_send("depth %i\n", config->cpu_level);
 
-		if (config->difficulty == 0)
+		// If we appear to be talking to gnuchess, send the "depth" command,
+		// since "sd" is not supported.
+		if (strstr(option->string, "gnuchess"))
+			comm_send("depth %i\n", config->cpu_level);
+
+		// On easy mode, send the "noquiesce" command to dreamer. This does not
+		// work on other engines.
+		if (!strcmp(option->string, "dreamer") && config->difficulty == 0)
 			comm_send("noquiesce\n");
 
 		if (config->player[WHITE] == PLAYER_UI && config->player[BLACK] == PLAYER_UI)
