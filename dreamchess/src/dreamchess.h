@@ -34,6 +34,7 @@ typedef struct config {
 
 int dreamchess(void *arg);
 
+board_t *game_get_board(void);
 void game_view_next(void);
 void game_view_prev(void);
 void game_undo(void);

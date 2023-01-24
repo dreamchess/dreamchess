@@ -115,6 +115,10 @@ static void move_list_view_prev(move_list_t *list) {
 		list->view--;
 }
 
+board_t *game_get_board(void) {
+	return history->last->board;
+}
+
 void game_view_next(void) {
 	history_view_next(history);
 	move_list_view_next(&fullalg_list);

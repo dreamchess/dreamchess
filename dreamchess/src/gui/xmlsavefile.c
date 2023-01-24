@@ -87,7 +87,7 @@ int write_save_xml(int slot) {
 	fprintf(fp, "<level>%i</level>\n", get_config()->cpu_level);
 	fprintf(fp, "<difficulty>%i</difficulty>\n", get_config()->difficulty);
 
-	fen = fen_encode(get_board());
+	fen = fen_encode(game_get_board());
 	if (!fen) {
 		DBG_ERROR("Error encoding FEN");
 		retval = -1;
