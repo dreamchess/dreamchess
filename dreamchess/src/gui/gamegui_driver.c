@@ -74,7 +74,10 @@ gg_event_t convert_event(SDL_Event *event) {
 			gg_event.key = GG_KEY_ESCAPE;
 			break;
 		default:
-			gg_event.type = GG_EVENT_NONE;
+			if (event->key.keysym.sym >= 0x20 && event->key.keysym.sym < 0x80)
+				gg_event.key = event->key.keysym.sym;
+			else
+				gg_event.type = GG_EVENT_NONE;
 			return gg_event;
 		}
 		break;
