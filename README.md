@@ -43,6 +43,16 @@ Additionally, there are several keyboard shortcuts you may like to use:
 | Alt+Enter / F11 | Toggle fullscreen mode                 |
 | Ctrl+F          | Toggle FPS counter (title screen only) |
 
+## Locating the saved games and config file
+
+DreamChess uses these folders to store the saved games and config file:
+
+| OS      | Folder                                   |
+| ------- | ---------------------------------------- |
+| Linux   | ~/.dreamchess                            |
+| macOS   | ~/Library/Application Support/DreamChess |
+| Windows | %APPDATA%\DreamChess                     |
+
 ## Acknowledgments
 
 Special thanks go out to the following people:
