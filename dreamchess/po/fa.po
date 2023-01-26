@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-21 03:11+0100\n"
+"POT-Creation-Date: 2023-01-26 22:03+0100\n"
 "PO-Revision-Date: 2021-12-02 16:52+0000\n"
 "Last-Translator: Yasin Huwsf <yasinbakhtiar521@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
@@ -39,7 +39,7 @@ msgstr "با تشکر از"
 msgid "Music"
 msgstr "موسیقی"
 
-#: dreamchess.c:409
+#: dreamchess.c:413
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,60 +54,61 @@ msgstr ""
 "\n"
 "گزینه ها:\n"
 
-#: dreamchess.c:412
+#: dreamchess.c:416
 msgid "show help"
 msgstr "نمایش کمک"
 
-#: dreamchess.c:413
+#: dreamchess.c:417
 msgid "run fullscreen"
 msgstr "اجرا به صورت تمام صفحه"
 
-#: dreamchess.c:414
+#: dreamchess.c:418
 msgid "set screen width"
 msgstr "تنظیم عرض صفحه"
 
-#: dreamchess.c:415
+#: dreamchess.c:419
 msgid "set screen height"
 msgstr "تنظیم ارتفاع صفحه"
 
-#: dreamchess.c:416
+#: dreamchess.c:420
 msgid "use <eng> as first chess engine"
 msgstr "از <eng> به عنوان اولین موتور شطرنج استفاده کنید"
 
-#: dreamchess.c:417
+#: dreamchess.c:421
 msgid "  defaults to 'dreamer'"
 msgstr "  به صورت پیش فرض به 'dreamer'"
 
-#: system_config.c:57 system_config.c:67 system_config.c:118
-#: system_config.c:127 system_config.c:162 system_config.c:170
+#: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
+#: system_config.c:123 system_config.c:132 system_config.c:167
+#: system_config.c:175
 msgid "Off"
 msgstr "خاموش"
 
-#: system_config.c:115
-msgid "Custom"
-msgstr "سفارشی"
-
-#: system_config.c:119
+#: system_config.c:58 system_config.c:124
 msgid "On"
 msgstr "روشن"
 
-#: system_config.c:137
+#: system_config.c:120
+msgid "Custom"
+msgstr "سفارشی"
+
+#: system_config.c:142
 msgid "Human vs. CPU"
 msgstr "انسانی در مقابل کامپیوتر"
 
-#: system_config.c:138
+#: system_config.c:143
 msgid "CPU vs. Human"
 msgstr "کامپیوتر در مقابل انسان"
 
-#: system_config.c:139
+#: system_config.c:144
 msgid "Human vs. Human"
 msgstr "انسان در مقابل انسان"
 
-#: system_config.c:142 gui/saveload_dialog.c:151
+#: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "آسان"
 
-#: system_config.c:143 gui/saveload_dialog.c:151
+#: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "متوسط"
 
@@ -123,28 +124,32 @@ msgstr "آهنگ ناشناخته"
 msgid "Unknown artist"
 msgstr "هنرمند ناشناس"
 
-#: dialogs/configuration.c:91
+#: dialogs/configuration.c:97
 msgid "Theme:"
 msgstr "تم:"
 
-#: dialogs/configuration.c:95
+#: dialogs/configuration.c:101
+msgid "Show Coordinates:"
+msgstr ""
+
+#: dialogs/configuration.c:105
 msgid "Engine:"
 msgstr "موتور:"
 
-#: dialogs/configuration.c:99
+#: dialogs/configuration.c:109
 msgid "Music Volume:"
 msgstr "صدای آهنگ :"
 
-#: dialogs/configuration.c:103
+#: dialogs/configuration.c:113
 msgid "Sound Volume:"
 msgstr "میزان صدا :"
 
-#: dialogs/configuration.c:137
+#: dialogs/configuration.c:153
 #, fuzzy
 msgid "Change resolution…"
 msgstr "تغییر وضوح نمایش .."
 
-#: dialogs/configuration.c:141 dialogs/message_dialog.c:38
+#: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
@@ -324,11 +329,11 @@ msgstr "ذخیره بازی"
 msgid "Load Game"
 msgstr "بارگذاری بازی"
 
-#: gui/ui_sdlgl.c:302
+#: gui/ui_sdlgl.c:312
 msgid "Error: failed to set video mode; using defaults"
 msgstr "خطا: تنظیم حالت ویدیو انجام نشد. از پیش فرض استفاده میشود"
 
-#: gui/ui_sdlgl.c:354
+#: gui/ui_sdlgl.c:364
 #, fuzzy
 msgid "Loading, please wait…"
 msgstr "در حال بارگذاری لطفا منتظر بمانید..."

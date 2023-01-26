@@ -7,12 +7,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-21 03:11+0100\n"
+"POT-Creation-Date: 2023-01-26 22:03+0100\n"
 "PO-Revision-Date: 2022-07-04 14:20+0000\n"
 "Last-Translator: tmdakm <tmdakm@163.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "dreamchess/dreamchess/zh_Hans/>\n"
-"Language: zh_Hans\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,7 +39,7 @@ msgstr "特别鸣谢"
 msgid "Music"
 msgstr "音乐"
 
-#: dreamchess.c:409
+#: dreamchess.c:413
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,60 +54,61 @@ msgstr ""
 "\n"
 "选项：\n"
 
-#: dreamchess.c:412
+#: dreamchess.c:416
 msgid "show help"
 msgstr "显示帮助"
 
-#: dreamchess.c:413
+#: dreamchess.c:417
 msgid "run fullscreen"
 msgstr "全屏运行"
 
-#: dreamchess.c:414
+#: dreamchess.c:418
 msgid "set screen width"
 msgstr "设置屏幕宽度"
 
-#: dreamchess.c:415
+#: dreamchess.c:419
 msgid "set screen height"
 msgstr "设置屏幕高度"
 
-#: dreamchess.c:416
+#: dreamchess.c:420
 msgid "use <eng> as first chess engine"
 msgstr "使用 <eng> 作为第一个国际象棋引擎"
 
-#: dreamchess.c:417
+#: dreamchess.c:421
 msgid "  defaults to 'dreamer'"
 msgstr "  默认为 'dreamer'"
 
-#: system_config.c:57 system_config.c:67 system_config.c:118
-#: system_config.c:127 system_config.c:162 system_config.c:170
+#: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
+#: system_config.c:123 system_config.c:132 system_config.c:167
+#: system_config.c:175
 msgid "Off"
 msgstr "关闭"
 
-#: system_config.c:115
-msgid "Custom"
-msgstr "定制"
-
-#: system_config.c:119
+#: system_config.c:58 system_config.c:124
 msgid "On"
 msgstr "开启"
 
-#: system_config.c:137
+#: system_config.c:120
+msgid "Custom"
+msgstr "定制"
+
+#: system_config.c:142
 msgid "Human vs. CPU"
 msgstr "先手对战机器"
 
-#: system_config.c:138
+#: system_config.c:143
 msgid "CPU vs. Human"
 msgstr "后手对战机器"
 
-#: system_config.c:139
+#: system_config.c:144
 msgid "Human vs. Human"
 msgstr "双人对战"
 
-#: system_config.c:142 gui/saveload_dialog.c:151
+#: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "简单"
 
-#: system_config.c:143 gui/saveload_dialog.c:151
+#: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "中等"
 
@@ -123,28 +124,32 @@ msgstr "未知专辑"
 msgid "Unknown artist"
 msgstr "未知艺术家"
 
-#: dialogs/configuration.c:91
+#: dialogs/configuration.c:97
 msgid "Theme:"
 msgstr "主题："
 
-#: dialogs/configuration.c:95
+#: dialogs/configuration.c:101
+msgid "Show Coordinates:"
+msgstr ""
+
+#: dialogs/configuration.c:105
 msgid "Engine:"
 msgstr "引擎："
 
-#: dialogs/configuration.c:99
+#: dialogs/configuration.c:109
 msgid "Music Volume:"
 msgstr "音乐音量："
 
-#: dialogs/configuration.c:103
+#: dialogs/configuration.c:113
 msgid "Sound Volume:"
 msgstr "声音音量："
 
-#: dialogs/configuration.c:137
+#: dialogs/configuration.c:153
 #, fuzzy
 msgid "Change resolution…"
 msgstr "更改分辨率…"
 
-#: dialogs/configuration.c:141 dialogs/message_dialog.c:38
+#: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
@@ -325,11 +330,11 @@ msgstr "保存游戏"
 msgid "Load Game"
 msgstr "加载游戏"
 
-#: gui/ui_sdlgl.c:302
+#: gui/ui_sdlgl.c:312
 msgid "Error: failed to set video mode; using defaults"
 msgstr "错误：无法设置视频模式;使用默认值"
 
-#: gui/ui_sdlgl.c:354
+#: gui/ui_sdlgl.c:364
 #, fuzzy
 msgid "Loading, please wait…"
 msgstr "正在加载，请稍候…"

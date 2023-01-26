@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-21 03:11+0100\n"
+"POT-Creation-Date: 2023-01-26 22:03+0100\n"
 "PO-Revision-Date: 2022-01-15 15:53+0000\n"
 "Last-Translator: Issa1553 <fairfull.playing@gmail.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/dreamchess/"
@@ -40,7 +40,7 @@ msgstr "Posebna Zahvalnost Za"
 msgid "Music"
 msgstr "Muzika"
 
-#: dreamchess.c:409
+#: dreamchess.c:413
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -55,60 +55,61 @@ msgstr ""
 "\n"
 "Opcije:\n"
 
-#: dreamchess.c:412
+#: dreamchess.c:416
 msgid "show help"
 msgstr "pokazati pomoć"
 
-#: dreamchess.c:413
+#: dreamchess.c:417
 msgid "run fullscreen"
 msgstr "pokreni celi ekran"
 
-#: dreamchess.c:414
+#: dreamchess.c:418
 msgid "set screen width"
 msgstr "podesi širinu ekrana"
 
-#: dreamchess.c:415
+#: dreamchess.c:419
 msgid "set screen height"
 msgstr "podesi visinu ekrana"
 
-#: dreamchess.c:416
+#: dreamchess.c:420
 msgid "use <eng> as first chess engine"
 msgstr "koristi <eng> kao prvu šahovsku mašinu"
 
-#: dreamchess.c:417
+#: dreamchess.c:421
 msgid "  defaults to 'dreamer'"
 msgstr "  podrazumeva na 'dreamer'"
 
-#: system_config.c:57 system_config.c:67 system_config.c:118
-#: system_config.c:127 system_config.c:162 system_config.c:170
+#: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
+#: system_config.c:123 system_config.c:132 system_config.c:167
+#: system_config.c:175
 msgid "Off"
 msgstr "Ugašeno"
 
-#: system_config.c:115
-msgid "Custom"
-msgstr "Uobičajeno"
-
-#: system_config.c:119
+#: system_config.c:58 system_config.c:124
 msgid "On"
 msgstr "Upaljeno"
 
-#: system_config.c:137
+#: system_config.c:120
+msgid "Custom"
+msgstr "Uobičajeno"
+
+#: system_config.c:142
 msgid "Human vs. CPU"
 msgstr "Čovek protiv Računara"
 
-#: system_config.c:138
+#: system_config.c:143
 msgid "CPU vs. Human"
 msgstr "Računar protiv Čoveka"
 
-#: system_config.c:139
+#: system_config.c:144
 msgid "Human vs. Human"
 msgstr "Čovek protiv Čoveka"
 
-#: system_config.c:142 gui/saveload_dialog.c:151
+#: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
 msgstr "Lako"
 
-#: system_config.c:143 gui/saveload_dialog.c:151
+#: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
 msgstr "Normalno"
 
@@ -124,27 +125,31 @@ msgstr "Nepoznati album"
 msgid "Unknown artist"
 msgstr "Nepoznati umetnik"
 
-#: dialogs/configuration.c:91
+#: dialogs/configuration.c:97
 msgid "Theme:"
 msgstr "Tema:"
 
-#: dialogs/configuration.c:95
+#: dialogs/configuration.c:101
+msgid "Show Coordinates:"
+msgstr ""
+
+#: dialogs/configuration.c:105
 msgid "Engine:"
 msgstr "Mašina:"
 
-#: dialogs/configuration.c:99
+#: dialogs/configuration.c:109
 msgid "Music Volume:"
 msgstr "Jačina Muzike:"
 
-#: dialogs/configuration.c:103
+#: dialogs/configuration.c:113
 msgid "Sound Volume:"
 msgstr "Jačina Zvuka:"
 
-#: dialogs/configuration.c:137
+#: dialogs/configuration.c:153
 msgid "Change resolution…"
 msgstr "Promena rezolucije…"
 
-#: dialogs/configuration.c:141 dialogs/message_dialog.c:38
+#: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
@@ -317,12 +322,12 @@ msgstr "Sačuvaj Igru"
 msgid "Load Game"
 msgstr "Učitaj Igru"
 
-#: gui/ui_sdlgl.c:302
+#: gui/ui_sdlgl.c:312
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 "Greška: nije uspelo podešavanje video režima; korištenje zadanih postavkih"
 
-#: gui/ui_sdlgl.c:354
+#: gui/ui_sdlgl.c:364
 msgid "Loading, please wait…"
 msgstr "Učitavanje, sačekajte…"
 
