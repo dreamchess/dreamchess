@@ -135,7 +135,7 @@ static inline float in_product(float x, float y, float z, float xx, float yy, fl
 
 static model_t model[13];
 static model_t board;
-static model_t lettering;
+static model_t coordinates;
 
 static int is_2d;
 
@@ -643,10 +643,10 @@ void loadmodels(char *filename) {
 void load_board(char *dcm_name, char *texture_name) {
 	board.mesh = load_mesh(dcm_name);
 	board.texture = load_piece_texture(texture_name);
-	lettering.mesh = load_mesh(dcm_name);
-	lettering.texture = load_piece_texture("lettering.png");
+	coordinates.mesh = load_mesh(dcm_name);
+	coordinates.texture = load_piece_texture("coords.png");
 	model_make_list(&board);
-	model_make_list(&lettering);
+	model_make_list(&coordinates);
 }
 
 static void free_mesh(void *data) {
@@ -811,9 +811,9 @@ static void draw_board(int blend) {
 	model_render(&board, 0, 1.0f);
 }
 
-static void draw_lettering(int blend) {
+static void draw_coordinates(int blend) {
 	setup_view();
-	model_render(&lettering, 0, 1.0f);
+	model_render(&coordinates, 0, 1.0f);
 }
 
 static void draw_selector(float alpha) {
@@ -991,8 +991,8 @@ void render_scene_3d(board_t *board, GLuint target_fb, int reflections) {
 		glCullFace(GL_BACK);
 		draw_board_center(1.0f, 1.0f, 1.0f, 0.8f);
 		draw_board(0);
-		if(get_is_lettering())
-			draw_lettering(0);
+		if(get_is_coordinates())
+			draw_coordinates(0);
 		draw_pieces(board, 0);
 
 	} else {
@@ -1000,8 +1000,8 @@ void render_scene_3d(board_t *board, GLuint target_fb, int reflections) {
 		glTranslatef(5.0f, 5.0, 5.0f);
 		draw_board_center(0.75f, 0.75f, 0.75f, 1.0f);
 		draw_board(0);
-		if(get_is_lettering())
-			draw_lettering(0);
+		if(get_is_coordinates())
+			draw_coordinates(0);
 		draw_pieces(board, 0);
 		glPopMatrix();
 	}

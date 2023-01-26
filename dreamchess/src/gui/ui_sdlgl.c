@@ -120,14 +120,14 @@ board_t *get_board(void) {
 	return &board;
 }
 
-void set_is_lettering(int lettering) {
-	option_t* option_lettering = config_get_option("lettering");
-	option_lettering->selected->index = lettering;
+void set_is_coordinates(int coordinates) {
+	option_t* option_coordinates = config_get_option("coordinates");
+	option_coordinates->selected->index = coordinates;
 }
 
-int get_is_lettering(void) {
-	option_t* option_lettering = config_get_option("lettering");
-	return option_lettering->selected->index;
+int get_is_coordinates(void) {
+	option_t* option_coordinates = config_get_option("coordinates");
+	return option_coordinates->selected->index;
 }
 
 config_t config;
@@ -375,8 +375,8 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_LOAD: {
 			option_t *option = config_get_option("theme");
 			struct theme_struct *theme = option->selected->data;
-			option_t *option_lettering = config_get_option("lettering");
-			set_is_lettering(option_lettering->selected->index);
+			option_t *option_coordinates = config_get_option("coordinates");
+			set_is_coordinates(option_coordinates->selected->index);
 
 			load_theme(theme);
 			reset_transition(TRUE);
