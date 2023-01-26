@@ -8,33 +8,36 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2023-01-26 22:03+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2023-01-27 00:26+0000\n"
+"Last-Translator: phlostically <phlostically@mailinator.com>\n"
+"Language-Team: Esperanto <https://hosted.weblate.org/projects/dreamchess/"
+"dreamchess/eo/>\n"
 "Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: credits.c:27
 msgid "Programming"
-msgstr ""
+msgstr "Programado"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr ""
+msgstr "Grafiko"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr ""
+msgstr "Tridimensia modeligo"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr ""
+msgstr "Specialan dankon al"
 
 #: credits.c:45
 msgid "Music"
-msgstr ""
+msgstr "Muziko"
 
 #: dreamchess.c:413
 #, c-format
@@ -45,300 +48,305 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"Uzado: dreamchess [opcioj]\n"
+"\n"
+"Ŝaka fasado kongrua kun xboard.\n"
+"\n"
+"Opcioj:\n"
 
 #: dreamchess.c:416
 msgid "show help"
-msgstr ""
+msgstr "montri helpon"
 
 #: dreamchess.c:417
 msgid "run fullscreen"
-msgstr ""
+msgstr "ruliĝi plenekrane"
 
 #: dreamchess.c:418
 msgid "set screen width"
-msgstr ""
+msgstr "agordi ekranan larĝon"
 
 #: dreamchess.c:419
 msgid "set screen height"
-msgstr ""
+msgstr "agordi ekranan alton"
 
 #: dreamchess.c:420
 msgid "use <eng> as first chess engine"
-msgstr ""
+msgstr "uzi <eng> kiel unuan ŝakmotoron"
 
 #: dreamchess.c:421
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  implicite «dreamer»"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
 #: system_config.c:175
 msgid "Off"
-msgstr ""
+msgstr "Malŝaltita"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr ""
+msgstr "Ŝaltita"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr ""
+msgstr "Propra"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr ""
+msgstr "Homo kontraŭ komputilo"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr ""
+msgstr "Komputilo kontraŭ homo"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr ""
+msgstr "Homo kontraŭ homo"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
-msgstr ""
+msgstr "Facile"
 
 #: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
-msgstr ""
+msgstr "Ordinare"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
-msgstr ""
+msgstr "Nekonata titolo"
 
 #: audio/playlist.c:61
 msgid "Unknown album"
-msgstr ""
+msgstr "Nekonata albumo"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr ""
+msgstr "Nekonata muzikisto"
 
 #: dialogs/configuration.c:97
 msgid "Theme:"
-msgstr ""
+msgstr "Etoso:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "Ĉu montri koordinatojn:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
-msgstr ""
+msgstr "Motoro:"
 
 #: dialogs/configuration.c:109
 msgid "Music Volume:"
-msgstr ""
+msgstr "Laŭto de muziko:"
 
 #: dialogs/configuration.c:113
 msgid "Sound Volume:"
-msgstr ""
+msgstr "Laŭto de sono:"
 
 #: dialogs/configuration.c:153
 msgid "Change resolution…"
-msgstr ""
+msgstr "Ŝanĝi distingivon…"
 
 #: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr ""
+msgstr "Bone"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr ""
+msgstr "Malmovi"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr ""
+msgstr "Ekmovi"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr ""
+msgstr "Vidi antaŭan movon"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr ""
+msgstr "Vidi sekvan movon"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
-msgstr ""
+msgstr "Nuligi"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr ""
+msgstr "Ĉu forlasi al titolo?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "Eraro: malsukcesis ŝanĝi videoreĝimon"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr ""
+msgstr "Distingivo:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "Propra:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
-msgstr ""
+msgstr "Plenekrana reĝimo:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "Multsamplado:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
-msgstr ""
+msgstr "Konservi partion…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options…"
-msgstr ""
+msgstr "Opcioj pri movo…"
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game…"
-msgstr ""
+msgstr "Forlasi partion…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
-msgstr ""
+msgstr "Vana partio!"
 
 #: gui/ingame_ui.c:102
 msgid "Checkmate!"
-msgstr ""
+msgstr "Ŝakmat!"
 
 #: gui/ingame_ui.c:103
 msgid "Check!"
-msgstr ""
+msgstr "Ŝak!"
 
 #: gui/ingame_ui.c:104
 msgid "Victory!"
-msgstr ""
+msgstr "Gajno!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr ""
+msgstr "Ludantoj:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
-msgstr ""
+msgstr "Facilo:"
 
 #: gui/title_dialog.c:142
 msgid "Level:"
-msgstr ""
+msgstr "Nivelo:"
 
 #: gui/title_dialog.c:171
 msgid "Time options…"
-msgstr ""
+msgstr "Opcioj pri horloĝo…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr ""
+msgstr "Ekludi"
 
 #: gui/title_dialog.c:198
 msgid "New Game…"
-msgstr ""
+msgstr "Nova partio…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game…"
-msgstr ""
+msgstr "Ŝargi partion…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration…"
-msgstr ""
+msgstr "Agordi…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr ""
+msgstr "Forlasi"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr ""
+msgstr "Promocio! Elektu novan ŝakfiguron!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "Sukcese konservis"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "Konservado malsukcesis"
 
 #: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
-msgstr ""
+msgstr "Konservis %s"
 
 #: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
-msgstr ""
+msgstr "Komputilo"
 
 #: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
-msgstr ""
+msgstr "Homo"
 
 #: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
-msgstr ""
+msgstr "%s kontraŭ %s"
 
 #: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
-msgstr ""
+msgstr "Facilo: %s"
 
 #: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
-msgstr ""
+msgstr "Nivelo: %i"
 
 #: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
-msgstr ""
+msgstr "Malplena pozicio"
 
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr ""
+msgstr "Konservi pozicion: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr ""
+msgstr "Konservi partion"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr ""
+msgstr "Ŝargi partion"
 
 #: gui/ui_sdlgl.c:312
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "Eraro: malsukcesis agordi videoreĝimon; uzante implicitaĵojn"
 
 #: gui/ui_sdlgl.c:364
 msgid "Loading, please wait…"
-msgstr ""
+msgstr "Ŝargante, bonvolu atendi…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr ""
+msgstr "Blanko gajnis la partion!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr ""
+msgstr "Nigro gajnis la partion!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr ""
+msgstr "La partio estas vana!"
 
 #: gui/xmlsavefile.c:120
 #, c-format
 msgid "%02i/%02i at %02i:%02i."
-msgstr ""
+msgstr "%02i/%02i je %02i:%02i."
 
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr ""
+msgstr "Nekonata"
