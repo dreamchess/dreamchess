@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2021-12-02 16:52+0000\n"
 "Last-Translator: Yasin Huwsf <yasinbakhtiar521@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
@@ -350,15 +350,13 @@ msgstr "سیاه برنده شد!"
 msgid "The game ended in a draw!"
 msgstr "بازی با تساوی به پایان رسید!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i در %02i:%02i."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "ناشناخته"
+
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i در %02i:%02i."
 
 #~ msgid "Load Game.."
 #~ msgstr "بارگزاری بازی.."

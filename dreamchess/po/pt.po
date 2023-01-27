@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2020-08-23 21:36+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/dreamchess/"
@@ -341,15 +341,13 @@ msgstr "Preto venceu!"
 msgid "The game ended in a draw!"
 msgstr "O jogo terminou em empate!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i em %02i:%02i."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "Desconhecido"
+
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i em %02i:%02i."
 
 #~ msgid "Load Game.."
 #~ msgstr "Carregar Jogo..."

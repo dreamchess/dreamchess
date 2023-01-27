@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2022-06-21 11:14+0000\n"
 "Last-Translator: Viktória Nagy <tindykmp@protonmail.ch>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/dreamchess/"
@@ -343,15 +343,13 @@ msgstr "A fekete nyerte a meccset!"
 msgid "The game ended in a draw!"
 msgstr "A mérkőzés döntetlennel ért véget!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i a %02i:%02i címen."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "Ismeretlen"
+
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i a %02i:%02i címen."
 
 #~ msgid "Load Game.."
 #~ msgstr "Játék Betöltése..."

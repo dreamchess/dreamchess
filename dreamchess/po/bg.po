@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2021-03-19 15:18+0000\n"
 "Last-Translator: Ivan Ivanov <vonavi.navi@gmail.com>\n"
 "Language-Team: Bulgarian <https://hosted.weblate.org/projects/dreamchess/"
@@ -341,12 +341,10 @@ msgstr "Черните спечелиха играта!"
 msgid "The game ended in a draw!"
 msgstr "Играта завърши наравно!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i на %02i:%02i."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i на %02i:%02i."

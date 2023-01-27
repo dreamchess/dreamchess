@@ -117,8 +117,8 @@ static void save_cb(void *user_data, const char *element, char *const *attrs, co
 
 		time = atoi(text);
 		tm = localtime(&time);
-		snprintf(time_save[slot], sizeof(time_save[slot]), _("%02i/%02i at %02i:%02i."), tm->tm_mday, tm->tm_mon + 1,
-				 tm->tm_hour, tm->tm_min);
+		snprintf(time_save[slot], sizeof(time_save[slot]), "%04d-%02d-%02d %02d:%02d",
+			tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min);
 	} else if (!strcmp(element, "white")) {
 		if (!strcmp(text, "ui"))
 			config_save[slot].player[WHITE] = PLAYER_UI;

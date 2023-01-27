@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2022-01-20 18:52+0000\n"
 "Last-Translator: Piotr <promantix@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/dreamchess/"
@@ -342,12 +342,10 @@ msgstr "Czarne wygrały mecz!"
 msgid "The game ended in a draw!"
 msgstr "Gra zakończona remisem!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i na %02i:%02i."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "Nieznany"
+
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i na %02i:%02i."

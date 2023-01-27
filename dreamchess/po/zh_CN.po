@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2023-01-27 01:28+0100\n"
 "PO-Revision-Date: 2022-07-04 14:20+0000\n"
 "Last-Translator: tmdakm <tmdakm@163.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -351,15 +351,14 @@ msgstr "黑方获胜!"
 msgid "The game ended in a draw!"
 msgstr "这场棋局以和棋告终!"
 
-#: gui/xmlsavefile.c:120
-#, fuzzy, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i 在 %02i:%02i。"
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "未知"
+
+#, fuzzy
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i 在 %02i:%02i。"
 
 #~ msgid "Load Game.."
 #~ msgstr "加载游戏.."
