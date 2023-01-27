@@ -155,7 +155,7 @@ void draw_ui_elements(void) {
 	coord3_t move_list_offset = {30 + get_ui_trans_pos(), 350};
 
 	int capture_lists = TRUE;
-	coord3_t capture_list_offset = {60 + get_ui_trans_pos(), 180};
+	coord3_t capture_list_offset = {10 + get_ui_trans_pos(), 180};
 
 	int player_status = TRUE;
 	coord3_t player_status_offset = {25 + get_ui_trans_pos(), 480 - 80};
@@ -303,30 +303,20 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
  *  @param col The text colour to use.
  */
 void draw_capture_list(coord3_t offset, gg_colour_t *col) {
-	/*float x_white = 60;
-	float y_white = 180;
-	float x_black = 580;
-	float y_black = 180;*/
-	int i;
+	int blackVOffset = offset.y;
+	int whiteVOffset = offset.y;
+	int i,j;
 
-	for (i = 9; i > 0; i -= 2) {
-		char s[4];
-		/*if (get_board()->captured[i] != 0)
-		{*/
-		if (snprintf(s, 4, "%i", get_board()->captured[i]) >= 4)
-			exit(1);
-		unicode_string_render(s, offset.x, offset.y, 0.0f, 1.0f, 0, *col);
-		draw_texture(get_black_piece(i / 2), offset.x - 24, offset.y, 24, 24, 1.0f, get_col(COL_WHITE));
-		/* }*/
-		// offset.y -= 28;
-		/*if (get_board()->captured[i - 1] != 0)
-		{*/
-		if (snprintf(s, 4, "%i", get_board()->captured[i - 1]) >= 4)
-			exit(1);
-		unicode_string_render(s, get_gl_width() - offset.x, offset.y, 1.0f, 1.0f, 0, *col);
-		draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x, offset.y, 24, 24, 1.0f,
-					 get_col(COL_WHITE));
-		/* }*/
-		offset.y -= 28;
+	for (i = 1; i <= 9; i += 2) {
+		for (j = 0; j < get_board()->captured[i]; j++)
+			draw_texture(get_black_piece(i / 2), offset.x + (j*8), blackVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
+		if (get_board()->captured[i] > 0)
+			blackVOffset -= 28;
+		
+		for (j = 0; j < get_board()->captured[i - 1]; j++)
+			draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x - 24 - (j*8), whiteVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
+		if (get_board()->captured[i - 1] > 0)
+			whiteVOffset -= 28;
+
 	}
 }
