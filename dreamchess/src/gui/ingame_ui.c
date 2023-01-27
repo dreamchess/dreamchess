@@ -147,7 +147,7 @@ void draw_ui_elements(void) {
 	coord3_t clock_offset = {300 + get_ui_trans_pos(), 480 - 60};
 	coord3_t white_clock_size, black_clock_size;
 
-	int health_bars = TRUE;
+	int health_bars = FALSE;
 	coord3_t health_bar_offset = {100 + get_ui_trans_pos(), 480 - 40};
 	coord3_t health_bar_size = {200, 15};
 
