@@ -511,6 +511,11 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 
+	// Check for and enable the flag needed to stop SDL from disabling linux compositor
+	#ifdef SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
+	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
+	#endif
+
 	sdl_window =
 		SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, video_flags);
 

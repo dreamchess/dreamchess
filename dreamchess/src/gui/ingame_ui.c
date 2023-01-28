@@ -317,6 +317,5 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 			draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x - 24 - (j*8), whiteVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
 		if (get_board()->captured[i - 1] > 0)
 			whiteVOffset -= 28;
-
 	}
 }
