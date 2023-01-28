@@ -677,7 +677,7 @@ void freemodels(void) {
 }
 
 /* How many squares per second? */
-#define PIECE_MOVE_SPEED 3.0
+#define PIECE_MOVE_SPEED 8.0
 
 /* Draw a selected piece after the rest.. */
 static int selected_piece_render;
