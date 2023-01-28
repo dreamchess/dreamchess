@@ -155,7 +155,7 @@ void draw_ui_elements(void) {
 	coord3_t move_list_offset = {30 + get_ui_trans_pos(), 350};
 
 	int capture_lists = TRUE;
-	coord3_t capture_list_offset = {10 + get_ui_trans_pos(), 180 + 24};
+	coord3_t capture_list_offset = {10 + get_ui_trans_pos(), 180};
 
 	int player_status = TRUE;
 	coord3_t player_status_offset = {25 + get_ui_trans_pos(), 480 - 80};
@@ -303,11 +303,23 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
  *  @param col The text colour to use.
  */
 void draw_capture_list(coord3_t offset, gg_colour_t *col) {
-	int blackVOffset = offset.y - 24;
-	int whiteVOffset = offset.y - 24;	
+	int blackVOffset = offset.y;
+	int whiteVOffset = offset.y;	
 	int i,j;
 	int blackHealth, whiteHealth;
 	char healthStr[10];
+
+	for (i = 1; i <= 9; i += 2) {
+		for (j = 0; j < get_board()->captured[i]; j++)
+			draw_texture(get_black_piece(i / 2), offset.x + (j*8), whiteVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
+		if (get_board()->captured[i] > 0)
+			whiteVOffset -= 28;
+		
+		for (j = 0; j < get_board()->captured[i - 1]; j++)
+			draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x - 24 - (j*8), blackVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
+		if (get_board()->captured[i - 1] > 0)
+			blackVOffset -= 28;
+	}
 
 	whiteHealth = 36 - ((get_board()->captured[WHITE_PAWN]) + (get_board()->captured[WHITE_ROOK] * 5) +
 		(get_board()->captured[WHITE_BISHOP] * 3) + (get_board()->captured[WHITE_KNIGHT] * 3) +
@@ -318,22 +330,10 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 	
 	if (blackHealth > whiteHealth) {
 		snprintf(healthStr, 10, "+%i", blackHealth - whiteHealth) ;		
-		unicode_string_render(healthStr, get_gl_width() - offset.x - 12 - (unicode_get_string_width(healthStr)/2.0f), offset.y, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
+		unicode_string_render(healthStr, get_gl_width() - offset.x - 12 - (unicode_get_string_width(healthStr)/2.0f), blackVOffset+(unicode_get_font_height()/2.0f)-4, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
 	}	
 	if (whiteHealth > blackHealth) {
 		snprintf(healthStr, 10, "+%i", whiteHealth - blackHealth);		
-		unicode_string_render(healthStr, offset.x + 12 - (unicode_get_string_width(healthStr)/2.0f), offset.y, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
-	}
-
-	for (i = 1; i <= 9; i += 2) {
-		for (j = 0; j < get_board()->captured[i]; j++)
-			draw_texture(get_black_piece(i / 2), offset.x + (j*8), blackVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
-		if (get_board()->captured[i] > 0)
-			blackVOffset -= 28;
-		
-		for (j = 0; j < get_board()->captured[i - 1]; j++)
-			draw_texture(get_white_piece((i - 1) / 2), get_gl_width() - offset.x - 24 - (j*8), whiteVOffset, 24, 24, 1.0f, get_col(COL_WHITE));
-		if (get_board()->captured[i - 1] > 0)
-			whiteVOffset -= 28;
-	}
+		unicode_string_render(healthStr, offset.x + 12 - (unicode_get_string_width(healthStr)/2.0f), whiteVOffset+(unicode_get_font_height()/2.0f)-4, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
+	}	
 }
