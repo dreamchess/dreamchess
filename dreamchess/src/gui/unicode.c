@@ -104,7 +104,7 @@ void unicode_exit(void) {
 }
 
 static texture_glyph_t *get_glyph(const char *codepoint) {
-	const unsigned char *cp = codepoint;
+	const unsigned char *cp = (const unsigned char *)codepoint;
 
 	// Check for leader byte
 	if (cp[0] >= 0x80 && cp[0] < 0xc0)
