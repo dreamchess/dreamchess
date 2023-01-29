@@ -40,12 +40,7 @@ void dbg_exit(void) {
 	}
 }
 
-#ifdef HAVE_VARARGS_MACROS
-void dbg_error(char *file, int line, const char *fmt, ...)
-#else
-void dbg_error(const char *fmt, ...)
-#endif
-{
+void dbg_error(char *file, int line, const char *fmt, ...) {
 	if (dbg_file) {
 		va_list ap;
 
@@ -55,21 +50,13 @@ void dbg_error(const char *fmt, ...)
 		vfprintf(dbg_file, fmt, ap);
 		va_end(ap);
 
-#ifdef HAVE_VARARGS_MACROS
 		fprintf(dbg_file, " (%s:%d)", file, line);
-#endif
-
 		fputs("\n", dbg_file);
 		fflush(dbg_file);
 	}
 }
 
-#ifdef HAVE_VARARGS_MACROS
-void dbg_warn(char *file, int line, const char *fmt, ...)
-#else
-void dbg_warn(const char *fmt, ...)
-#endif
-{
+void dbg_warn(char *file, int line, const char *fmt, ...) {
 	if (dbg_file) {
 		va_list ap;
 
@@ -79,21 +66,13 @@ void dbg_warn(const char *fmt, ...)
 		vfprintf(dbg_file, fmt, ap);
 		va_end(ap);
 
-#ifdef HAVE_VARARGS_MACROS
 		fprintf(dbg_file, " (%s:%d)", file, line);
-#endif
-
 		fputs("\n", dbg_file);
 		fflush(dbg_file);
 	}
 }
 
-#ifdef HAVE_VARARGS_MACROS
-void dbg_log(char *file, int line, const char *fmt, ...)
-#else
-void dbg_log(const char *fmt, ...)
-#endif
-{
+void dbg_log(char *file, int line, const char *fmt, ...) {
 	if (dbg_file) {
 		va_list ap;
 
@@ -101,10 +80,7 @@ void dbg_log(const char *fmt, ...)
 		vfprintf(dbg_file, fmt, ap);
 		va_end(ap);
 
-#ifdef HAVE_VARARGS_MACROS
 		fprintf(dbg_file, " (%s:%d)", file, line);
-#endif
-
 		fputs("\n", dbg_file);
 		fflush(dbg_file);
 	}
