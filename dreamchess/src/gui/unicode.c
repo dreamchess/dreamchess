@@ -103,6 +103,20 @@ void unicode_exit(void) {
 	texture_atlas_delete(atlas);
 }
 
+static texture_glyph_t *get_glyph(const char *codepoint) {
+	const unsigned char *cp = codepoint;
+
+	// Check for leader byte
+	if (cp[0] >= 0x80 && cp[0] < 0xc0)
+		return NULL;
+
+	// Use the symbol font for 'Miscellaneous Symbols' unicode block
+	if (cp[0] == 0xe2 && cp[1] >= 0x98 && cp[1] < 0x9c)
+		return texture_font_get_glyph(symbol_font, codepoint);
+
+	return texture_font_get_glyph(font, codepoint);
+}
+
 static vertex_t *create_vertex_array(const char *text, size_t *array_size, float *width) {
 	const size_t text_len = strlen(text);
 
@@ -114,41 +128,25 @@ static vertex_t *create_vertex_array(const char *text, size_t *array_size, float
 	float pen_x = 0.0f;
 	const float pen_y = 0.0f;
 	const char *prev_char = NULL;
-	const texture_font_t *prev_font = NULL;
 
 	for (size_t i = 0; i < text_len; ++i) {
-		unsigned char cur_byte = text[i];
-		// Skip bytes that are continuing a UTF-8 sequence
-		if (cur_byte < 0x80 || cur_byte >= 0xc0) {
-			texture_glyph_t *glyph;
-			texture_font_t *cur_font = font;
-			unsigned char next_byte = text[i + 1]; // Might be NUL
+		const texture_glyph_t *glyph = get_glyph(text + i);
 
-			// Use the symbol font for 'Miscellaneous Symbols' unicode block
-			if (cur_byte == 0xe2 && next_byte >= 0x98 && next_byte < 0x9c)
-				cur_font = symbol_font;
+		if (glyph != NULL) {
+			pen_x += texture_glyph_get_kerning(glyph, prev_char);
+			prev_char = text + i;
 
-			glyph = texture_font_get_glyph(cur_font, text + i);
+			const int x0  = (int)(pen_x + glyph->offset_x);
+			const int y0  = (int)(pen_y + glyph->offset_y);
+			const int x1  = (int)(x0 + glyph->width);
+			const int y1  = (int)(y0 - glyph->height);
 
-			if (glyph != NULL) {
-				if (cur_font == prev_font)
-					pen_x += texture_glyph_get_kerning(glyph, prev_char);
+			vertex_array[vertex_index++] = (vertex_t){ x0, y1, 1.0f, glyph->s0, glyph->t1 };
+			vertex_array[vertex_index++] = (vertex_t){ x0, y0, 1.0f, glyph->s0, glyph->t0 };
+			vertex_array[vertex_index++] = (vertex_t){ x1, y0, 1.0f, glyph->s1, glyph->t0 };
+			vertex_array[vertex_index++] = (vertex_t){ x1, y1, 1.0f, glyph->s1, glyph->t1 };
 
-				prev_font = cur_font;
-				prev_char = text + i;
-
-				const int x0  = (int)(pen_x + glyph->offset_x);
-				const int y0  = (int)(pen_y + glyph->offset_y);
-				const int x1  = (int)(x0 + glyph->width);
-				const int y1  = (int)(y0 - glyph->height);
-
-				vertex_array[vertex_index++] = (vertex_t){ x0, y1, 1.0f, glyph->s0, glyph->t1 };
-				vertex_array[vertex_index++] = (vertex_t){ x0, y0, 1.0f, glyph->s0, glyph->t0 };
-				vertex_array[vertex_index++] = (vertex_t){ x1, y0, 1.0f, glyph->s1, glyph->t0 };
-				vertex_array[vertex_index++] = (vertex_t){ x1, y1, 1.0f, glyph->s1, glyph->t1 };
-
-				pen_x += glyph->advance_x;
-			}
+			pen_x += glyph->advance_x;
 		}
 	}
 
@@ -230,15 +228,22 @@ float unicode_get_font_height(void) {
 }
 
 float unicode_get_string_width(const char *text) {
-	const float screen_scale = get_gl_height() / get_screen_height();
-	float width;
+	const size_t text_len = strlen(text);
 
-	// FIXME: Do this without actually creating the array
-	size_t array_size;
-	vertex_t *vertex_array = create_vertex_array(text, &array_size, &width);
-	free(vertex_array);
+	float width = 0.0f;
+	const char *prev_char = NULL;
 
-	return width * screen_scale;
+	for (size_t i = 0; i < text_len; ++i) {
+		const texture_glyph_t *glyph = get_glyph(text + i);
+
+		if (glyph != NULL) {
+			width += texture_glyph_get_kerning(glyph, prev_char) + glyph->advance_x;
+			prev_char = text + i;
+		}
+	}
+
+	// Scale for actual window size
+	return width * get_gl_height() / get_screen_height();
 }
 
 void unicode_render_atlas(void) {
