@@ -177,6 +177,23 @@ static void reset_turn_counter(void) {
 	turn_counter_start = SDL_GetTicks();
 }
 
+void handle_system_events(SDL_Event *event) {
+	if (event->type == SDL_QUIT)
+		/* FIXME */
+		exit(0);
+
+	if (event->type == SDL_WINDOWEVENT) {
+		switch(event->window.event) {
+		case SDL_WINDOWEVENT_MINIMIZED:
+			set_is_minimized(true);
+			break;
+		case SDL_WINDOWEVENT_RESTORED:
+			set_is_minimized(false);
+			break;
+		}
+	}
+}
+
 static int poll_event(gg_event_t *event) {
 	gg_event_t gg_event;
 	SDL_Event sdl_event;
@@ -185,9 +202,7 @@ static int poll_event(gg_event_t *event) {
 
 	while (SDL_PollEvent(&sdl_event)) {
 
-		if (sdl_event.type == SDL_QUIT)
-			/* FIXME */
-			exit(0);
+		handle_system_events(&sdl_event);
 
 		if ((sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
 			 sdl_event.key.keysym.sym == SDLK_RETURN) ||

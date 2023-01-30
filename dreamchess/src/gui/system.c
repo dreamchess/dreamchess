@@ -18,6 +18,8 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
+
 #include "ui_sdlgl.h"
 #include "unicode.h"
 
@@ -28,6 +30,7 @@ static int frames = 0;
 static Uint32 fps_time = 0;
 static float fps;
 static float gl_width, gl_height;
+static bool is_minimized;
 
 extern SDL_Window *sdl_window;
 
@@ -147,20 +150,26 @@ float get_gl_height() {
 	return gl_height;
 }
 
+void set_is_minimized(bool minimized) {
+	is_minimized = minimized;
+}
+
 /** @brief Swaps the OpenGL buffer.
  */
 void gl_swap(void) {
 	static Uint32 last = 0;
 	Uint32 now;
 
-	if (fps_enabled) {
-		char fps_s[16];
+	if (!is_minimized) {
+		if (fps_enabled) {
+			char fps_s[16];
 
-		snprintf(fps_s, 16, "FPS: %.2f", fps);
-		unicode_string_render(fps_s, 10, 10, 0.0f, 1.0f, 0, (gg_colour_t){1.0f, 0.0f, 0.0f, 1.0f});
+			snprintf(fps_s, 16, "FPS: %.2f", fps);
+			unicode_string_render(fps_s, 10, 10, 0.0f, 1.0f, 0, (gg_colour_t){1.0f, 0.0f, 0.0f, 1.0f});
+		}
+
+		blit_fbo();
 	}
-
-	blit_fbo();
 
 	now = SDL_GetTicks();
 	if (now - last < 1000 / FPS)

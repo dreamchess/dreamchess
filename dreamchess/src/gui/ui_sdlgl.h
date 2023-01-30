@@ -28,6 +28,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -179,6 +180,7 @@ void unload_border(texture_t border[9]);
 int get_move(void);
 
 /* ui_sdlgl.c */
+void handle_system_events(SDL_Event *event);
 int get_fading_out(void);
 void set_fading_out(int fade);
 void blit_fbo(void);
@@ -254,6 +256,7 @@ void update_fps_time(void);
 int power_of_two(int input);
 float get_gl_width();
 float get_gl_height();
+void set_is_minimized(bool minimized);
 
 /* texture.c */
 texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, int clamp);

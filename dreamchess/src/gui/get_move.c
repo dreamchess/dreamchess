@@ -61,17 +61,13 @@ int get_move(void) {
 			move_camera(KEYBOARD_CAM_SPEED, 0.0f);
 
 		while (SDL_PollEvent(&event))
-			if (event.type == SDL_QUIT)
-				/* FIXME */
-				exit(0);
+			handle_system_events(&event);
 	}
 
 	while (SDL_PollEvent(&event)) {
 		gg_event_t gg_event;
 
-		if (event.type == SDL_QUIT)
-			/* FIXME */
-			exit(0);
+		handle_system_events(&event);
 
 		if (event.type == SDL_MOUSEMOTION)
 			set_mouse_pos(event.motion.x, event.motion.y);
