@@ -18,21 +18,32 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GUI_UNICODE_H
-#define GUI_UNICODE_H
+#ifndef GUI_OPENGL_H
+#define GUI_OPENGL_H
 
-#include "opengl.h"
+#include "cglm/struct.h"
+#include "SDL_opengl.h"
 
-#define UNICODE_FLAG_BOUNCY    (1 << 0)
-#define UNICODE_FLAG_NO_SHADOW (1 << 1)
+typedef struct gl_2d_obj {
+    GLuint vbo, ebo, vao;
+    unsigned int count;
+    GLuint tex;
+    mat4s model;
+    vec2s pos;
+    vec2s scale;
+    vec4s colour;
+} gl_2d_obj;
 
-int unicode_init(float pt_size);
-int unicode_resize(float pt_size);
-void unicode_exit(void);
-void unicode_string_render(const char *text, float x, float y, float align, float scale, unsigned int flags, gg_colour_t colour);
-void unicode_render_atlas(void);
-float unicode_get_font_height(void);
-float unicode_get_string_width(const char *text);
-void unicode_create_text_obj(gl_2d_obj *obj, const char *text, float *width);
+void gl_init(void);
+void gl_set_gui(unsigned int width, unsigned int height);
+void gl_2d_init(gl_2d_obj *obj);
+void gl_2d_release(gl_2d_obj *obj);
+void gl_2d_set_texture(gl_2d_obj *obj, GLuint tex);
+void gl_2d_delete_texture(gl_2d_obj *obj);
+void gl_2d_set_pos(gl_2d_obj *obj, vec2s pos);
+void gl_2d_set_scale(gl_2d_obj *obj, vec2s pos);
+void gl_2d_set_colour(gl_2d_obj *obj, vec4s colour);
+void gl_2d_set_geometry(gl_2d_obj *obj, const float *data, size_t size, const uint16_t *idx, size_t idx_count);
+void gl_2d_render(gl_2d_obj *obj);
 
 #endif

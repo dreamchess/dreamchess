@@ -173,6 +173,8 @@ target_sources(dreamchess PRIVATE
     gui/get_move.c
     gui/ingame_ui.c
     gui/load_data.c
+    gui/opengl.c
+    gui/opengl.h
     gui/promote_dialog.c
     gui/saveload_dialog.c
     gui/system.c

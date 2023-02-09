@@ -21,7 +21,9 @@
 #include <stdbool.h>
 
 #include "ui_sdlgl.h"
+#include "opengl.h"
 #include "unicode.h"
+#include "cglm/cglm.h"
 
 static float zerodepth = 1.0f;
 
@@ -33,6 +35,9 @@ static float gl_width, gl_height;
 static bool is_minimized;
 
 extern SDL_Window *sdl_window;
+
+static GLuint vertex_shader, fragment_shader;
+static GLuint program;
 
 float get_fps(void) {
 	return fps;
@@ -100,9 +105,6 @@ void go_3d(int width, int height) {
 
 /** @brief Sets the OpenGL rendering options. */
 void init_gl(void) {
-	/* Enable smooth shading */
-	glShadeModel(GL_SMOOTH);
-
 	/* Set the background black */
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -115,15 +117,13 @@ void init_gl(void) {
 	/* The Type Of Depth Test To Do */
 	glDepthFunc(GL_LEQUAL);
 
-	/* Really Nice Perspective Calculations */
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	glEnable(GL_BLEND);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	gl_init();
 }
 
 /** @brief Resizes the OpenGL window.
@@ -133,13 +133,9 @@ void init_gl(void) {
  */
 void resize_window(int width, int height) {
 	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	gl_set_gui(width, height);
 	gl_width = 480 * width / (float)height;
 	gl_height = 480;
-	glOrtho(0, gl_width, 0, gl_height, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 }
 
 float get_gl_width() {
@@ -165,7 +161,7 @@ void gl_swap(void) {
 			char fps_s[16];
 
 			snprintf(fps_s, 16, "FPS: %.2f", fps);
-			unicode_string_render(fps_s, 10, 10, 0.0f, 1.0f, 0, (gg_colour_t){1.0f, 0.0f, 0.0f, 1.0f});
+//			unicode_string_render(fps_s, 10, 10, 0.0f, 1.0f, 0, (gg_colour_t){1.0f, 0.0f, 0.0f, 1.0f});
 		}
 
 		blit_fbo();

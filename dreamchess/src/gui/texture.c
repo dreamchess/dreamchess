@@ -53,23 +53,56 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
 	dest.h = area->h;
 	SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surface, area, image, &dest);
+	GLenum glerr;
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 
 	/* Create an OpenGL texture for the image */
 	glGenTextures(1, &texture.id);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 	glBindTexture(GL_TEXTURE_2D, texture.id);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	if (clamp) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, (alpha ? 4 : 3), w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+	if (clamp) {
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, (alpha ? GL_RGBA : GL_RGB), w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 	SDL_FreeSurface(image); /* No longer needed */
 
-	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_TEXTURE_2D);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
 	glGenerateMipmap(GL_TEXTURE_2D);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	texture.u1 = 0;
 	texture.v1 = 0;
@@ -173,7 +206,7 @@ void draw_texture_fullscreen(texture_t *texture, float zpos) {
  *  @param alpha 1 = Create texture with alpha channel (taken from image),
  *               0 = Create texture without alpha channel.
  */
-void load_texture_png(texture_t *texture, char *filename, int alpha, int clamp) {
+void load_texture_png(texture_t *texture, const char *filename, int alpha, int clamp) {
 	/* Create storage space for the texture */
 	SDL_Surface *texture_image;
 

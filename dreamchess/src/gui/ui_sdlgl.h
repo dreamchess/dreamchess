@@ -264,7 +264,7 @@ void draw_texture_uv(texture_t *texture, float xpos, float ypos, float width, fl
 					 gg_colour_t *col, float u1, float v1, float u2, float v2, GLenum mode_h, GLenum mode_v);
 void draw_texture(texture_t *texture, float xpos, float ypos, float width, float height, float zpos, gg_colour_t *col);
 void draw_texture_fullscreen(texture_t *texture, float zpos);
-void load_texture_png(texture_t *texture, char *filename, int alpha, int clamp);
+void load_texture_png(texture_t *texture, const char *filename, int alpha, int clamp);
 
 /* draw_shape.c */
 void draw_rect(int x, int y, int w, int h, gg_colour_t *col);
@@ -272,6 +272,10 @@ void draw_rect_fill_gradient(int x, int y, int w, int h, gg_colour_t *top_left, 
 							 gg_colour_t *bottom_left, gg_colour_t *bottom_right);
 void draw_rect_fill(int x, int y, int w, int h, gg_colour_t *col);
 void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col);
+
+/* opengl.c */
+void gl_init(void);
+void gl_set_gui(unsigned int width, unsigned int height);
 
 /* colours.c */
 #define COL_BLACK 0

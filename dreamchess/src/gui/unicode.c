@@ -23,13 +23,27 @@
 #include <locale.h>
 #include <libintl.h>
 
+// Renames due to freetype-gl and cglm name collisions
+#define vec4 vec4_
+#define vec3 vec3_
+#define vec2 vec2_
+#define ivec4 ivec4_
+#define ivec3 ivec3_
+#define ivec2 ivec2_
+#include "freetype-gl/texture-font.h"
+#include "freetype-gl/utf8-utils.h"
+#undef ivec2
+#undef ivec3
+#undef ivec4
+#undef vec2
+#undef vec3
+#undef vec4
+
+#include "opengl.h"
 #include "debug.h"
 #include "ui_sdlgl.h"
 #include "unicode.h"
 #include "dir.h"
-
-#include "freetype-gl/texture-font.h"
-#include "freetype-gl/utf8-utils.h"
 
 static texture_atlas_t *atlas;
 static texture_font_t *font, *symbol_font;
@@ -77,14 +91,26 @@ static int load_fonts(float pt_size) {
 
 int unicode_init(float pt_size) {
 	atlas  = texture_atlas_new(2048, 2048, 1);
+	GLenum glerr;
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 001 %d: %s", glerr, gluErrorString(glerr));
+	}
 
 	glGenTextures(1, &atlas->id);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 001 %d: %s", glerr, gluErrorString(glerr));
+	}
 	glBindTexture(GL_TEXTURE_2D, atlas->id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 001 %d: %s", glerr, gluErrorString(glerr));
+	}
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, atlas->width, atlas->height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, atlas->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlas->width, atlas->height, 0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
+	const GLint swizzleMask[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
+	glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
 
 	return load_fonts(pt_size);
 }
@@ -163,6 +189,65 @@ static vertex_t *create_vertex_array(const char *text, size_t *array_size, float
 	return vertex_array;
 }
 
+void unicode_create_text_obj(gl_2d_obj *obj, const char *text, float *width) {
+	gl_2d_init(obj);
+
+	const size_t text_len = strlen(text);
+
+	float *data = malloc(text_len * sizeof(float) * 16);
+	size_t data_offset = 0;
+	uint16_t *idx = malloc(text_len * sizeof(uint16_t) * 6);
+	size_t idx_offset = 0;
+
+	float pen_x = 0.0f;
+	const float pen_y = 0.0f;
+	const char *prev_char = NULL;
+
+	for (size_t i = 0; i < text_len; ++i) {
+		const texture_glyph_t *glyph = get_glyph(text + i);
+
+		if (glyph != NULL) {
+			pen_x += texture_glyph_get_kerning(glyph, prev_char);
+			prev_char = text + i;
+
+			const float x0  = pen_x + glyph->offset_x;
+			const float y0  = pen_y + glyph->offset_y;
+			const float x1  = x0 + glyph->width;
+			const float y1  = y0 - glyph->height;
+
+			const float glyph_data[16] = {
+				x0, y1, glyph->s0, glyph->t1, 
+				x0, y0, glyph->s0, glyph->t0,
+				x1, y0, glyph->s1, glyph->t0,
+				x1, y1, glyph->s1, glyph->t1
+			};
+
+			memcpy(data + data_offset, glyph_data, 16 * sizeof(float));
+			data_offset += 16;
+
+			const uint16_t base = idx_offset / 3 * 2;
+			const uint16_t glyph_idx[6] = { base, base + 1, base + 2, base, base + 2, base + 3 };
+
+			memcpy(idx + idx_offset, glyph_idx, 6 * sizeof(uint16_t));
+			idx_offset += 6;
+
+			pen_x += glyph->advance_x;
+		}
+	}
+
+	gl_2d_set_geometry(obj, data, data_offset * sizeof(float), idx, idx_offset * sizeof(uint16_t));
+	gl_2d_set_texture(obj, atlas->id);
+
+	if (atlas->modified) {
+		glBindTexture(GL_TEXTURE_2D, atlas->id);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2048, 2048, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
+		atlas->modified = 0;
+	}
+
+	if (width)
+		*width = pen_x;
+}
+
 static void render_vertex_array(const vertex_t *vertex_array, size_t size, float x, float y, float xoffset, float scale, unsigned int flags, gg_colour_t colour) {
 	if (size == 0)
 		return;
@@ -208,6 +293,7 @@ static void render_vertex_array(const vertex_t *vertex_array, size_t size, float
 }
 
 void unicode_string_render(const char *text, float x, float y, float align, float scale, unsigned int flags, gg_colour_t colour) {
+#if 0
 	const float screen_scale = get_gl_height() / get_screen_height();
 	size_t array_size;
 	float width;
@@ -220,6 +306,7 @@ void unicode_string_render(const char *text, float x, float y, float align, floa
 	render_vertex_array(vertex_array, array_size, x, y, xoffset, screen_scale * scale, flags, colour);
 
 	free(vertex_array);
+#endif
 }
 
 float unicode_get_font_height(void) {

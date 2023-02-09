@@ -19,6 +19,7 @@
 */
 
 #include "ui_sdlgl.h"
+#include "opengl.h"
 #include "git_rev.h"
 
 #ifdef _WIN32
@@ -34,10 +35,11 @@
 #include "theme.h"
 #include "i18n.h"
 #include "unicode.h"
-#include <GL/glew.h>
 #include <SDL2/SDL_syswm.h>
 
 static int turn_counter_start = 0;
+static gl_2d_obj backdrop_obj;
+static gl_2d_obj version_str_obj;
 static texture_t menu_title_tex;
 static int game_in_stalemate;
 static int white_in_check;
@@ -314,10 +316,10 @@ void blit_fbo() {
 static config_t *do_menu(int *pgn) {
 	title_process_retval = 2;
 
-	resize_window(screen_width, screen_height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	resize_window(screen_width, screen_height);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	glEnable(GL_BLEND);
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	engine_error_shown = 0;
 	set_loading = FALSE;
 	//draw_credits(1);
@@ -346,17 +348,20 @@ static config_t *do_menu(int *pgn) {
 		/* Draw the menu.. */
 		glDisable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
-		draw_texture_fullscreen(&menu_title_tex, 1.0f);
+//		backdrop_obj.tex = version_str_obj.tex;
+		gl_2d_render(&backdrop_obj);
+//		draw_texture_fullscreen(&menu_title_tex, 1.0f);
 		glEnable(GL_BLEND);
-		unicode_render_atlas();
-		glEnable(GL_DEPTH_TEST);
-		unicode_string_render(g_version, get_gl_width() - 20, 20, 1.0f, 0.75f, 0, (gg_colour_t){1.0f, 1.0f, 1.0f, 1.0f});
+//		unicode_render_atlas();
+//		glEnable(GL_DEPTH_TEST);
+//		unicode_string_render(g_version, get_gl_width() - 20, 20, 1.0f, 0.75f, 0, (gg_colour_t){1.0f, 1.0f, 1.0f, 1.0f});
+		gl_2d_render(&version_str_obj);
 
 		switch (menu_state) {
 		case MENU_STATE_FADE_IN:
 			while (poll_event(&event))
 				;
-			gg_dialog_render_all();
+//			gg_dialog_render_all();
 
 			if (!draw_fade(FADE_IN)) {
 				menu_state = MENU_STATE_IN_MENU;
@@ -384,7 +389,7 @@ static config_t *do_menu(int *pgn) {
 			} //else
 				//draw_credits(0);
 
-			gg_dialog_render_all();
+//			gg_dialog_render_all();
 			break;
 
 		case MENU_STATE_LOAD: {
@@ -422,7 +427,7 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_RETURN:
 			while (poll_event(&event))
 				;
-			gg_dialog_render_all();
+//			gg_dialog_render_all();
 
 			if (!draw_fade(FADE_IN))
 				menu_state = MENU_STATE_IN_MENU;
@@ -430,23 +435,47 @@ static config_t *do_menu(int *pgn) {
 		}
 
 		/* Draw mouse cursor.. */
-		draw_texture(get_menu_mouse_cursor(), get_mouse_x(), (479 - get_mouse_y() - 32), 32, 32, 1.0f,
-					 get_col(COL_WHITE));
+//		draw_texture(get_menu_mouse_cursor(), get_mouse_x(), (479 - get_mouse_y() - 32), 32, 32, 1.0f,
+//					 get_col(COL_WHITE));
+
 
 		gl_swap();
 	}
 }
 
 static void free_menu_tex(void) {
-	glDeleteTextures(1, &menu_title_tex.id);
+	gl_2d_delete_texture(&backdrop_obj);
+	gl_2d_release(&backdrop_obj);
 	glDeleteTextures(1, &get_menu_mouse_cursor()->id);
 	glDeleteTextures(1, &get_menu_border()->id);
+}
+
+void set_backdrop(const char *filename) {
+	gl_2d_delete_texture(&backdrop_obj);
+
+	static texture_t menu_title_tex;
+	load_texture_png(&menu_title_tex, filename, 0, 1);
+
+	const float data[] = { 0.0f, 0.0f, menu_title_tex.u1, menu_title_tex.v2, 
+		get_gl_width(), 0.0f, menu_title_tex.u2, menu_title_tex.v2,
+		get_gl_width(), get_gl_height(), menu_title_tex.u2, menu_title_tex.v1,
+		0.0f, get_gl_height(), menu_title_tex.u1, menu_title_tex.v1 };
+
+	const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
+
+	gl_2d_set_texture(&backdrop_obj, menu_title_tex.id);
+	gl_2d_set_geometry(&backdrop_obj, data, sizeof(data), indices, sizeof(indices));
 }
 
 static void load_menu_tex(void) {
 	ch_datadir();
 	/* For the menu.. */
-	load_texture_png(&menu_title_tex, "menu_title.png", 0, 1);
+	gl_2d_init(&backdrop_obj);
+	unicode_create_text_obj(&version_str_obj, g_version, NULL);
+	gl_2d_set_scale(&version_str_obj, (vec2s){ 0.5f, 0.5f });
+	gl_2d_set_colour(&version_str_obj, (vec4s){ 0.0f, 1.0f, 0.0f, 1.0f });
+	gl_2d_set_pos(&version_str_obj, (vec2s){ 200, 200 });
+	set_backdrop("menu_title.png");
 
 	chdir("styles");
 	chdir("default");
@@ -463,7 +492,7 @@ static int set_fullscreen(int fullscreen) {
 	return 0;
 }
 
-static const float font_size = 16.0f;
+static const float font_size = 48.0f;
 
 static int resize(int width, int height, int fullscreen, int ms) {
 	DBG_LOG("Resizing video mode to %ix%i; fullscreen %s; %ix multisampling", width, height, fullscreen ? "on" : "off",
@@ -523,13 +552,16 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	if (fullscreen)
 		video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 
 	// Check for and enable the flag needed to stop SDL from disabling linux compositor
-	#ifdef SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
+#ifdef SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
 	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
-	#endif
+#endif
 
 	sdl_window =
 		SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, video_flags);
@@ -571,17 +603,48 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 		return 1;
 	}
 
+	GLenum glerr;
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 001 %d: %s", glerr, gluErrorString(glerr));
+	}
+
 	init_screen_fbo(width, height, ms);
+
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 002 %d: %s", glerr, gluErrorString(glerr));
+	}
+
 	init_gl();
+
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 003 %d: %s", glerr, gluErrorString(glerr));
+	}
+
 	resize_window(width, height);
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 004 %d: %s", glerr, gluErrorString(glerr));
+	}
+
 	init_colourpicking_fbo(width, height);
 
-	if (unicode_init(font_size * height / get_gl_height())) {
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 005 %d: %s", glerr, gluErrorString(glerr));
+	}
+
+	if (unicode_init(font_size)) {
 		DBG_ERROR("Failed to initialize font system");
 		exit(1);
 	}
 
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 006 %d: %s", glerr, gluErrorString(glerr));
+	}
+
 	load_menu_tex();
+
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 007 %d: %s", glerr, gluErrorString(glerr));
+	}
 
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -610,6 +673,10 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	/* Register music callback */
 	audio_set_music_callback(music_callback);
+
+	while((glerr = glGetError()) != GL_NO_ERROR) {
+		DBG_LOG("OpenGL error 008 %d: %s", glerr, gluErrorString(glerr));
+	}
 
 	return 0;
 }
