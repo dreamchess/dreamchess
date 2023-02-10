@@ -307,7 +307,7 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 	int whiteVOffset = offset.y;	
 	int i,j;
 	int blackHealth, whiteHealth;
-	int strLen = sizeof(int)+2; 
+	int strLen = 12; 
 	char healthStr[strLen];
 
 	for (i = 1; i <= 9; i += 2) {
