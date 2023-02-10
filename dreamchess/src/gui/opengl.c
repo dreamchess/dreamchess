@@ -98,7 +98,7 @@ void gl_set_gui(unsigned int width, unsigned int height) {
 	screen_height = height;
 
 	glUseProgram(program_gui);
-	mat4s m = glms_ortho(0.0f, 480 * width / (float)height, 0.0f, 480.0f, -1.0f, 1.0f, m);
+	mat4s m = glms_ortho(0.0f, 480 * width / (float)height, 0.0f, 480.0f, -1.0f, 1.0f);
 	GLint loc = glGetUniformLocation(program_gui, "projection");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, m.raw[0]);
 	while((glerr = glGetError()) != GL_NO_ERROR) {
