@@ -307,8 +307,7 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 	int whiteVOffset = offset.y;	
 	int i,j;
 	int blackHealth, whiteHealth;
-	int strLen = 12; 
-	char healthStr[strLen];
+	char healthStr[12];
 
 	for (i = 1; i <= 9; i += 2) {
 		for (j = 0; j < get_board()->captured[i]; j++)
@@ -330,11 +329,11 @@ void draw_capture_list(coord3_t offset, gg_colour_t *col) {
 	   (get_board()->captured[BLACK_QUEEN] * 9));
 	
 	if (blackHealth > whiteHealth) {
-		snprintf(healthStr, strLen, "+%i", blackHealth - whiteHealth) ;		
+		snprintf(healthStr, 12, "+%i", blackHealth - whiteHealth) ;		
 		unicode_string_render(healthStr, get_gl_width() - offset.x - 12 - (unicode_get_string_width(healthStr)/2.0f), blackVOffset+(unicode_get_font_height()/2.0f)-4, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
 	}	
 	if (whiteHealth > blackHealth) {
-		snprintf(healthStr, strLen, "+%i", whiteHealth - blackHealth);		
+		snprintf(healthStr, 12, "+%i", whiteHealth - blackHealth);		
 		unicode_string_render(healthStr, offset.x + 12 - (unicode_get_string_width(healthStr)/2.0f), whiteVOffset+(unicode_get_font_height()/2.0f)-4, 0.0f, 1.0f, 0, *get_col(COL_WHITE));
 	}	
 }
