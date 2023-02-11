@@ -20,14 +20,18 @@
 
 #include "ui_sdlgl.h"
 #include "opengl.h"
-#include "cglm/cglm.h"
 
-static GLuint program_gui;
-static GLuint background_vbo, background_vao;
-static texture_t background_tex;
-static unsigned int screen_width, screen_height;
+static const struct {
+	const char *vertex_shader;
+	const char *fragment_shader;
+} shader_2d_sources[SHADER_2D_COUNT] = {
+	{ "shaders/vert_textured.glsl", "shaders/frag_textured.glsl" }, // SHADER_2D_TEXTURED
+	{ "shaders/vert_shaded.glsl", "shaders/frag_shaded.glsl" }      // SHADER_2D_SHADED
+};
 
-static const char *load_file(const char *filename) {
+static GLuint shader_2d_programs[SHADER_2D_COUNT];
+
+static char *load_file(const char *filename) {
 	FILE *f = fopen(filename, "rb");
 
 	if (!f) {
@@ -61,56 +65,67 @@ static const char *load_file(const char *filename) {
 }
 
 static GLuint load_shader(const char *filename, GLenum shader_type) {
-	const char *shader_src = load_file(filename);
+	char *shader_src = load_file(filename);
 	GLuint shader = glCreateShader(shader_type);
 	glShaderSource(shader, 1, &shader_src, NULL);
 	glCompileShader(shader);
 
-	GLsizei loglen;
-	GLchar *log = malloc(1024);
-	glGetShaderInfoLog(shader, 1024, &loglen, log);
- 	DBG_LOG("Program log: %s", log);
+	GLint success;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
+	if (success == GL_FALSE) {
+		GLint loglen;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &loglen);
+		GLchar *log = malloc(loglen);
+		glGetShaderInfoLog(shader, loglen, NULL, log);
+		DBG_ERROR("Shader '%s' failed to compile: %s", filename, log);
+		exit(1);
+	}
+
+	free(shader_src);
 	return shader;
 }
 
 void gl_init(void) {
-	GLuint vertex_shader = load_shader("shaders/vertex.glsl", GL_VERTEX_SHADER);
-	GLuint fragment_shader = load_shader("shaders/fragment.glsl", GL_FRAGMENT_SHADER);
-	program_gui = glCreateProgram();
-	glAttachShader(program_gui, vertex_shader);
-	glAttachShader(program_gui, fragment_shader);
-	glLinkProgram(program_gui);
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
+	for (unsigned int i = 0; i < SHADER_2D_COUNT; ++i) {
+		GLuint vertex_shader = load_shader(shader_2d_sources[i].vertex_shader, GL_VERTEX_SHADER);
+		GLuint fragment_shader = load_shader(shader_2d_sources[i].fragment_shader, GL_FRAGMENT_SHADER);
+		GLuint program = glCreateProgram();
+		glAttachShader(program, vertex_shader);
+		glAttachShader(program, fragment_shader);
+		glLinkProgram(program);
 
-	// Create VBO and VAO for background image
-    glGenBuffers(1, &background_vbo);
-	glGenVertexArrays(1, &background_vao);
+		GLint success;
+		glGetProgramiv(program, GL_LINK_STATUS, &success);
+
+		if (success == GL_FALSE) {
+			GLint loglen;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &loglen);
+			GLchar *log = malloc(loglen);
+			glGetProgramInfoLog(program, loglen, NULL, log);
+			DBG_ERROR("Program with '%s' and '%s' failed to link: %s",
+				shader_2d_sources[i].vertex_shader, shader_2d_sources[i].fragment_shader, log);
+			exit(1);
+		}
+
+		shader_2d_programs[i] = program;
+		glDeleteShader(vertex_shader);
+		glDeleteShader(fragment_shader);
+	}
 }
 
 void gl_set_gui(unsigned int width, unsigned int height) {
-	GLenum glerr;
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
-	screen_width = width;
-	screen_height = height;
-
-	glUseProgram(program_gui);
 	mat4s m = glms_ortho(0.0f, 480 * width / (float)height, 0.0f, 480.0f, -1.0f, 1.0f);
-	GLint loc = glGetUniformLocation(program_gui, "projection");
-	glUniformMatrix4fv(loc, 1, GL_FALSE, m.raw[0]);
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
+
+	for (unsigned int i = 0; i < SHADER_2D_COUNT; ++i) {
+		glUseProgram(shader_2d_programs[i]);
+		GLint loc = glGetUniformLocation(shader_2d_programs[i], "projection");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, m.raw[0]);
 	}
 }
 
-void gl_2d_init(gl_2d_obj *obj) {
-	GLenum glerr;
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
+void gl_2d_init(gl_2d_obj *obj, shader_2d_t shader) {
+	obj->shader = shader;
 	obj->tex = 0;
 	obj->count = 0;
 	glGenBuffers(1, &obj->vbo);
@@ -138,10 +153,9 @@ void gl_2d_delete_texture(gl_2d_obj *obj) {
 }
 
 void gl_2d_set_geometry(gl_2d_obj *obj, const float *data, size_t data_size, const uint16_t *idx, size_t idx_size) {
-	GLenum glerr;
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
+	const GLint attrib_1_size = (obj->shader == SHADER_2D_TEXTURED ? 2 : 4);
+	const GLsizei stride = 2 + attrib_1_size;
+
 	obj->count = idx_size / sizeof(uint16_t);
 	glBindVertexArray(obj->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
@@ -149,15 +163,11 @@ void gl_2d_set_geometry(gl_2d_obj *obj, const float *data, size_t data_size, con
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, idx_size, idx, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4, NULL);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, NULL);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4, (void *)(sizeof(GL_FLOAT) * 2));
+	glVertexAttribPointer(1, attrib_1_size, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, (void *)(sizeof(GL_FLOAT) * 2));
 	glBindVertexArray(0);
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
 }
-
 
 static void update_model_matrix(gl_2d_obj *obj) {
 	obj->model = glms_scale_make((vec3s){ obj->scale.x, obj->scale.y, 1.0f });
@@ -180,26 +190,21 @@ void gl_2d_set_colour(gl_2d_obj *obj, vec4s colour) {
 }
 
 void gl_2d_render(gl_2d_obj *obj) {
-	GLint loc = glGetUniformLocation(program_gui, "model");
+	GLuint program = shader_2d_programs[obj->shader];
+	glUseProgram(program);
+
+	GLint loc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, obj->model.raw[0]);
 
-	loc = glGetUniformLocation(program_gui, "colour");
+	loc = glGetUniformLocation(program, "colour");
 	glUniform4fv(loc, 1, obj->colour.raw);
-
-	GLenum glerr;
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
 	glBindVertexArray(obj->vao);
 
 	glActiveTexture(GL_TEXTURE0); 
 	glBindTexture(GL_TEXTURE_2D, obj->tex);
-	loc = glGetUniformLocation(program_gui, "texture1");
+	loc = glGetUniformLocation(program, "texture1");
 	glUniform1i(loc, 0);
-
+glEnable(GL_BLEND);
 	glDrawElements(GL_TRIANGLES, obj->count, GL_UNSIGNED_SHORT, NULL);
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error %d: %s", glerr, gluErrorString(glerr));
-	}
 	glBindVertexArray(0);
 }

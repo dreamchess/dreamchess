@@ -470,7 +470,7 @@ void set_backdrop(const char *filename) {
 static void load_menu_tex(void) {
 	ch_datadir();
 	/* For the menu.. */
-	gl_2d_init(&backdrop_obj);
+	gl_2d_init(&backdrop_obj, SHADER_2D_TEXTURED);
 	unicode_create_text_obj(&version_str_obj, g_version, NULL);
 	gl_2d_set_scale(&version_str_obj, (vec2s){ 0.5f, 0.5f });
 	gl_2d_set_colour(&version_str_obj, (vec4s){ 0.0f, 1.0f, 0.0f, 1.0f });

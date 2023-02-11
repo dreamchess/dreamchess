@@ -22,21 +22,27 @@
 #define GUI_OPENGL_H
 
 #include "cglm/struct.h"
-#include "SDL_opengl.h"
 
-typedef struct gl_2d_obj {
-    GLuint vbo, ebo, vao;
-    unsigned int count;
-    GLuint tex;
-    mat4s model;
-    vec2s pos;
-    vec2s scale;
-    vec4s colour;
+typedef enum {
+	SHADER_2D_TEXTURED,
+	SHADER_2D_SHADED,
+	SHADER_2D_COUNT
+} shader_2d_t;
+
+typedef struct {
+	shader_2d_t shader;
+	GLuint vbo, ebo, vao;
+	unsigned int count;
+	GLuint tex;
+	mat4s model;
+	vec2s pos;
+	vec2s scale;
+	vec4s colour;
 } gl_2d_obj;
 
 void gl_init(void);
 void gl_set_gui(unsigned int width, unsigned int height);
-void gl_2d_init(gl_2d_obj *obj);
+void gl_2d_init(gl_2d_obj *obj, shader_2d_t shader);
 void gl_2d_release(gl_2d_obj *obj);
 void gl_2d_set_texture(gl_2d_obj *obj, GLuint tex);
 void gl_2d_delete_texture(gl_2d_obj *obj);

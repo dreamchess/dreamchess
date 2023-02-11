@@ -190,7 +190,7 @@ static vertex_t *create_vertex_array(const char *text, size_t *array_size, float
 }
 
 void unicode_create_text_obj(gl_2d_obj *obj, const char *text, float *width) {
-	gl_2d_init(obj);
+	gl_2d_init(obj, SHADER_2D_TEXTURED);
 
 	const size_t text_len = strlen(text);
 
