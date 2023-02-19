@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2023-01-27 01:28+0100\n"
-"PO-Revision-Date: 2022-01-15 15:53+0000\n"
-"Last-Translator: Issa1553 <fairfull.playing@gmail.com>\n"
+"PO-Revision-Date: 2023-02-20 11:38+0000\n"
+"Last-Translator: Vojtěch Šamla <auzkok@seznam.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/cs/>\n"
 "Language: cs\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -130,7 +130,7 @@ msgstr "Téma:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "Zobrazit souřadnice:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
