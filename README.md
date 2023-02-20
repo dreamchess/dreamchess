@@ -18,9 +18,9 @@ DreamChess currently supports Windows, macOS and Linux. It is licensed under the
 
 ## Building
 
-The following dependencies are required for building DreamChess: [CMake](https://cmake.org/), [bison](https://www.gnu.org/software/bison/), [flex](https://github.com/westes/flex), [SDL 2.0](https://www.libsdl.org/), [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer 2.0](https://www.libsdl.org/projects/SDL_mixer/), [Expat](https://libexpat.github.io/), [GLEW](https://glew.sourceforge.net/) and [FreeType](https://freetype.org/).
+The following dependencies are required for building DreamChess: [CMake](https://cmake.org/), [bison](https://www.gnu.org/software/bison/), [flex](https://github.com/westes/flex), [gettext](https://www.gnu.org/software/gettext/), [SDL 2.0](https://www.libsdl.org/), [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer 2.0](https://www.libsdl.org/projects/SDL_mixer/), [Expat](https://libexpat.github.io/), [GLEW](https://glew.sourceforge.net/) and [FreeType](https://freetype.org/).
 
-On Ubuntu this translates to the following package list: gcc, cmake, bison, flex, libsdl2-dev, libsdl2-image-dev, libsdl2-mixer-dev, libexpat1-dev, libglew-dev and libfreetype-dev.
+On Ubuntu this translates to the following package list: gcc cmake bison flex gettext libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libexpat1-dev libglew-dev libfreetype-dev
 
 ## Controls
 
