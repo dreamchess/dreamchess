@@ -22,6 +22,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -40,12 +41,8 @@ static void sigpipe_handler(int number) {
 }
 
 int comm_init(char *engine) {
-	char *argv[2];
 	int to_child[2], from_child[2];
 	pid_t pid;
-
-	argv[0] = engine;
-	argv[1] = NULL;
 
 	pipe(to_child);
 	pipe(from_child);
@@ -69,6 +66,20 @@ int comm_init(char *engine) {
 		sigaction(SIGPIPE, &sig, NULL);
 	} else {
 		/* We're the child. */
+
+		unsigned int argc = 0;
+		char **argv = NULL;
+		char *token = strtok(engine, " ");
+
+		while (token) {
+			argv = realloc(argv, ++argc * sizeof(char *));
+			argv[argc - 1] = token;
+			token = strtok(NULL, " ");
+		}
+
+		// Add sentinel
+		argv = realloc(argv, (argc + 1) * sizeof(char *));
+		argv[argc] = NULL;
 
 		/* Copy read fd of pipe to child to stdin. */
 		dup2(to_child[0], 0);
