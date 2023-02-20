@@ -235,7 +235,7 @@ void unicode_create_text_obj(gl_2d_obj *obj, const char *text, float *width) {
 		}
 	}
 
-	gl_2d_set_geometry(obj, data, data_offset * sizeof(float), idx, idx_offset * sizeof(uint16_t));
+	gl_2d_set_triangles(obj, data, data_offset * sizeof(float), idx, idx_offset * sizeof(uint16_t));
 	gl_2d_set_texture(obj, atlas->id);
 
 	if (atlas->modified) {

@@ -40,6 +40,7 @@
 static int turn_counter_start = 0;
 static gl_2d_obj backdrop_obj;
 static gl_2d_obj version_str_obj;
+static gl_2d_obj test_shaded;
 static texture_t menu_title_tex;
 static int game_in_stalemate;
 static int white_in_check;
@@ -350,6 +351,7 @@ static config_t *do_menu(int *pgn) {
 		glDisable(GL_DEPTH_TEST);
 //		backdrop_obj.tex = version_str_obj.tex;
 		gl_2d_render(&backdrop_obj);
+		gl_2d_render(&test_shaded);
 //		draw_texture_fullscreen(&menu_title_tex, 1.0f);
 		glEnable(GL_BLEND);
 //		unicode_render_atlas();
@@ -361,7 +363,7 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_FADE_IN:
 			while (poll_event(&event))
 				;
-//			gg_dialog_render_all();
+			gg_dialog_render_all();
 
 			if (!draw_fade(FADE_IN)) {
 				menu_state = MENU_STATE_IN_MENU;
@@ -389,7 +391,7 @@ static config_t *do_menu(int *pgn) {
 			} //else
 				//draw_credits(0);
 
-//			gg_dialog_render_all();
+			gg_dialog_render_all();
 			break;
 
 		case MENU_STATE_LOAD: {
@@ -427,7 +429,7 @@ static config_t *do_menu(int *pgn) {
 		case MENU_STATE_RETURN:
 			while (poll_event(&event))
 				;
-//			gg_dialog_render_all();
+			gg_dialog_render_all();
 
 			if (!draw_fade(FADE_IN))
 				menu_state = MENU_STATE_IN_MENU;
@@ -464,13 +466,26 @@ void set_backdrop(const char *filename) {
 	const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
 
 	gl_2d_set_texture(&backdrop_obj, menu_title_tex.id);
-	gl_2d_set_geometry(&backdrop_obj, data, sizeof(data), indices, sizeof(indices));
+	gl_2d_set_triangles(&backdrop_obj, data, sizeof(data), indices, sizeof(indices));
+}
+
+void create_shaded() {
+	gl_2d_init(&test_shaded, SHADER_2D_SHADED);
+
+	const float data[] = { 400.0f, 200.0f, 1.0f, 0.0f, 0.0f, 1.0f, 
+		500.0f, 200.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		500.0f, 300.0f,  0.0f, 0.0f, 1.0f, 1.0f,
+		400.0f, 300.0f,  1.0f, 1.0f, 1.0f, 0.0f };
+
+	gl_2d_set_colour(&test_shaded, (vec4s){ 1.0f, 1.0f, 1.0f, 1.0f });
+	gl_2d_set_line_loop(&test_shaded, data, sizeof(data));
 }
 
 static void load_menu_tex(void) {
 	ch_datadir();
 	/* For the menu.. */
 	gl_2d_init(&backdrop_obj, SHADER_2D_TEXTURED);
+	create_shaded();
 	unicode_create_text_obj(&version_str_obj, g_version, NULL);
 	gl_2d_set_scale(&version_str_obj, (vec2s){ 0.5f, 0.5f });
 	gl_2d_set_colour(&version_str_obj, (vec4s){ 0.0f, 1.0f, 0.0f, 1.0f });
@@ -586,16 +601,6 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 		exit(1);
 	}
 
-	if (!glewIsSupported("GL_ARB_framebuffer_object")) {
-		DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
-		exit(1);
-	}
-
-	if (!glewIsSupported("GL_ARB_texture_non_power_of_two")) {
-		DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
-		exit(1);
-	}
-
 	glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
 	if (ms > max_samples) {
 		SDL_DestroyWindow(sdl_window);
@@ -603,49 +608,17 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 		return 1;
 	}
 
-	GLenum glerr;
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 001 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	init_screen_fbo(width, height, ms);
-
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 002 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	init_gl();
-
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 003 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	resize_window(width, height);
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 004 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	init_colourpicking_fbo(width, height);
-
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 005 %d: %s", glerr, gluErrorString(glerr));
-	}
 
 	if (unicode_init(font_size)) {
 		DBG_ERROR("Failed to initialize font system");
 		exit(1);
 	}
 
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 006 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	load_menu_tex();
-
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 007 %d: %s", glerr, gluErrorString(glerr));
-	}
-
 	SDL_ShowCursor(SDL_DISABLE);
 
 	// SDL_WM_SetCaption( "DreamChess", NULL );
@@ -673,10 +646,6 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	/* Register music callback */
 	audio_set_music_callback(music_callback);
-
-	while((glerr = glGetError()) != GL_NO_ERROR) {
-		DBG_LOG("OpenGL error 008 %d: %s", glerr, gluErrorString(glerr));
-	}
 
 	return 0;
 }

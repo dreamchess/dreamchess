@@ -135,6 +135,7 @@ void gl_2d_init(gl_2d_obj *obj, shader_2d_t shader) {
 	obj->colour = glms_vec4_one();
 	obj->scale = glms_vec2_one();
 	obj->pos = glms_vec2_zero();
+	obj->mode = 0;
 }
 
 void gl_2d_release(gl_2d_obj *obj) {
@@ -152,7 +153,14 @@ void gl_2d_delete_texture(gl_2d_obj *obj) {
 	obj->tex = 0;
 }
 
-void gl_2d_set_geometry(gl_2d_obj *obj, const float *data, size_t data_size, const uint16_t *idx, size_t idx_size) {
+static void set_vertex_attrib_pointers(GLsizei stride, GLint attrib_1_size) {
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, NULL);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, attrib_1_size, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, (void *)(sizeof(GL_FLOAT) * 2));
+}
+
+void gl_2d_set_triangles(gl_2d_obj *obj, const float *data, size_t data_size, const uint16_t *idx, size_t idx_size) {
 	const GLint attrib_1_size = (obj->shader == SHADER_2D_TEXTURED ? 2 : 4);
 	const GLsizei stride = 2 + attrib_1_size;
 
@@ -162,11 +170,67 @@ void gl_2d_set_geometry(gl_2d_obj *obj, const float *data, size_t data_size, con
 	glBufferData(GL_ARRAY_BUFFER, data_size, data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, idx_size, idx, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, NULL);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, attrib_1_size, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * stride, (void *)(sizeof(GL_FLOAT) * 2));
+	set_vertex_attrib_pointers(stride, attrib_1_size);
 	glBindVertexArray(0);
+
+	obj->mode = GL_TRIANGLES;
+}
+
+void gl_2d_init_textured_rect(gl_2d_obj *obj, vec2s p1, vec2s p2, vec2s t1, vec2s t2) {
+	gl_2d_init(obj, SHADER_2D_TEXTURED);
+
+	const float data[] = {
+		p1.x, p1.y, t1.u, t2.v, 
+		p2.x, p1.y, t2.u, t2.v,
+		p2.x, p2.y, t2.u, t1.v,
+		p1.x, p2.y, t1.u, t1.v
+	};
+
+	const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
+
+	gl_2d_set_triangles(obj, data, sizeof(data), indices, sizeof(indices));
+}
+
+void gl_2d_init_shaded_rect(gl_2d_obj *obj, vec2s p1, vec2s p2, vec4s c1, vec4s c2, vec4s c3, vec4s c4) {
+	gl_2d_init(obj, SHADER_2D_SHADED);
+
+	const float data[] = {
+		p1.x, p1.y, c1.r, c1.g, c1.b, c1.a, 
+		p2.x, p1.y, c2.r, c2.g, c2.b, c2.a,
+		p2.x, p2.y, c3.r, c3.g, c3.b, c3.a,
+		p1.x, p2.y, c4.r, c4.g, c4.b, c4.a
+	};
+
+	const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
+
+	gl_2d_set_triangles(obj, data, sizeof(data), indices, sizeof(indices));
+}
+
+void gl_2d_set_line_loop(gl_2d_obj *obj, const float *data, size_t data_size) {
+	const GLint attrib_1_size = (obj->shader == SHADER_2D_TEXTURED ? 2 : 4);
+	const GLsizei stride = 2 + attrib_1_size;
+
+	obj->count = data_size / stride / sizeof(GL_FLOAT);
+	glBindVertexArray(obj->vao);
+	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
+	glBufferData(GL_ARRAY_BUFFER, data_size, data, GL_STATIC_DRAW);
+	set_vertex_attrib_pointers(stride, attrib_1_size);
+	glBindVertexArray(0);
+
+	obj->mode = GL_LINE_LOOP;
+}
+
+void gl_2d_init_rect(gl_2d_obj *obj, vec2s p1, vec2s p2) {
+	gl_2d_init(obj, SHADER_2D_SHADED);
+
+	const float data[] = {
+		p1.x, p1.y, 1.0f, 1.0f, 1.0f, 1.0f, 
+		p2.x, p1.y, 1.0f, 1.0f, 1.0f, 1.0f,
+		p2.x, p2.y, 1.0f, 1.0f, 1.0f, 1.0f,
+		p1.x, p2.y, 1.0f, 1.0f, 1.0f, 1.0f
+	};
+
+	gl_2d_set_line_loop(obj, data, sizeof(data));
 }
 
 static void update_model_matrix(gl_2d_obj *obj) {
@@ -204,7 +268,11 @@ void gl_2d_render(gl_2d_obj *obj) {
 	glBindTexture(GL_TEXTURE_2D, obj->tex);
 	loc = glGetUniformLocation(program, "texture1");
 	glUniform1i(loc, 0);
-glEnable(GL_BLEND);
-	glDrawElements(GL_TRIANGLES, obj->count, GL_UNSIGNED_SHORT, NULL);
+
+	if (obj->mode == GL_TRIANGLES)
+		glDrawElements(GL_TRIANGLES, obj->count, GL_UNSIGNED_SHORT, NULL);
+	else if (obj->mode == GL_LINE_LOOP)
+		glDrawArrays(GL_LINE_LOOP, 0, obj->count);
+
 	glBindVertexArray(0);
 }
