@@ -194,7 +194,7 @@ void gg_system_get_string_size(const char *s, int *width, int *height) {
 }
 
 void gg_system_draw_string(char *s, int x, int y, gg_colour_t *colour, int bounce, float align) {
-	driver->draw_string(s, x, y, align, bounce, (colour->a == 2.0f ? 1 : 0), *colour);
+	driver->draw_string(s, x, y, gg_clipping_get(), align, bounce, (colour->a == 2.0f ? 1 : 0), *colour);
 }
 
 gg_colour_t gg_colour(float r, float g, float b, float a) {

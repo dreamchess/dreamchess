@@ -93,7 +93,7 @@ typedef struct gg_driver {
 	/* Unicode string interface */
 	unsigned int (*get_line_height)(void);
 	unsigned int (*get_string_width)(const char *text);
-	void (*draw_string)(const char *text, int x, int y, float align, int bounce, int no_shadow, gg_colour_t colour);
+	void (*draw_string)(const char *text, int x, int y, const gg_rect_t *clip, float align, int bounce, int no_shadow, gg_colour_t colour);
 } gg_driver_t;
 
 /** Value indicating an unregistered class. */

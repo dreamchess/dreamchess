@@ -164,9 +164,24 @@ static unsigned int get_string_width(const char *text) {
 	return (unsigned int)unicode_get_string_width(text);
 }
 
-static void draw_string(const char *text, int x, int y, float align, int bounce, int no_shadow, gg_colour_t colour) {
+static void draw_string(const char *text, int x, int y, const gg_rect_t *clip, float align, int bounce, int no_shadow, gg_colour_t colour) {
 	const unsigned int flags = (bounce ? UNICODE_FLAG_BOUNCY : 0) | (no_shadow ? UNICODE_FLAG_NO_SHADOW : 0);
+
+	if (clip) {
+		// This is not pixel-exact
+		GLint x = clip->x * get_screen_width() / get_gl_width();
+		GLint y = clip->y * get_screen_height() / get_gl_height();
+		GLint w = clip->width * get_screen_width() / get_gl_width();
+		GLint h = clip->height * get_screen_height() / get_gl_height();
+
+		glScissor(x, y, w, h);
+		glEnable(GL_SCISSOR_TEST);
+	}
+
 	unicode_string_render(text, x, y, align, 1.0f, flags, colour);
+
+	if (clip)
+		glDisable(GL_SCISSOR_TEST);
 }
 
 static void get_image_size(void *image, int *width, int *height) {
