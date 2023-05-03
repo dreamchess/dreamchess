@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2023-01-27 01:28+0100\n"
-"PO-Revision-Date: 2021-12-02 16:52+0000\n"
-"Last-Translator: Yasin Huwsf <yasinbakhtiar521@gmail.com>\n"
+"PO-Revision-Date: 2023-05-04 19:47+0000\n"
+"Last-Translator: M <bafandehmajid@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.10-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -130,7 +130,7 @@ msgstr "تم:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "نمایش مختصات:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
@@ -145,9 +145,8 @@ msgid "Sound Volume:"
 msgstr "میزان صدا :"
 
 #: dialogs/configuration.c:153
-#, fuzzy
 msgid "Change resolution…"
-msgstr "تغییر وضوح نمایش .."
+msgstr "تغییر وضوح نمایش…"
 
 #: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -201,19 +200,16 @@ msgid "Multisampling:"
 msgstr "چند مرحله ای:"
 
 #: dialogs/system_dialog.c:63
-#, fuzzy
 msgid "Save game…"
-msgstr "ذخیره بازی .."
+msgstr "ذخیره بازی…"
 
 #: dialogs/system_dialog.c:67
-#, fuzzy
 msgid "Move Options…"
-msgstr "گزینه های حرکت .."
+msgstr "گزینه‌های انتقال…"
 
 #: dialogs/system_dialog.c:71
-#, fuzzy
 msgid "Quit Game…"
-msgstr "خارج شدن از بازی .."
+msgstr "خروج از بازی…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
@@ -244,28 +240,24 @@ msgid "Level:"
 msgstr "سطح:"
 
 #: gui/title_dialog.c:171
-#, fuzzy
 msgid "Time options…"
-msgstr "گزینه های زمان .."
+msgstr "گزینه‌های زمان…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
 msgstr "شروع بازی"
 
 #: gui/title_dialog.c:198
-#, fuzzy
 msgid "New Game…"
-msgstr "بازی جدید .."
+msgstr "بازی جدید…"
 
 #: gui/title_dialog.c:202
-#, fuzzy
 msgid "Load Game…"
-msgstr "بارگذاری بازی"
+msgstr "بارگذاری بازی…"
 
 #: gui/title_dialog.c:206
-#, fuzzy
 msgid "Configuration…"
-msgstr "پیکربندی.."
+msgstr "تنظیمات…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -334,9 +326,8 @@ msgid "Error: failed to set video mode; using defaults"
 msgstr "خطا: تنظیم حالت ویدیو انجام نشد. از پیش فرض استفاده میشود"
 
 #: gui/ui_sdlgl.c:364
-#, fuzzy
 msgid "Loading, please wait…"
-msgstr "در حال بارگذاری لطفا منتظر بمانید..."
+msgstr "در حال بارگذاری، لطفا منتظر بمانید…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
