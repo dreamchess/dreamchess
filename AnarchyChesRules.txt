@@ -1,0 +1,4 @@
+On promotion a pawn can be promoted to a Knook, A combination of Rook and Knight. 
+
+In Algebraic notation, this piece will be referred to as 'O' as 'K' and 'N" are taken. 
+
