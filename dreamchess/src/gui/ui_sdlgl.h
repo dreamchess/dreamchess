@@ -156,8 +156,8 @@ float get_ui_trans_pos(void);
 /* xmlsavefile.c */
 void load_saves_xml(void);
 int write_save_xml(int slot);
-int get_slots(void);
-void set_slots(int slots);
+int get_slot_used_status(int slot);
+void set_slot_used_status(int slot, int status);
 char *get_time_save(int index);
 config_t *get_config_save(int index);
 board_t *get_saved_board(int index);
@@ -281,6 +281,6 @@ void draw_tri(int x1, int y1, int x2, int y2, int x3, int y3, gg_colour_t *col);
 
 gg_colour_t *get_col(int colour);
 
-#define SAVEGAME_SLOTS 15
+#define SAVEGAME_SLOTS 99
 
 #endif
