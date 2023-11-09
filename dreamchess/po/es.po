@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2023-01-21 03:11+0100\n"
-"PO-Revision-Date: 2021-12-29 12:52+0000\n"
-"Last-Translator: badlop <badlop@process-one.net>\n"
+"PO-Revision-Date: 2023-11-10 20:36+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/es/>\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 5.2-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -29,7 +29,7 @@ msgstr "Gráficos"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr "Modelado 3D"
+msgstr "Modelado en 3D"
 
 #: credits.c:39
 msgid "Special Thanks To"
@@ -50,7 +50,7 @@ msgid ""
 msgstr ""
 "Uso: dreamchess [opciones]\n"
 "\n"
-"Una interfaz de ajedrez compatible con xboard\n"
+"Una interfaz de ajedrez compatible con xboard.\n"
 "\n"
 "Opciones:\n"
 
@@ -60,7 +60,7 @@ msgstr "mostrar ayuda"
 
 #: dreamchess.c:413
 msgid "run fullscreen"
-msgstr "correr en pantalla completa"
+msgstr "ejecutar a pantalla completa"
 
 #: dreamchess.c:414
 msgid "set screen width"
@@ -72,7 +72,7 @@ msgstr "establecer la altura de la pantalla"
 
 #: dreamchess.c:416
 msgid "use <eng> as first chess engine"
-msgstr "usar <eng> como motor de ajedrez principal"
+msgstr "utilizar <eng> como primer motor de ajedrez"
 
 #: dreamchess.c:417
 msgid "  defaults to 'dreamer'"
@@ -81,7 +81,7 @@ msgstr "  por defecto usa 'dreamer'"
 #: system_config.c:57 system_config.c:67 system_config.c:118
 #: system_config.c:127 system_config.c:162 system_config.c:170
 msgid "Off"
-msgstr "No"
+msgstr "Apagado"
 
 #: system_config.c:115
 msgid "Custom"
@@ -89,19 +89,19 @@ msgstr "Personalizado"
 
 #: system_config.c:119
 msgid "On"
-msgstr "Sí"
+msgstr "Encender"
 
 #: system_config.c:137
 msgid "Human vs. CPU"
-msgstr "Humano vs. CPU"
+msgstr "Humano contra la CPU"
 
 #: system_config.c:138
 msgid "CPU vs. Human"
-msgstr "CPU vs. Humano"
+msgstr "CPU contra un Humano"
 
 #: system_config.c:139
 msgid "Human vs. Human"
-msgstr "Humano vs. Humano"
+msgstr "Humano contra Humano"
 
 #: system_config.c:142 gui/saveload_dialog.c:151
 msgid "Easy"
@@ -133,37 +133,37 @@ msgstr "Motor:"
 
 #: dialogs/configuration.c:99
 msgid "Music Volume:"
-msgstr "Volumen de la Música:"
+msgstr "Volumen de la música:"
 
 #: dialogs/configuration.c:103
 msgid "Sound Volume:"
-msgstr "Volumen del Sonido:"
+msgstr "Volumen del sonido:"
 
 #: dialogs/configuration.c:137
 msgid "Change resolution…"
-msgstr "Cambiar resolución…"
+msgstr "Cambiar la resolución…"
 
 #: dialogs/configuration.c:141 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr "OK"
+msgstr "DE ACUERDO"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr "Retraer Movimiento"
+msgstr "Deshacer el movimiento"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr "Mover Ahora"
+msgstr "Mover ahora"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr "Ver Anterior Movimiento"
+msgstr "Ver el movimiento anterior"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr "Ver Siguiente Movimiento"
+msgstr "Ver el siguiente movimiento"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
@@ -172,7 +172,7 @@ msgstr "Cancelar"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr "¿Volver al Título?"
+msgstr "¿Dejar el título?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
@@ -192,19 +192,19 @@ msgstr "Pantalla completa:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr "Multimuestreo:"
+msgstr "Muestreo múltiple:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
-msgstr "Guardar juego…"
+msgstr "Guardar el juego…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options…"
-msgstr "Opciones de Movimiento…"
+msgstr "Opciones de movimiento…"
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game…"
-msgstr "Salir del Juego…"
+msgstr "Salir del juego…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
@@ -216,7 +216,7 @@ msgstr "¡Jaque mate!"
 
 #: gui/ingame_ui.c:103
 msgid "Check!"
-msgstr "Jaque!"
+msgstr "¡Jaque!"
 
 #: gui/ingame_ui.c:104
 msgid "Victory!"
@@ -240,15 +240,15 @@ msgstr "Opciones de tiempo…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr "Empezar Juego"
+msgstr "Empezar el juego"
 
 #: gui/title_dialog.c:198
 msgid "New Game…"
-msgstr "Nuevo Juego…"
+msgstr "Nuevo juego…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game…"
-msgstr "Cargar Juego…"
+msgstr "Cargar el juego…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration…"
@@ -260,7 +260,7 @@ msgstr "Salir"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr "¡Promoción, elige una nueva pieza!"
+msgstr "¡Promoción! ¡Elija una nueva pieza!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
@@ -310,11 +310,11 @@ msgstr "Espacio de guardado: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr "Guardar Juego"
+msgstr "Guardar el juego"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr "Cargar Juego"
+msgstr "Cargar el juego"
 
 #: gui/ui_sdlgl.c:302
 msgid "Error: failed to set video mode; using defaults"
