@@ -50,6 +50,7 @@ void game_make_move_str(char *move_str, int ui_update);
 int game_get_engine_error(void);
 void game_set_engine_error(int err);
 
+int last_move_is_valid(move_t *move);
 int set_resolution(int init);
 void toggle_fullscreen(void);
 

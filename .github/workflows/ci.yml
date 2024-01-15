@@ -23,7 +23,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get -y install gettext libfreetype-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libglew-dev
+        sudo apt-get -y install gettext libfreetype-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libglew-dev flex bison cmake libexpat1-dev
 
     - uses: actions/checkout@v3
 
