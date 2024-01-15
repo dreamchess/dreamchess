@@ -22,7 +22,7 @@
 #include "xml.h"
 #include "i18n.h"
 
-static int slots;
+static int usedslots[SAVEGAME_SLOTS];
 static char time_save[SAVEGAME_SLOTS][80];
 static config_t config_save[SAVEGAME_SLOTS];
 static board_t saved_board[SAVEGAME_SLOTS];
@@ -39,12 +39,12 @@ char *get_time_save(int index) {
 	return time_save[index];
 }
 
-void set_slots(int slots) {
-	slots = slots;
+void set_slot_used_status(int slot, int status) {
+ 	usedslots[slot] = status;
 }
 
-int get_slots(void) {
-	return slots;
+int get_slot_used_status(int slot) {
+ 	return usedslots[slot];
 }
 
 int write_save_xml(int slot) {
@@ -152,6 +152,7 @@ void load_saves_xml(void) {
 		config_save[slot].cpu_level = 1;
 		config_save[slot].difficulty = 1;
 		board_setup(&saved_board[slot]);
+		usedslots[slot] = 0;
 	}
 
 	if (ch_userdir()) {
@@ -159,7 +160,6 @@ void load_saves_xml(void) {
 		return;
 	}
 
-	slots = 0;
 
 	for (slot = 0; slot < SAVEGAME_SLOTS; ++slot) {
 		char temp[256];
@@ -168,7 +168,7 @@ void load_saves_xml(void) {
 		DBG_LOG("Reading save xml: %s", temp);
 
 		if (!xml_parse(temp, "save", save_cb, NULL, NULL, &slot))
-			slots |= (1 << slot);
+			usedslots[slot] = 1;
 		else
 			DBG_LOG("Failed to load: %s", temp);
 	}

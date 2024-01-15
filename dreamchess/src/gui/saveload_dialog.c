@@ -53,7 +53,7 @@ static const char *xmlsquaretofont(int square) {
 static int dialog_loadgame_load(gg_widget_t *widget, gg_widget_t *emitter, void *data, void *extra_data) {
 	int slot = saveload_selected;
 
-	if (get_slots() & (1 << slot)) {
+	if (get_slot_used_status(slot)) {
 		set_pgn_slot(slot);
 		set_set_loading(TRUE);
 		gg_dialog_close();
@@ -110,7 +110,7 @@ gg_dialog_t *dialog_saveload_create(gg_dialog_t *parent, int saving) {
 
 	gg_set_requested_size(vbox, 250, 0);
 
-	if (get_slots() & (1 << saveload_selected)) {
+	if (get_slot_used_status(saveload_selected)) {
 		gg_widget_t *board_box = gg_vbox_create(0);
 
 		snprintf(temp, sizeof(temp), _("Saved: %s"), get_time_save(saveload_selected));
