@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2023-01-27 01:28+0100\n"
-"PO-Revision-Date: 2023-11-28 16:06+0000\n"
-"Last-Translator: Patrice Perez <patriceperez@e.email>\n"
+"PO-Revision-Date: 2024-03-17 14:22+0000\n"
+"Last-Translator: Bruno Raoult <braoult@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/fr/>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.3-dev\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -76,7 +76,7 @@ msgstr "utilise <eng> comme premier moteur de jeu d'échecs"
 
 #: dreamchess.c:421
 msgid "  defaults to 'dreamer'"
-msgstr "  par défaut à « rêveur »"
+msgstr "  par défaut 'dreamer'"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
@@ -94,15 +94,15 @@ msgstr "Personnalisé"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr "Joueur vs Ordinateur"
+msgstr "Humain contre Ordinateur"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr "Ordinateur vs Joueur"
+msgstr "Ordinateur contre Humain"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr "Joueur vs Joueur"
+msgstr "Humain contre Humain"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
@@ -126,12 +126,11 @@ msgstr "Artiste inconnu"
 
 #: dialogs/configuration.c:97
 msgid "Theme:"
-msgstr "Thème :"
+msgstr "Thème :"
 
 #: dialogs/configuration.c:101
-#, fuzzy
 msgid "Show Coordinates:"
-msgstr "Montrer les positions"
+msgstr "Afficher les coordonnées :"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
@@ -143,7 +142,7 @@ msgstr "Volume de la musique :"
 
 #: dialogs/configuration.c:113
 msgid "Sound Volume:"
-msgstr "Volume du son :"
+msgstr "Volume :"
 
 #: dialogs/configuration.c:153
 msgid "Change resolution…"
@@ -157,19 +156,19 @@ msgstr "OK"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr "Annuler le déplacement"
+msgstr "Reprendre le coup"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr "Déplacer maintenant"
+msgstr "Jouer maintenant"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr "Voir le mouvement précédent"
+msgstr "Voir le coup précédent"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr "Voir le mouvement suivant"
+msgstr "Voir le coup suivant"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
@@ -178,15 +177,15 @@ msgstr "Annuler"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr "Quitter vers l'écran titre ?"
+msgstr "Revenir au titre ?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr "Erreur : Impossible de modifier le mode vidéo"
+msgstr "Erreur : Impossible de modifier le mode vidéo"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr "Résolution :"
+msgstr "Résolution :"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
@@ -202,7 +201,7 @@ msgstr "Multi-échantillonnage :"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
-msgstr "Sauvegarder la partie…"
+msgstr "Sauver la partie…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options…"
@@ -246,7 +245,7 @@ msgstr "Options de temps…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr "Démarrer la partie"
+msgstr "Commencer une partie"
 
 #: gui/title_dialog.c:198
 msgid "New Game…"
@@ -254,7 +253,7 @@ msgstr "Nouvelle partie…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game…"
-msgstr "Charger la partie…"
+msgstr "Charger une partie…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration…"
@@ -266,7 +265,7 @@ msgstr "Quitter"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr "Promotion ! Choisissez une nouvelle pièce !"
+msgstr "Promotion ! Choisissez une pièce !"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
