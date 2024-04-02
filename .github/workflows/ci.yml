@@ -86,7 +86,10 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install dependencies
-      run: choco install -y winflexbison3
+      run: |
+        choco install -y winflexbison3
+        Invoke-WebRequest -Uri https://github.com/vslavik/gettext-tools-windows/releases/download/v0.22.5/gettext-tools-windows-0.22.5.zip -OutFile .\gettext-tools.zip
+        Expand-Archive -LiteralPath .\gettext-tools.zip
 
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v10
@@ -95,7 +98,7 @@ jobs:
         prependedCacheKey: '${{ matrix.arch }}'
 
     - name: Configure
-      run: cmake -B build -G "Visual Studio 17 2022" -A ${{ matrix.arch }} -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
+      run: cmake -B build -G "Visual Studio 17 2022" -A ${{ matrix.arch }} -DCMAKE_PROGRAM_PATH="${{ github.workspace }}\gettext-tools\bin" -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
     - name: Disable vcpkg cache on error
       run: echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
