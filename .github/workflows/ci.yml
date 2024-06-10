@@ -174,9 +174,8 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install vcpkg
-      uses: lukka/run-vcpkg@v10
+      uses: lukka/run-vcpkg@v11
       with:
-        vcpkgGitCommitId: 'f14984af3738e69f197bf0e647a8dca12de92996'   # 2023.01.09
         prependedCacheKey: '${{ matrix.triplet }}+${{ matrix.target }}'
 
     - name: Configure
