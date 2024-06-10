@@ -92,7 +92,7 @@ jobs:
         Expand-Archive -LiteralPath .\gettext-tools.zip
 
     - name: Install vcpkg
-      uses: lukka/run-vcpkg@v10
+      uses: lukka/run-vcpkg@v11
       with:
         prependedCacheKey: '${{ matrix.arch }}'
 
