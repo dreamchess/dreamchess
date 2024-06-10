@@ -49,7 +49,6 @@ add_executable(dreamchess MACOSX_BUNDLE
     xml.h
     ${BISON_PgnParser_OUTPUTS}
     ${FLEX_PgnScanner_OUTPUTS}
-    include/engine.h
     include/options.h
     include/system_config.h
     include/theme.h

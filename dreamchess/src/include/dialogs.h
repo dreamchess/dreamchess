@@ -23,7 +23,6 @@
 
 #include "debug.h"
 #include "dreamchess.h"
-#include "engine.h"
 #include "gamegui.h"
 #include "options.h"
 #include "ui.h"
