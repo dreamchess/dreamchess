@@ -30,9 +30,7 @@ static int move_is_semi_valid(board_t *board, move_t *move);
 static int in_check(board_t *board, int turn);
 
 void board_setup(board_t *board) {
-	int i;
-
-	for (i = 16; i < 48; i++)
+	for (int i = 16; i < 48; i++)
 		board->square[i] = NONE;
 
 	board->square[0] = WHITE_ROOK;
@@ -52,17 +50,21 @@ void board_setup(board_t *board) {
 	board->square[62] = BLACK_KNIGHT;
 	board->square[63] = BLACK_ROOK;
 
-	for (i = 8; i < 16; i++)
+	for (int i = 8; i < 16; i++)
 		board->square[i] = WHITE_PAWN;
 
-	for (i = 48; i < 56; i++)
+	for (int i = 48; i < 56; i++)
 		board->square[i] = BLACK_PAWN;
 
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		board->captured[i] = 0;
 
 	board->turn = WHITE;
 	board->state = BOARD_NORMAL;
+	board->can_castle_kingside[WHITE] = true;
+	board->can_castle_kingside[BLACK] = true;
+	board->can_castle_queenside[WHITE] = true;
+	board->can_castle_queenside[BLACK] = true;
 }
 
 static int move_is_capture(board_t *board, move_t *move) {
@@ -141,6 +143,20 @@ int make_move(board_t *board, move_t *move) {
 		board->square[move->destination - 2] = NONE;
 	}
 
+	if (PIECE(board->square[move->source]) == KING) {
+		/* If the king moves, castling becomes illegal. */
+		board->can_castle_kingside[board->turn] = false;
+		board->can_castle_queenside[board->turn] = false;
+	}
+
+	if (PIECE(board->square[move->source]) == ROOK) {
+		/* If the rook moves, castling becomes illegal. */
+		if (move->source == (board->turn == WHITE ? 0 : 56))
+			board->can_castle_queenside[board->turn] = false;
+		else if (move->source == (board->turn == WHITE ? 7 : 63))
+			board->can_castle_kingside[board->turn] = false;
+	}
+
 	if ((PIECE(board->square[move->source]) == PAWN) && (move->destination < 8 || move->destination >= 56))
 		/* Promotion. */
 		board->square[move->destination] = move->promotion_piece;
@@ -208,6 +224,8 @@ static int square_attacked(board_t *b, int square, int side) {
 
 /* Checks whether a move is valid, except for whether this puts own king in check. */
 static int move_is_semi_valid(board_t *board, move_t *move) {
+	int colour = COLOUR(board->square[move->source]);
+
 	/* Bounds check. */
 	if ((move->source > 63) || (move->source < 0))
 		return 0;
@@ -224,7 +242,7 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 		return 0;
 
 	/* Test for moving opponent's piece. */
-	if (COLOUR(board->square[move->source]) != board->turn)
+	if (colour != board->turn)
 		return 0;
 
 	/* Check that a promotion piece is specified for promotion moves. */
@@ -255,7 +273,7 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 			return 0;
 		if (board->square[move->destination] == NONE)
 			break;
-		if (COLOUR(board->square[move->destination]) == COLOUR(board->square[move->source]))
+		if (COLOUR(board->square[move->destination]) == colour)
 			return 0;
 		break;
 	case BISHOP:
@@ -278,9 +296,9 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 		break;
 	case PAWN:
 		/* Catch moves in wrong direction. */
-		if ((move->destination > move->source) && (COLOUR(board->square[move->source]) == BLACK))
+		if ((move->destination > move->source) && (colour == BLACK))
 			return 0;
-		if ((move->destination < move->source) && (COLOUR(board->square[move->source]) == WHITE))
+		if ((move->destination < move->source) && (colour == WHITE))
 			return 0;
 
 		if (HOR > 1)
@@ -304,13 +322,11 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 				return 0;
 			/* En-passant move. */
 			if (board->square[move->destination] == NONE) {
-				if ((COLOUR(board->square[move->source]) == WHITE) && !((move->source >= 32) && (move->source < 40)))
+				if ((colour == WHITE) && !((move->source >= 32) && (move->source < 40)))
 					return 0;
-				if ((COLOUR(board->square[move->source]) == BLACK) && !((move->source >= 24) && (move->source < 32)))
+				if ((colour == BLACK) && !((move->source >= 24) && (move->source < 32)))
 					return 0;
-
-				if (board->square[move->destination + (COLOUR(board->square[move->source]) == WHITE ? -8 : 8)] !=
-					PAWN + OPPONENT(COLOUR(board->square[move->source])))
+				if (board->square[move->destination + (colour == WHITE ? -8 : 8)] != PAWN + OPPONENT(colour))
 					return 0;
 			}
 		}
@@ -319,7 +335,7 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 		if (HOR > 2)
 			return 0;
 		else if (HOR == 2) {
-			int white = COLOUR(board->square[move->source]) == WHITE;
+			bool white = colour == WHITE;
 
 			int i, step = (move->destination > move->source ? 1 : -1);
 			int rook = (step == 1 ? (white ? 7 : 63) : (white ? 0 : 56));
@@ -331,7 +347,7 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 			if (move->source != (white ? 4 : 60))
 				return 0;
 
-			if (board->square[rook] != ROOK + COLOUR(board->square[move->source]))
+			if (board->square[rook] != ROOK + colour)
 				return 0;
 
 			i = move->source + step;
@@ -342,12 +358,21 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 				i += step;
 			}
 
+			// Check if castling is allowed.
+			if (step > 0) {
+				if (!board->can_castle_kingside[colour])
+					return 0;
+			} else {
+				if (!board->can_castle_queenside[colour])
+					return 0;
+			}
+
 			/* Check whether any of the squares the king moves over is under
 			** attack. Note that destination square is checked later.
 			*/
-			if (square_attacked(board, move->source, (white ? BLACK : WHITE)))
+			if (square_attacked(board, move->source, OPPONENT(colour)))
 				return 0;
-			if (square_attacked(board, move->source + step, (white ? BLACK : WHITE)))
+			if (square_attacked(board, move->source + step, OPPONENT(colour)))
 				return 0;
 		} else {
 			if (VERT > 1)

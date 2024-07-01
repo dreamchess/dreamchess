@@ -22,6 +22,7 @@
 #define DREAMCHESS_BOARD_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #define PAWN 0
 #define WHITE_PAWN 0
@@ -91,6 +92,8 @@ typedef struct board {
 	int square[64];
 	int captured[10];
 	int state;
+	bool can_castle_kingside[2];
+	bool can_castle_queenside[2];
 } board_t;
 
 typedef struct move {

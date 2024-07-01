@@ -25,9 +25,6 @@
 #include "board.h"
 #include "fen.h"
 
-/* FIXME: Add support for castling rights and move counters. */
-/* FIXME: Error checking. */
-
 char *fen_encode(board_t *board) {
 	const size_t fen_max_size = 255;
 	char *fen = malloc(fen_max_size + 1);
@@ -85,72 +82,104 @@ char *fen_encode(board_t *board) {
 		if (rank > 0 && feni < fen_max_size)
 			fen[feni++] = '/';
 	}
-	snprintf(fen + feni, fen_max_size + 1 - feni, " %c KQkq - 0 1", board->turn == WHITE ? 'w' : 'b');
+
+	fen[feni] = '\0';
+	strcat(fen, board->turn == WHITE ? " w " : " b ");
+
+	if (board->can_castle_kingside[WHITE])
+		strcat(fen, "K");
+	if (board->can_castle_queenside[WHITE])
+		strcat(fen, "Q");
+	if (board->can_castle_kingside[BLACK])
+		strcat(fen, "k");
+	if (board->can_castle_queenside[BLACK])
+		strcat(fen, "q");
+
+	if (!board->can_castle_kingside[WHITE] && !board->can_castle_queenside[WHITE] &&
+		!board->can_castle_kingside[BLACK] && !board->can_castle_queenside[BLACK])
+		strcat(fen, "-");
+
+	// FIXME: Add en passant target square and move counters
+	strcat(fen, " - 0 1");
 
 	return fen;
 }
 
 board_t *fen_decode(const char *fen) {
-	board_t *board;
-	char *space = strchr(fen, ' ');
-	int i;
-	int square = 56;
+	board_t *board = malloc(sizeof(board_t));
+	memset(board, 0, sizeof(board_t));
 
-	if (!space)
-		return NULL;
+	for (int i = 0; i < 64; ++i)
+		board->square[i] = NONE;
 
-	board = malloc(sizeof(board_t));
+	int rank = 7;
+	int file = 0;
+	const char *ptr = fen;
 
-	for (i = 0; i < space - fen; i++) {
-		int j;
-		char c = fen[i];
-		char piece = 0;
+	// Parse board position
+	while (*ptr && *ptr != ' ') {
+		if (*ptr == '/') {
+			rank--;
+			file = 0;
+		} else if (isdigit(*ptr)) {
+			file += *ptr - '0';
+		} else {
+			int piece = NONE;
 
-		if ((c >= '1') && (c <= '8')) {
-			for (j = 0; j < c - '0'; j++)
-				board->square[square++] = NONE;
-			continue;
+			switch (toupper(*ptr)) {
+				case 'P': piece = PAWN; break;
+				case 'N': piece = KNIGHT; break;
+				case 'B': piece = BISHOP; break;
+				case 'R': piece = ROOK; break;
+				case 'Q': piece = QUEEN; break;
+				case 'K': piece = KING; break;
+			}
+
+			if (islower(*ptr))
+				piece |= BLACK;
+
+			if (rank < 0 || file > 7)
+				goto error;
+
+			board->square[8 * rank + file] = piece;
+			file++;
 		}
-
-		switch (toupper(c)) {
-		case 'P':
-			piece = PAWN;
-			break;
-		case 'N':
-			piece = KNIGHT;
-			break;
-		case 'B':
-			piece = BISHOP;
-			break;
-		case 'R':
-			piece = ROOK;
-			break;
-		case 'Q':
-			piece = QUEEN;
-			break;
-		case 'K':
-			piece = KING;
-			break;
-		case '/':
-			square -= 16;
-			continue;
-		}
-
-		if (c >= 'a')
-			piece |= BLACK;
-
-		board->square[square++] = piece;
+		ptr++;
 	}
 
-	if (*(space + 1) == 'w')
-		board->turn = 0;
+	// Skip space
+	if (*ptr++ != ' ')
+		goto error;
+
+	// Parse turn
+	char turn = *ptr++;
+	if (turn == 'w')
+		board->turn = WHITE;
+	else if (turn == 'b')
+		board->turn = BLACK;
 	else
-		board->turn = 1;
+		goto error;
 
-	for (i = 0; i < 10; i++)
-		board->captured[i] = 0;
+	// Skip space
+	if (*ptr++ != ' ')
+		goto error;
 
-	board->state = BOARD_NORMAL;
+	// Parse castling availability
+	while (*ptr && *ptr != ' ') {
+		switch (*ptr++) {
+			case 'K': board->can_castle_kingside[WHITE] = true; break;
+			case 'Q': board->can_castle_queenside[WHITE] = true; break;
+			case 'k': board->can_castle_kingside[BLACK] = true; break;
+			case 'q': board->can_castle_queenside[BLACK] = true; break;
+			case '-': break;
+		}
+	}
+
+	// FIXME: Parse en passant target square and move counters
 
 	return board;
+
+error:
+	free(board);
+	return NULL;
 }
