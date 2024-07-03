@@ -276,7 +276,7 @@ void unmake_move(board_t *board, move_t move, bitboard_t old_en_passant, int old
 /* Unmakes a move on a board.
 ** Parameters: (board_t *) board: Board to unmake the move on.
 **             (move_t) move: The move to unmake.
-**             (bitboard_t) old_en_passant: The en-passant flags before the
+**             (bitboard_t) old_en_passant: The en passant flags before the
 **                 last move.
 **             (int) old_castle_flags: The castling flags before the last
 **                 move.

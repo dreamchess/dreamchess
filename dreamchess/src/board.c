@@ -65,6 +65,7 @@ void board_setup(board_t *board) {
 	board->can_castle_kingside[BLACK] = true;
 	board->can_castle_queenside[WHITE] = true;
 	board->can_castle_queenside[BLACK] = true;
+	board->en_passant = -1;
 }
 
 static int move_is_capture(board_t *board, move_t *move) {
@@ -116,12 +117,15 @@ static int san_piece(int piece) {
 	exit(1);
 }
 
+#define HOR abs(move->source % 8 - move->destination % 8)
+#define VERT abs(move->source / 8 - move->destination / 8)
+
 int make_move(board_t *board, move_t *move) {
 	/* Assume that move is valid. */
 
-	if ((PIECE(board->square[move->source]) == PAWN) && ((PIECE(board->square[move->destination]) == NONE)) &&
-		((move->source % 8) != (move->destination % 8))) {
-		/* En-passant move. */
+	if ((PIECE(board->square[move->source]) == PAWN) && (PIECE(board->square[move->destination]) == NONE) &&
+		(HOR != 0)) {
+		/* En passant move. */
 		int ep = move->destination - 8 * (move->destination > move->source ? 1 : -1);
 		board->captured[board->square[ep]]++;
 		board->square[ep] = NONE;
@@ -163,14 +167,16 @@ int make_move(board_t *board, move_t *move) {
 	else
 		board->square[move->destination] = board->square[move->source];
 
+	if ((PIECE(board->square[move->source]) == PAWN) && VERT == 2)
+		board->en_passant = move->source + 8 * (move->destination > move->source ? 1 : -1);
+	else
+		board->en_passant = -1;
+
 	board->square[move->source] = NONE;
 	board->turn = OPPONENT(board->turn);
 
 	return 0;
 }
-
-#define HOR abs(move->source % 8 - move->destination % 8)
-#define VERT abs(move->source / 8 - move->destination / 8)
 
 static int ray_ok(board_t *board, move_t *move) {
 	int step, i;
@@ -320,15 +326,9 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 				return 0;
 			if (!ray_ok(board, move))
 				return 0;
-			/* En-passant move. */
-			if (board->square[move->destination] == NONE) {
-				if ((colour == WHITE) && !((move->source >= 32) && (move->source < 40)))
-					return 0;
-				if ((colour == BLACK) && !((move->source >= 24) && (move->source < 32)))
-					return 0;
-				if (board->square[move->destination + (colour == WHITE ? -8 : 8)] != PAWN + OPPONENT(colour))
-					return 0;
-			}
+			/* En passant move. */
+			if ((board->square[move->destination] == NONE) && (move->destination != board->en_passant))
+				return 0;
 		}
 		break;
 	case KING:

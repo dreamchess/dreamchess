@@ -99,8 +99,19 @@ char *fen_encode(board_t *board) {
 		!board->can_castle_kingside[BLACK] && !board->can_castle_queenside[BLACK])
 		strcat(fen, "-");
 
-	// FIXME: Add en passant target square and move counters
-	strcat(fen, " - 0 1");
+	strcat(fen, " ");
+
+	if (board->en_passant != -1) {
+		const int file = board->en_passant % 8;
+		const int rank = board->en_passant / 8;
+		const char square[3] = { 'a' + file, '1' + rank, '\0' };
+		strcat(fen, square);
+	} else {
+		strcat(fen, "-");
+	}
+
+	// FIXME: Add move counters
+	strcat(fen, " 0 1");
 
 	return fen;
 }
@@ -108,6 +119,7 @@ char *fen_encode(board_t *board) {
 board_t *fen_decode(const char *fen) {
 	board_t *board = malloc(sizeof(board_t));
 	memset(board, 0, sizeof(board_t));
+	board->en_passant = -1;
 
 	for (int i = 0; i < 64; ++i)
 		board->square[i] = NONE;
@@ -175,7 +187,28 @@ board_t *fen_decode(const char *fen) {
 		}
 	}
 
-	// FIXME: Parse en passant target square and move counters
+	// Skip space
+	if (*ptr++ != ' ')
+		goto error;
+
+	// Parse en passant target square
+	if (*ptr != '-') {
+		if (*ptr < 'a' || *ptr > 'h')
+			goto error;
+
+		const int file = *ptr++ - 'a';
+
+		if (*ptr != '3' && *ptr != '6')
+			goto error;
+
+		const int rank = *ptr++ - '1';
+
+		board->en_passant = 8 * rank + file;
+	} else {
+		ptr++; // Skip the dash
+	}
+
+	// FIXME: Parse move counters
 
 	return board;
 

@@ -94,6 +94,7 @@ typedef struct board {
 	int state;
 	bool can_castle_kingside[2];
 	bool can_castle_queenside[2];
+	int en_passant;
 } board_t;
 
 typedef struct move {
