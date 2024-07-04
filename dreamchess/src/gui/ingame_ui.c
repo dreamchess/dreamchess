@@ -222,7 +222,7 @@ void draw_ui_elements(void) {
 
 	/* Draw the move lists. */
 	if (move_lists)
-		draw_move_lists(move_list_offset, get_col(COL_WHITE), get_col(COL_YELLOW));
+		draw_move_lists(move_list_offset, get_col(COL_WHITE), get_col(COL_WHITE));
 
 	if (capture_lists)
 		draw_capture_list(capture_list_offset, get_col(COL_WHITE));
@@ -254,7 +254,7 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
 	int last_white, last_black;
 
 	gg_colour_t col_normal2 = *col_normal;
-	gg_colour_t col_high2 = *col_normal;
+	gg_colour_t col_high2 = *col_high;
 
 	game_get_move_list(&list, &entries, &view);
 
@@ -268,30 +268,27 @@ void draw_move_lists(coord3_t offset, gg_colour_t *col_normal, gg_colour_t *col_
 
 	y = offset.y;
 	for (i = last_white; i >= 0 && i >= last_white - 8; i -= 2) {
-		char s[11];
-		if (snprintf(s, 11, "%i.%s", (i >> 1) + 1, list[i]) >= 11)
-			exit(1);
-		if (i != view)
-			unicode_string_render(s, offset.x + 5, y - 5, 0.0f, 1.0f, 0, col_normal2);
-		else
-			unicode_string_render(s, offset.x + 5, y - 5, 0.0f, 1.0f, 0, col_high2);
+		char s[20];
+
+		snprintf(s, sizeof(s), "%i.%s", (i >> 1) + 1, list[i]);
+		unicode_string_render(s, offset.x + 5, y - 5, 0.0f, 1.0f, 0, (i == view ? col_high2 : col_normal2));
 		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
 	}
+
 	col_normal2 = *col_normal;
-	col_high2 = *col_normal;
+	col_high2 = *col_high;
+
 	y = offset.y;
 	if (IS_BLACK(get_board()->turn)) {
 		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
 	}
+
 	for (i = last_black; i >= 0 && i >= last_black - (IS_BLACK(get_board()->turn) ? 6 : 8); i -= 2) {
-		if (i != view)
-			unicode_string_render(list[i], get_gl_width() - offset.x - 5, y - 5, 1.0f, 1.0f, 0, col_normal2);
-		else
-			unicode_string_render(list[i], get_gl_width() - offset.x - 5, y - 5, 1.0f, 1.0f, 0, col_high2);
+		unicode_string_render(list[i], get_gl_width() - offset.x - 5, y - 5, 1.0f, 1.0f, 0, (i == view ? col_high2 : col_normal2));
 		y -= unicode_get_font_height();
 		col_normal2.a -= 0.15f;
 		col_high2.a -= 0.15f;
