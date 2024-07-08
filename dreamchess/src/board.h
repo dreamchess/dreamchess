@@ -95,6 +95,8 @@ typedef struct board {
 	bool can_castle_kingside[2];
 	bool can_castle_queenside[2];
 	int en_passant;
+	int halfmove_clock;
+	int fullmove_number;
 } board_t;
 
 typedef struct move {

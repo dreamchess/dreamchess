@@ -66,6 +66,8 @@ void board_setup(board_t *board) {
 	board->can_castle_queenside[WHITE] = true;
 	board->can_castle_queenside[BLACK] = true;
 	board->en_passant = -1;
+	board->halfmove_clock = 0;
+	board->fullmove_number = 1;
 }
 
 static int move_is_capture(board_t *board, move_t *move) {
@@ -123,8 +125,9 @@ static int san_piece(int piece) {
 int make_move(board_t *board, move_t *move) {
 	/* Assume that move is valid. */
 
-	if ((PIECE(board->square[move->source]) == PAWN) && (PIECE(board->square[move->destination]) == NONE) &&
-		(HOR != 0)) {
+	const int piece = PIECE(board->square[move->source]);
+
+	if ((piece == PAWN) && (PIECE(board->square[move->destination]) == NONE) && (HOR != 0)) {
 		/* En passant move. */
 		int ep = move->destination - 8 * (move->destination > move->source ? 1 : -1);
 		board->captured[board->square[ep]]++;
@@ -135,25 +138,25 @@ int make_move(board_t *board, move_t *move) {
 	if (board->square[move->destination] != NONE)
 		board->captured[board->square[move->destination]]++;
 
-	if ((PIECE(board->square[move->source]) == KING) && (move->destination - move->source == 2)) {
+	if ((piece == KING) && (move->destination - move->source == 2)) {
 		/* Kingside castle. */
 		board->square[move->destination - 1] = board->square[move->destination + 1];
 		board->square[move->destination + 1] = NONE;
 	}
 
-	if ((PIECE(board->square[move->source]) == KING) && (move->source - move->destination == 2)) {
+	if ((piece == KING) && (move->source - move->destination == 2)) {
 		/* Queenside castle. */
 		board->square[move->destination + 1] = board->square[move->destination - 2];
 		board->square[move->destination - 2] = NONE;
 	}
 
-	if (PIECE(board->square[move->source]) == KING) {
+	if (piece == KING) {
 		/* If the king moves, castling becomes illegal. */
 		board->can_castle_kingside[board->turn] = false;
 		board->can_castle_queenside[board->turn] = false;
 	}
 
-	if (PIECE(board->square[move->source]) == ROOK) {
+	if (piece == ROOK) {
 		/* If the rook moves, castling becomes illegal. */
 		if (move->source == (board->turn == WHITE ? 0 : 56))
 			board->can_castle_queenside[board->turn] = false;
@@ -161,19 +164,27 @@ int make_move(board_t *board, move_t *move) {
 			board->can_castle_kingside[board->turn] = false;
 	}
 
-	if ((PIECE(board->square[move->source]) == PAWN) && (move->destination < 8 || move->destination >= 56))
+	if ((piece == PAWN) && (move->destination < 8 || move->destination >= 56))
 		/* Promotion. */
 		board->square[move->destination] = move->promotion_piece;
 	else
 		board->square[move->destination] = board->square[move->source];
 
-	if ((PIECE(board->square[move->source]) == PAWN) && VERT == 2)
+	if ((piece == PAWN) && (VERT == 2))
 		board->en_passant = move->source + 8 * (move->destination > move->source ? 1 : -1);
 	else
 		board->en_passant = -1;
 
 	board->square[move->source] = NONE;
 	board->turn = OPPONENT(board->turn);
+
+	if ((piece == PAWN) || (move->type == CAPTURE))
+		board->halfmove_clock = 0;
+	else
+		board->halfmove_clock++;
+
+	if (board->turn == WHITE)
+		board->fullmove_number++;
 
 	return 0;
 }

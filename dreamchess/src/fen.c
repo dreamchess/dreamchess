@@ -110,8 +110,12 @@ char *fen_encode(board_t *board) {
 		strcat(fen, "-");
 	}
 
-	// FIXME: Add move counters
-	strcat(fen, " 0 1");
+	char move_number[5];
+	snprintf(move_number, sizeof(move_number), " %d", board->halfmove_clock);
+	strcat(fen, move_number);
+
+	snprintf(move_number, sizeof(move_number), " %d", board->fullmove_number);
+	strcat(fen, move_number);
 
 	return fen;
 }
@@ -164,7 +168,7 @@ board_t *fen_decode(const char *fen) {
 		goto error;
 
 	// Parse turn
-	char turn = *ptr++;
+	const char turn = *ptr++;
 	if (turn == 'w')
 		board->turn = WHITE;
 	else if (turn == 'b')
@@ -208,7 +212,19 @@ board_t *fen_decode(const char *fen) {
 		ptr++; // Skip the dash
 	}
 
-	// FIXME: Parse move counters
+	// Parse move counters
+	if ((*ptr++ != ' ') || !isdigit(*ptr))
+		goto error;
+
+	board->halfmove_clock = atoi(ptr);
+
+	while (isdigit(*ptr))
+		ptr++;
+
+	if (*ptr++ != ' ' || !isdigit(*ptr))
+		goto error;
+
+	board->fullmove_number = atoi(ptr);
 
 	return board;
 

@@ -195,6 +195,15 @@ int game_get_engine_error(void) {
 	return engine_error;
 }
 
+static result_t *result_new(int code, const char *reason) {
+	result_t *result = malloc(sizeof(result_t));
+
+	result->code = code;
+	result->reason = strdup(reason);
+
+	return result;
+}
+
 static int do_move(move_t *move, int ui_update) {
 	char *move_s, *move_f, *move_san;
 	board_t new_board;
@@ -236,27 +245,18 @@ static int do_move(move_t *move, int ui_update) {
 		ui->update(history->view->board, move);
 
 	if (new_board.state == MOVE_CHECKMATE) {
-		history->result = malloc(sizeof(result_t));
-
-		if (new_board.turn == WHITE) {
-			history->result->code = RESULT_BLACK_WINS;
-			history->result->reason = strdup("Black mates");
-		} else {
-			history->result->code = RESULT_WHITE_WINS;
-			history->result->reason = strdup("White mates");
-		}
-
-		if (ui_update)
-			ui->show_result(history->result);
+		if (new_board.turn == WHITE)
+			history->result = result_new(RESULT_BLACK_WINS, "Black mates");
+		else
+			history->result = result_new(RESULT_WHITE_WINS, "White mates");
 	} else if (new_board.state == MOVE_STALEMATE) {
-		history->result = malloc(sizeof(result_t));
-
-		history->result->code = RESULT_DRAW;
-		history->result->reason = strdup("Stalemate");
-
-		if (ui_update)
-			ui->show_result(history->result);
+		history->result = result_new(RESULT_DRAW, "Stalemate");
+	} else if (new_board.halfmove_clock == 100) {
+		history->result = result_new(RESULT_DRAW, "50-move rule");
 	}
+
+	if (history->result && ui_update)
+		ui->show_result(history->result);
 
 	return 1;
 }
