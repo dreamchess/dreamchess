@@ -133,6 +133,24 @@ int history_view_prev(history_t *hist) {
 	return 0;
 }
 
+bool history_has_threefold_rep(history_t *hist) {
+	// Check if the last board position is a threefold repetition
+	step_t *step = hist->last;
+
+	board_t *cur_board = step->board;
+
+	int reps = 0;
+	step = step->prev;
+
+	while (step) {
+		if (board_check_repetition(step->board, cur_board))
+			reps++;
+		step = step->prev;
+	}
+
+	return reps >= 2;
+}
+
 int history_save_pgn(history_t *hist, char *filename) {
 	FILE *f;
 	int width;

@@ -213,6 +213,11 @@ static int do_move(move_t *move, int ui_update) {
 		return 0;
 	}
 
+	if (history->result) {
+		DBG_WARN("Game has already finished");
+		return 0;
+	}
+
 	move_set_attr(history->last->board, move);
 	new_board = *history->last->board;
 	move_s = move_to_fullalg(&new_board, move);
@@ -236,6 +241,8 @@ static int do_move(move_t *move, int ui_update) {
 		new_board.state = BOARD_CHECK;
 	else if (move->state == MOVE_CHECKMATE)
 		new_board.state = BOARD_CHECKMATE;
+	else if (move->state == MOVE_STALEMATE)
+		new_board.state = BOARD_STALEMATE;
 	else
 		new_board.state = BOARD_NORMAL;
 
@@ -244,13 +251,15 @@ static int do_move(move_t *move, int ui_update) {
 	if (ui_update)
 		ui->update(history->view->board, move);
 
-	if (new_board.state == MOVE_CHECKMATE) {
+	if (new_board.state == BOARD_CHECKMATE) {
 		if (new_board.turn == WHITE)
 			history->result = result_new(RESULT_BLACK_WINS, "Black mates");
 		else
 			history->result = result_new(RESULT_WHITE_WINS, "White mates");
-	} else if (new_board.state == MOVE_STALEMATE) {
+	} else if (new_board.state == BOARD_STALEMATE) {
 		history->result = result_new(RESULT_DRAW, "Stalemate");
+	} else if (history_has_threefold_rep(history)) {
+		history->result = result_new(RESULT_DRAW, "Threefold repetition");
 	} else if (new_board.halfmove_clock == 100) {
 		history->result = result_new(RESULT_DRAW, "50-move rule");
 	}
@@ -559,6 +568,10 @@ int main(int argc, char **argv) {
 			}
 
 		ui->update(history->view->board, NULL);
+
+		if (history->result)
+			ui->show_result(history->result);
+
 		while (in_game) {
 			char *s;
 

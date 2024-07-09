@@ -26,8 +26,8 @@
 #include "debug.h"
 #include "san.h"
 
-static int move_is_semi_valid(board_t *board, move_t *move);
-static int in_check(board_t *board, int turn);
+static int move_is_semi_valid(const board_t *board, move_t *move);
+static int in_check(const board_t *board, int turn);
 
 void board_setup(board_t *board) {
 	for (int i = 16; i < 48; i++)
@@ -189,7 +189,7 @@ int make_move(board_t *board, move_t *move) {
 	return 0;
 }
 
-static int ray_ok(board_t *board, move_t *move) {
+static int ray_ok(const board_t *board, move_t *move) {
 	int step, i;
 	if (VERT != 0)
 		step = (move->destination - move->source) / VERT;
@@ -213,7 +213,7 @@ static int ray_ok(board_t *board, move_t *move) {
 	return 0;
 }
 
-static int square_attacked(board_t *b, int square, int side) {
+static int square_attacked(const board_t *b, int square, int side) {
 	board_t board = *b;
 	move_t move;
 	int i;
@@ -240,7 +240,7 @@ static int square_attacked(board_t *b, int square, int side) {
 }
 
 /* Checks whether a move is valid, except for whether this puts own king in check. */
-static int move_is_semi_valid(board_t *board, move_t *move) {
+static int move_is_semi_valid(const board_t *board, move_t *move) {
 	int colour = COLOUR(board->square[move->source]);
 
 	/* Bounds check. */
@@ -395,7 +395,7 @@ static int move_is_semi_valid(board_t *board, move_t *move) {
 	return 1;
 }
 
-static int in_check(board_t *board, int turn) {
+static int in_check(const board_t *board, int turn) {
 	int i;
 	for (i = 0; i < 64; i++)
 		if (board->square[i] == KING + turn)
@@ -409,7 +409,7 @@ static int in_check(board_t *board, int turn) {
 	return square_attacked(board, i, OPPONENT(turn));
 }
 
-int move_is_valid(board_t *b, move_t *move) {
+int move_is_valid(const board_t *b, move_t *move) {
 	board_t board = *b;
 
 	if (!move_is_semi_valid(&board, move))
@@ -713,4 +713,46 @@ char *san_to_fan(board_t *board, char *move_s) {
 	}
 
 	return strdup(move_s);
+}
+
+static bool is_legal_ep_move(const board_t *board, int source) {
+	move_t move;
+	move.source = source;
+	move.destination = board->en_passant;
+	move.promotion_piece = NONE;
+
+	if (!move_is_valid(board, &move))
+		return false;
+
+	// Move is valid, but we need to ensure it's actually a pawn move
+	return PIECE(board->square[source]) == PAWN;
+}
+
+bool board_check_repetition(const board_t *board1, const board_t *board2) {
+	// We assume board1 is the earlier position
+
+	// Boards need to be on the same turn
+	if (board1->turn != board2->turn)
+		return false;
+
+	// ..and have the same pieces on the same squares
+	if (memcmp(board1->square, board2->square, sizeof(board1->square)) != 0)
+		return false;
+
+	// If board1 had a double pawn push as the opponent's last move, we need
+	// to make sure an en passant capture was not possible
+	if (board1->en_passant != -1) {
+		if (is_legal_ep_move(board1, board1->en_passant + (board1->turn == WHITE ? -9 : 9)))
+			return false;
+		if (is_legal_ep_move(board1, board1->en_passant + (board1->turn == WHITE ? -7 : 7)))
+			return false;
+	}
+
+	if (board1->can_castle_kingside[board1->turn] != board2->can_castle_kingside[board2->turn])
+		return false;
+
+	if (board1->can_castle_queenside[board1->turn] != board2->can_castle_queenside[board2->turn])
+		return false;
+
+	return true;
 }

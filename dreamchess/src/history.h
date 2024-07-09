@@ -116,4 +116,6 @@ int history_view_prev(history_t *hist);
  */
 int history_save_pgn(history_t *hist, char *filename);
 
+bool history_has_threefold_rep(history_t *hist);
+
 #endif
