@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-27 01:28+0100\n"
+"POT-Creation-Date: 2024-07-12 14:17+0200\n"
 "PO-Revision-Date: 2023-02-20 11:38+0000\n"
 "Last-Translator: Vojtěch Šamla <auzkok@seznam.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/dreamchess/"
@@ -39,7 +39,24 @@ msgstr "Speciální poděkování"
 msgid "Music"
 msgstr "Hudba"
 
-#: dreamchess.c:413
+#: dreamchess.c:256 dreamchess.c:258
+#, fuzzy
+msgid "Checkmate"
+msgstr "Šach mat"
+
+#: dreamchess.c:260
+msgid "Stalemate"
+msgstr ""
+
+#: dreamchess.c:262
+msgid "Threefold repetition"
+msgstr ""
+
+#: dreamchess.c:264
+msgid "50-move rule"
+msgstr ""
+
+#: dreamchess.c:422
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,27 +71,27 @@ msgstr ""
 "\n"
 "Volby:\n"
 
-#: dreamchess.c:416
+#: dreamchess.c:425
 msgid "show help"
 msgstr "zobrazit nápovědu"
 
-#: dreamchess.c:417
+#: dreamchess.c:426
 msgid "run fullscreen"
 msgstr "spustit na celou obrazovku"
 
-#: dreamchess.c:418
+#: dreamchess.c:427
 msgid "set screen width"
 msgstr "nastavit šířku obrazovky"
 
-#: dreamchess.c:419
+#: dreamchess.c:428
 msgid "set screen height"
 msgstr "nastavit výšku obrazovky"
 
-#: dreamchess.c:420
+#: dreamchess.c:429
 msgid "use <eng> as first chess engine"
 msgstr "použít <eng> jako primární šachový engine"
 
-#: dreamchess.c:421
+#: dreamchess.c:430
 msgid "  defaults to 'dreamer'"
 msgstr "  výchozí je 'dreamer'"
 
@@ -321,11 +338,11 @@ msgstr "Uložit hru"
 msgid "Load Game"
 msgstr "Nahrát hru"
 
-#: gui/ui_sdlgl.c:312
+#: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Chyba: Nepodařilo se nastavit mód videa; byl použit výchozí"
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
 msgstr "Načítání, prosím čekejte…"
 

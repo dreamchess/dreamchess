@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-27 01:28+0100\n"
+"POT-Creation-Date: 2024-07-12 14:17+0200\n"
 "PO-Revision-Date: 2022-07-04 14:20+0000\n"
 "Last-Translator: tmdakm <tmdakm@163.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -39,7 +39,24 @@ msgstr "特别鸣谢"
 msgid "Music"
 msgstr "音乐"
 
-#: dreamchess.c:413
+#: dreamchess.c:256 dreamchess.c:258
+#, fuzzy
+msgid "Checkmate"
+msgstr "将死"
+
+#: dreamchess.c:260
+msgid "Stalemate"
+msgstr ""
+
+#: dreamchess.c:262
+msgid "Threefold repetition"
+msgstr ""
+
+#: dreamchess.c:264
+msgid "50-move rule"
+msgstr ""
+
+#: dreamchess.c:422
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,27 +71,27 @@ msgstr ""
 "\n"
 "选项：\n"
 
-#: dreamchess.c:416
+#: dreamchess.c:425
 msgid "show help"
 msgstr "显示帮助"
 
-#: dreamchess.c:417
+#: dreamchess.c:426
 msgid "run fullscreen"
 msgstr "全屏运行"
 
-#: dreamchess.c:418
+#: dreamchess.c:427
 msgid "set screen width"
 msgstr "设置屏幕宽度"
 
-#: dreamchess.c:419
+#: dreamchess.c:428
 msgid "set screen height"
 msgstr "设置屏幕高度"
 
-#: dreamchess.c:420
+#: dreamchess.c:429
 msgid "use <eng> as first chess engine"
 msgstr "使用 <eng> 作为第一个国际象棋引擎"
 
-#: dreamchess.c:421
+#: dreamchess.c:430
 msgid "  defaults to 'dreamer'"
 msgstr "  默认为 'dreamer'"
 
@@ -330,11 +347,11 @@ msgstr "保存游戏"
 msgid "Load Game"
 msgstr "加载游戏"
 
-#: gui/ui_sdlgl.c:312
+#: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr "错误：无法设置视频模式;使用默认值"
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:379
 #, fuzzy
 msgid "Loading, please wait…"
 msgstr "正在加载，请稍候…"

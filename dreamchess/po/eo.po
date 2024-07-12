@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-26 22:03+0100\n"
+"POT-Creation-Date: 2024-07-12 14:17+0200\n"
 "PO-Revision-Date: 2023-01-27 00:26+0000\n"
 "Last-Translator: phlostically <phlostically@mailinator.com>\n"
 "Language-Team: Esperanto <https://hosted.weblate.org/projects/dreamchess/"
@@ -39,7 +39,24 @@ msgstr "Specialan dankon al"
 msgid "Music"
 msgstr "Muziko"
 
-#: dreamchess.c:413
+#: dreamchess.c:256 dreamchess.c:258
+#, fuzzy
+msgid "Checkmate"
+msgstr "Ŝakmat"
+
+#: dreamchess.c:260
+msgid "Stalemate"
+msgstr ""
+
+#: dreamchess.c:262
+msgid "Threefold repetition"
+msgstr ""
+
+#: dreamchess.c:264
+msgid "50-move rule"
+msgstr ""
+
+#: dreamchess.c:422
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,27 +71,27 @@ msgstr ""
 "\n"
 "Opcioj:\n"
 
-#: dreamchess.c:416
+#: dreamchess.c:425
 msgid "show help"
 msgstr "montri helpon"
 
-#: dreamchess.c:417
+#: dreamchess.c:426
 msgid "run fullscreen"
 msgstr "ruliĝi plenekrane"
 
-#: dreamchess.c:418
+#: dreamchess.c:427
 msgid "set screen width"
 msgstr "agordi ekranan larĝon"
 
-#: dreamchess.c:419
+#: dreamchess.c:428
 msgid "set screen height"
 msgstr "agordi ekranan alton"
 
-#: dreamchess.c:420
+#: dreamchess.c:429
 msgid "use <eng> as first chess engine"
 msgstr "uzi <eng> kiel unuan ŝakmotoron"
 
-#: dreamchess.c:421
+#: dreamchess.c:430
 msgid "  defaults to 'dreamer'"
 msgstr "  implicite «dreamer»"
 
@@ -321,11 +338,11 @@ msgstr "Konservi partion"
 msgid "Load Game"
 msgstr "Ŝargi partion"
 
-#: gui/ui_sdlgl.c:312
+#: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Eraro: malsukcesis agordi videoreĝimon; uzante implicitaĵojn"
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
 msgstr "Ŝargante, bonvolu atendi…"
 
@@ -341,12 +358,11 @@ msgstr "Nigro gajnis la partion!"
 msgid "The game ended in a draw!"
 msgstr "La partio estas vana!"
 
-#: gui/xmlsavefile.c:120
-#, c-format
-msgid "%02i/%02i at %02i:%02i."
-msgstr "%02i/%02i je %02i:%02i."
-
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
 msgstr "Nekonata"
+
+#, c-format
+#~ msgid "%02i/%02i at %02i:%02i."
+#~ msgstr "%02i/%02i je %02i:%02i."

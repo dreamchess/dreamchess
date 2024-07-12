@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-27 01:28+0100\n"
+"POT-Creation-Date: 2024-07-12 14:17+0200\n"
 "PO-Revision-Date: 2023-04-28 09:50+0000\n"
 "Last-Translator: Serdar Sağlam <teknomobil@msn.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/dreamchess/"
@@ -39,7 +39,24 @@ msgstr "Özel Teşekkürler"
 msgid "Music"
 msgstr "Müzik"
 
-#: dreamchess.c:413
+#: dreamchess.c:256 dreamchess.c:258
+#, fuzzy
+msgid "Checkmate"
+msgstr "Şah Mat"
+
+#: dreamchess.c:260
+msgid "Stalemate"
+msgstr ""
+
+#: dreamchess.c:262
+msgid "Threefold repetition"
+msgstr ""
+
+#: dreamchess.c:264
+msgid "50-move rule"
+msgstr ""
+
+#: dreamchess.c:422
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -54,27 +71,27 @@ msgstr ""
 "\n"
 "Seçenekler:\n"
 
-#: dreamchess.c:416
+#: dreamchess.c:425
 msgid "show help"
 msgstr "yardımı göster"
 
-#: dreamchess.c:417
+#: dreamchess.c:426
 msgid "run fullscreen"
 msgstr "tam ekran çalıştır"
 
-#: dreamchess.c:418
+#: dreamchess.c:427
 msgid "set screen width"
 msgstr "ekran genişliğini ayarla"
 
-#: dreamchess.c:419
+#: dreamchess.c:428
 msgid "set screen height"
 msgstr "ekran yüksekliğini ayarla"
 
-#: dreamchess.c:420
+#: dreamchess.c:429
 msgid "use <eng> as first chess engine"
 msgstr "ilk satranç motoru olarak <eng> kullan"
 
-#: dreamchess.c:421
+#: dreamchess.c:430
 msgid "  defaults to 'dreamer'"
 msgstr "  öntanımlı olarak 'dreamer'"
 
@@ -321,11 +338,11 @@ msgstr "Oyunu Kaydet"
 msgid "Load Game"
 msgstr "Oyun Yükle"
 
-#: gui/ui_sdlgl.c:312
+#: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr "Hata: video kipi ayarlanamadı; varsayılan kullanılıyor"
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
 msgstr "Yükleniyor, lütfen bekleyin…"
 

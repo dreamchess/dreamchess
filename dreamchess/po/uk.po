@@ -2,12 +2,12 @@
 # Copyright (C) YEAR DreamChess authors
 # This file is distributed under the same license as the DreamChess package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2023-01-27 01:28+0100\n"
+"POT-Creation-Date: 2024-07-12 14:17+0200\n"
 "PO-Revision-Date: 2024-01-01 12:09+0000\n"
 "Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/dreamchess/"
@@ -40,7 +40,24 @@ msgstr "Окрема подяка"
 msgid "Music"
 msgstr "Музика"
 
-#: dreamchess.c:413
+#: dreamchess.c:256 dreamchess.c:258
+#, fuzzy
+msgid "Checkmate"
+msgstr "Шах-мат"
+
+#: dreamchess.c:260
+msgid "Stalemate"
+msgstr ""
+
+#: dreamchess.c:262
+msgid "Threefold repetition"
+msgstr ""
+
+#: dreamchess.c:264
+msgid "50-move rule"
+msgstr ""
+
+#: dreamchess.c:422
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -55,27 +72,27 @@ msgstr ""
 "\n"
 "Налаштування:\n"
 
-#: dreamchess.c:416
+#: dreamchess.c:425
 msgid "show help"
 msgstr "показати довідку"
 
-#: dreamchess.c:417
+#: dreamchess.c:426
 msgid "run fullscreen"
 msgstr "повноекранний режим"
 
-#: dreamchess.c:418
+#: dreamchess.c:427
 msgid "set screen width"
 msgstr "встановити ширину екрану"
 
-#: dreamchess.c:419
+#: dreamchess.c:428
 msgid "set screen height"
 msgstr "встановити висоту екрану"
 
-#: dreamchess.c:420
+#: dreamchess.c:429
 msgid "use <eng> as first chess engine"
 msgstr "використовувати <eng> як основний шаховий рушій"
 
-#: dreamchess.c:421
+#: dreamchess.c:430
 msgid "  defaults to 'dreamer'"
 msgstr "  за замовчуванням 'dreamer'"
 
@@ -322,12 +339,12 @@ msgstr "Зберегти гру"
 msgid "Load Game"
 msgstr "Завантажити гру"
 
-#: gui/ui_sdlgl.c:312
+#: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
 "Помилка: не вдалося встановити режим відео; використовується стандартний"
 
-#: gui/ui_sdlgl.c:364
+#: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
 msgstr "Завантажується, будь ласка зачекайте…"
 
