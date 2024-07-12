@@ -125,9 +125,9 @@ void check_game_end(state_t *state) {
 	case STATE_MATE:
 		state->done = 1;
 		if (board->current_player == SIDE_WHITE)
-			e_comm_send("0-1 {Black mates}\n");
+			e_comm_send("0-1 {Checkmate}\n");
 		else
-			e_comm_send("1-0 {White mates}\n");
+			e_comm_send("1-0 {Checkmate}\n");
 		return;
 	case STATE_STALEMATE:
 		state->done = 1;
@@ -137,11 +137,11 @@ void check_game_end(state_t *state) {
 		switch (is_draw(board)) {
 		case 1:
 			state->done = 1;
-			e_comm_send("1/2-1/2 {Drawn by 3-fold repetition}\n");
+			e_comm_send("1/2-1/2 {Threefold repetition}\n");
 			return;
 		case 2:
 			state->done = 1;
-			e_comm_send("1/2-1/2 {Drawn by 50 move rule}\n");
+			e_comm_send("1/2-1/2 {50-move rule}\n");
 			return;
 		}
 	}

@@ -253,15 +253,15 @@ static int do_move(move_t *move, int ui_update) {
 
 	if (new_board.state == BOARD_CHECKMATE) {
 		if (new_board.turn == WHITE)
-			history->result = result_new(RESULT_BLACK_WINS, "Black mates");
+			history->result = result_new(RESULT_BLACK_WINS, _("Checkmate"));
 		else
-			history->result = result_new(RESULT_WHITE_WINS, "White mates");
+			history->result = result_new(RESULT_WHITE_WINS, _("Checkmate"));
 	} else if (new_board.state == BOARD_STALEMATE) {
-		history->result = result_new(RESULT_DRAW, "Stalemate");
+		history->result = result_new(RESULT_DRAW, _("Stalemate"));
 	} else if (history_has_threefold_rep(history)) {
-		history->result = result_new(RESULT_DRAW, "Threefold repetition");
+		history->result = result_new(RESULT_DRAW, _("Threefold repetition"));
 	} else if (new_board.halfmove_clock == 100) {
-		history->result = result_new(RESULT_DRAW, "50-move rule");
+		history->result = result_new(RESULT_DRAW, _("50-move rule"));
 	}
 
 	if (history->result && ui_update)
