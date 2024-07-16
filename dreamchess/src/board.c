@@ -756,3 +756,63 @@ bool board_check_repetition(const board_t *board1, const board_t *board2) {
 
 	return true;
 }
+
+bool board_has_insufficient_material(const board_t *board) {
+	int pawns = 0;
+	int knights = 0;
+	int light_bishops = 0;
+	int dark_bishops = 0;
+	int rooks = 0;
+	int queens = 0;
+	int pieces = 0;
+
+	for (int i = 0; i < 64; ++i) {
+		int colour = COLOUR(board->square[i]);
+
+		if (board->square[i] == NONE)
+			continue;
+
+		switch (PIECE(board->square[i])) {
+		case PAWN:
+			++pawns;
+			break;
+		case KNIGHT:
+			++knights;
+			break;
+		case BISHOP:
+			if ((i % 2) == (i / 8) % 2)
+				++light_bishops;
+			else
+				++dark_bishops;
+			break;
+		case ROOK:
+			++rooks;
+			break;
+		case QUEEN:
+			++queens;
+			break;
+		}
+
+		++pieces;
+	}
+
+	// If any Pawns, Queens or Rooks are left, the material is sufficient
+	if (pawns > 0 || queens > 0 || rooks > 0)
+		return false;
+
+	// King vs. King, King + Bishop vs. King, King + Knight vs. King are a draw
+	if (pieces <= 3)
+		return true;
+
+	// We have two or more Knights/Bishops on the board. If there is at least one
+	// Knight, material is sufficient.
+	if (knights > 0)
+		return false;
+
+	// We have only Kings and Bishops left. This is sufficient if there
+	// are two bishops on different colours.
+	if (light_bishops > 0 && dark_bishops > 0)
+		return false;
+
+	return true;
+}

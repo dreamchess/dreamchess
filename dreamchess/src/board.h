@@ -129,5 +129,6 @@ int move_is_valid(const board_t *b, move_t *move);
 char *move_to_san(board_t *board, move_t *move);
 char *san_to_fan(board_t *board, char *move_s);
 bool board_check_repetition(const board_t *board1, const board_t *board2);
+bool board_has_insufficient_material(const board_t *board);
 
 #endif

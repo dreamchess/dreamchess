@@ -262,6 +262,8 @@ static int do_move(move_t *move, int ui_update) {
 		history->result = result_new(RESULT_DRAW, _("Threefold repetition"));
 	} else if (new_board.halfmove_clock == 100) {
 		history->result = result_new(RESULT_DRAW, _("50-move rule"));
+	} else if (board_has_insufficient_material(&new_board)) {
+		history->result = result_new(RESULT_DRAW, _("Insufficient material"));
 	}
 
 	if (history->result && ui_update)
