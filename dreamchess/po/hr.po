@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2024-07-12 14:17+0200\n"
+"POT-Creation-Date: 2024-07-16 09:53+0200\n"
 "PO-Revision-Date: 2023-02-06 20:37+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/dreamchess/"
@@ -57,7 +57,11 @@ msgstr ""
 msgid "50-move rule"
 msgstr ""
 
-#: dreamchess.c:422
+#: dreamchess.c:266
+msgid "Insufficient material"
+msgstr ""
+
+#: dreamchess.c:424
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -72,27 +76,27 @@ msgstr ""
 "\n"
 "Postavke:\n"
 
-#: dreamchess.c:425
+#: dreamchess.c:427
 msgid "show help"
 msgstr "prikaži pomoć"
 
-#: dreamchess.c:426
+#: dreamchess.c:428
 msgid "run fullscreen"
 msgstr "pokreni cijeli zaslon"
 
-#: dreamchess.c:427
+#: dreamchess.c:429
 msgid "set screen width"
 msgstr "postavi širinu zaslona"
 
-#: dreamchess.c:428
+#: dreamchess.c:430
 msgid "set screen height"
 msgstr "postavi visinu zaslona"
 
-#: dreamchess.c:429
+#: dreamchess.c:431
 msgid "use <eng> as first chess engine"
 msgstr "koristi <eng> kao prvi šahovski stroj"
 
-#: dreamchess.c:430
+#: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
 msgstr "  zadano na 'dreamer'"
 

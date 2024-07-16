@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2024-07-12 14:17+0200\n"
+"POT-Creation-Date: 2024-07-16 09:53+0200\n"
 "PO-Revision-Date: 2021-03-19 15:18+0000\n"
 "Last-Translator: Ivan Ivanov <vonavi.navi@gmail.com>\n"
 "Language-Team: Bulgarian <https://hosted.weblate.org/projects/dreamchess/"
@@ -56,7 +56,11 @@ msgstr ""
 msgid "50-move rule"
 msgstr ""
 
-#: dreamchess.c:422
+#: dreamchess.c:266
+msgid "Insufficient material"
+msgstr ""
+
+#: dreamchess.c:424
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -71,27 +75,27 @@ msgstr ""
 "\n"
 "Настроики:\n"
 
-#: dreamchess.c:425
+#: dreamchess.c:427
 msgid "show help"
 msgstr "покажи помощ"
 
-#: dreamchess.c:426
+#: dreamchess.c:428
 msgid "run fullscreen"
 msgstr "стартиране на цял екран"
 
-#: dreamchess.c:427
+#: dreamchess.c:429
 msgid "set screen width"
 msgstr "задай ширина на екрана"
 
-#: dreamchess.c:428
+#: dreamchess.c:430
 msgid "set screen height"
 msgstr "задай височина на екрана"
 
-#: dreamchess.c:429
+#: dreamchess.c:431
 msgid "use <eng> as first chess engine"
 msgstr "използвай <eng> като първи шах двигател"
 
-#: dreamchess.c:430
+#: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
 msgstr "  по подразбиране e 'dreamer'"
 

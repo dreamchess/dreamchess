@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
-"POT-Creation-Date: 2024-07-12 14:17+0200\n"
+"POT-Creation-Date: 2024-07-16 09:53+0200\n"
 "PO-Revision-Date: 2023-10-16 12:04+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -56,7 +56,11 @@ msgstr ""
 msgid "50-move rule"
 msgstr ""
 
-#: dreamchess.c:422
+#: dreamchess.c:266
+msgid "Insufficient material"
+msgstr ""
+
+#: dreamchess.c:424
 #, c-format
 msgid ""
 "Usage: dreamchess [options]\n"
@@ -71,28 +75,28 @@ msgstr ""
 "\n"
 "Valg:\n"
 
-#: dreamchess.c:425
+#: dreamchess.c:427
 msgid "show help"
 msgstr "vis hjelp"
 
-#: dreamchess.c:426
+#: dreamchess.c:428
 #, fuzzy
 msgid "run fullscreen"
 msgstr "fullskjermsvisning"
 
-#: dreamchess.c:427
+#: dreamchess.c:429
 msgid "set screen width"
 msgstr "sett skjermbredde"
 
-#: dreamchess.c:428
+#: dreamchess.c:430
 msgid "set screen height"
 msgstr "sett skjermhøyde"
 
-#: dreamchess.c:429
+#: dreamchess.c:431
 msgid "use <eng> as first chess engine"
 msgstr "bruk <eng> som første sjakkmotor"
 
-#: dreamchess.c:430
+#: dreamchess.c:432
 #, fuzzy
 msgid "  defaults to 'dreamer'"
 msgstr "  har forvalg «dreamer»"
