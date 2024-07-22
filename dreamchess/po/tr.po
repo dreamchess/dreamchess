@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2024-07-21 23:09+0000\n"
-"Last-Translator: Halit Sever <halitsever@protonmail.com>\n"
+"PO-Revision-Date: 2024-07-23 16:09+0000\n"
+"Last-Translator: Ramazan S <ramazansancar4545@gmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/tr/>\n"
 "Language: tr\n"
@@ -40,7 +40,6 @@ msgid "Music"
 msgstr "Müzik"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "Şah Mat"
 
