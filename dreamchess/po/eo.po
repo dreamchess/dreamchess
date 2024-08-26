@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2023-01-27 00:26+0000\n"
+"PO-Revision-Date: 2024-08-27 10:55+0000\n"
 "Last-Translator: phlostically <phlostically@mailinator.com>\n"
 "Language-Team: Esperanto <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/eo/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 5.7.1-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,25 +40,24 @@ msgid "Music"
 msgstr "Muziko"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
-msgstr "Ŝakmat"
+msgstr "Mato"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Pato"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Trifoja ripeto"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "50-mova regulo"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Nesufiĉo da ŝakpecoj"
 
 #: dreamchess.c:424
 #, c-format
