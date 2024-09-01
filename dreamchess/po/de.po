@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2024-08-15 08:09+0000\n"
+"PO-Revision-Date: 2024-09-02 16:09+0000\n"
 "Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.8-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -45,19 +45,19 @@ msgstr "Schachmatt"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Pattsituation"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Dreifache Stellungswiederholung"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "50-Züge-Regel"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Unzureichendes Material"
 
 #: dreamchess.c:424
 #, c-format
