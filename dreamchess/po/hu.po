@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2022-06-21 11:14+0000\n"
-"Last-Translator: Viktória Nagy <tindykmp@protonmail.ch>\n"
+"PO-Revision-Date: 2024-10-23 09:15+0000\n"
+"Last-Translator: Balázs Meskó <meskobalazs@mailbox.org>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/hu/>\n"
 "Language: hu\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"X-Generator: Weblate 5.8.2-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -29,7 +29,7 @@ msgstr "Grafika"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr "3D-s Modellezés"
+msgstr "3D-s modellezés"
 
 #: credits.c:39
 msgid "Special Thanks To"
@@ -40,25 +40,24 @@ msgid "Music"
 msgstr "Zene"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "Sakk-matt"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Patt"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Háromszori tükörkép"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "Az ötven lépés szabálya"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Nincs mattadó erő"
 
 #: dreamchess.c:424
 #, c-format
@@ -69,15 +68,15 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
-"Használat: dreamchess [opciók]\n"
+"Használat: dreamchess [kapcsolók]\n"
 "\n"
 "Egy xboard-kompatibilis sakkfelület.\n"
 "\n"
-"Opciók:\n"
+"Kapcsolók:\n"
 
 #: dreamchess.c:427
 msgid "show help"
-msgstr "segítség megjelenítése"
+msgstr "súgó megjelenítése"
 
 #: dreamchess.c:428
 msgid "run fullscreen"
@@ -93,37 +92,37 @@ msgstr "képernyőmagasság beállítása"
 
 #: dreamchess.c:431
 msgid "use <eng> as first chess engine"
-msgstr "<eng> mint első sakkmotor használata"
+msgstr "<eng> használata első sakkmotorként"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr "  alapértelmezett értéked 'álmodó'"
+msgstr "  alapértelmezett érték: „dreamer”"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
 #: system_config.c:175
 msgid "Off"
-msgstr "Kikapcsolva"
+msgstr "Ki"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr "Bekapcsolva"
+msgstr "Be"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr "Egyedi"
+msgstr "Egyéni"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr "Ember kontra CPU"
+msgstr "Ember CPU ellen"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr "CPU kontra Ember"
+msgstr "CPU ember ellen"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr "Ember kontra Ember"
+msgstr "Ember ember ellen"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
@@ -131,7 +130,7 @@ msgstr "Könnyű"
 
 #: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
-msgstr "Normális"
+msgstr "Normál"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
@@ -151,15 +150,15 @@ msgstr "Téma:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "Koordináták megjelenítése:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
-msgstr "Hajtómű:"
+msgstr "Motor:"
 
 #: dialogs/configuration.c:109
 msgid "Music Volume:"
-msgstr "Zene Hangereje:"
+msgstr "Zene hangereje:"
 
 #: dialogs/configuration.c:113
 msgid "Sound Volume:"
@@ -167,21 +166,21 @@ msgstr "Hangerő:"
 
 #: dialogs/configuration.c:153
 msgid "Change resolution…"
-msgstr "Változás felbontás…"
+msgstr "Felbontás megváltoztatása…"
 
 #: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr "OKÉ"
+msgstr "OK"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr "Visszavonás Lépés"
+msgstr "Lépés visszavonása"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr "Lépj Most"
+msgstr "Lépés most"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
@@ -194,7 +193,7 @@ msgstr "Következő lépés megtekintése"
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
-msgstr "Mégsem"
+msgstr "Mégse"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
@@ -202,7 +201,7 @@ msgstr "Kilépés a címhez?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr "Hiba: nem sikerült megváltoztatni a videó módot"
+msgstr "Hiba: nem sikerült megváltoztatni a videómódot"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
@@ -210,7 +209,7 @@ msgstr "Megoldás:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr "Egyedi:"
+msgstr "Egyéni:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
@@ -218,7 +217,7 @@ msgstr "Teljes képernyő:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr "Több mintavétel:"
+msgstr "Többszörös mintavétel:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
@@ -226,11 +225,11 @@ msgstr "Játék mentése…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options…"
-msgstr "Mozgási Lehetőségek…"
+msgstr "Mozgási lehetőségek…"
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game…"
-msgstr "Kilépés a Játékból…"
+msgstr "Kilépés a játékból…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
@@ -262,23 +261,23 @@ msgstr "Szint:"
 
 #: gui/title_dialog.c:171
 msgid "Time options…"
-msgstr "Időbeosztás…"
+msgstr "Időbeállítások…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr "Játék Kezdése"
+msgstr "Játék indítása"
 
 #: gui/title_dialog.c:198
 msgid "New Game…"
-msgstr "Új Játék…"
+msgstr "Új játék…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game…"
-msgstr "Játék Betöltése…"
+msgstr "Játék betöltése…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration…"
-msgstr "Konfiguráció…"
+msgstr "Beállítások…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
@@ -286,11 +285,11 @@ msgstr "Kilépés"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr "Előléptetés! Válassz új darabot!"
+msgstr "Átalakulás! Válasszon új bábut!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr "Sikeres mentés"
+msgstr "A mentés sikeres"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
@@ -299,7 +298,7 @@ msgstr "A mentés sikertelen"
 #: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
-msgstr "Mentve:%s"
+msgstr "Mentve: %s"
 
 #: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
@@ -312,7 +311,7 @@ msgstr "Ember"
 #: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
-msgstr "%s kontra %s"
+msgstr "%s %s ellen"
 
 #: gui/saveload_dialog.c:150
 #, c-format
@@ -332,37 +331,35 @@ msgstr "Üres hely"
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr "Hely mentése: %i"
+msgstr "Mentési hely: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr "Játék Mentése"
+msgstr "Játék mentése"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr "Játék Betöltése"
+msgstr "Játék betöltése"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
-"Hiba: nem sikerült beállítani a videomódot; alapértelmezett beállítások "
-"használata"
+msgstr "Hiba: nem sikerült beállítani a videómódot; alapértelmezések használata"
 
 #: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
-msgstr "Betöltés, kérlek várj…"
+msgstr "Betöltés, kis türelmet…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr "A fehér nyerte a meccset!"
+msgstr "A világos nyerte a meccset!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr "A fekete nyerte a meccset!"
+msgstr "A sötét nyerte a meccset!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr "A mérkőzés döntetlennel ért véget!"
+msgstr "A játék döntetlennel ért véget!"
 
 #: gui/xmlsavefile.c:149
 #, c-format
