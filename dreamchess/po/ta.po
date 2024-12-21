@@ -8,53 +8,56 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-12-22 03:00+0000\n"
+"Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
+"Language-Team: Tamil <https://hosted.weblate.org/projects/dreamchess/"
+"dreamchess/ta/>\n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: credits.c:27
 msgid "Programming"
-msgstr ""
+msgstr "நிரலாக்க"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr ""
+msgstr "கிராபிக்ச்"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr ""
+msgstr "3 டி மாடலிங்"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr ""
+msgstr "சிறப்பு நன்றி"
 
 #: credits.c:45
 msgid "Music"
-msgstr ""
+msgstr "இசை"
 
 #: dreamchess.c:256 dreamchess.c:258
 msgid "Checkmate"
-msgstr ""
+msgstr "செக்மேட்"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "முட்டுக்கட்டை"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "மூன்று மடங்கு மறுபடியும்"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "50-நகரும் விதி"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "போதுமான பொருள்"
 
 #: dreamchess.c:424
 #, c-format
@@ -65,295 +68,301 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"பயன்பாடு: ட்ரீம்செச் [விருப்பங்கள்]\n"
+"\n"
+" ஒரு எக்ச்போர்டு-இணக்கமான சதுரங்க இடைமுகம்.\n"
+"\n"
+" விருப்பங்கள்:\n"
 
 #: dreamchess.c:427
 msgid "show help"
-msgstr ""
+msgstr "உதவியைக் காட்டு"
 
 #: dreamchess.c:428
 msgid "run fullscreen"
-msgstr ""
+msgstr "முழுத்திரை இயக்கவும்"
 
 #: dreamchess.c:429
 msgid "set screen width"
-msgstr ""
+msgstr "திரை அகலத்தை அமைக்கவும்"
 
 #: dreamchess.c:430
 msgid "set screen height"
-msgstr ""
+msgstr "திரை உயரத்தை அமைக்கவும்"
 
 #: dreamchess.c:431
 msgid "use <eng> as first chess engine"
-msgstr ""
+msgstr "முதல் சதுரங்க இயந்திரமாக <eng> ஐப் பயன்படுத்தவும்"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  'ட்ரீமர்' க்கு இயல்புநிலை"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
 #: system_config.c:175
 msgid "Off"
-msgstr ""
+msgstr "அணை"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr ""
+msgstr "ஆன்"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr ""
+msgstr "தனிப்பயன்"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr ""
+msgstr "மனித வெர்சச் சிபியு"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr ""
+msgstr "சிபியு vs. மனிதர்"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr ""
+msgstr "மனித வெர்சச் மனிதர்"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
-msgstr ""
+msgstr "எளிதானது"
 
 #: system_config.c:148 gui/saveload_dialog.c:151
 msgid "Normal"
-msgstr ""
+msgstr "சாதாரண"
 
 #: audio/playlist.c:60
 msgid "Unknown title"
-msgstr ""
+msgstr "தெரியாத தலைப்பு"
 
 #: audio/playlist.c:61
 msgid "Unknown album"
-msgstr ""
+msgstr "தெரியாத ஆல்பம்"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr ""
+msgstr "தெரியாத கலைஞர்"
 
 #: dialogs/configuration.c:97
 msgid "Theme:"
-msgstr ""
+msgstr "தீம்:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "ஆயத்தொலைவுகளைக் காட்டு:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
-msgstr ""
+msgstr "இயந்திரம்:"
 
 #: dialogs/configuration.c:109
 msgid "Music Volume:"
-msgstr ""
+msgstr "இசை தொகுதி:"
 
 #: dialogs/configuration.c:113
 msgid "Sound Volume:"
-msgstr ""
+msgstr "ஒலி தொகுதி:"
 
 #: dialogs/configuration.c:153
 msgid "Change resolution…"
-msgstr ""
+msgstr "தீர்மானத்தை மாற்றவும்…"
 
 #: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
 #: dialogs/resolution.c:219 gui/victory_dialog.c:61
 msgid "OK"
-msgstr ""
+msgstr "சரி"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr ""
+msgstr "பின்வாங்கல் நகர்வு"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr ""
+msgstr "இப்போது நகர்த்தவும்"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr ""
+msgstr "முந்தைய நகர்வைக் காண்க"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr ""
+msgstr "அடுத்த நகர்வைக் காண்க"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
-msgstr ""
+msgstr "ரத்துசெய்"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
-msgstr ""
+msgstr "தலைப்புக்கு வெளியேறவா?"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr ""
+msgstr "பிழை: வீடியோ பயன்முறையை மாற்றுவதில் தோல்வி"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr ""
+msgstr "தீர்மானம்:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "வழக்கம்:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
-msgstr ""
+msgstr "முழுத் திரை:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "மல்டிசாம்ப்ளிங்:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
-msgstr ""
+msgstr "விளையாட்டைச் சேமிக்கவும்…"
 
 #: dialogs/system_dialog.c:67
 msgid "Move Options…"
-msgstr ""
+msgstr "விருப்பங்களை நகர்த்தவும்…"
 
 #: dialogs/system_dialog.c:71
 msgid "Quit Game…"
-msgstr ""
+msgstr "விளையாட்டிலிருந்து வெளியேறவும்…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
-msgstr ""
+msgstr "கட்டப்பட்டது!"
 
 #: gui/ingame_ui.c:102
 msgid "Checkmate!"
-msgstr ""
+msgstr "செக்மேட்!"
 
 #: gui/ingame_ui.c:103
 msgid "Check!"
-msgstr ""
+msgstr "சரிபார்!"
 
 #: gui/ingame_ui.c:104
 msgid "Victory!"
-msgstr ""
+msgstr "வெற்றி!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr ""
+msgstr "வீரர்கள்:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
-msgstr ""
+msgstr "சிரமம்:"
 
 #: gui/title_dialog.c:142
 msgid "Level:"
-msgstr ""
+msgstr "நிலை:"
 
 #: gui/title_dialog.c:171
 msgid "Time options…"
-msgstr ""
+msgstr "நேர விருப்பங்கள்…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr ""
+msgstr "விளையாட்டைத் தொடங்கவும்"
 
 #: gui/title_dialog.c:198
 msgid "New Game…"
-msgstr ""
+msgstr "புதிய விளையாட்டு…"
 
 #: gui/title_dialog.c:202
 msgid "Load Game…"
-msgstr ""
+msgstr "சுமை விளையாட்டு…"
 
 #: gui/title_dialog.c:206
 msgid "Configuration…"
-msgstr ""
+msgstr "உள்ளமைவு…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr ""
+msgstr "வெளியேறு"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr ""
+msgstr "பதவி உயர்வு! புதிய துண்டு தேர்வு!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr ""
+msgstr "வெற்றிகரமாக சேமிக்கவும்"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "சேமி தோல்வியுற்றது"
 
 #: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
-msgstr ""
+msgstr "சேமிக்கப்பட்டது: %s"
 
 #: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
-msgstr ""
+msgstr "சிபியு"
 
 #: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
-msgstr ""
+msgstr "மனித"
 
 #: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
-msgstr ""
+msgstr "%s vs %s"
 
 #: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
-msgstr ""
+msgstr "சிரமம்: %s"
 
 #: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
-msgstr ""
+msgstr "நிலை: %i"
 
 #: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
-msgstr ""
+msgstr "வெற்று ச்லாட்"
 
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr ""
+msgstr "ச்லாட்டை சேமிக்கவும்: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr ""
+msgstr "விளையாட்டைச் சேமிக்கவும்"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr ""
+msgstr "விளையாட்டு சுமை"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
 msgstr ""
+"பிழை: வீடியோ பயன்முறையை அமைப்பதில் தோல்வி; இயல்புநிலைகளைப் பயன்படுத்துதல்"
 
 #: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
-msgstr ""
+msgstr "ஏற்றுகிறது, தயவுசெய்து காத்திருங்கள்…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr ""
+msgstr "போட்டியில் வெள்ளை வென்றது!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr ""
+msgstr "பிளாக் போட்டியில் வென்றார்!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr ""
+msgstr "விளையாட்டு ஒரு டிராவில் முடிந்தது!"
 
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr ""
+msgstr "தெரியவில்லை"
