@@ -41,9 +41,7 @@ jobs:
       matrix:
         sys:
           - mingw64
-          - mingw32
           - clang64
-          - clang32
 
     steps:
     - uses: msys2/setup-msys2@v2
