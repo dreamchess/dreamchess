@@ -105,13 +105,13 @@ jobs:
         cpack -G WIX -C ${{ env.BUILD_TYPE }}
 
     - name: Upload zip artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ZIP_ASSET_LABEL }}
         path: build/*.zip
 
     - name: Upload installer artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.MSI_ASSET_LABEL }}
         path: build/*.msi
@@ -179,7 +179,7 @@ jobs:
         cpack -G DragNDrop -C ${{ env.BUILD_TYPE }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.DMG_ASSET_LABEL }}
         path: build/*.dmg
