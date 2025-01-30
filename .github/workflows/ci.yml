@@ -164,6 +164,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Install Ninja
+      run: brew install ninja
+
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v11
 
