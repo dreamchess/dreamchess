@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2025-03-02 19:55+0000\n"
+"PO-Revision-Date: 2025-03-03 16:04+0000\n"
 "Last-Translator: __ Fresh __ <artemoka571@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/ru/>\n"
@@ -73,17 +73,17 @@ msgid ""
 msgstr ""
 "Использовать: dreamchess [настройки]\n"
 "\n"
-"xboard-совместимый шахматный интерфейс.\n"
+"Xboard-совместимый шахматный интерфейс.\n"
 "\n"
 "Настройки:\n"
 
 #: dreamchess.c:427
 msgid "show help"
-msgstr "показать помощь"
+msgstr "Открыть помощь"
 
 #: dreamchess.c:428
 msgid "run fullscreen"
-msgstr "запустить полноэкранный режим"
+msgstr "Запустить в полноэкранном режиме"
 
 #: dreamchess.c:429
 msgid "set screen width"
@@ -117,11 +117,11 @@ msgstr "Выборочно"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr "Человек против Процессора"
+msgstr "Человек против Робота"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr "Процессор против Человека"
+msgstr "Робот против Человека"
 
 #: system_config.c:144
 msgid "Human vs. Human"
