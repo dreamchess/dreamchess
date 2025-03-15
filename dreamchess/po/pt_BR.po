@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2023-08-27 02:51+0000\n"
-"Last-Translator: pedrolinharesmoreira <pedrolinhares@unifei.edu.br>\n"
+"PO-Revision-Date: 2025-03-15 12:39+0000\n"
+"Last-Translator: Paulo da Silva Quitério Neto <layoutbr@lexxa.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "dreamchess/dreamchess/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0.1-dev\n"
+"X-Generator: Weblate 5.11-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -29,36 +29,35 @@ msgstr "Gráficos"
 
 #: credits.c:37
 msgid "3D Modelling"
-msgstr "Modelação 3D"
+msgstr "Modelagem 3D"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr "Agradecimentos Especiais A"
+msgstr "Agradecimentos especiais a"
 
 #: credits.c:45
 msgid "Music"
 msgstr "Música"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "Xeque-mate"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Impasse"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Repetição tripla"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "Regra dos 50 movimentos"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Material insuficiente"
 
 #: dreamchess.c:424
 #, c-format
@@ -93,21 +92,21 @@ msgstr "definir altura da tela"
 
 #: dreamchess.c:431
 msgid "use <eng> as first chess engine"
-msgstr "usar <eng> como primeiro motor de xadrez"
+msgstr "usar <eng> como primeiro mecanismo de xadrez"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr "  por defeito usa 'dreamer'"
+msgstr "  padrões para 'dreamer'"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
 #: system_config.c:175
 msgid "Off"
-msgstr "Não"
+msgstr "Desativado"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr "Sim"
+msgstr "Ativado"
 
 #: system_config.c:120
 msgid "Custom"
@@ -155,7 +154,7 @@ msgstr "Mostrar coordenadas:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
-msgstr "Motor:"
+msgstr "Mecanismo:"
 
 #: dialogs/configuration.c:109
 msgid "Music Volume:"
@@ -185,11 +184,11 @@ msgstr "Mover Agora"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr "Ver Movimento Anterior"
+msgstr "Visualizar Movimento Anterior"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr "Ver Próximo Movimento"
+msgstr "Visualizar Movimento Seguinte"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
@@ -218,7 +217,7 @@ msgstr "Tela Cheia:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr "Multi-amostra:"
+msgstr "Multiamostragem:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
@@ -312,7 +311,7 @@ msgstr "Humano"
 #: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
-msgstr "%s vs %s"
+msgstr "%s contra %s"
 
 #: gui/saveload_dialog.c:150
 #, c-format
@@ -344,23 +343,23 @@ msgstr "Carregar Jogo"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
-msgstr "Erro: Falha ao definir o modo de vídeo; usando padrão"
+msgstr "Erro: Falha ao definir o modo de vídeo; usando padrões"
 
 #: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
-msgstr "Carregando. Por favor, aguarde…"
+msgstr "Carregando, aguarde…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr "Branco venceu!"
+msgstr "As brancas venceram a partida!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr "Preto venceu!"
+msgstr "As pretas venceram a partida!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr "O jogo terminou em empate!"
+msgstr "O jogo terminou empatado!"
 
 #: gui/xmlsavefile.c:149
 #, c-format
