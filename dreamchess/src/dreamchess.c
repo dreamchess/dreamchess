@@ -204,12 +204,19 @@ static result_t *result_new(int code, const char *reason) {
 	return result;
 }
 
+int last_move_is_valid(move_t *move) {
+	if (!move_is_valid(history->last->board, move)) {
+		DBG_WARN("Move is illegal");
+		return 0;
+	}
+	return 1;
+}
+
 static int do_move(move_t *move, int ui_update) {
 	char *move_s, *move_f, *move_san;
 	board_t new_board;
 
-	if (!move_is_valid(history->last->board, move)) {
-		DBG_WARN("Move is illegal");
+	if (!last_move_is_valid(move)) {
 		return 0;
 	}
 
