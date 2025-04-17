@@ -40,9 +40,9 @@ gg_event_t convert_event(SDL_Event *event) {
 	gg_event_t gg_event = {GG_EVENT_NONE};
 
 	switch (event->type) {
-	case SDL_KEYDOWN:
+	case SDL_EVENT_KEY_DOWN:
 		gg_event.type = GG_EVENT_KEY;
-		switch (event->key.keysym.sym) {
+		switch (event->key.key) {
 		case SDLK_RIGHT:
 			gg_event.key = GG_KEY_RIGHT;
 			break;
@@ -74,15 +74,15 @@ gg_event_t convert_event(SDL_Event *event) {
 			gg_event.key = GG_KEY_ESCAPE;
 			break;
 		default:
-			if (event->key.keysym.sym >= 0x20 && event->key.keysym.sym < 0x80)
-				gg_event.key = event->key.keysym.sym;
+			if (event->key.key >= 0x20 && event->key.key < 0x80)
+				gg_event.key = event->key.key;
 			else
 				gg_event.type = GG_EVENT_NONE;
 			return gg_event;
 		}
 		break;
 
-	case SDL_TEXTINPUT: {
+	case SDL_EVENT_TEXT_INPUT: {
 		unsigned int utf32 = utf8_to_utf32(event->text.text);
 
 		// Accept ASCII input only
@@ -93,8 +93,8 @@ gg_event_t convert_event(SDL_Event *event) {
 		}
 	} break;
 
-	case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP: {
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
+	case SDL_EVENT_MOUSE_BUTTON_UP: {
 		int width, height;
 		int mouse_x, mouse_y;
 		SDL_GetWindowSize(sdl_window, &width, &height);
@@ -102,13 +102,13 @@ gg_event_t convert_event(SDL_Event *event) {
 		mouse_y = event->motion.y * get_screen_height() / height;
 		set_mouse_pos(mouse_x, mouse_y);
 		gg_event.type = GG_EVENT_MOUSE;
-		gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
+		gg_event.mouse.type = (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
 		gg_event.mouse.button = event->button.button - 1;
 		gg_event.mouse.x = ((float)mouse_x / (float)get_screen_width()) * get_gl_width();
 		gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y / (float)get_screen_height()) * 480;
 	} break;
 
-	case SDL_MOUSEMOTION: {
+	case SDL_EVENT_MOUSE_MOTION: {
 		int width, height;
 		int mouse_x, mouse_y;
 		SDL_GetWindowSize(sdl_window, &width, &height);

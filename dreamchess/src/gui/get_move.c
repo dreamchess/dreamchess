@@ -36,9 +36,9 @@ int last_mousey = 0;
 
 int get_move(void) {
 	int retval = -1;
-	int mousex, mousey;
+	float mousex, mousey;
 	SDL_Event event;
-	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+	const bool *keystate = SDL_GetKeyboardState(NULL);
 	Uint8 mousestate = SDL_GetMouseState(&mousex, &mousey);
 
 	if (mousestate & SDL_BUTTON_MIDDLE) {
@@ -69,10 +69,10 @@ int get_move(void) {
 
 		handle_system_events(&event);
 
-		if (event.type == SDL_MOUSEMOTION)
+		if (event.type == SDL_EVENT_MOUSE_MOTION)
 			set_mouse_pos(event.motion.x, event.motion.y);
 
-		if (!gg_dialog_get_active() && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+		if (!gg_dialog_get_active() && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && event.button.button == SDL_BUTTON_LEFT) {
 			retval = get_mouse_square();
 			if (retval != -1)
 				select_piece(retval);
@@ -80,14 +80,14 @@ int get_move(void) {
 			continue;
 		}
 
-		if (!gg_dialog_get_active() && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
+		if (!gg_dialog_get_active() && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && event.button.button == SDL_BUTTON_RIGHT) {
 			gg_dialog_open(dialog_system_create());
 
 			continue;
 		}
 
-		if ((event.type == SDL_KEYDOWN && event.key.keysym.mod & KMOD_ALT && event.key.keysym.sym == SDLK_RETURN) ||
-			(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11)) {
+		if ((event.type == SDL_EVENT_KEY_DOWN && event.key.mod & SDL_KMOD_ALT && event.key.key == SDLK_RETURN) ||
+			(event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_F11)) {
 			DBG_LOG("Toggled fullscreen");
 			toggle_fullscreen();
 			continue;

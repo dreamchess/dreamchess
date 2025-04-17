@@ -35,11 +35,11 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
 	w = power_of_two(area->w);
 	h = power_of_two(area->h);
 
-	image = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32,
+	image = SDL_CreateSurface(w, h,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
-								 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+	SDL_PIXELFORMAT_ABGR8888
 #else
-								 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+	SDL_PIXELFORMAT_RGBA8888
 #endif
 	);
 	if (image == NULL) {
@@ -66,7 +66,7 @@ texture_t SDL_GL_LoadTexture(SDL_Surface *surface, SDL_Rect *area, int alpha, in
 	}
 
 	glTexImage2D(GL_TEXTURE_2D, 0, (alpha ? 4 : 3), w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
-	SDL_FreeSurface(image); /* No longer needed */
+	SDL_DestroySurface(image); /* No longer needed */
 
 	glEnable(GL_TEXTURE_2D);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -194,5 +194,5 @@ void load_texture_png(texture_t *texture, char *filename, int alpha, int clamp) 
 
 	/* Free up any memory we may have used */
 	if (texture_image)
-		SDL_FreeSurface(texture_image);
+		SDL_DestroySurface(texture_image);
 }

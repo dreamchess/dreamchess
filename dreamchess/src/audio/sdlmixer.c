@@ -26,13 +26,14 @@
 #include <unistd.h>
 #endif
 
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL3/SDL.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 #include "debug.h"
 #include "playlist.h"
 #include "system_config.h"
 #include "theme.h"
+#include <stdlib.h>
 
 static sound_t sounds[AUDIO_SOUNDS] = {{AUDIO_MOVE, "move1.wav"}};
 
@@ -75,7 +76,8 @@ static void music_finished(void) {
 void audio_init(void) {
 	music_packs_t *music_packs;
 	int audio_rate = 44100;
-	Uint16 audio_format = AUDIO_S16;
+	// Uint16 audio_format = SDL_AUDIO_S16LE;
+	// SDL_AudioSpec audio_format = SDL_AUDIO_S16LE;
 	int audio_channels = 2;
 	int audio_buffers = 4096;
 	music_pack_t *music_pack;
@@ -88,7 +90,7 @@ void audio_init(void) {
 		return;
 	}
 
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
+	if (Mix_OpenAudio(0, NULL )) {
 		DBG_ERROR("Unable to open audio");
 		return;
 	}

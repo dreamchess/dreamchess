@@ -1,8 +1,8 @@
-find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
 
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_mixer REQUIRED)
+find_package(SDL3_image REQUIRED)
+find_package(SDL3_mixer REQUIRED)
 unset(CMAKE_FIND_PACKAGE_PREFER_CONFIG)
 
 find_package(OpenGL REQUIRED)
@@ -214,8 +214,8 @@ if(UNIX)
 endif()
 
 target_include_directories(dreamchess PRIVATE
-    ${SDL2_IMAGE_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
+    ${SDL3_IMAGE_INCLUDE_DIR}
+    ${SDL3_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
@@ -230,12 +230,12 @@ target_link_libraries(dreamchess PRIVATE
     common
     GLEW::GLEW
     Freetype::Freetype
-    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,$<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image-static>>
-    ${SDL2_IMAGE_LIBRARY}
-    $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,$<TARGET_NAME_IF_EXISTS:SDL2_mixer::SDL2_mixer-static>>
-    ${SDL2_MIXER_LIBRARY}
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image>,SDL3_image::SDL3_image,$<TARGET_NAME_IF_EXISTS:SDL3_image::SDL3_image-static>>
+    ${SDL3_IMAGE_LIBRARY}
+    $<IF:$<TARGET_EXISTS:SDL3_mixer::SDL3_mixer>,SDL3_mixer::SDL3_mixer,$<TARGET_NAME_IF_EXISTS:SDL3_mixer::SDL3_mixer-static>>
+    ${SDL3_MIXER_LIBRARY}
+    $<TARGET_NAME_IF_EXISTS:SDL3::SDL3main>
+    $<IF:$<TARGET_EXISTS:SDL3::SDL3>,SDL3::SDL3,SDL3::SDL3-static>
     ${OPENGL_LIBRARY}
     EXPAT::EXPAT
     ${Intl_LIBRARIES}

@@ -35,7 +35,6 @@
 #include "i18n.h"
 #include "unicode.h"
 #include <GL/glew.h>
-#include <SDL2/SDL_syswm.h>
 
 static int turn_counter_start = 0;
 static texture_t menu_title_tex;
@@ -178,20 +177,14 @@ static void reset_turn_counter(void) {
 }
 
 void handle_system_events(SDL_Event *event) {
-	if (event->type == SDL_QUIT)
+	if (event->type == SDL_EVENT_QUIT)
 		/* FIXME */
 		exit(0);
 
-	if (event->type == SDL_WINDOWEVENT) {
-		switch(event->window.event) {
-		case SDL_WINDOWEVENT_MINIMIZED:
+	if (event->type == SDL_EVENT_WINDOW_MINIMIZED)
 			set_is_minimized(true);
-			break;
-		case SDL_WINDOWEVENT_RESTORED:
-			set_is_minimized(false);
-			break;
-		}
-	}
+	if (event->type == SDL_EVENT_WINDOW_RESTORED)
+			set_is_minimized(false);		
 }
 
 static int poll_event(gg_event_t *event) {
@@ -204,16 +197,16 @@ static int poll_event(gg_event_t *event) {
 
 		handle_system_events(&sdl_event);
 
-		if ((sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_ALT &&
-			 sdl_event.key.keysym.sym == SDLK_RETURN) ||
-			(sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.sym == SDLK_F11)) {
+		if ((sdl_event.type == SDL_EVENT_KEY_DOWN && sdl_event.key.mod & SDL_KMOD_ALT &&
+			 sdl_event.key.key == SDLK_RETURN) ||
+			(sdl_event.type == SDL_EVENT_KEY_DOWN && sdl_event.key.key == SDLK_F11)) {
 			DBG_LOG("Toggled fullscreen");
 			toggle_fullscreen();
 			continue;
 		}
 
-		if ((sdl_event.type == SDL_KEYDOWN && sdl_event.key.keysym.mod & KMOD_CTRL &&
-			 sdl_event.key.keysym.sym == SDLK_f)) {
+		if ((sdl_event.type == SDL_EVENT_KEY_DOWN && sdl_event.key.mod & SDL_KMOD_CTRL &&
+			 sdl_event.key.key == SDLK_F)) {
 			DBG_LOG("Toggled fps counter");
 			toggle_show_fps();
 			continue;
@@ -334,7 +327,7 @@ static config_t *do_menu(int *pgn) {
 	DBG_LOG("Entering title menu");
 
 	while (1) {
-		const Uint8 *keystate;
+		const bool *keystate;
 		gg_event_t event;
 
 		keystate = SDL_GetKeyboardState(NULL);
@@ -455,7 +448,7 @@ static void load_menu_tex(void) {
 }
 
 static int set_fullscreen(int fullscreen) {
-	if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) > 0) {
+	if (SDL_SetWindowFullscreen(sdl_window, fullscreen) > 0) {
 		DBG_ERROR("Failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
 		return 1;
 	}
@@ -521,7 +514,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 			ms);
 
 	if (fullscreen)
-		video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		video_flags |= SDL_WINDOW_FULLSCREEN;
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
@@ -532,7 +525,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	#endif
 
 	sdl_window =
-		SDL_CreateWindow("DreamChess", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, video_flags);
+		SDL_CreateWindow("DreamChess", width, height, video_flags);
 
 	if (!sdl_window) {
 		DBG_ERROR("Failed to set video mode: %ix%i; fullscreen %s; %ix multisampling: %s", width, height,
@@ -583,7 +576,7 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	load_menu_tex();
 
-	SDL_ShowCursor(SDL_DISABLE);
+	SDL_HideCursor();
 
 	// SDL_WM_SetCaption( "DreamChess", NULL );
 
@@ -654,7 +647,7 @@ static void show_result(result_t *res) {
 
 /** Implements ui_driver::init. */
 static void sdlgl_init(void) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
 		exit(1);
 	}

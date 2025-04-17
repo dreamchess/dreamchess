@@ -31,7 +31,8 @@
 #define HAVE_GETOPT_LONG
 #endif /* HAVE_GETOPT_H */
 #include <errno.h>
-#include <SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL.h>
 
 #include "audio.h"
 #include "board.h"

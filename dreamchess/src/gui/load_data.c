@@ -44,7 +44,7 @@ void load_border(texture_t border[9], char *filename) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 		/* Free up any memory we may have used */
-		SDL_FreeSurface(surface);
+		SDL_DestroySurface(surface);
 	} else {
 		DBG_ERROR("Could not load texture: %s", filename);
 		exit(1);
