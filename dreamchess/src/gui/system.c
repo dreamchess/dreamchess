@@ -137,6 +137,8 @@ void resize_window(int width, int height) {
 	glLoadIdentity();
 	gl_width = 480 * width / (float)height;
 	gl_height = 480;
+	//gl_width = width;
+	//gl_height = height;
 	glOrtho(0, gl_width, 0, gl_height, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

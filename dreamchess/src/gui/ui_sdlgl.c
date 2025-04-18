@@ -62,6 +62,8 @@ SDL_Window *sdl_window;
 static GLuint screen_fb, screen_temp_fb, screen_tex, screen_color_rb, screen_temp_color_rb, screen_depth_stencil_rb;
 static int max_samples;
 
+static int resize(int width, int height, int fullscreen, int ms);
+
 static void music_callback(char *title, char *artist, char *album) {
 	DBG_LOG("Now playing: %s - %s", artist, title);
 }
@@ -182,9 +184,15 @@ void handle_system_events(SDL_Event *event) {
 		exit(0);
 
 	if (event->type == SDL_EVENT_WINDOW_MINIMIZED)
-			set_is_minimized(true);
+		set_is_minimized(true);
 	if (event->type == SDL_EVENT_WINDOW_RESTORED)
-			set_is_minimized(false);		
+		set_is_minimized(false);	
+	if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+		int w, h;
+		SDL_GetWindowSizeInPixels(sdl_window, &w, &h);
+		resize(w,h,false,screen_ms);
+		//resize_window(w, h);	
+	}
 }
 
 static int poll_event(gg_event_t *event) {
