@@ -448,7 +448,7 @@ static void load_menu_tex(void) {
 }
 
 static int set_fullscreen(int fullscreen) {
-	if (SDL_SetWindowFullscreen(sdl_window, fullscreen) > 0) {
+	if (!SDL_SetWindowFullscreen(sdl_window, fullscreen)) {
 		DBG_ERROR("Failed to set fullscreen to %s: %s", fullscreen ? "on" : "off", SDL_GetError());
 		return 1;
 	}
@@ -515,6 +515,8 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	if (fullscreen)
 		video_flags |= SDL_WINDOW_FULLSCREEN;
+		
+	video_flags |= SDL_WINDOW_RESIZABLE;
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
@@ -647,7 +649,7 @@ static void show_result(result_t *res) {
 
 /** Implements ui_driver::init. */
 static void sdlgl_init(void) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)) {
 		DBG_ERROR("SDL initialization failed: %s", SDL_GetError());
 		exit(1);
 	}

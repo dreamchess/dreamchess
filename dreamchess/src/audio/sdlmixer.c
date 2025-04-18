@@ -77,20 +77,23 @@ void audio_init(void) {
 	music_packs_t *music_packs;
 	int audio_rate = 44100;
 	// Uint16 audio_format = SDL_AUDIO_S16LE;
-	// SDL_AudioSpec audio_format = SDL_AUDIO_S16LE;
-	int audio_channels = 2;
+	SDL_AudioSpec audio_format;
+	audio_format.freq = MIX_DEFAULT_FREQUENCY;
+    audio_format.format = SDL_AUDIO_S16LE;
+    audio_format.channels = 2;
+
 	int audio_buffers = 4096;
 	music_pack_t *music_pack;
 	option_t *option;
 
 	music_packs = theme_get_music_packs();
 
-	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+	if (!SDL_Init(SDL_INIT_AUDIO)) {
 		DBG_ERROR("SDL audio initialization failed: %s", SDL_GetError());
 		return;
 	}
 
-	if (Mix_OpenAudio(0, NULL )) {
+	if (Mix_OpenAudio(0, &audio_format )) {
 		DBG_ERROR("Unable to open audio");
 		return;
 	}
