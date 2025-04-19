@@ -100,7 +100,7 @@ void set_perspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zF
 void go_3d(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	set_perspective(45.0f, get_gl_width() / 480.0f, 1.0f, 100.0f);
+	set_perspective(45.0f, get_gl_width() / get_gl_height(), 1.0f, 100.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }

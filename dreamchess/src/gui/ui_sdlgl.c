@@ -524,6 +524,8 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 	if (fullscreen)
 		video_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
+	video_flags |= SDL_WINDOW_RESIZABLE;
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
