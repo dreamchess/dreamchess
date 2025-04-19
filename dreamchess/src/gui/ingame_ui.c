@@ -132,33 +132,33 @@ void draw_ui_elements(void) {
 	/* Enable/disable elements, set positions/sizes. */
 	int avatars = TRUE;
 	coord3_t avatar_size = {100, 100};
-	coord3_t avatar_offset = {0 + get_ui_trans_pos(), 480 - avatar_size.y};
+	coord3_t avatar_offset = {0 + get_ui_trans_pos(), get_gl_height() - avatar_size.y};
 
 	int shadows = TRUE;
 	coord3_t shadow_offset = {2, 2};
 
 	int names = TRUE;
 	char *white_name, *black_name;
-	coord3_t name_offset = {100 + get_ui_trans_pos(), 480 - 60};
+	coord3_t name_offset = {100 + get_ui_trans_pos(), get_gl_height() - 60};
 	coord3_t white_name_size, black_name_size;
 
 	int clocks = FALSE;
 	char *white_clock, *black_clock;
-	coord3_t clock_offset = {300 + get_ui_trans_pos(), 480 - 60};
+	coord3_t clock_offset = {300 + get_ui_trans_pos(), get_gl_height() - 60};
 	coord3_t white_clock_size, black_clock_size;
 
 	int health_bars = FALSE;
-	coord3_t health_bar_offset = {100 + get_ui_trans_pos(), 480 - 40};
+	coord3_t health_bar_offset = {100 + get_ui_trans_pos(), get_gl_height() - 40};
 	coord3_t health_bar_size = {200, 15};
 
 	int move_lists = TRUE;
-	coord3_t move_list_offset = {30 + get_ui_trans_pos(), 350};
+	coord3_t move_list_offset = {30 + get_ui_trans_pos(), get_gl_height() - 130};
 
 	int capture_lists = TRUE;
 	coord3_t capture_list_offset = {10 + get_ui_trans_pos(), 180};
 
 	int player_status = TRUE;
-	coord3_t player_status_offset = {25 + get_ui_trans_pos(), 480 - 80};
+	coord3_t player_status_offset = {25 + get_ui_trans_pos(), get_gl_height() - 80};
 
 	/* Get name sizes, string */
 	white_name = get_white_name();

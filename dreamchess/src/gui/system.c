@@ -69,11 +69,11 @@ int get_true_mouse_y(void) {
 }
 
 int get_mouse_x(void) {
-	return ((float)mouse_pos.x / (float)get_screen_width()) * get_gl_width();
+	return ((float)mouse_pos.x); // / (float)get_screen_width()) * get_gl_width();
 }
 
 int get_mouse_y(void) {
-	return ((float)mouse_pos.y / (float)get_screen_height()) * 480;
+	return ((float)mouse_pos.y); // / (float)get_screen_height()) * 480;
 }
 
 /** @brief Computes smallest power of two that's larger than the input value.
@@ -142,9 +142,9 @@ void resize_window(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gl_width = 480 * width / (float)height;
-	gl_height = 480;
-	glOrtho(0, gl_width, 0, gl_height, -1, 1);
+	gl_width = width; // 480 * width / (float)height;
+	gl_height = height; // 480;
+	glOrtho(0.0f, gl_width, 0.0f, gl_height, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }

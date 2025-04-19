@@ -70,7 +70,7 @@
 #define FADE_IN 1
 
 #define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+//#define SCREEN_HEIGHT 720
 #define SCREEN_BPP 16
 
 /** Desired frames per second. */

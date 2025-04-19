@@ -105,7 +105,7 @@ gg_event_t convert_event(SDL_Event *event) {
 		gg_event.mouse.type = (event->type == SDL_MOUSEBUTTONDOWN ? GG_MOUSE_BUTTON_DOWN : GG_MOUSE_BUTTON_UP);
 		gg_event.mouse.button = event->button.button - 1;
 		gg_event.mouse.x = ((float)mouse_x / (float)get_screen_width()) * get_gl_width();
-		gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y / (float)get_screen_height()) * 480;
+		gg_event.mouse.y = (float)get_screen_height() - 1 - ((float)mouse_y / (float)get_screen_height()) * get_gl_height();
 	} break;
 
 	case SDL_MOUSEMOTION: {
@@ -118,7 +118,7 @@ gg_event_t convert_event(SDL_Event *event) {
 		gg_event.type = GG_EVENT_MOUSE;
 		gg_event.mouse.type = GG_MOUSE_MOVE;
 		gg_event.mouse.x = ((float)mouse_x / (float)get_screen_width()) * get_gl_width();
-		gg_event.mouse.y = SCREEN_HEIGHT - 1 - ((float)mouse_y / (float)get_screen_height()) * 480;
+		gg_event.mouse.y = (float)get_screen_height() - 1 - ((float)mouse_y / (float)get_screen_height()) * get_gl_height();
 	}
 	}
 
@@ -202,8 +202,11 @@ static float get_gl_screen_width(void) {
 	return get_gl_width();
 }
 
+static float get_gl_screen_height(void) {
+	return get_gl_height();
+}
 gg_driver_t gg_driver_sdlgl = {draw_rect, draw_rect_fill, draw_rect_fill_gradient, draw_image,
-							   get_image_size, get_ticks, get_gl_screen_width,
+							   get_image_size, get_ticks, get_gl_screen_width, get_gl_screen_height,
 							   get_line_height, get_string_width, draw_string};
 
 gg_driver_t *get_gg_driver_sdlgl(void) {

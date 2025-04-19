@@ -78,7 +78,7 @@
 
 /* FIXME */
 /** Screen height in pixels. */
-#define SCREEN_HEIGHT 480
+//#define SCREEN_HEIGHT 720
 
 /** Textured dialog border style. */
 typedef struct gg_dialog_border {

@@ -42,7 +42,7 @@ int draw_fade(int inout) {
 		col.a = 1.0f;
 
 	if (col.a >= 0.0f)
-		gg_system_draw_filled_rect(0, 0, get_gl_width(), 480, &col);
+		gg_system_draw_filled_rect(0, 0, get_gl_width(), get_gl_height(), &col);
 
 	if (amount >= 1.0f)
 		return FALSE;
@@ -70,29 +70,29 @@ int draw_sonic_fade(int inout) {
 		else if (amount >= 0.7f)
 			amount = 1.0f;
 
-		gg_system_draw_filled_rect(0, 480 - (480 * amount), get_screen_width(), 480, &col_blue);
-		gg_system_draw_filled_rect(get_screen_width() - (get_screen_width() * amount), 0, get_screen_width(), (480 / 3), &col_yellow);
+		gg_system_draw_filled_rect(0, get_gl_height() - (get_gl_height() * amount), get_screen_width(), get_gl_height(), &col_blue);
+		gg_system_draw_filled_rect(get_screen_width() - (get_screen_width() * amount), 0, get_screen_width(), (get_gl_height() / 3), &col_yellow);
 
-		unicode_string_render("DreamChess the chess game", get_screen_width() - (get_screen_width() * amount) + 280, (480 / 3) - 30, 0.0f, 1.2f, 0, col_white);
+		unicode_string_render("DreamChess the chess game", get_screen_width() - (get_screen_width() * amount) + 280, (get_gl_height() / 3) - 30, 0.0f, 1.2f, 0, col_white);
 
-		gg_system_draw_filled_rect(0, 0, (((640 / 3) + (480 / 14)) * amount) - (480 / 14), 480, &col_red);
+		gg_system_draw_filled_rect(0, 0, (((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14), get_gl_height(), &col_red);
 
 		for (i = 0; i < 14; i++) {
-			draw_tri((((640 / 3) + (480 / 14)) * amount) - (480 / 14) + 2, i * (480 / 14) - 2,
-					 (((640 / 3) + (480 / 14)) * amount) - (480 / 14) + 2, i * (480 / 14) + (480 / 14) - 2,
-					 (((640 / 3) + (480 / 14)) * amount) - (480 / 14) + (480 / 14) + 2,
-					 i * (480 / 14) + ((480 / 14) / 2) - 2, &col_black);
+			draw_tri((((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14) + 2, i * (get_gl_height() / 14) - 2,
+					 (((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14) + 2, i * (get_gl_height() / 14) + (get_gl_height() / 14) - 2,
+					 (((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14) + (get_gl_height() / 14) + 2,
+					 i * (get_gl_height() / 14) + ((get_gl_height() / 14) / 2) - 2, &col_black);
 
-			draw_tri((((640 / 3) + (480 / 14)) * amount) - (480 / 14), i * (480 / 14),
-					 (((640 / 3) + (480 / 14)) * amount) - (480 / 14), i * (480 / 14) + (480 / 14),
-					 (((640 / 3) + (480 / 14)) * amount) - (480 / 14) + (480 / 14), i * (480 / 14) + ((480 / 14) / 2),
+			draw_tri((((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14), i * (get_gl_height() / 14),
+					 (((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14), i * (get_gl_height() / 14) + (get_gl_height() / 14),
+					 (((640 / 3) + (get_gl_height() / 14)) * amount) - (get_gl_height() / 14) + (get_gl_height() / 14), i * (get_gl_height() / 14) + ((get_gl_height() / 14) / 2),
 					 &col_red);
 		}
 
-		unicode_string_render("Chess Hill", 640 - (640 * amount * 2) + 840, 480 - (480 / 3), 0.0f, 3.0f, 0, col_white);
+		unicode_string_render("Chess Hill", 640 - (640 * amount * 2) + 840, get_gl_height() - (get_gl_height() / 3), 0.0f, 3.0f, 0, col_white);
 
-		unicode_string_render("Zone", (640 * amount * 2) - 1000, 480 - (480 / 3) - 50, 0.0f, 3.0f, 0, col_white);
-		unicode_string_render("1", (640 * amount * 2) - 860, 480 - (480 / 3) - 60, 0.0f, 4.0f, 0, col_yellow);
+		unicode_string_render("Zone", (640 * amount * 2) - 1000, get_gl_height() - (get_gl_height() / 3) - 50, 0.0f, 3.0f, 0, col_white);
+		unicode_string_render("1", (640 * amount * 2) - 860, get_gl_height() - (get_gl_height() / 3) - 60, 0.0f, 4.0f, 0, col_yellow);
 	}
 
 	if (amount >= 1.0f) {
