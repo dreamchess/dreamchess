@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2024-09-05 20:09+0000\n"
-"Last-Translator: Adrián Ricardo Iazbeck Scalia <adrian.r.scalia@gmail.com>\n"
+"PO-Revision-Date: 2025-04-28 12:44+0000\n"
+"Last-Translator: GiannosOB <giannos2105@gmail.com>\n"
 "Language-Team: Spanish (Argentina) <https://hosted.weblate.org/projects/"
 "dreamchess/dreamchess/es_AR/>\n"
 "Language: es_AR\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8-dev\n"
+"X-Generator: Weblate 5.12-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,7 +40,6 @@ msgid "Music"
 msgstr "Música"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "Jaque mate"
 
