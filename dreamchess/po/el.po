@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2021-07-02 14:33+0000\n"
-"Last-Translator: Eugenia Russell <eugenia.russell2019@gmail.com>\n"
+"PO-Revision-Date: 2025-04-28 12:44+0000\n"
+"Last-Translator: GiannosOB <giannos2105@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/el/>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8-dev\n"
+"X-Generator: Weblate 5.12-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,25 +40,24 @@ msgid "Music"
 msgstr "Μουσική"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
-msgstr "Ρουά Ματ"
+msgstr "Ρουά ματ"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Αδιέξοδο"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Τριπλή επαναληπτικότητα"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "Κανόνας 50 κινήσεων"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Ανεπαρκές υλικό"
 
 #: dreamchess.c:424
 #, c-format
@@ -69,6 +68,11 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"Χρήση: dreamchess [επιλογές]\n"
+"\n"
+"Μια διεπαφή σκακιού συμβατή με το xboard.\n"
+"\n"
+"Επιλογές:\n"
 
 #: dreamchess.c:427
 msgid "show help"
@@ -88,37 +92,37 @@ msgstr "ρύθμιση ύψους οθόνης"
 
 #: dreamchess.c:431
 msgid "use <eng> as first chess engine"
-msgstr ""
+msgstr "χρησιμοποιήστε <eng> ως πρώτη μηχανή σκακιού"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  προεπιλογή σε 'dreamer' (ονειροπόλος)"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
 #: system_config.c:175
 msgid "Off"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr ""
+msgstr "Άνοιγμα"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr ""
+msgstr "Προσαρμοσμένο"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr ""
+msgstr "Άνθρωπος εναντίον ΚΜΕ"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr ""
+msgstr "CPU εναντίον ανθρώπου"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr ""
+msgstr "Άνθρωπος εναντίον ανθρώπου"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
@@ -146,7 +150,7 @@ msgstr "Θέμα:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "Εμφάνιση συντεταγμένων:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
@@ -289,75 +293,75 @@ msgstr "Αποθήκευση με επιτυχία"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
-msgstr ""
+msgstr "Η αποθήκευση απέτυχε"
 
 #: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
-msgstr ""
+msgstr "Αποθηκεύτηκε: %s"
 
 #: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
-msgstr ""
+msgstr "ΚΕΝΤΡΙΚΉ ΜΟΝΆΔΑ ΕΠΕΞΕΡΓΑΣΊΑΣ"
 
 #: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
-msgstr ""
+msgstr "Άνθρωπος"
 
 #: gui/saveload_dialog.c:146
 #, c-format
 msgid "%s vs %s"
-msgstr ""
+msgstr "%s εναντίον %s"
 
 #: gui/saveload_dialog.c:150
 #, c-format
 msgid "Difficulty: %s"
-msgstr ""
+msgstr "Δυσκολία: %s"
 
 #: gui/saveload_dialog.c:155
 #, c-format
 msgid "Level: %i"
-msgstr ""
+msgstr "Επίπεδο: %i"
 
 #: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
-msgstr ""
+msgstr "Κενή σχισμή"
 
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr ""
+msgstr "Αποθήκευση σχισμής: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr ""
+msgstr "Αποθήκευση του παιχνιδιού"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr ""
+msgstr "Φόρτωση του παιχνιδιού"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "Σφάλμα: Αποτυχία ρύθμισης της λειτουργίας βίντεο; χρήση προεπιλογών"
 
 #: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
-msgstr ""
+msgstr "Φόρτωση, παρακαλούμε περιμένετε…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr ""
+msgstr "Ο Λευκός κέρδισε τον αγώνα!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr ""
+msgstr "Ο Μαύρος κέρδισε τον αγώνα!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr ""
+msgstr "Το παιχνίδι έληξε ισόπαλο!"
 
 #: gui/xmlsavefile.c:149
 #, c-format
 msgid "Unknown"
-msgstr ""
+msgstr "Άγνωστος"
