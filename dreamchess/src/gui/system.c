@@ -90,10 +90,17 @@ int power_of_two(int input) {
 	return value;
 }
 
+void set_perspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
+	const GLdouble pi = 3.1415926535897932384626433832795;
+	const GLdouble fH = tan( fovY / 360 * pi ) * zNear;
+	const GLdouble fW = fH * aspect;
+	glFrustum(-fW, fW, -fH, fH, zNear, zFar);
+}
+
 void go_3d(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0f, get_gl_width() / 480.0f, 1.0f, 100.0f);
+	set_perspective(45.0f, get_gl_width() / 480.0f, 1.0f, 100.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
