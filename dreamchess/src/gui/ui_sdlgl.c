@@ -34,7 +34,8 @@
 #include "theme.h"
 #include "i18n.h"
 #include "unicode.h"
-#include <GL/glew.h>
+#define GLAD_GL_IMPLEMENTATION
+#include "glad/gl.h"
 #include <SDL2/SDL_syswm.h>
 
 static int turn_counter_start = 0;
@@ -525,6 +526,8 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
 	// Check for and enable the flag needed to stop SDL from disabling linux compositor
 	#ifdef SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
@@ -548,19 +551,16 @@ static int create_window(int width, int height, int fullscreen, int ms) {
 		return 1;
 	}
 
-	err = glewInit();
-	if (err != GLEW_OK) {
-		DBG_ERROR("Failed to initialize GLEW: %s", glewGetErrorString(err));
+	int version = gladLoadGL((GLADloadfunc) SDL_GL_GetProcAddress);
+	if (version == 0) {
+		DBG_ERROR("Failed to initialize GL context");
 		exit(1);
 	}
 
-	if (!glewIsSupported("GL_ARB_framebuffer_object")) {
+	DBG_LOG("Loaded OpenGL %d.%d", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+
+	if (!GLAD_GL_ARB_framebuffer_object) {
 		DBG_ERROR("OpenGL extension GL_ARB_framebuffer_object not supported");
-		exit(1);
-	}
-
-	if (!glewIsSupported("GL_ARB_texture_non_power_of_two")) {
-		DBG_ERROR("OpenGL extension GL_ARB_texture_non_power_of_two not supported");
 		exit(1);
 	}
 

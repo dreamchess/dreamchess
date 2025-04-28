@@ -18,7 +18,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <GL/glew.h>
+#include "glad/gl.h"
 #include <string.h>
 #include <locale.h>
 #include <libintl.h>

@@ -6,7 +6,6 @@ find_package(SDL2_mixer REQUIRED)
 unset(CMAKE_FIND_PACKAGE_PREFER_CONFIG)
 
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(EXPAT REQUIRED)
 
@@ -217,7 +216,6 @@ target_include_directories(dreamchess PRIVATE
     ${SDL2_IMAGE_INCLUDE_DIR}
     ${SDL2_MIXER_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
     ${EXPAT_INCLUDE_DIR}
     ${Intl_INCLUDE_DIRS}
@@ -228,7 +226,6 @@ target_include_directories(dreamchess PRIVATE
 
 target_link_libraries(dreamchess PRIVATE
     common
-    GLEW::GLEW
     Freetype::Freetype
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,$<TARGET_NAME_IF_EXISTS:SDL2_image::SDL2_image-static>>
     ${SDL2_IMAGE_LIBRARY}

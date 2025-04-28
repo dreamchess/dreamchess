@@ -4,7 +4,6 @@
     "sdl2-image",
     "sdl2-mixer",
     "expat",
-    "glew",
     "gettext",
     "freetype"
   ],

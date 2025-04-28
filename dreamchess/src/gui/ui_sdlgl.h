@@ -34,7 +34,7 @@
 #include "SDL_image.h"
 #include "SDL_thread.h"
 
-#include <GL/glew.h>
+#include "glad/gl.h"
 
 //#define NO_SDL_GLEXT
 //#include "SDL_opengl.h"
