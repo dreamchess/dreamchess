@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2025-03-03 16:04+0000\n"
-"Last-Translator: __ Fresh __ <artemoka571@gmail.com>\n"
+"PO-Revision-Date: 2025-07-04 20:01+0000\n"
+"Last-Translator: Илья Рябов <ilyarya131@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/ru/>\n"
 "Language: ru\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.10.3-dev\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -45,14 +45,12 @@ msgid "Checkmate"
 msgstr "Шах и Мат"
 
 #: dreamchess.c:260
-#, fuzzy
 msgid "Stalemate"
-msgstr "Тупик"
+msgstr "Пат"
 
 #: dreamchess.c:262
-#, fuzzy
 msgid "Threefold repetition"
-msgstr "Трехкратное повторение"
+msgstr "Троекратное повторение позиции"
 
 #: dreamchess.c:264
 msgid "50-move rule"
@@ -152,7 +150,6 @@ msgid "Theme:"
 msgstr "Тема:"
 
 #: dialogs/configuration.c:101
-#, fuzzy
 msgid "Show Coordinates:"
 msgstr "Показать координаты:"
 
