@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2023-05-04 19:47+0000\n"
-"Last-Translator: M <bafandehmajid@gmail.com>\n"
+"PO-Revision-Date: 2025-09-10 11:02+0000\n"
+"Last-Translator: Ashkan Gholizadeh <moal.gholi@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"X-Generator: Weblate 5.14-dev\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -46,7 +46,7 @@ msgstr "کیش ومات"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "بن‌بست"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
