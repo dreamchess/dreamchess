@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2021-03-11 13:02+0000\n"
-"Last-Translator: adel nasri <nsryadl8@gmail.com>\n"
+"PO-Revision-Date: 2026-05-16 16:11+0000\n"
+"Last-Translator: \"E. Ta.\" <eta00823@gmail.com>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/ar/>\n"
 "Language: ar\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.5.2-dev\n"
+"X-Generator: Weblate 2026.6.dev0\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -26,7 +26,7 @@ msgstr "البرمجة"
 
 #: credits.c:29
 msgid "Graphics"
-msgstr "الرسوميات"
+msgstr "الرسومات"
 
 #: credits.c:37
 msgid "3D Modelling"
@@ -34,32 +34,31 @@ msgstr "النمذجة ثلاثية الأبعاد"
 
 #: credits.c:39
 msgid "Special Thanks To"
-msgstr "شكر خاص"
+msgstr "شكر خاص لـ"
 
 #: credits.c:45
 msgid "Music"
-msgstr "موسيقى"
+msgstr "الموسيقى"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "كش ملك"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "تعادل"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "التكرار ثلاث مرات"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "قاعدة الخمسين نقلة"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "مواد غير كافية"
 
 #: dreamchess.c:424
 #, c-format
@@ -70,35 +69,35 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
-"الاستعمال: dreamchess [إختيارات]\n"
+"الاستخدام: dreamchess [الخيارات]\n"
 "\n"
 "واجهة شطرنج متوافقة مع xboard.\n"
 "\n"
-"إختيارات:\n"
+"الخيارات:\n"
 
 #: dreamchess.c:427
 msgid "show help"
-msgstr "اعرض التعليمات"
+msgstr "عرض التعليمات"
 
 #: dreamchess.c:428
 msgid "run fullscreen"
-msgstr "شغل ملء الشاشة"
+msgstr "التشغيل بوضع ملء الشاشة"
 
 #: dreamchess.c:429
 msgid "set screen width"
-msgstr "عين عرض الشاشة"
+msgstr "ضبط عرض الشاشة"
 
 #: dreamchess.c:430
 msgid "set screen height"
-msgstr "عين طول الشاشة"
+msgstr "ضبط ارتفاع الشاشة"
 
 #: dreamchess.c:431
 msgid "use <eng> as first chess engine"
-msgstr "استخدم <eng> كأول محرك شطرنج"
+msgstr "استخدام <eng> كمحرّك الشطرنج الأول"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr "  استخدم 'حالم' كافتراضي"
+msgstr "  يستخدم ’Dreamer‘ كالمحرّك الافتراضي"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
@@ -108,23 +107,23 @@ msgstr "معطّل"
 
 #: system_config.c:58 system_config.c:124
 msgid "On"
-msgstr "مفعل"
+msgstr "مفعّل"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr "مخصص"
+msgstr "مخصّص"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
-msgstr "لاعب ضد حاسوب"
+msgstr "الإنسان ضد الآلة"
 
 #: system_config.c:143
 msgid "CPU vs. Human"
-msgstr "حاسوب ضد اللاعب"
+msgstr "الآلة ضد الإنسان"
 
 #: system_config.c:144
 msgid "Human vs. Human"
-msgstr "لاعب ضد لاعب"
+msgstr "الإنسان ضد الإنسان"
 
 #: system_config.c:147 gui/saveload_dialog.c:151
 msgid "Easy"
@@ -140,11 +139,11 @@ msgstr "عنوان مجهول"
 
 #: audio/playlist.c:61
 msgid "Unknown album"
-msgstr "البوم مجهول"
+msgstr "ألبوم مجهول"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr "فنان مجهول"
+msgstr "فنّان مجهول"
 
 #: dialogs/configuration.c:97
 msgid "Theme:"
@@ -152,11 +151,11 @@ msgstr "السمة:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "إظهار الإحداثيات:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
-msgstr "المحرك:"
+msgstr "المحرّك:"
 
 #: dialogs/configuration.c:109
 msgid "Music Volume:"
@@ -167,9 +166,8 @@ msgid "Sound Volume:"
 msgstr "حجم الصوت:"
 
 #: dialogs/configuration.c:153
-#, fuzzy
 msgid "Change resolution…"
-msgstr "يغير الأبعاد.."
+msgstr "جارٍ تغيير الأبعاد…"
 
 #: dialogs/configuration.c:157 dialogs/message_dialog.c:38
 #: dialogs/message_dialog.c:60 dialogs/quit_dialog.c:58 dialogs/resolution.c:43
@@ -179,24 +177,24 @@ msgstr "موافق"
 
 #: dialogs/ingame_dialog.c:65
 msgid "Retract Move"
-msgstr "تراجع عن النقلة"
+msgstr "التراجع عن النقلة"
 
 #: dialogs/ingame_dialog.c:69
 msgid "Move Now"
-msgstr "انقل الآن"
+msgstr "النقل الآن"
 
 #: dialogs/ingame_dialog.c:73
 msgid "View Previous Move"
-msgstr "اعرض النقلة السابقة"
+msgstr "عرض النقلة السابقة"
 
 #: dialogs/ingame_dialog.c:77
 msgid "View Next Move"
-msgstr "اعرض النقلة التالية"
+msgstr "عرض النقلة التالية"
 
 #: dialogs/ingame_dialog.c:81 dialogs/quit_dialog.c:62 dialogs/resolution.c:222
 #: dialogs/system_dialog.c:75 gui/title_dialog.c:180 gui/saveload_dialog.c:252
 msgid "Cancel"
-msgstr "ألغِ"
+msgstr "إلغاء"
 
 #: dialogs/quit_dialog.c:52
 msgid "Quit to Title?"
@@ -204,15 +202,15 @@ msgstr "العودة إلى العنوان؟"
 
 #: dialogs/resolution.c:94
 msgid "Error: failed to change video mode"
-msgstr "خطأ: فشل تغيير نمط العرض"
+msgstr "خطأ: فشل تغيير وضع الفيديو"
 
 #: dialogs/resolution.c:160
 msgid "Resolution:"
-msgstr "دقة الشاشة:"
+msgstr "الدقّة:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr "مخصص:"
+msgstr "مخصّص:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
@@ -220,26 +218,23 @@ msgstr "ملء الشاشة:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr "عينة متعددة:"
+msgstr "عيّنات متعدّدة:"
 
 #: dialogs/system_dialog.c:63
-#, fuzzy
 msgid "Save game…"
-msgstr "احفظ اللعبة.."
+msgstr "حفظ اللعبة…"
 
 #: dialogs/system_dialog.c:67
-#, fuzzy
 msgid "Move Options…"
-msgstr "خيارات النقل.."
+msgstr "خيارات النقل…"
 
 #: dialogs/system_dialog.c:71
-#, fuzzy
 msgid "Quit Game…"
-msgstr "أخرج من اللعبة.."
+msgstr "الخروج من اللعبة…"
 
 #: gui/ingame_ui.c:101
 msgid "Tied!"
-msgstr "تعادل!"
+msgstr "تَعادَل!"
 
 #: gui/ingame_ui.c:102
 msgid "Checkmate!"
@@ -255,7 +250,7 @@ msgstr "فزت!"
 
 #: gui/title_dialog.c:135
 msgid "Players:"
-msgstr "اللاعبان:"
+msgstr "اللاعبين:"
 
 #: gui/title_dialog.c:139
 msgid "Difficulty:"
@@ -266,40 +261,36 @@ msgid "Level:"
 msgstr "المستوى:"
 
 #: gui/title_dialog.c:171
-#, fuzzy
 msgid "Time options…"
-msgstr "خيارات الوقت.."
+msgstr "خيارات الوقت…"
 
 #: gui/title_dialog.c:176
 msgid "Start Game"
-msgstr "اِبدأ اللعبة"
+msgstr "بدء اللعبة"
 
 #: gui/title_dialog.c:198
-#, fuzzy
 msgid "New Game…"
-msgstr "لعبة جديدة.."
+msgstr "لعبة جديدة…"
 
 #: gui/title_dialog.c:202
-#, fuzzy
 msgid "Load Game…"
-msgstr "حمل لعبة"
+msgstr "تحميل اللعبة…"
 
 #: gui/title_dialog.c:206
-#, fuzzy
 msgid "Configuration…"
-msgstr "الإعداد.."
+msgstr "الإعدادات…"
 
 #: gui/title_dialog.c:210
 msgid "Quit"
-msgstr "أغلق"
+msgstr "إغلاق"
 
 #: gui/promote_dialog.c:39
 msgid "Promotion! Choose new piece!"
-msgstr "ترقية! اختر القطعة الجديدة!"
+msgstr "عرض خاص! اختر قطعة جديدة!"
 
 #: gui/saveload_dialog.c:82
 msgid "Save successful"
-msgstr "نجح الحفظ"
+msgstr "تم الحفظ بنجاح"
 
 #: gui/saveload_dialog.c:84
 msgid "Save failed"
@@ -308,7 +299,7 @@ msgstr "فشل الحفظ"
 #: gui/saveload_dialog.c:116
 #, c-format
 msgid "Saved: %s"
-msgstr "حُفظ: %s"
+msgstr "حُفِظ: %s"
 
 #: gui/saveload_dialog.c:122 gui/saveload_dialog.c:135
 msgid "CPU"
@@ -316,7 +307,7 @@ msgstr "حاسوب"
 
 #: gui/saveload_dialog.c:125 gui/saveload_dialog.c:138
 msgid "Human"
-msgstr "لاعب"
+msgstr "إنسان"
 
 #: gui/saveload_dialog.c:146
 #, c-format
@@ -341,36 +332,35 @@ msgstr "خانة فارغة"
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr "خانة حفظ: %i"
+msgstr "خانة حِفْظ: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
-msgstr "احفظ اللعبة"
+msgstr "حفظ اللعبة"
 
 #: gui/saveload_dialog.c:247
 msgid "Load Game"
-msgstr "حمل لعبة"
+msgstr "تحميل لعبة"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
-msgstr "خطأ: فشل تعيين نمط العرض; إستخدام الوضع الإفتراضي"
+msgstr "خطأ: فشل ضبط وضع الفيديو؛ جارٍ استخدام الإعدادات الافتراضية"
 
 #: gui/ui_sdlgl.c:379
-#, fuzzy
 msgid "Loading, please wait…"
-msgstr "يحمل، يرجى الإنتظار…"
+msgstr "جارٍ التحميل، يُرجى الانتظار…"
 
 #: gui/victory_dialog.c:41
 msgid "White won the match!"
-msgstr "فاز الأبيض!"
+msgstr "فاز الأبيض بالمباراة!"
 
 #: gui/victory_dialog.c:47
 msgid "Black won the match!"
-msgstr "فاز الأسود!"
+msgstr "فاز الأسود بالمباراة!"
 
 #: gui/victory_dialog.c:53
 msgid "The game ended in a draw!"
-msgstr "انتهت اللعبة بالتعادل!"
+msgstr "انتهت المباراة بالتعادل!"
 
 #: gui/xmlsavefile.c:149
 #, c-format
