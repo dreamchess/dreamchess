@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DreamChess\n"
 "Report-Msgid-Bugs-To: feedback@dreamchess.org\n"
 "POT-Creation-Date: 2024-07-16 09:53+0200\n"
-"PO-Revision-Date: 2022-08-31 05:14+0000\n"
-"Last-Translator: daudiffa <daud20010707@gmail.com>\n"
+"PO-Revision-Date: 2026-05-20 11:11+0000\n"
+"Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/dreamchess/"
 "dreamchess/id/>\n"
 "Language: id\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.1-dev\n"
+"X-Generator: Weblate 2026.6.dev0\n"
 
 #: credits.c:27
 msgid "Programming"
@@ -40,25 +40,24 @@ msgid "Music"
 msgstr "Musik"
 
 #: dreamchess.c:256 dreamchess.c:258
-#, fuzzy
 msgid "Checkmate"
 msgstr "Skakmat"
 
 #: dreamchess.c:260
 msgid "Stalemate"
-msgstr ""
+msgstr "Patt"
 
 #: dreamchess.c:262
 msgid "Threefold repetition"
-msgstr ""
+msgstr "Pengulangan tiga kali"
 
 #: dreamchess.c:264
 msgid "50-move rule"
-msgstr ""
+msgstr "Aturan 50 langkah"
 
 #: dreamchess.c:266
 msgid "Insufficient material"
-msgstr ""
+msgstr "Materi tidak cukup"
 
 #: dreamchess.c:424
 #, c-format
@@ -97,7 +96,7 @@ msgstr "gunakan <eng> sebagai mesin catur pertama"
 
 #: dreamchess.c:432
 msgid "  defaults to 'dreamer'"
-msgstr ""
+msgstr "  default ke 'dreamer'"
 
 #: system_config.c:57 system_config.c:59 system_config.c:62 system_config.c:72
 #: system_config.c:123 system_config.c:132 system_config.c:167
@@ -111,7 +110,7 @@ msgstr "Aktif"
 
 #: system_config.c:120
 msgid "Custom"
-msgstr ""
+msgstr "Kustom"
 
 #: system_config.c:142
 msgid "Human vs. CPU"
@@ -143,7 +142,7 @@ msgstr "Album tidak diketahui"
 
 #: audio/playlist.c:62
 msgid "Unknown artist"
-msgstr ""
+msgstr "Artis tidak dikenal"
 
 #: dialogs/configuration.c:97
 msgid "Theme:"
@@ -151,7 +150,7 @@ msgstr "Tema:"
 
 #: dialogs/configuration.c:101
 msgid "Show Coordinates:"
-msgstr ""
+msgstr "Tampilkan Koordinat:"
 
 #: dialogs/configuration.c:105
 msgid "Engine:"
@@ -210,7 +209,7 @@ msgstr "Resolusi:"
 
 #: dialogs/resolution.c:164
 msgid "Custom:"
-msgstr ""
+msgstr "Kustom:"
 
 #: dialogs/resolution.c:168
 msgid "Full screen:"
@@ -218,7 +217,7 @@ msgstr "Layar penuh:"
 
 #: dialogs/resolution.c:172
 msgid "Multisampling:"
-msgstr ""
+msgstr "Multisampling:"
 
 #: dialogs/system_dialog.c:63
 msgid "Save game…"
@@ -327,12 +326,12 @@ msgstr "Level: %i"
 #: gui/saveload_dialog.c:213
 #, c-format
 msgid "Empty slot"
-msgstr ""
+msgstr "Slot kosong"
 
 #: gui/saveload_dialog.c:234
 #, c-format
 msgid "Save slot: %i"
-msgstr ""
+msgstr "Simpan slot: %i"
 
 #: gui/saveload_dialog.c:244
 msgid "Save Game"
@@ -344,7 +343,7 @@ msgstr "Muat Permainan"
 
 #: gui/ui_sdlgl.c:327
 msgid "Error: failed to set video mode; using defaults"
-msgstr ""
+msgstr "Kesalahan: gagal menetapkan mode video; menggunakan default"
 
 #: gui/ui_sdlgl.c:379
 msgid "Loading, please wait…"
